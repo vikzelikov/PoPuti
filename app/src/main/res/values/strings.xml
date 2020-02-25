@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Po Puti</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="input_number_phone">Введите номер телефона</string>
+    <string name="confirm_code">Мы отправим на него код подтверждения</string>
+    <string name="mobile_phone">Мобильный телефон</string>
+    <string name="next">Далее</string>
+    <string name="terms_cooperation">Нажимая «Далее», я соглашаюсь с
+        <a href="https://google.com">Пользовательским соглашением</a>, а также с обработкой моей персональной информации на условиях <a href="https://google.com">Политики конфиденциальности</a>
+    </string>
+    <string name="input_code">Введите код из СМС</string>
+    <string name="retry_code_send">Отправить еще раз</string>
+    <string name="who_are_you">Как вас зовут?</string>
+    <string name="your_name">Ваше имя</string>
+    <string name="youe_famaly">Ваша фамилия</string>
+    <string name="your_name_display_for_driver">Ваше имя будет видно водителю</string>
+    <string name="regular_driving">Регулярные поездки</string>
+    <string name="get_driver">Вызвать машину</string>
+    <string name="profile">Личный кабинет</string>
+    <string name="from">Откуда</string>
+    <string name="to">Куда</string>
+    <string name="map">Карта</string>
+    <string name="comment">Комментарий</string>
+    <string name="payment_method">Способ оплаты</string>
+    <string name="offer_price">Предложите цену</string>
+    <string name="offerPrice">Предложить цену</string>
+    <string name="offer_price_text">Чтобы заинтересовать водителей, устанавливайте справедливую цену</string>
+    <string name="getdriver">Вызвать машину</string>
+    <string name="add_payment">Добавить карту</string>
+    <string name="addCard">Добавить карту</string>
+    <string name="addBankCard">Добавление карты</string>
+    <string name="cvc_cvv">CVC/CVV</string>
+    <string name="valid_until">Действует до</string>
+    <string name="numberBankCard">Номер карты</string>
+    <string name="ready">Готово</string>
+    <string name="commentForDriver">Комментарий для водителя</string>
+</resources>
