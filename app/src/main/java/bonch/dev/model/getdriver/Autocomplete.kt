@@ -1,9 +1,6 @@
 package bonch.dev.model.getdriver
 
 import bonch.dev.model.getdriver.pojo.Ride
-import bonch.dev.presenter.getdriver.GetDriverPresenter
-import bonch.dev.view.getdriver.AddressesListAdapter
-import bonch.dev.view.getdriver.GetDriverView
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
@@ -28,7 +25,7 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
     )
 
     private val SUGGEST_OPTIONS = SuggestOptions(
-        SuggestType.GEO.value or SuggestType.GEO.value or SuggestType.TRANSIT.value,
+        SuggestType.GEO.value or SuggestType.BIZ.value or SuggestType.TRANSIT.value,
         userLocationPoint,
         false
     )
@@ -44,18 +41,22 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
         for (i in 0 until Math.min(RESULT_NUMBER_LIMIT, suggest.size)) {
             if (suggest[i].subtitle != null) {
 
-                suggestResult.add(
-                    Ride(
-                        suggest[i].title.text,
-                        suggest[i].subtitle!!.text
-                    )
-                )
+                if(suggest[i].uri.toString().length > 50){
 
-                if (suggest[i].uri != null) {
-                    println(suggest[i].uri)
-                    println(getPoint(suggest[i].uri!!).latitude)
-                    println(getPoint(suggest[i].uri!!).longitude)
+                    suggestResult.add(
+                        Ride(
+                            suggest[i].title.text,
+                            suggest[i].subtitle!!.text
+                        )
+                    )
+
+                    if (suggest[i].uri != null) {
+                        println(suggest[i].uri)
+                        println(getPoint(suggest[i].uri!!).latitude)
+                        println(getPoint(suggest[i].uri!!).longitude)
+                    }
                 }
+
 
             } else {
                 suggestResult.add(

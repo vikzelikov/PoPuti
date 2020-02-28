@@ -1,56 +1,147 @@
 package bonch.dev.view.getdriver
 
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import androidx.fragment.app.Fragment
-import bonch.dev.MainActivity
+import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
+import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 
-class AddBankCardView : Fragment() {
 
+class AddBankCardView : AppCompatActivity() {
 
-    private lateinit var offerBtn: Button
+    private val CARD_NUMBER = "CARD_NUMBER"
+    private val VALID_UNTIL = "VALID_UNTIL"
+    private val CVC = "CVC"
+    private val BANK_IMG = "BANK_IMG"
+    private val VISA = 4
+    private val MC = 5
+    private val RUS_WORLD = 2
+
+    private lateinit var addCardBtn: Button
     private lateinit var backBtn: ImageButton
-    private lateinit var cardNumber: EditText
+    private lateinit var cardBankNumber: EditText
     private lateinit var validUntil: EditText
     private lateinit var cvc: EditText
     private var startHeight: Int = 0
     private var screenHeight: Int = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.add_bank_card_fragment, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.add_bank_card_activity)
 
+        val root = findViewById<View>(R.id.rootLinearLayout)
 
-        initViews(root)
+        initViews()
 
         setListener(root)
 
         setMovingButtonListener(root)
 
-
-        return root
-
+        cardBankNumber.requestFocus()
+        showKeyboard(this)
     }
 
 
-    private fun setListener(root:View){
-        backBtn.setOnClickListener {
-            hideKeyboard(activity!!, root)
+    private fun setListener(root: View) {
+        var lock = false
 
 
-            (activity as MainActivity).supportFragmentManager.popBackStack()
+        addCardBtn.setOnClickListener {
+            if(isValidCard()){
+                var img: Int? = null
+                val intent = Intent()
+                var cardNumber = cardBankNumber.text.toString()
+
+                when (cardNumber[0].toString().toInt()) {
+                    VISA -> {
+                        img = R.drawable.visa
+                        cardNumber = "•••• " + cardNumber.substring(15, 19)
+                    }
+
+                    MC -> {
+                        img = R.drawable.mastercard
+                        cardNumber = "•••• " + cardNumber.substring(15, 19)
+                    }
+
+                    RUS_WORLD -> {
+                        img = R.drawable.pay_world
+                        cardNumber = "•••• " + cardNumber.substring(15, 19)
+                    }
+
+                    else -> {
+                        img = null
+                        cardNumber = "•••• " + cardNumber.substring(15, 19)
+                    }
+                }
+
+
+                intent.putExtra(CARD_NUMBER, cardNumber)
+                intent.putExtra(VALID_UNTIL, validUntil.text.toString())
+                intent.putExtra(CVC, cvc.text.toString())
+                intent.putExtra(BANK_IMG, img)
+                setResult(RESULT_OK, intent)
+
+                hideKeyboard(this, root)
+
+                finish()
+            }
+
         }
+
+        backBtn.setOnClickListener {
+            hideKeyboard(this, root)
+
+            finish()
+        }
+
+        cardBankNumber.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (lock || s!!.length > 16) {
+                    return
+                }
+                lock = true
+
+                var i = 4
+                while (i < s.length) {
+                    if (s.toString()[i] != ' ') {
+                        val filters = s.filters
+                        s.filters = arrayOf()
+                        s.insert(i, " ")
+                        s.filters = filters
+                    }
+                    i += 5
+                }
+
+                lock = false
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
+
+        validUntil.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s!!.length == 3 && s.toString()[2] != '/') {
+                    val filters = s.filters
+                    s.filters = arrayOf()
+                    s.insert(2, "/")
+                    s.filters = filters
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
     }
 
 
@@ -71,7 +162,7 @@ class AddBankCardView : Fragment() {
 
                 if (btnDefaultPosition == 0.0f) {
                     //init default position of button
-                    btnDefaultPosition = offerBtn.y
+                    btnDefaultPosition = addCardBtn.y
                 }
 
                 if (startHeight == 0) {
@@ -81,20 +172,31 @@ class AddBankCardView : Fragment() {
 
                 if (heightDiff > startHeight) {
                     //move UP
-                    offerBtn.y = btnDefaultPosition - heightDiff + startHeight
+                    addCardBtn.y = btnDefaultPosition - heightDiff + startHeight
                 } else {
                     //move DOWN
-                    offerBtn.y = btnDefaultPosition
+                    addCardBtn.y = btnDefaultPosition
                 }
             }
     }
 
 
-    private fun initViews(root: View){
-        offerBtn = root.findViewById(R.id.offer)
-        backBtn = root.findViewById(R.id.back_btn)
-        cardNumber = root.findViewById(R.id.card_number)
-        validUntil = root.findViewById(R.id.valid_until)
-        cvc = root.findViewById(R.id.cvc)
+    private fun isValidCard(): Boolean {
+        var isValid = false
+
+        if (cardBankNumber.text.length == 19 && cvc.text.length == 3 && validUntil.text.length == 5) {
+            isValid = true
+        }
+
+        return isValid
+    }
+
+
+    private fun initViews() {
+        addCardBtn = findViewById(R.id.add_card)
+        backBtn = findViewById(R.id.back_btn)
+        cardBankNumber = findViewById(R.id.card_number)
+        validUntil = findViewById(R.id.valid_until)
+        cvc = findViewById(R.id.cvc)
     }
 }

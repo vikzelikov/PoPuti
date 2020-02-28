@@ -1,7 +1,8 @@
-package bonch.dev.view.getdriver
+package bonch.dev.presenter.getdriver.adapters
 
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.Constant.Companion.DETAIL_RIDE_VIEW
 import bonch.dev.Coordinator
 import bonch.dev.MainActivity
+import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Ride
+import bonch.dev.view.getdriver.GetDriverView
 
 
 class AddressesListAdapter(
@@ -22,14 +25,12 @@ class AddressesListAdapter(
     val root: View
 ) : RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
 
-    private var imm: InputMethodManager? = null
+    private val FROM = "FROM"
+    private val TO = "TO"
     private var coordinator: Coordinator? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
-
-        imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
         return ItemPostHolder(
             LayoutInflater.from(context)
                 .inflate(R.layout.ride_item, parent, false)
@@ -43,23 +44,24 @@ class AddressesListAdapter(
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
+        var bundle: Bundle
         val post = list[position]
+
         holder.bind(post)
 
         holder.itemView.setOnClickListener {
 
-            if(getDriverView.fromAddress.isFocused){
+            if (getDriverView.fromAddress.isFocused) {
                 getDriverView.fromAddress.setText(list[position].address)
-
-                coordinator!!.replaceFragment(DETAIL_RIDE_VIEW)
-
-                //make routing +
             }
 
-            if(getDriverView.toAddress.isFocused){
+            if (getDriverView.toAddress.isFocused) {
                 getDriverView.toAddress.setText(list[position].address)
 
-                coordinator!!.replaceFragment(DETAIL_RIDE_VIEW)
+                bundle = Bundle()
+                bundle.putString(FROM, getDriverView.fromAddress.text.toString())
+                bundle.putString(TO, getDriverView.toAddress.text.toString())
+                coordinator!!.replaceFragment(DETAIL_RIDE_VIEW, bundle)
 
             }
 
@@ -67,7 +69,7 @@ class AddressesListAdapter(
 
 
         holder.itemView.setOnTouchListener { _, _ ->
-            imm!!.hideSoftInputFromWindow(root.windowToken, 0)
+            hideKeyboard(getDriverView.activity!!, root)
 
             false
         }
@@ -87,7 +89,7 @@ class AddressesListAdapter(
 
 
     init {
-        if(coordinator == null){
+        if (coordinator == null) {
             coordinator = (getDriverView.activity as MainActivity).coordinator
         }
     }

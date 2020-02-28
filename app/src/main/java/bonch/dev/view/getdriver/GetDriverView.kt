@@ -20,6 +20,7 @@ import bonch.dev.MainActivity.Companion.getOpacity
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.getdriver.GetDriverPresenter
+import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.view.getdriver.SearchPlace.Companion.pointGeocoder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
@@ -162,7 +163,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         var userPoint: Point
 
         myPos.setOnClickListener {
-            userPoint = userLocationPoint()
+            userPoint = userLocationPoint()!!
             moveCamera(userPoint)
         }
 
@@ -283,8 +284,14 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    fun userLocationPoint(): Point {
-        return userLocationLayer!!.cameraPosition()!!.target
+    fun userLocationPoint(): Point? {
+        var point: Point? = null
+
+        if (userLocationLayer!!.cameraPosition() != null) {
+            point = userLocationLayer!!.cameraPosition()!!.target
+        }
+
+        return point
     }
 
 
@@ -329,7 +336,13 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         onMapView = root.findViewById(R.id.on_map_view)
         containerAddresses = root.findViewById(R.id.inputs_layout)
 
-        addressesListAdapter = AddressesListAdapter(this, ArrayList(), context!!, root)
+        addressesListAdapter =
+            AddressesListAdapter(
+                this,
+                ArrayList(),
+                context!!,
+                root
+            )
 
         bottomSheet = root.findViewById(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from<View>(bottomSheet)

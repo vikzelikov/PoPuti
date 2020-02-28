@@ -82,7 +82,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/from"
+                        android:id="@+id/fromAddress"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@null"
@@ -112,7 +112,7 @@
                     android:weightSum="1">
 
                     <TextView
-                        android:id="@+id/to"
+                        android:id="@+id/toAddress"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@null"
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_ruble"
             android:drawablePadding="17dp"
-            android:paddingStart="18dp"
+            android:paddingStart="16dp"
             android:paddingTop="15dp"
             android:paddingEnd="15dp"
             android:paddingBottom="25dp"
@@ -159,6 +159,38 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
+
+            <LinearLayout
+                android:id="@+id/selected_payment_method"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center|start"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="23dp"
+                android:paddingBottom="24dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/payment_method_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:minWidth="40dp" />
+
+                <TextView
+                    android:id="@+id/number_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/roboto"
+                    android:paddingStart="5dp"
+                    android:textColor="@android:color/black" />
+
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/payment_method"
                 android:layout_width="0dp"
@@ -167,7 +199,7 @@
                 android:drawableStart="@drawable/ic_payment_method"
                 android:drawablePadding="10dp"
                 android:fontFamily="@font/roboto"
-                android:gravity="center|left"
+                android:gravity="center|start"
                 android:paddingStart="15dp"
                 android:paddingTop="20dp"
                 android:paddingEnd="10dp"
@@ -176,19 +208,40 @@
                 android:textColor="@android:color/black" />
 
 
-            <TextView
-                android:id="@+id/comment_btn"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:fontFamily="@font/roboto"
-                android:gravity="end"
-                android:paddingStart="18dp"
-                android:paddingTop="20dp"
-                android:paddingEnd="15dp"
-                android:paddingBottom="24dp"
-                android:text="@string/comment"
-                android:textColor="@android:color/black" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/comment_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto"
+                    android:gravity="end"
+                    android:paddingStart="18dp"
+                    android:paddingTop="23dp"
+                    android:paddingEnd="15dp"
+                    android:text="@string/comment"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/comment_min_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="15dp"
+                    android:singleLine="true"
+                    android:textColor="#60000000"
+                    android:textSize="12sp" />
+
+
+            </LinearLayout>
 
 
         </LinearLayout>
@@ -233,7 +286,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/bottom_sheet_arrow" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -241,13 +294,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_marginStart="70dp"
-                android:layout_marginEnd="15dp"
-                android:background="#30000000" />
 
             <TextView
                 android:id="@+id/add_card"
@@ -262,21 +308,19 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
-
         </LinearLayout>
 
 
         <LinearLayout
             android:id="@+id/comment_bottom_sheet"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="450dp"
             android:background="@drawable/corners_layout"
             android:elevation="10dp"
             android:orientation="vertical"
             android:padding="15dp"
             app:behavior_peekHeight="0dp"
             app:layout_behavior=".view.getdriver.MBottomSheet">
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -309,7 +353,7 @@
                 android:id="@+id/comment_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:background="@null"
                 android:hint="@string/commentForDriver"
                 android:inputType="textMultiLine"

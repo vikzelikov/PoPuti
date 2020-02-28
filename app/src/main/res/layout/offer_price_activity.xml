@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -24,8 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:layout_weight="0.05"
-        android:gravity="center_vertical"
+        android:layout_weight="0.1"
+        android:gravity="bottom"
         android:orientation="vertical">
 
 
@@ -60,7 +61,8 @@
                 android:fontFamily="@font/roboto"
                 android:text="@string/offer_price_text"
                 android:textAlignment="center"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
 
 
         </LinearLayout>
@@ -72,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:layout_weight="0.95"
+        android:layout_weight="0.9"
         android:gravity="bottom"
         android:orientation="vertical">
 

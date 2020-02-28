@@ -85,7 +85,7 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
         nextBtn.setOnClickListener {
             hideKeyboard(activity!!, root)
 
-            coordinator!!.replaceFragment(MAIN_FRAGMENT)
+            coordinator!!.replaceFragment(MAIN_FRAGMENT, Bundle())
         }
 
         backBtn.setOnClickListener {

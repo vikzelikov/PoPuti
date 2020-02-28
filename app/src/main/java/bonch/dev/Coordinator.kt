@@ -1,48 +1,37 @@
 package bonch.dev
 
+import android.os.Bundle
 import androidx.fragment.app.FragmentManager
-import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
 import bonch.dev.Constant.Companion.CONFIRM_PHONE_VIEW
 import bonch.dev.Constant.Companion.DETAIL_RIDE_VIEW
 import bonch.dev.Constant.Companion.FULL_NAME_VIEW
 import bonch.dev.Constant.Companion.MAIN_FRAGMENT
-import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.view.MainFragment
-import bonch.dev.view.getdriver.AddBankCardView
 import bonch.dev.view.getdriver.DetailRideView
-import bonch.dev.view.getdriver.OfferPriceView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
 
-class Coordinator (private val supportFragmentManager: FragmentManager) {
+class Coordinator(private val supportFragmentManager: FragmentManager) {
 
 
-    fun replaceFragment(id: Int) {
+    fun replaceFragment(id: Int, bundle: Bundle) {
         when (id) {
             MAIN_FRAGMENT -> {
+                val fragment = MainFragment()
+                fragment.arguments = bundle
+
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, MainFragment())
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit()
             }
 
             DETAIL_RIDE_VIEW -> {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, DetailRideView())
-                    .addToBackStack(null)
-                    .commit()
-            }
+                val fragment = DetailRideView()
+                fragment.arguments = bundle
 
-            OFFER_PRICE_VIEW -> {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, OfferPriceView())
-                    .addToBackStack(null)
-                    .commit()
-            }
-
-            ADD_BANK_CARD_VIEW -> {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, AddBankCardView())
+                    .replace(R.id.fragment_container, fragment)
                     .addToBackStack(null)
                     .commit()
             }
@@ -52,10 +41,13 @@ class Coordinator (private val supportFragmentManager: FragmentManager) {
 
 
     fun replaceFragment(id: Int, startHeight: Int, screenHeight: Int) {
-        when(id) {
+        when (id) {
             CONFIRM_PHONE_VIEW -> {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, ConfirmPhoneFragment(startHeight, screenHeight))
+                    .replace(
+                        R.id.fragment_container,
+                        ConfirmPhoneFragment(startHeight, screenHeight)
+                    )
                     .addToBackStack(null)
                     .commit()
             }
@@ -68,5 +60,6 @@ class Coordinator (private val supportFragmentManager: FragmentManager) {
             }
         }
     }
+
 
 }

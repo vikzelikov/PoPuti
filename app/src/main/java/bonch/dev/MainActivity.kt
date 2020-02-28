@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.view.MainFragment
+import bonch.dev.view.getdriver.DetailRideView
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, MainFragment())
+            .add(R.id.fragment_container, DetailRideView())
             .commit()
 
     }
@@ -153,10 +154,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
 
-        getKeyboard(this).hideSoftInputFromWindow(
-            findViewById<LinearLayout>(R.id.fragment_container).windowToken,
-            0
-        )
+        hideKeyboard(this, findViewById<LinearLayout>(R.id.fragment_container))
     }
 
 

@@ -2,7 +2,7 @@ package bonch.dev.presenter.getdriver
 
 import bonch.dev.model.getdriver.GetDriverModel
 import bonch.dev.model.getdriver.pojo.Ride
-import bonch.dev.view.getdriver.AddressesListAdapter
+import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.view.getdriver.GetDriverView
 
 class GetDriverPresenter(
@@ -15,7 +15,7 @@ class GetDriverPresenter(
     fun requestSuggest(query: String) {
 
         if(query.length > 2){
-            getDriverModel!!.requestSuggest(query, getDriverView.userLocationPoint())
+            getDriverModel!!.requestSuggest(query, getDriverView.userLocationPoint()!!)
         }else{
             clearRecyclerSuggest()
         }

@@ -31,7 +31,6 @@ class SearchPlace : Session.SearchListener {
 
         fun stringGeocoder(query: String) {
 
-
             searchSession = searchManager.submit(
                 query,
                 Geometry.fromPoint(Point(59.0, 30.0)),
@@ -53,7 +52,6 @@ class SearchPlace : Session.SearchListener {
         for (i in 0..3) {
             //println(response.collection.children.firstOrNull()?.obj?.metadataContainer?.getItem(ToponymObjectMetadata::class.java)?.address?.components?.get(i)?.name)
         }
-
 
         //val address = response.collection.children[0].obj!!.name
 

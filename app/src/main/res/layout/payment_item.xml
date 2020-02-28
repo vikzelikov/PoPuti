@@ -2,42 +2,59 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingStart="15dp"
-    android:paddingEnd="15dp">
-
-
-    <ImageView
-        android:id="@+id/payment_method_img"
-        android:layout_width="70dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/visa" />
-
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="30dp"
-        android:paddingBottom="30dp">
-
-        <TextView
-            android:id="@+id/number_card"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="VISA  **** 2955"
-            android:textColor="@android:color/black" />
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp">
 
         <ImageView
-            android:layout_width="30dp"
+            android:id="@+id/payment_method_img"
+            android:layout_width="wrap_content"
+            android:minWidth="40dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_tick"/>
+            android:layout_gravity="center" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp">
+
+            <TextView
+                android:id="@+id/number_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:paddingStart="5dp"
+                android:textColor="@android:color/black" />
+
+            <ImageView
+                android:id="@+id/tick"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_tick" />
+
+
+        </LinearLayout>
 
 
     </LinearLayout>
+
+
+    <View
+        android:id="@+id/line_payment"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="15dp"
+        android:background="#30000000" />
 
 
 </LinearLayout>
