@@ -63,6 +63,10 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
         code1EditText.requestFocus()
         showKeyboard(activity!!)
 
+        if(coordinator == null){
+            coordinator = (activity as MainActivity).coordinator
+        }
+
         return root
     }
 
@@ -162,12 +166,6 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
         nextBtn = root.findViewById(R.id.next)
     }
 
-
-    init {
-        if(coordinator == null){
-            coordinator = (activity as MainActivity).coordinator
-        }
-    }
 
 
 }

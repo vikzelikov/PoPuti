@@ -42,6 +42,10 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
 
         setHintListener()
 
+        if (coordinator == null) {
+            coordinator = (activity as MainActivity).coordinator
+        }
+
         return root
     }
 
@@ -124,10 +128,4 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
         nextBtn = root.findViewById(R.id.next)
     }
 
-
-    init {
-        if (coordinator == null) {
-            coordinator = (activity as MainActivity).coordinator
-        }
-    }
 }

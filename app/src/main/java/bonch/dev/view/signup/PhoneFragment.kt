@@ -1,6 +1,5 @@
 package bonch.dev.view.signup
 
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.SpannableString
@@ -10,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -62,6 +60,9 @@ class PhoneFragment : Fragment() {
         termsTextView.movementMethod = LinkMovementMethod.getInstance()
         removeUnderline(termsTextView)
 
+        if (coordinator == null) {
+            coordinator = (activity as MainActivity).coordinator
+        }
 
         return root
     }
@@ -177,12 +178,6 @@ class PhoneFragment : Fragment() {
         }
     }
 
-
-    init {
-        if (coordinator == null) {
-            coordinator = (activity as MainActivity).coordinator
-        }
-    }
 }
 
 
