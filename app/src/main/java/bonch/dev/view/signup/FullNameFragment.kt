@@ -40,7 +40,28 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
         //set listener to move button in relation to keyboard on/off
         setMovingButtonListener(root)
 
+        setHintListener()
+
         return root
+    }
+
+
+    private fun setHintListener() {
+        firstName.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                firstName.hint = ""
+            } else {
+                firstName.hint = getString(R.string.your_name)
+            }
+        }
+
+        lastName.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                lastName.hint = ""
+            } else {
+                lastName.hint = getString(R.string.your_family)
+            }
+        }
     }
 
 

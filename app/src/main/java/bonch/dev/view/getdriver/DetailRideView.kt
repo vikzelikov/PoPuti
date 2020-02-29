@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -66,6 +67,7 @@ class DetailRideView : Fragment() {
     private lateinit var selectedPaymentMethod: LinearLayout
     private lateinit var paymentMethodImg: ImageView
     private lateinit var cardNumberText: TextView
+    private lateinit var priceLabelColor: TextView
 
 
     override fun onCreateView(
@@ -106,13 +108,24 @@ class DetailRideView : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            val strEditText = data!!.getStringExtra(OFFER_PRICE)
+            val strPrice = data!!.getStringExtra(OFFER_PRICE)
 
             offerPrice.textSize = 22f
             offerPrice.setTextColor(Color.parseColor("#000000"))
             offerPrice.typeface = Typeface.DEFAULT_BOLD
 
-            offerPrice.text = strEditText
+            if (isPositiveOfferPrice(strPrice.toInt())) {
+                priceLabelColor.text = getString(R.string.positive)
+                priceLabelColor.background =
+                    ContextCompat.getDrawable(context!!, R.drawable.offer_price_positive)
+            } else {
+                priceLabelColor.text = getString(R.string.negative)
+                priceLabelColor.background =
+                    ContextCompat.getDrawable(context!!, R.drawable.offer_price_negative)
+            }
+
+            priceLabelColor.visibility = View.VISIBLE
+            offerPrice.text = strPrice
         }
 
         if (requestCode == 2 && resultCode == RESULT_OK) {
@@ -130,12 +143,24 @@ class DetailRideView : Fragment() {
     }
 
 
-    fun setSelectedBankCard(paymentCard: PaymentCard){
+    private fun isPositiveOfferPrice(price: Int): Boolean {
+        var isPositive = false
+        //TODO
+
+        if (price > 300) {
+            isPositive = true
+        }
+
+        return isPositive
+    }
+
+
+    fun setSelectedBankCard(paymentCard: PaymentCard) {
         selectedPaymentMethod.visibility = View.VISIBLE
         paymentMethod.visibility = View.GONE
 
         cardNumberText.text = paymentCard.numberCard
-        if(paymentCard.img != null){
+        if (paymentCard.img != null) {
             paymentMethodImg.setImageResource(paymentCard.img!!)
         }
 
@@ -239,6 +264,7 @@ class DetailRideView : Fragment() {
         selectedPaymentMethod = root.findViewById(R.id.selected_payment_method)
         paymentMethodImg = root.findViewById(R.id.payment_method_img)
         cardNumberText = root.findViewById(R.id.number_card)
+        priceLabelColor = root.findViewById(R.id.price_label_color)
 
         cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(cardsBottomSheet)
         commentBottomSheetBehavior = BottomSheetBehavior.from<View>(commentBottomSheet)

@@ -90,7 +90,7 @@
                         android:padding="10dp"
                         android:paddingStart="0dp"
                         android:singleLine="true"
-                        android:text="Чкалова"
+                        android:text="Address 1"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
 
@@ -120,7 +120,7 @@
                         android:padding="10dp"
                         android:paddingStart="0dp"
                         android:singleLine="true"
-                        android:text="Вокзальая"
+                        android:text="Address 2"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
 
@@ -133,19 +133,42 @@
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/offer_price"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_ruble"
-            android:drawablePadding="17dp"
+            android:orientation="horizontal"
             android:paddingStart="16dp"
-            android:paddingTop="15dp"
             android:paddingEnd="15dp"
-            android:paddingBottom="25dp"
-            android:text="@string/offer_price"
-            android:textColor="#50000000"
-            android:textSize="14sp" />
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/offer_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/ic_ruble"
+                android:drawablePadding="17dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="25dp"
+                android:text="@string/offer_price"
+                android:textColor="#50000000"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/price_label_color"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/offer_price_positive"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:paddingStart="20dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="10dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
 
         <View

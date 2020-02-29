@@ -14,7 +14,7 @@
     <string name="retry_code_send">Отправить еще раз</string>
     <string name="who_are_you">Как вас зовут?</string>
     <string name="your_name">Ваше имя</string>
-    <string name="youe_famaly">Ваша фамилия</string>
+    <string name="your_family">Ваша фамилия</string>
     <string name="your_name_display_for_driver">Ваше имя будет видно водителю</string>
     <string name="regular_driving">Регулярные поездки</string>
     <string name="get_driver">Вызвать машину</string>
@@ -36,4 +36,6 @@
     <string name="numberBankCard">Номер карты</string>
     <string name="ready">Готово</string>
     <string name="commentForDriver">Комментарий для водителя</string>
+    <string name="positive">Выгодно</string>
+    <string name="negative">Невыгодно</string>
 </resources>

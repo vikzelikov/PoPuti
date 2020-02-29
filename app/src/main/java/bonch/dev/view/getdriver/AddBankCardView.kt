@@ -43,6 +43,8 @@ class AddBankCardView : AppCompatActivity() {
 
         setListener(root)
 
+        setHintListener()
+
         setMovingButtonListener(root)
 
         cardBankNumber.requestFocus()
@@ -55,7 +57,7 @@ class AddBankCardView : AppCompatActivity() {
 
 
         addCardBtn.setOnClickListener {
-            if(isValidCard()){
+            if (isValidCard()) {
                 var img: Int? = null
                 val intent = Intent()
                 var cardNumber = cardBankNumber.text.toString()
@@ -189,6 +191,33 @@ class AddBankCardView : AppCompatActivity() {
         }
 
         return isValid
+    }
+
+
+    private fun setHintListener() {
+        cardBankNumber.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                cardBankNumber.hint = ""
+            }else{
+                cardBankNumber.hint = getString(R.string.numberBankCard)
+            }
+        }
+
+        validUntil.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                validUntil.hint = ""
+            }else{
+                validUntil.hint = getString(R.string.valid_until)
+            }
+        }
+
+        cvc.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                cvc.hint = ""
+            }else{
+                cvc.hint = getString(R.string.cvc_cvv)
+            }
+        }
     }
 
 

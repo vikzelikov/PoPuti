@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -49,23 +50,30 @@
             android:orientation="vertical">
 
 
-            <EditText
-                android:id="@+id/card_number"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/edt_bg_selector"
-                android:cursorVisible="true"
                 android:hint="@string/numberBankCard"
-                android:inputType="number"
-                android:maxLength="19"
-                android:nextFocusDown="@+id/valid_until"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                android:singleLine="true"
-                android:textColor="@android:color/black"
-                android:textColorHint="#60000000"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:textSize="16sp" />
+                app:hintTextColor="#000000">
+
+                <EditText
+                    android:id="@+id/card_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edt_bg_selector"
+                    android:cursorVisible="true"
+                    android:inputType="number"
+                    android:maxLength="19"
+                    android:nextFocusDown="@+id/valid_until"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="#60000000"
+                    android:textCursorDrawable="@drawable/color_cursor"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
 
             <LinearLayout
@@ -75,46 +83,62 @@
                 android:orientation="horizontal"
                 android:weightSum="1">
 
-                <EditText
-                    android:id="@+id/valid_until"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="13dp"
                     android:layout_weight="0.5"
-                    android:background="@drawable/edt_bg_selector"
-                    android:cursorVisible="true"
                     android:hint="@string/valid_until"
-                    android:inputType="number"
-                    android:maxLength="5"
-                    android:nextFocusDown="@+id/cvc"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/black"
-                    android:textColorHint="#60000000"
-                    android:textCursorDrawable="@drawable/color_cursor"
-                    android:textSize="16sp" />
+                    app:hintTextColor="#000000">
+
+                    <EditText
+                        android:id="@+id/valid_until"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="13dp"
+                        android:background="@drawable/edt_bg_selector"
+                        android:cursorVisible="true"
+                        android:hint="@string/valid_until"
+                        android:inputType="number"
+                        android:maxLength="5"
+                        android:nextFocusDown="@+id/cvc"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="#60000000"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
 
-                <EditText
-                    android:id="@+id/cvc"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="13dp"
                     android:layout_weight="0.5"
-                    android:background="@drawable/edt_bg_selector"
-                    android:cursorVisible="true"
                     android:hint="@string/cvc_cvv"
-                    android:inputType="number"
-                    android:maxLength="3"
-                    android:nextFocusDown="@+id/last_name"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/black"
-                    android:textColorHint="#60000000"
-                    android:textCursorDrawable="@drawable/color_cursor"
-                    android:textSize="16sp" />
+                    app:hintTextColor="#000000">
+
+                    <EditText
+                        android:id="@+id/cvc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="13dp"
+                        android:background="@drawable/edt_bg_selector"
+                        android:cursorVisible="true"
+                        android:hint="@string/cvc_cvv"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:nextFocusDown="@+id/last_name"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="#60000000"
+                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
 
             </LinearLayout>
