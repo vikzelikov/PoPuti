@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.Coordinator
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.getOpacity
+import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.getdriver.GetDriverPresenter
@@ -51,7 +52,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     private var userLocationLayer: UserLocationLayer? = null
     private var getDriverPresenter: GetDriverPresenter? = null
     private var routing: Routing? = null
-    private var coordinator: Coordinator? = null
 
     lateinit var toAddress: EditText
     lateinit var fromAddress: EditText
@@ -271,7 +271,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         onMapView.setOnClickListener {
             bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            MainActivity.hideKeyboard(activity!!, root)
+            hideKeyboard(activity!!, root)
         }
 
 
@@ -305,14 +305,9 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     private fun initialize() {
-
         recyclerAddresses.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerAddresses.adapter = addressesListAdapter
-
-        if (coordinator == null) {
-            coordinator = (activity as MainActivity).coordinator
-        }
 
         if (getDriverPresenter == null) {
             getDriverPresenter = GetDriverPresenter(this, addressesListAdapter!!)
@@ -376,7 +371,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    MainActivity.hideKeyboard(activity!!, root)
+                    hideKeyboard(activity!!, root)
                     toAddress.clearFocus()
                     fromAddress.clearFocus()
                 }
@@ -405,8 +400,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     override fun onStop() {
         super.onStop()
-        mapView!!.onStop()
         MapKitFactory.getInstance().onStop()
+        mapView!!.onStop()
     }
 
 

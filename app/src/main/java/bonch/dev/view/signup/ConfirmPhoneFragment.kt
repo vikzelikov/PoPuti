@@ -1,31 +1,30 @@
 package bonch.dev.view.signup
 
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import bonch.dev.Constant.Companion.CONFIRM_PHONE_VIEW
 import bonch.dev.Constant.Companion.FULL_NAME_VIEW
-import bonch.dev.Coordinator
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
+import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.view.EditTextCode
 
 
 class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fragment(),
     View.OnKeyListener {
 
-    private var coordinator: Coordinator? = null
+    private var signupPresenter: SignupPresenter? = null
 
     private lateinit var code1EditText: EditTextCode
     private lateinit var code2EditText: EditTextCode
@@ -34,7 +33,6 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
     private lateinit var retrySend: TextView
     private lateinit var backBtn: ImageButton
     private lateinit var nextBtn: Button
-
 
 
     override fun onCreateView(
@@ -63,8 +61,8 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
         code1EditText.requestFocus()
         showKeyboard(activity!!)
 
-        if(coordinator == null){
-            coordinator = (activity as MainActivity).coordinator
+        if (signupPresenter == null) {
+            signupPresenter = SignupPresenter()
         }
 
         return root
@@ -145,13 +143,19 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
         nextBtn.setOnClickListener {
             hideKeyboard(activity!!, root)
 
-            coordinator!!.replaceFragment(FULL_NAME_VIEW, startHeight, screenHeight)
+            if (signupPresenter != null) {
+                val fm = (activity as MainActivity).supportFragmentManager
+                signupPresenter!!.clickNextBtn(CONFIRM_PHONE_VIEW, startHeight, screenHeight, fm)
+            }
         }
 
         backBtn.setOnClickListener {
             hideKeyboard(activity!!, root)
 
-            (activity as MainActivity).supportFragmentManager.popBackStack()
+            if (signupPresenter != null) {
+                val fm = (activity as MainActivity).supportFragmentManager
+                signupPresenter!!.clickBackBtn(fm)
+            }
         }
     }
 
@@ -165,7 +169,6 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
         backBtn = root.findViewById(R.id.back_btn)
         nextBtn = root.findViewById(R.id.next)
     }
-
 
 
 }

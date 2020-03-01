@@ -1,64 +1,97 @@
 package bonch.dev
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
 import bonch.dev.Constant.Companion.CONFIRM_PHONE_VIEW
 import bonch.dev.Constant.Companion.DETAIL_RIDE_VIEW
 import bonch.dev.Constant.Companion.FULL_NAME_VIEW
 import bonch.dev.Constant.Companion.MAIN_FRAGMENT
+import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.view.MainFragment
+import bonch.dev.view.getdriver.AddBankCardView
 import bonch.dev.view.getdriver.DetailRideView
+import bonch.dev.view.getdriver.OfferPriceView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
 
-class Coordinator(private val supportFragmentManager: FragmentManager) {
+class Coordinator {
 
+    companion object {
 
-    fun replaceFragment(id: Int, bundle: Bundle) {
-        when (id) {
-            MAIN_FRAGMENT -> {
-                val fragment = MainFragment()
-                fragment.arguments = bundle
+        fun replaceFragment(id: Int, bundle: Bundle, fm: FragmentManager) {
+            when (id) {
+                MAIN_FRAGMENT -> {
+                    val fragment = MainFragment()
+                    fragment.arguments = bundle
 
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                    fm.beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+
+                DETAIL_RIDE_VIEW -> {
+                    val fragment = DetailRideView()
+                    fragment.arguments = bundle
+
+                    fm.beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
+        }
 
-            DETAIL_RIDE_VIEW -> {
-                val fragment = DetailRideView()
-                fragment.arguments = bundle
 
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
+        fun replaceFragment(id: Int, startHeight: Int, screenHeight: Int, fm: FragmentManager) {
+            when (id) {
+                CONFIRM_PHONE_VIEW -> {
+                    fm.beginTransaction()
+                        .replace(
+                            R.id.fragment_container,
+                            ConfirmPhoneFragment(startHeight, screenHeight)
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
+
+                FULL_NAME_VIEW -> {
+                    fm.beginTransaction()
+                        .replace(
+                            R.id.fragment_container,
+                            FullNameFragment(startHeight, screenHeight)
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
         }
 
-    }
 
+        fun openActivity(id: Int, context: Context, fragment: Fragment) {
+            when (id) {
+                OFFER_PRICE_VIEW -> {
+                    val intent = Intent(context, OfferPriceView::class.java)
+                    fragment.startActivityForResult(intent, OFFER_PRICE_VIEW)
+                }
 
-    fun replaceFragment(id: Int, startHeight: Int, screenHeight: Int) {
-        when (id) {
-            CONFIRM_PHONE_VIEW -> {
-                supportFragmentManager.beginTransaction()
-                    .replace(
-                        R.id.fragment_container,
-                        ConfirmPhoneFragment(startHeight, screenHeight)
-                    )
-                    .addToBackStack(null)
-                    .commit()
-            }
+                ADD_BANK_CARD_VIEW -> {
+                    val intent = Intent(context, AddBankCardView::class.java)
+                    fragment.startActivityForResult(intent, ADD_BANK_CARD_VIEW)
+                }
 
-            FULL_NAME_VIEW -> {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, FullNameFragment(startHeight, screenHeight))
-                    .addToBackStack(null)
-                    .commit()
             }
         }
+
+
+        fun previousFragment(fm: FragmentManager) {
+            fm.popBackStack()
+        }
+
     }
 
 

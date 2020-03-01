@@ -13,11 +13,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import bonch.dev.Constant
 import bonch.dev.Constant.Companion.CONFIRM_PHONE_VIEW
+import bonch.dev.Constant.Companion.PHONE_VIEW
 import bonch.dev.Coordinator
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
+import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.request.signup.Articles
 import bonch.dev.request.signup.News
 import bonch.dev.request.signup.RetrofitService
@@ -32,7 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class PhoneFragment : Fragment() {
 
-    private var coordinator: Coordinator? = null
+    private var signupPresenter: SignupPresenter? = null
 
     private lateinit var nextBtn: Button
     private lateinit var termsTextView: TextView
@@ -60,8 +63,8 @@ class PhoneFragment : Fragment() {
         termsTextView.movementMethod = LinkMovementMethod.getInstance()
         removeUnderline(termsTextView)
 
-        if (coordinator == null) {
-            coordinator = (activity as MainActivity).coordinator
+        if (signupPresenter == null) {
+            signupPresenter = SignupPresenter()
         }
 
         return root
@@ -132,12 +135,10 @@ class PhoneFragment : Fragment() {
             hideKeyboard(activity!!, root)
 
             //sendSms()
-            coordinator!!.replaceFragment(
-                CONFIRM_PHONE_VIEW,
-                startHeight,
-                screenHeight
-            )
-
+            if (signupPresenter != null) {
+                val fm = (activity as MainActivity).supportFragmentManager
+                signupPresenter!!.clickNextBtn(PHONE_VIEW, startHeight, screenHeight, fm)
+            }
         }
     }
 

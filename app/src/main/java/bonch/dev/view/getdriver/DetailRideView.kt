@@ -13,12 +13,15 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
+import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.Coordinator
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.PaymentCard
+import bonch.dev.presenter.getdriver.DetailRidePresenter
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
@@ -46,7 +49,7 @@ class DetailRideView : Fragment() {
     private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
-    private var coordinator: Coordinator? = null
+    private var detailRidePresenter: DetailRidePresenter? = null
 
 
     private lateinit var getDriverBtn: Button
@@ -96,9 +99,7 @@ class DetailRideView : Fragment() {
 
         setBottomSheet(root)
 
-        if (coordinator == null) {
-            coordinator = (activity as MainActivity).coordinator
-        }
+        initialize()
 
         initBankCardRecycler()
 
@@ -110,14 +111,14 @@ class DetailRideView : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == OFFER_PRICE_VIEW && resultCode == RESULT_OK) {
             val strPrice = data!!.getStringExtra(OFFER_PRICE)
 
             offerPrice.textSize = 22f
             offerPrice.setTextColor(Color.parseColor("#000000"))
             offerPrice.typeface = Typeface.DEFAULT_BOLD
 
-            if (isPositiveOfferPrice(strPrice.toInt())) {
+            if (isPositiveOfferPrice(strPrice!!.toInt())) {
                 priceLabelColor.text = getString(R.string.positive)
                 priceLabelColor.background =
                     ContextCompat.getDrawable(context!!, R.drawable.offer_price_positive)
@@ -131,7 +132,7 @@ class DetailRideView : Fragment() {
             offerPrice.text = strPrice
         }
 
-        if (requestCode == 2 && resultCode == RESULT_OK) {
+        if (requestCode == ADD_BANK_CARD_VIEW && resultCode == RESULT_OK) {
             val cardNumber = data!!.getStringExtra(CARD_NUMBER)
             val validUntil = data.getStringExtra(VALID_UNTIL)
             val cvc = data.getStringExtra(CVC)
@@ -173,15 +174,15 @@ class DetailRideView : Fragment() {
 
     private fun setListener(root: View) {
         offerPrice.setOnClickListener {
-            //TODO() to do via coordianator
-            val intent = Intent(context, OfferPriceView::class.java)
-            startActivityForResult(intent, 1)
+            if (detailRidePresenter != null) {
+                detailRidePresenter!!.clickOfferPriceBtn(this)
+            }
         }
 
         addCard.setOnClickListener {
-            //TODO() to do via coordianator
-            val intent = Intent(context, AddBankCardView::class.java)
-            startActivityForResult(intent, 2)
+            if (detailRidePresenter != null) {
+                detailRidePresenter!!.clickAddBankCardBtn(this)
+            }
         }
 
 
@@ -198,9 +199,6 @@ class DetailRideView : Fragment() {
             hideKeyboard(activity!!, root)
             commentText.clearFocus()
             commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-
-            commentText.setText("")
-            commentMinText.text = ""
         }
 
         commentDoneBtn.setOnClickListener {
@@ -292,6 +290,13 @@ class DetailRideView : Fragment() {
             }
 
         })
+    }
+
+
+    private fun initialize() {
+        if (detailRidePresenter == null) {
+            detailRidePresenter = DetailRidePresenter(context!!)
+        }
     }
 
 

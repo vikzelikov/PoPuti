@@ -11,15 +11,18 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import bonch.dev.Constant
+import bonch.dev.Constant.Companion.FULL_NAME_VIEW
 import bonch.dev.Constant.Companion.MAIN_FRAGMENT
 import bonch.dev.Coordinator
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
+import bonch.dev.presenter.signup.SignupPresenter
 
 class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fragment() {
 
-    private var coordinator: Coordinator? = null
+    private var signupPresenter: SignupPresenter? = null
 
     private lateinit var firstName: EditText
     private lateinit var lastName: EditText
@@ -42,8 +45,8 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
 
         setHintListener()
 
-        if (coordinator == null) {
-            coordinator = (activity as MainActivity).coordinator
+        if (signupPresenter == null) {
+            signupPresenter = SignupPresenter()
         }
 
         return root
@@ -110,13 +113,19 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
         nextBtn.setOnClickListener {
             hideKeyboard(activity!!, root)
 
-            coordinator!!.replaceFragment(MAIN_FRAGMENT, Bundle())
+            if (signupPresenter != null) {
+                val fm = (activity as MainActivity).supportFragmentManager
+                signupPresenter!!.clickNextBtn(FULL_NAME_VIEW, fm)
+            }
         }
 
         backBtn.setOnClickListener {
             hideKeyboard(activity!!, root)
 
-            (activity as MainActivity).supportFragmentManager.popBackStack()
+            if (signupPresenter != null) {
+                val fm = (activity as MainActivity).supportFragmentManager
+                signupPresenter!!.clickBackBtn(fm)
+            }
         }
     }
 

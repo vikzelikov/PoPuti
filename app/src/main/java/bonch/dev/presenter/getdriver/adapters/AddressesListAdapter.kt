@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.Constant.Companion.DETAIL_RIDE_VIEW
 import bonch.dev.Coordinator
+import bonch.dev.Coordinator.Companion.replaceFragment
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
@@ -27,7 +28,6 @@ class AddressesListAdapter(
 
     private val FROM = "FROM"
     private val TO = "TO"
-    private var coordinator: Coordinator? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
@@ -61,7 +61,9 @@ class AddressesListAdapter(
                 bundle = Bundle()
                 bundle.putString(FROM, getDriverView.fromAddress.text.toString())
                 bundle.putString(TO, getDriverView.toAddress.text.toString())
-                coordinator!!.replaceFragment(DETAIL_RIDE_VIEW, bundle)
+
+                val fm = (getDriverView.activity as MainActivity).supportFragmentManager
+                replaceFragment(DETAIL_RIDE_VIEW, bundle, fm)
 
             }
 
@@ -85,13 +87,6 @@ class AddressesListAdapter(
             city.text = post.city
         }
 
-    }
-
-
-    init {
-        if (coordinator == null) {
-            coordinator = (getDriverView.activity as MainActivity).coordinator
-        }
     }
 
 }

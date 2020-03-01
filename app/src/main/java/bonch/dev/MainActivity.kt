@@ -12,8 +12,6 @@ import bonch.dev.view.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
-    var coordinator: Coordinator? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        fun getKeyboard(activity: FragmentActivity): InputMethodManager {
+        private fun getKeyboard(activity: FragmentActivity): InputMethodManager {
             return activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         }
 
@@ -154,13 +152,6 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
 
         hideKeyboard(this, findViewById<LinearLayout>(R.id.fragment_container))
-    }
-
-
-    init {
-        if (coordinator == null) {
-            coordinator = Coordinator(supportFragmentManager)
-        }
     }
 
 
