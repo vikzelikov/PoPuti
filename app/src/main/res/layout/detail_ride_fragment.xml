@@ -27,11 +27,12 @@
 
 
     <LinearLayout
+        android:id="@+id/main_info_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/corners_layout"
-        android:elevation="10dp"
+        android:elevation="30dp"
         android:orientation="vertical">
 
 
@@ -161,11 +162,11 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/offer_price_positive"
                 android:gravity="center"
-                android:textColor="@android:color/white"
                 android:paddingStart="20dp"
                 android:paddingTop="10dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="10dp"
+                android:textColor="@android:color/white"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -288,12 +289,10 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/dynamic_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="10dp"
         tools:context="ui.dashboard.HomeFragment">
-
 
         <LinearLayout
             android:id="@+id/cards_bottom_sheet"
@@ -341,29 +340,35 @@
             android:background="@drawable/corners_layout"
             android:elevation="10dp"
             android:orientation="vertical"
-            android:padding="15dp"
             app:behavior_peekHeight="0dp"
             app:layout_behavior=".view.getdriver.MBottomSheet">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <ImageView
                     android:id="@+id/comment_back_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingStart="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:paddingEnd="50dp"
                     android:gravity="start"
                     android:src="@drawable/arrow_left" />
 
 
                 <TextView
                     android:id="@+id/comment_done"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:fontFamily="@font/roboto"
                     android:gravity="end"
+                    android:padding="15dp"
                     android:text="@string/ready"
                     android:textColor="@color/colorBlue"
                     android:textSize="16sp" />
@@ -378,6 +383,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@null"
+                android:layout_margin="15dp"
                 android:hint="@string/commentForDriver"
                 android:inputType="textMultiLine"
                 android:textColor="@android:color/black"
@@ -389,4 +395,12 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+
+    <View
+        android:id="@+id/on_map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@android:color/black"
+        android:visibility="gone" />
 </RelativeLayout>

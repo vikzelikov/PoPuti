@@ -68,6 +68,8 @@ class DetailRideView : Fragment() {
     private lateinit var paymentMethodImg: ImageView
     private lateinit var cardNumberText: TextView
     private lateinit var priceLabelColor: TextView
+    private lateinit var onMapView: View
+    private lateinit var mainInfoLayout: LinearLayout
 
 
     override fun onCreateView(
@@ -98,6 +100,7 @@ class DetailRideView : Fragment() {
             coordinator = (activity as MainActivity).coordinator
         }
 
+        initBankCardRecycler()
 
         moveCamera(Point(60.066971, 30.334))
 
@@ -192,18 +195,24 @@ class DetailRideView : Fragment() {
         }
 
         commentBackBtn.setOnClickListener {
+            hideKeyboard(activity!!, root)
+            commentText.clearFocus()
             commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+
             commentText.setText("")
+            commentMinText.text = ""
         }
 
         commentDoneBtn.setOnClickListener {
             val comment = commentText.text.toString()
 
             if (comment.trim().isNotEmpty()) {
-                hideKeyboard(activity!!, root)
-                commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
                 commentMinText.text = comment
             }
+
+            hideKeyboard(activity!!, root)
+            commentText.clearFocus()
+            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         paymentMethod.setOnClickListener {
@@ -212,6 +221,14 @@ class DetailRideView : Fragment() {
 
         selectedPaymentMethod.setOnClickListener {
             cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        onMapView.setOnClickListener {
+            hideKeyboard(activity!!, root)
+            commentText.clearFocus()
+
+            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
     }
@@ -229,7 +246,7 @@ class DetailRideView : Fragment() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 if (slideOffset > 0) {
-                    //onMapView.alpha = slideOffset
+                    onMapView.alpha = slideOffset * 0.8f
                 }
             }
 
@@ -237,6 +254,40 @@ class DetailRideView : Fragment() {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     hideKeyboard(activity!!, root)
                     commentText.clearFocus()
+                }
+
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    onMapView.visibility = View.GONE
+                    mainInfoLayout.elevation = 30f
+                } else {
+                    onMapView.visibility = View.VISIBLE
+                    mainInfoLayout.elevation = 0f
+                }
+            }
+
+        })
+
+        cardsBottomSheetBehavior!!.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (slideOffset > 0) {
+                    onMapView.alpha = slideOffset * 0.8f
+                }
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    hideKeyboard(activity!!, root)
+                    commentText.clearFocus()
+                }
+
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    onMapView.visibility = View.GONE
+                    mainInfoLayout.elevation = 30f
+                } else {
+                    onMapView.visibility = View.VISIBLE
+                    mainInfoLayout.elevation = 0f
                 }
             }
 
@@ -265,12 +316,17 @@ class DetailRideView : Fragment() {
         paymentMethodImg = root.findViewById(R.id.payment_method_img)
         cardNumberText = root.findViewById(R.id.number_card)
         priceLabelColor = root.findViewById(R.id.price_label_color)
+        onMapView = root.findViewById(R.id.on_map_view)
+        mainInfoLayout = root.findViewById(R.id.main_info_layout)
 
         cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(cardsBottomSheet)
         commentBottomSheetBehavior = BottomSheetBehavior.from<View>(commentBottomSheet)
+    }
 
 
+    private fun initBankCardRecycler() {
         val list = arrayListOf<PaymentCard>()
+
         list.add(PaymentCard("", "", "", R.drawable.google_pay))
         paymentsListAdapter =
             PaymentsListAdapter(
@@ -279,6 +335,7 @@ class DetailRideView : Fragment() {
                 context!!,
                 this
             )
+
         recyclerPayments.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerPayments.adapter = paymentsListAdapter
