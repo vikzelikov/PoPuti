@@ -5,6 +5,7 @@ import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
+import kotlin.math.min
 
 class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point) :
     SuggestSession.SuggestListener {
@@ -35,34 +36,18 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
 
 
     override fun onResponse(suggest: MutableList<SuggestItem>) {
-//TODO
         suggestResult.clear()
 
-        for (i in 0 until Math.min(RESULT_NUMBER_LIMIT, suggest.size)) {
+        for (i in 0 until min(RESULT_NUMBER_LIMIT, suggest.size)) {
             if (suggest[i].subtitle != null) {
 
-                if(suggest[i].uri.toString().length > 50){
+                //TODO check nullable uri
 
-                    suggestResult.add(
-                        Ride(
-                            suggest[i].title.text,
-                            suggest[i].subtitle!!.text
-                        )
-                    )
-
-                    if (suggest[i].uri != null) {
-                        println(suggest[i].uri)
-                        println(getPoint(suggest[i].uri!!).latitude)
-                        println(getPoint(suggest[i].uri!!).longitude)
-                    }
-                }
-
-
-            } else {
                 suggestResult.add(
                     Ride(
-                        suggest[i].displayText!!,
-                        "Город"
+                        suggest[i].title.text,
+                        suggest[i].subtitle?.text,
+                        suggest[i].uri
                     )
                 )
             }
@@ -79,22 +64,5 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
 
         suggestSession = searchManager.createSuggestSession()
         suggestSession.suggest(query, BOUNDING_BOX, SUGGEST_OPTIONS, this)
-    }
-
-
-    private fun getPoint(uri: String): Point {
-        val coordinate: Point
-        val lat: Double
-        val long: Double
-        var str: List<String>
-
-        str = uri.split("=")
-        str = str[1].split("%")
-        long = str[0].toDouble()
-        lat = str[1].substring(2, str[1].length - 4).toDouble()
-
-        coordinate = Point(lat, long)
-
-        return coordinate
     }
 }

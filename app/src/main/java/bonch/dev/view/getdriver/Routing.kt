@@ -15,7 +15,7 @@ import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.runtime.Error
 import java.util.*
 
-class Routing(var context: Context, var getDriverView: GetDriverView) :
+class Routing(var context: Context, var detailRideView: DetailRideView) :
     DrivingSession.DrivingRouteListener {
 
     private var screenCenter: Point? = null
@@ -27,7 +27,7 @@ class Routing(var context: Context, var getDriverView: GetDriverView) :
     init {
         DirectionsFactory.initialize(context)
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
-        mapObjects = getDriverView.mapView!!.map.mapObjects.addCollection()
+        mapObjects = detailRideView.mapView!!.map.mapObjects.addCollection()
     }
 
 
@@ -39,15 +39,15 @@ class Routing(var context: Context, var getDriverView: GetDriverView) :
             mapObjects!!.addPolyline(route.geometry)
         }
 
-        getDriverView.mapView!!.map.move(
-            CameraPosition(screenCenter!!, 5f, 0f, 1f),
+        detailRideView.mapView!!.map.move(
+            CameraPosition(screenCenter!!, 15f, 0f, 1f),
             Animation(Animation.Type.SMOOTH, 1f),
             null
         )
     }
 
 
-    private fun submitRequest(startLocation: Point, endLocation: Point) {
+    fun submitRequest(startLocation: Point, endLocation: Point) {
         val options = DrivingOptions()
         val requestPoints = ArrayList<RequestPoint>()
         screenCenter = Point(

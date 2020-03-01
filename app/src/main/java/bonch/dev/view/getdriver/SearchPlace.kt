@@ -1,43 +1,30 @@
 package bonch.dev.view.getdriver
 
-import android.location.Geocoder
-import androidx.fragment.app.Fragment
-import com.yandex.mapkit.geometry.Geometry
+import bonch.dev.presenter.getdriver.DetailRidePresenter
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
-import java.util.*
 
-class SearchPlace : Session.SearchListener {
+class SearchPlace(val detailRidePresenter: DetailRidePresenter) : Session.SearchListener {
 
+    private var searchSession: Session? = null
+    private var searchManager: SearchManager =
+        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    private val searchOptions = SearchOptions()
 
-    companion object {
+    fun pointGeocoder(point: Point) {
 
-        private var searchSession: Session? = null
-        private var searchPlace: SearchPlace = SearchPlace()
-        private var searchManager: SearchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
-        private val searchOptions = SearchOptions()
-
-        fun pointGeocoder(point: Point) {
-
-            searchSession = searchManager.submit(
-                point,
-                16,
-                searchOptions,
-                searchPlace
-            )
-        }
+        searchSession = searchManager.submit(
+            point,
+            16,
+            searchOptions,
+            this
+        )
+    }
 
 
-        fun stringGeocoder(query: String) {
-
-            searchSession = searchManager.submit(
-                query,
-                Geometry.fromPoint(Point(59.0, 30.0)),
-                searchOptions,
-                searchPlace
-            )
-        }
+    fun stringGeocoder(uri: String) {
+        searchSession = searchManager.resolveURI(uri, searchOptions, this)
     }
 
 
@@ -46,6 +33,12 @@ class SearchPlace : Session.SearchListener {
 
     override fun onSearchResponse(response: Response) {
 
+        val point = response.collection.children[0].obj?.geometry?.first()?.point
+        if (detailRidePresenter.fromPoint == null) {
+            detailRidePresenter.fromPoint = point
+        } else {
+            detailRidePresenter.toPoint = point
+        }
 
         //println(response.collection.children.firstOrNull()?.obj?.metadataContainer?.getItem(ToponymObjectMetadata::class.java)?.address?.additionalInfo)
 

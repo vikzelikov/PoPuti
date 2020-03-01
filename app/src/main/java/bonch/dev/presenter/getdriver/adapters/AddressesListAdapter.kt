@@ -17,6 +17,7 @@ import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.view.getdriver.GetDriverView
+import bonch.dev.view.getdriver.SearchPlace
 
 
 class AddressesListAdapter(
@@ -27,7 +28,11 @@ class AddressesListAdapter(
 ) : RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
 
     private val FROM = "FROM"
+    private val FROM_URI = "FROM_URI"
     private val TO = "TO"
+    private val TO_URI = "TO_URI"
+    private var fromAdr: Ride? = null
+    private var toAdr: Ride? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
@@ -51,16 +56,28 @@ class AddressesListAdapter(
 
         holder.itemView.setOnClickListener {
 
-            if (getDriverView.fromAddress.isFocused) {
-                getDriverView.fromAddress.setText(list[position].address)
+            val fromAddress = getDriverView.fromAddress
+            val toAddress = getDriverView.toAddress
+
+            if (fromAddress.isFocused) {
+                fromAddress.setText(list[position].address)
+                fromAddress.setSelection(fromAddress.text.length)
+
+                fromAdr = list[position]
             }
 
-            if (getDriverView.toAddress.isFocused) {
-                getDriverView.toAddress.setText(list[position].address)
+            if (toAddress.isFocused) {
+                toAddress.setText(list[position].address)
+
+                toAdr = list[position]
 
                 bundle = Bundle()
-                bundle.putString(FROM, getDriverView.fromAddress.text.toString())
-                bundle.putString(TO, getDriverView.toAddress.text.toString())
+                bundle.putString(FROM, fromAdr!!.address)
+                bundle.putString(FROM_URI, fromAdr?.uri)
+
+                bundle.putString(TO, toAdr!!.address)
+                bundle.putString(TO_URI, toAdr?.uri)
+
 
                 val fm = (getDriverView.activity as MainActivity).supportFragmentManager
                 replaceFragment(DETAIL_RIDE_VIEW, bundle, fm)
@@ -82,6 +99,7 @@ class AddressesListAdapter(
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val address = itemView.findViewById<TextView>(R.id.address)
         private val city = itemView.findViewById<TextView>(R.id.city)
+
         fun bind(post: Ride) {
             address.text = post.address
             city.text = post.city

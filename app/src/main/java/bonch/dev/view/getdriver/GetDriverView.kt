@@ -14,15 +14,12 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.Coordinator
-import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.getOpacity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
-import bonch.dev.view.getdriver.SearchPlace.Companion.pointGeocoder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -46,12 +43,12 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     private val API_KEY = "6e2e73e8-4a73-42f5-9bf1-35259708af3c"
 
-    var mapView: MapView? = null
+    private var mapView: MapView? = null
     private var bottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var addressesListAdapter: AddressesListAdapter? = null
     private var userLocationLayer: UserLocationLayer? = null
     private var getDriverPresenter: GetDriverPresenter? = null
-    private var routing: Routing? = null
+
 
     lateinit var toAddress: EditText
     lateinit var fromAddress: EditText
@@ -111,7 +108,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         p3: Boolean
     ) {
         if (p2 == CameraUpdateSource.GESTURES && p3) {
-            pointGeocoder(Point(p1.target.latitude, p1.target.longitude))
+            //pointGeocoder(Point(p1.target.latitude, p1.target.longitude))
         }
     }
 

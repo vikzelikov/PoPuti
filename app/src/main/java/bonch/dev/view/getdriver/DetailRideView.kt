@@ -41,11 +41,9 @@ class DetailRideView : Fragment() {
     private val VALID_UNTIL = "VALID_UNTIL"
     private val BANK_IMG = "BANK_IMG"
     private val CVC = "CVC"
-    private val FROM = "FROM"
-    private val TO = "TO"
 
 
-    private var mapView: MapView? = null
+    var mapView: MapView? = null
     private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
@@ -90,20 +88,18 @@ class DetailRideView : Fragment() {
         val root = inflater.inflate(R.layout.detail_ride_fragment, container, false)
         initViews(root)
 
-        val bundle = this.arguments
-        if (bundle != null) {
-            setAddresses(bundle)
-        }
-
         setListener(root)
 
         setBottomSheet(root)
 
         initialize()
 
-        initBankCardRecycler()
+        val bundle = this.arguments
+        if (bundle != null && detailRidePresenter != null) {
+            detailRidePresenter!!.receiveAddresses(bundle)
+        }
 
-        moveCamera(Point(60.066971, 30.334))
+        initBankCardRecycler()
 
         return root
     }
@@ -232,9 +228,9 @@ class DetailRideView : Fragment() {
     }
 
 
-    private fun setAddresses(bundle: Bundle) {
-        fromAddress.text = bundle.getString(FROM, "")
-        toAddress.text = bundle.getString(TO, "")
+    fun setAddresses(fromAddress: String, toAddress: String) {
+        this.fromAddress.text = fromAddress
+        this.toAddress.text = toAddress
     }
 
 
@@ -295,7 +291,7 @@ class DetailRideView : Fragment() {
 
     private fun initialize() {
         if (detailRidePresenter == null) {
-            detailRidePresenter = DetailRidePresenter(context!!)
+            detailRidePresenter = DetailRidePresenter(context!!, this)
         }
     }
 
