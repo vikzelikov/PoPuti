@@ -26,15 +26,15 @@ import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
-import com.yandex.mapkit.map.CameraListener
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.CameraUpdateSource
+import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.image.ImageProvider
+import com.yandex.runtime.image.ImageProvider.fromResource
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -110,6 +110,12 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         if (p2 == CameraUpdateSource.GESTURES && p3) {
             //pointGeocoder(Point(p1.target.latitude, p1.target.longitude))
         }
+
+        if (p3) {
+            if (userLocationLayer != null) {
+                userLocationLayer!!.resetAnchor()
+            }
+        }
     }
 
 
@@ -117,38 +123,30 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     override fun onObjectAdded(userLocationView: UserLocationView) {
-//TODO()
-//        userLocationView.pin.setIcon(
-//            ImageProvider.fromResource(
-//                context, R.drawable.user_mark
-//            )
-//        )
+        val pinIcon = userLocationView.pin.useCompositeIcon()
 
-//        val pinIcon = userLocationView.pin.useCompositeIcon()
-//
-
-//        userLocationView.pin.setIcon(
-//            ImageProvider.fromResource(context, R.drawable.user_mark),
-//            IconStyle().setAnchor(PointF(0f, 0f))
-//                .setRotationType(RotationType.ROTATE)
-//                .setZIndex(0f)
-//                .setScale(1f)
-//        )
-
-
-        //userLocationView.arrow.setIcon(ImageProvider.fromResource(context, R.drawable.user_mark, true))
-
+        userLocationView.arrow.setIcon(fromResource(context, R.drawable.ic_user_mark, true))
 
         userLocationLayer!!.setAnchor(
-            PointF((mapView!!.width * 0.5).toFloat(), (mapView!!.height * 0.5).toFloat()),
-            PointF((mapView!!.width * 0.1).toFloat(), (mapView!!.height * 0.1).toFloat())
+            PointF(
+                (mapView!!.width * 0.5).toFloat(),
+                (mapView!!.height * 0.5).toFloat()
+            ),
+            PointF(
+                (mapView!!.width * 0.5).toFloat(),
+                (mapView!!.height * 0.83).toFloat()
+            )
         )
-//
 
-//
-//
-//
-//
+        pinIcon.setIcon(
+            "pin",
+            fromResource(context, R.drawable.ic_user_mark),
+            IconStyle().setAnchor(PointF(0.5f, 0.5f))
+                .setRotationType(RotationType.ROTATE)
+                .setZIndex(1f)
+                .setScale(0.5f)
+        )
+
         userLocationView.accuracyCircle.fillColor = Color.TRANSPARENT
     }
 
