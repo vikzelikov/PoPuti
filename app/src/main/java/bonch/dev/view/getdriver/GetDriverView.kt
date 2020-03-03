@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,20 +44,20 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     private val API_KEY = "6e2e73e8-4a73-42f5-9bf1-35259708af3c"
 
     private var mapView: MapView? = null
+    var getDriverPresenter: GetDriverPresenter? = null
     var addressesListAdapter: AddressesListAdapter? = null
     private var bottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var userLocationLayer: UserLocationLayer? = null
-    private var getDriverPresenter: GetDriverPresenter? = null
 
     var isFromMapSearch = true
 
     lateinit var toAddress: EditText
     lateinit var fromAddress: EditText
+    lateinit var addressMapEditText: TextView
     private lateinit var myPos: ImageButton
     private lateinit var bottomSheet: RelativeLayout
     private lateinit var centerPosition: ImageView
     private lateinit var arrowBottomSheet: ImageView
-    private lateinit var linearLayout: LinearLayout
     private lateinit var recyclerAddresses: RecyclerView
     private lateinit var fromMapBtn: TextView
     private lateinit var toMapBtn: TextView
@@ -64,6 +65,9 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     private lateinit var crossToDelete: ImageView
     private lateinit var onMapView: View
     private lateinit var containerAddresses: LinearLayout
+    private lateinit var addressesMapMarkerLayout: LinearLayout
+    private lateinit var addressMapMarkerBtn: Button
+    private lateinit var circleMarker: ImageView
 
 
     override fun onCreateView(
@@ -128,7 +132,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     override fun onObjectAdded(userLocationView: UserLocationView) {
         val pinIcon = userLocationView.pin.useCompositeIcon()
         //TODO change to svg
-        userLocationView.arrow.setIcon(fromResource(context, R.drawable.placeholder, true))
+        userLocationView.arrow.setIcon(fromResource(context, R.drawable.ic_user_mark, true))
 
         userLocationLayer!!.setAnchor(
             PointF(
@@ -143,7 +147,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         pinIcon.setIcon(
             "pin",
-            fromResource(context, R.drawable.placeholder),
+            fromResource(context, R.drawable.ic_user_mark),
             IconStyle().setAnchor(PointF(0.5f, 0.5f))
                 .setRotationType(RotationType.ROTATE)
                 .setZIndex(1f)
@@ -275,19 +279,45 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         containerAddresses.setOnClickListener {}
 
         fromMapBtn.setOnClickListener {
+            containerAddresses.visibility = View.GONE
+            addressesMapMarkerLayout.visibility = View.VISIBLE
+
             isFromMapSearch = true
-            centerPosition.setImageResource(R.drawable.ic_map_marker_black)
+            centerPosition.setImageResource(R.drawable.ic_map_marker)
+            circleMarker.setImageResource(R.drawable.input_marker_from)
+            addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_blue)
+
             bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             fromAddress.clearFocus()
             hideKeyboard(activity!!, root)
         }
 
         toMapBtn.setOnClickListener {
+            containerAddresses.visibility = View.GONE
+            addressesMapMarkerLayout.visibility = View.VISIBLE
+
             isFromMapSearch = false
             centerPosition.setImageResource(R.drawable.ic_map_marker_black)
+            circleMarker.setImageResource(R.drawable.input_marker_to)
+            addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_black)
+
             bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             toAddress.clearFocus()
             hideKeyboard(activity!!, root)
+
+
+        }
+
+        addressMapMarkerBtn.setOnClickListener {
+            if (addressesListAdapter!!.fromAdr != null && addressesListAdapter!!.toAdr != null) {
+                getDriverPresenter!!.addressesDone()
+            } else {
+                centerPosition.setImageResource(R.drawable.ic_map_marker)
+                containerAddresses.visibility = View.VISIBLE
+                addressesMapMarkerLayout.visibility = View.GONE
+                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+                fromAddress.requestFocus()
+            }
         }
     }
 
@@ -317,7 +347,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         myPos = root.findViewById(R.id.my_pos)
         fromAddress = root.findViewById(R.id.from)
         toAddress = root.findViewById(R.id.to)
-        linearLayout = root.findViewById(R.id.inputs_layout)
         centerPosition = root.findViewById(R.id.center_position)
         arrowBottomSheet = root.findViewById(R.id.bottom_sheet_arrow)
         recyclerAddresses = root.findViewById(R.id.addresses_list)
@@ -326,7 +355,11 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         crossFromDelete = root.findViewById(R.id.from_cross)
         crossToDelete = root.findViewById(R.id.to_cross)
         onMapView = root.findViewById(R.id.on_map_view)
-        containerAddresses = root.findViewById(R.id.inputs_layout)
+        containerAddresses = root.findViewById(R.id.main_addresses_layout)
+        addressesMapMarkerLayout = root.findViewById(R.id.address_map_marker_layout)
+        addressMapEditText = root.findViewById(R.id.address_map_text)
+        addressMapMarkerBtn = root.findViewById(R.id.address_map_marker_btn)
+        circleMarker = root.findViewById(R.id.circle_marker)
 
         addressesListAdapter =
             AddressesListAdapter(

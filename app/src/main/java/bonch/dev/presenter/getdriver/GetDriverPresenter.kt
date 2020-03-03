@@ -1,5 +1,9 @@
 package bonch.dev.presenter.getdriver
 
+import android.os.Bundle
+import bonch.dev.Constant
+import bonch.dev.Coordinator
+import bonch.dev.MainActivity
 import bonch.dev.model.getdriver.GetDriverModel
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.view.getdriver.GetDriverView
@@ -9,6 +13,26 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
     private var getDriverModel: GetDriverModel? = null
     private val addressesListAdapter = getDriverView.addressesListAdapter
+    var fromAdr: Ride? = null
+    var toAdr: Ride? = null
+    private val FROM = "FROM"
+    private val TO = "TO"
+
+    fun addressesDone() {
+//TODO
+        fromAdr = addressesListAdapter!!.fromAdr
+        toAdr = addressesListAdapter.toAdr
+
+        if (fromAdr != null && toAdr != null) {
+            val bundle = Bundle()
+            bundle.putParcelable(FROM, fromAdr)
+            bundle.putParcelable(TO, toAdr)
+
+            val fm = (getDriverView.activity as MainActivity).supportFragmentManager
+            Coordinator.replaceFragment(Constant.DETAIL_RIDE_VIEW, bundle, fm)
+        }
+    }
+
 
     fun requestSuggest(query: String) {
 
@@ -44,7 +68,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
     fun responseGeocoder(address: String?, point: Point?) {
 
-        var ride: Ride?
+        val ride: Ride?
 
         if (address != null) {
             if (getDriverView.isFromMapSearch) {
@@ -62,8 +86,9 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
                     getDriverView.addressesListAdapter!!.toAdr = ride
                 }
             }
-        } else {
-            getDriverView.fromAddress.setText("Address 1")
+
+            getDriverView.addressMapEditText.text = address
+
         }
 
     }

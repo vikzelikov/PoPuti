@@ -57,7 +57,7 @@ class OfferPriceView : AppCompatActivity() {
 
             val intent = Intent()
             val price = priceEditText.text.toString()
-            if (price.length > 4) {
+            if (price.length < 7 && price.isNotEmpty()) {
                 intent.putExtra(OFFER_PRICE, price.substring(0, price.length - 2))
                 setResult(RESULT_OK, intent)
                 finish()

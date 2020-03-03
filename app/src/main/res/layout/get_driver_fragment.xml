@@ -7,7 +7,6 @@
     tools:context=".view.getdriver.GetDriverView">
 
 
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/dynamic_container"
         android:layout_width="match_parent"
@@ -72,7 +71,7 @@
 
 
             <LinearLayout
-                android:id="@+id/inputs_layout"
+                android:id="@+id/main_addresses_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/bottom_sheet_arrow"
@@ -83,7 +82,8 @@
                 android:orientation="horizontal"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-                android:translationZ="5dp">
+                android:translationZ="5dp"
+                android:visibility="visible">
 
 
                 <LinearLayout
@@ -232,19 +232,82 @@
             </LinearLayout>
 
 
+            <LinearLayout
+                android:id="@+id/address_map_marker_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bottom_sheet_arrow"
+                android:orientation="vertical"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/inputs_layout"
+                    android:elevation="10dp"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:translationZ="5dp">
+
+
+                    <ImageView
+                        android:id="@+id/circle_marker"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="1dp"
+                        android:src="@drawable/input_marker_to" />
+
+
+                    <TextView
+                        android:id="@+id/address_map_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:background="@null"
+                        android:fontFamily="@font/roboto"
+                        android:gravity="start|center"
+                        android:padding="5dp"
+                        android:paddingStart="0dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/address_map_marker_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/btn_style_black"
+                    android:fontFamily="@font/roboto"
+                    android:shadowColor="@color/colorBlue"
+                    android:text="@string/ready"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:textAllCaps="false"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/addresses_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/inputs_layout" />
+                android:layout_below="@+id/main_addresses_layout" />
 
 
         </RelativeLayout>
 
 
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 
 </RelativeLayout>

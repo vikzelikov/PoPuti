@@ -34,8 +34,6 @@ class AddressesListAdapter(
     var toAdr: Ride? = null
     private val fromAddressView = getDriverView.fromAddress
     private val toAddressView = getDriverView.toAddress
-    private val FROM = "FROM"
-    private val TO = "TO"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
@@ -62,17 +60,6 @@ class AddressesListAdapter(
                 fromAddressView.setSelection(fromAddressView.text.length)
 
                 fromAdr = list[position]
-
-                if (fromAdr != null && toAdr != null) {
-                    val bundle = Bundle()
-                    bundle.putParcelable(FROM, fromAdr)
-                    bundle.putParcelable(TO, toAdr)
-
-                    val fm = (getDriverView.activity as MainActivity).supportFragmentManager
-                    replaceFragment(DETAIL_RIDE_VIEW, bundle, fm)
-                } else {
-                    Toast.makeText(context, "Fill all fields", Toast.LENGTH_SHORT).show()
-                }
             }
 
             if (toAddressView.isFocused) {
@@ -80,16 +67,7 @@ class AddressesListAdapter(
 
                 toAdr = list[position]
 
-                if (fromAdr != null && toAdr != null) {
-                    val bundle = Bundle()
-                    bundle.putParcelable(FROM, fromAdr)
-                    bundle.putParcelable(TO, toAdr)
-
-                    val fm = (getDriverView.activity as MainActivity).supportFragmentManager
-                    replaceFragment(DETAIL_RIDE_VIEW, bundle, fm)
-                } else {
-                    Toast.makeText(context, "Fill all fields", Toast.LENGTH_SHORT).show()
-                }
+                getDriverView.getDriverPresenter!!.addressesDone()
             }
 
         }
