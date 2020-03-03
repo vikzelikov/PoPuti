@@ -13,16 +13,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import bonch.dev.Constant
-import bonch.dev.Constant.Companion.CONFIRM_PHONE_VIEW
 import bonch.dev.Constant.Companion.PHONE_VIEW
-import bonch.dev.Coordinator
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.signup.SignupPresenter
-import bonch.dev.request.signup.Articles
-import bonch.dev.request.signup.News
+import bonch.dev.request.signup.RetrofitNetwork.Companion.makeRetrofitService
 import bonch.dev.request.signup.RetrofitService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +26,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class PhoneFragment : Fragment() {
 
@@ -134,7 +128,8 @@ class PhoneFragment : Fragment() {
         nextBtn.setOnClickListener {
             hideKeyboard(activity!!, root)
 
-            //sendSms()
+            sendSms(phoneEditText.text.toString())
+
             if (signupPresenter != null) {
                 val fm = (activity as MainActivity).supportFragmentManager
                 signupPresenter!!.clickNextBtn(PHONE_VIEW, startHeight, screenHeight, fm)
@@ -143,20 +138,22 @@ class PhoneFragment : Fragment() {
     }
 
 
-    private fun sendSms() {
-        var response: Response<News>
-        val service = makeRetrofitService()
-        var list: List<Articles>
+    private fun sendSms(phone: String) {
+        var service: RetrofitService? = null
+        var response: Response<*>
+
+        if(service == null){
+            service = makeRetrofitService()
+        }
 
         CoroutineScope(Dispatchers.IO).launch {
-            //send request and get data object
-            response = service.getData("USA")
+            response = service.sendPhone(phone)
             try {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        //get list data and init recycler
-                        list = response.body()!!.articles
-                        print(list)
+                        println(response.message())
+                    } else {
+                        println(response.code())
                     }
                 }
             } catch (err: HttpException) {
@@ -165,19 +162,6 @@ class PhoneFragment : Fragment() {
         }
     }
 
-
-    companion object {
-        private val BASE_URL = "https://newsapi.org"
-
-        private fun makeRetrofitService(): RetrofitService {
-            val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            return retrofit.create(RetrofitService::class.java)
-        }
-    }
 
 }
 

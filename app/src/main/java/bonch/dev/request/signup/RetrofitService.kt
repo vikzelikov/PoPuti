@@ -2,12 +2,11 @@ package bonch.dev.request.signup
 
 
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface RetrofitService {
 
-    @GET("/v2/everything")
-    suspend fun getData(@Query("q") query: String): Response<News>
-
+    @FormUrlEncoded
+    @POST("/api/auth")
+    suspend fun sendPhone(@Field("phone") phone: String): Response<*>
 }
