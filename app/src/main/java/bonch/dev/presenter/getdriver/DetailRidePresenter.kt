@@ -2,21 +2,20 @@ package bonch.dev.presenter.getdriver
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
 import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.Coordinator.Companion.openActivity
+import bonch.dev.model.getdriver.SearchPlace
+import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.view.getdriver.DetailRideView
-import bonch.dev.view.getdriver.Routing
-import bonch.dev.view.getdriver.SearchPlace
 import com.yandex.mapkit.geometry.Point
 
 class DetailRidePresenter(val context: Context, val detailRideView: DetailRideView) {
 
     private val FROM = "FROM"
-    private val FROM_URI = "FROM_URI"
     private val TO = "TO"
-    private val TO_URI = "TO_URI"
 
     private var searchPlace: SearchPlace? = null
     private var routing: Routing? = null
@@ -34,45 +33,49 @@ class DetailRidePresenter(val context: Context, val detailRideView: DetailRideVi
 
 
     fun receiveAddresses(bundle: Bundle) {
-        val fromAddress = bundle.getString(FROM, null)
-        val fromUri = bundle.getString(FROM_URI, null)
-        val toAddress = bundle.getString(TO, null)
-        val toUri = bundle.getString(TO_URI, null)
+        val fromAddress = bundle.getParcelable<Ride>(FROM)
+        val fromUri = fromAddress?.uri
+        val toAddress = bundle.getParcelable<Ride>(TO)
+        val toUri = toAddress?.uri
+
 
         if (fromAddress != null && toAddress != null) {
-            detailRideView.setAddresses(fromAddress, toAddress)
+            detailRideView.setAddresses(fromAddress.address!!, toAddress.address!!)
+
+            if (fromAddress.lat != null) {
+                fromPoint = Point(fromAddress.lat!!, fromAddress.long!!)
+            }
+
+            if (toAddress.lat != null) {
+                toPoint = Point(toAddress.lat!!, toAddress.long!!)
+            }
+
+            if (fromUri != null) {
+                if (fromUri.length > 50) {
+                    fromPoint = getPoint(fromUri)
+                } else {
+                    searchPlace!!.request(fromUri)
+                }
+            }
+
+            if (toUri != null) {
+                if (toUri.length > 50) {
+                    toPoint = getPoint(toUri)
+                } else {
+                    searchPlace!!.request(toUri)
+                }
+            }
         }
 
 
-        //TODO delete 50 !!!!
-        if (fromUri != null) {
-            if (fromUri.length > 50) {
-                //search local
-                fromPoint = getPoint(fromUri)
-            } else {
-                //search network
-                searchPlace!!.stringGeocoder(fromUri)
-            }
-            println(fromUri)
-        }
+        submitRouting()
 
-        if (toUri != null) {
-            if (toUri.length > 50) {
-                //search local
-                toPoint = getPoint(toUri)
-            } else {
-                //search network
-                searchPlace!!.stringGeocoder(toUri)
-            }
-        }
+    }
 
-        //TODO
-        while (true) {
-            if(fromPoint != null && toPoint != null){
-                routing!!.submitRequest(fromPoint!!, toPoint!!)
-                break
-            }
-            println("${fromPoint} ******* ${toPoint} ")
+
+    fun submitRouting() {
+        if (fromPoint != null && toPoint != null) {
+            routing!!.submitRequest(fromPoint!!, toPoint!!)
         }
     }
 

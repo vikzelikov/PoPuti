@@ -132,7 +132,8 @@ class DetailRideView : Fragment() {
             val cardNumber = data!!.getStringExtra(CARD_NUMBER)
             val validUntil = data.getStringExtra(VALID_UNTIL)
             val cvc = data.getStringExtra(CVC)
-            val img = data.getIntExtra(BANK_IMG, 4)
+            //TODO
+            val img = data.getIntExtra(BANK_IMG, R.drawable.visa)
 
             val paymentCard = PaymentCard(cardNumber, validUntil, cvc, img)
 

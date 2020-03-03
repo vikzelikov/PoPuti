@@ -9,6 +9,7 @@ class GetDriverModel(
 ) {
 
     private var autocomplete: Autocomplete? = null
+    private var geocoder: Geocoder? = null
 
     fun requestSuggest(query: String, userLocationPoint: Point) {
 
@@ -23,6 +24,20 @@ class GetDriverModel(
 
     fun responseSuggest(suggestResult: ArrayList<Ride>) {
         getDriverPresenter.setRecyclerSuggest(suggestResult)
+    }
+
+
+    fun requestGeocoder(point: Point) {
+        if (geocoder == null) {
+            geocoder = Geocoder(this)
+        }
+
+        geocoder!!.request(point)
+    }
+
+
+    fun responseGeocoder(address: String?, point: Point?){
+        getDriverPresenter.responseGeocoder(address, point)
     }
 
 }

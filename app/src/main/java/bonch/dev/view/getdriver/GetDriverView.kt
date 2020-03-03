@@ -33,7 +33,6 @@ import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.image.ImageProvider.fromResource
 import kotlin.math.abs
 import kotlin.math.floor
@@ -44,11 +43,12 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     private val API_KEY = "6e2e73e8-4a73-42f5-9bf1-35259708af3c"
 
     private var mapView: MapView? = null
+    var addressesListAdapter: AddressesListAdapter? = null
     private var bottomSheetBehavior: BottomSheetBehavior<*>? = null
-    private var addressesListAdapter: AddressesListAdapter? = null
     private var userLocationLayer: UserLocationLayer? = null
     private var getDriverPresenter: GetDriverPresenter? = null
 
+    var isFromMapSearch = true
 
     lateinit var toAddress: EditText
     lateinit var fromAddress: EditText
@@ -82,13 +82,16 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         initViews(root)
 
+        if (getDriverPresenter == null) {
+            getDriverPresenter = GetDriverPresenter(this)
+        }
+
         mapView!!.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
 
         userLocationLayer = mapKit.createUserLocationLayer(mapView!!.mapWindow)
         userLocationLayer!!.isHeadingEnabled = false
         userLocationLayer!!.isVisible = true
         userLocationLayer!!.setObjectListener(this)
-
         mapView!!.map.addCameraListener(this)
 
         setListeners(root)
@@ -107,8 +110,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         p2: CameraUpdateSource,
         p3: Boolean
     ) {
-        if (p2 == CameraUpdateSource.GESTURES && p3) {
-            //pointGeocoder(Point(p1.target.latitude, p1.target.longitude))
+        if (getDriverPresenter != null && p2 == CameraUpdateSource.GESTURES && p3) {
+            getDriverPresenter!!.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
         }
 
         if (p3) {
@@ -124,8 +127,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     override fun onObjectAdded(userLocationView: UserLocationView) {
         val pinIcon = userLocationView.pin.useCompositeIcon()
-
-        userLocationView.arrow.setIcon(fromResource(context, R.drawable.ic_user_mark, true))
+        //TODO change to svg
+        userLocationView.arrow.setIcon(fromResource(context, R.drawable.placeholder, true))
 
         userLocationLayer!!.setAnchor(
             PointF(
@@ -140,11 +143,10 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         pinIcon.setIcon(
             "pin",
-            fromResource(context, R.drawable.ic_user_mark),
+            fromResource(context, R.drawable.placeholder),
             IconStyle().setAnchor(PointF(0.5f, 0.5f))
                 .setRotationType(RotationType.ROTATE)
                 .setZIndex(1f)
-                .setScale(0.5f)
         )
 
         userLocationView.accuracyCircle.fillColor = Color.TRANSPARENT
@@ -272,9 +274,20 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         containerAddresses.setOnClickListener {}
 
+        fromMapBtn.setOnClickListener {
+            isFromMapSearch = true
+            centerPosition.setImageResource(R.drawable.ic_map_marker_black)
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            fromAddress.clearFocus()
+            hideKeyboard(activity!!, root)
+        }
 
         toMapBtn.setOnClickListener {
-            Toast.makeText(context, "Map", Toast.LENGTH_SHORT).show()
+            isFromMapSearch = false
+            centerPosition.setImageResource(R.drawable.ic_map_marker_black)
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            toAddress.clearFocus()
+            hideKeyboard(activity!!, root)
         }
     }
 
@@ -296,17 +309,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             Animation(Animation.Type.SMOOTH, 1f),
             null
         )
-    }
-
-
-    private fun initialize() {
-        recyclerAddresses.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        recyclerAddresses.adapter = addressesListAdapter
-
-        if (getDriverPresenter == null) {
-            getDriverPresenter = GetDriverPresenter(this, addressesListAdapter!!)
-        }
     }
 
 
@@ -334,9 +336,20 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
                 root
             )
 
+
         bottomSheet = root.findViewById(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from<View>(bottomSheet)
+    }
 
+
+    private fun initialize() {
+        recyclerAddresses.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        recyclerAddresses.adapter = addressesListAdapter
+
+        if (getDriverPresenter == null) {
+            getDriverPresenter = GetDriverPresenter(this)
+        }
     }
 
 

@@ -1,7 +1,7 @@
-package bonch.dev.view.getdriver
+package bonch.dev.presenter.getdriver
 
 import android.content.Context
-import com.yandex.mapkit.Animation
+import bonch.dev.view.getdriver.DetailRideView
 import com.yandex.mapkit.RequestPoint
 import com.yandex.mapkit.RequestPointType
 import com.yandex.mapkit.directions.DirectionsFactory
@@ -40,15 +40,16 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
         }
 
         detailRideView.mapView!!.map.move(
-            CameraPosition(screenCenter!!, 15f, 0f, 1f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
+            CameraPosition(
+                screenCenter!!, 13f, 0f, 0f
+            )
         )
     }
 
 
     fun submitRequest(startLocation: Point, endLocation: Point) {
-        val options = DrivingOptions()
+        val drivingOptions = DrivingOptions()
+        drivingOptions.alternativeCount = 1
         val requestPoints = ArrayList<RequestPoint>()
         screenCenter = Point(
             (startLocation.latitude + endLocation.latitude) / 2,
@@ -70,6 +71,6 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
             )
         )
 
-        drivingSession = drivingRouter!!.requestRoutes(requestPoints, options, this)
+        drivingSession = drivingRouter!!.requestRoutes(requestPoints, drivingOptions, this)
     }
 }

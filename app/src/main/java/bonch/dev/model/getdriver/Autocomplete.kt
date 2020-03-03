@@ -42,14 +42,16 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
             if (suggest[i].subtitle != null) {
 
                 //TODO check nullable uri
-
-                suggestResult.add(
-                    Ride(
-                        suggest[i].title.text,
-                        suggest[i].subtitle?.text,
-                        suggest[i].uri
+                if (suggest[i].uri != null) {
+                    suggestResult.add(
+                        Ride(
+                            suggest[i].title.text,
+                            suggest[i].subtitle?.text,
+                            suggest[i].uri
+                        )
                     )
-                )
+                }
+
             }
         }
 

@@ -1,21 +1,37 @@
 package bonch.dev
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.view.MainFragment
 
 
 class MainActivity : AppCompatActivity() {
 
+    private val LOCATION_PERMISSION_NAME = "android.permission.ACCESS_FINE_LOCATION"
+    private val LOCATION_PERMISSION_REQUEST = 1
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if (ContextCompat.checkSelfPermission(this, LOCATION_PERMISSION_NAME)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(LOCATION_PERMISSION_NAME),
+                LOCATION_PERMISSION_REQUEST
+            )
+        }
 
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, MainFragment())
