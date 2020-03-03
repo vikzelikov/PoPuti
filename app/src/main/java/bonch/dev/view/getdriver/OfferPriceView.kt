@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
@@ -56,10 +57,14 @@ class OfferPriceView : AppCompatActivity() {
 
             val intent = Intent()
             val price = priceEditText.text.toString()
-            intent.putExtra(OFFER_PRICE, price.substring(0, price.length - 2))
-            setResult(RESULT_OK, intent)
+            if (price.length > 4) {
+                intent.putExtra(OFFER_PRICE, price.substring(0, price.length - 2))
+                setResult(RESULT_OK, intent)
+                finish()
+            } else {
+                Toast.makeText(this, "Enter correct price", Toast.LENGTH_SHORT).show()
+            }
 
-            finish()
         }
 
         priceEditText.addTextChangedListener(object : TextWatcher {

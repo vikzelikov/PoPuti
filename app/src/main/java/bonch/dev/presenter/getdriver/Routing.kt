@@ -51,6 +51,7 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
         val drivingOptions = DrivingOptions()
         drivingOptions.alternativeCount = 1
         val requestPoints = ArrayList<RequestPoint>()
+
         screenCenter = Point(
             (startLocation.latitude + endLocation.latitude) / 2,
             (startLocation.longitude + endLocation.longitude) / 2
