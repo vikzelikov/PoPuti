@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -275,7 +274,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             hideKeyboard(activity!!, root)
         }
 
-
         containerAddresses.setOnClickListener {}
 
         fromMapBtn.setOnClickListener {
@@ -368,7 +366,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
                 context!!,
                 root
             )
-
 
         bottomSheet = root.findViewById(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehavior.from<View>(bottomSheet)

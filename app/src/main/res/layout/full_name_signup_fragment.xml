@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:paddingBottom="20dp"
     android:weightSum="1">
 
     <ImageButton
@@ -16,7 +15,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/back_btn"
         android:elevation="12dp"
-        android:padding="15dp"
+        android:padding="13dp"
         android:src="@drawable/back_arrow" />
 
 
@@ -112,8 +111,6 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_weight="0.95"
         android:gravity="bottom"
         android:orientation="vertical">
@@ -122,10 +119,12 @@
             android:id="@+id/next"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/btn_style_blue"
+            android:background="@drawable/btn_style_gray"
             android:fontFamily="@font/roboto"
-            android:shadowColor="@color/colorBlue"
             android:text="@string/next"
             android:textAllCaps="false"
             android:textSize="16sp" />

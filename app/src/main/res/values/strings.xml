@@ -38,4 +38,5 @@
     <string name="commentForDriver">Комментарий для водителя</string>
     <string name="positive">Выгодно</string>
     <string name="negative">Невыгодно</string>
+    <string name="errorCode">Неверный код</string>
 </resources>

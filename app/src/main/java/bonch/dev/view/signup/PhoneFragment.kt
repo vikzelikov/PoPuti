@@ -2,7 +2,9 @@ package bonch.dev.view.signup
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.Editable
 import android.text.SpannableString
+import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.util.Log
@@ -126,15 +128,32 @@ class PhoneFragment : Fragment() {
     private fun setListener(root: View) {
 
         nextBtn.setOnClickListener {
-            hideKeyboard(activity!!, root)
+            val phone = phoneEditText.text.toString().trim()
 
-            sendSms(phoneEditText.text.toString())
+            if (signupPresenter != null && phone.length > 15) {
+                sendSms(phone)
 
-            if (signupPresenter != null) {
+                hideKeyboard(activity!!, root)
+
                 val fm = (activity as MainActivity).supportFragmentManager
                 signupPresenter!!.clickNextBtn(PHONE_VIEW, startHeight, screenHeight, fm)
             }
         }
+
+        phoneEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                val phone = s.toString().trim()
+                if(phone.length > 15){
+                    nextBtn.setBackgroundResource(R.drawable.btn_style_blue)
+                }else{
+                    nextBtn.setBackgroundResource(R.drawable.btn_style_gray)
+                }
+            }
+        })
     }
 
 

@@ -20,7 +20,10 @@ import bonch.dev.view.signup.FullNameFragment
 
 class Coordinator {
 
+
     companion object {
+
+        private val TAG_FRAGMENT = "TAG_FRAGMENT"
 
         fun replaceFragment(id: Int, bundle: Bundle, fm: FragmentManager) {
             when (id) {
@@ -30,7 +33,7 @@ class Coordinator {
 
                     fm.beginTransaction()
                         .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(null)
+                        .addToBackStack(TAG_FRAGMENT)
                         .commit()
                 }
 
@@ -40,7 +43,7 @@ class Coordinator {
 
                     fm.beginTransaction()
                         .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(null)
+                        .addToBackStack(TAG_FRAGMENT)
                         .commit()
                 }
             }
@@ -55,7 +58,7 @@ class Coordinator {
                             R.id.fragment_container,
                             ConfirmPhoneFragment(startHeight, screenHeight)
                         )
-                        .addToBackStack(null)
+                        .addToBackStack(TAG_FRAGMENT)
                         .commit()
                 }
 
@@ -65,7 +68,7 @@ class Coordinator {
                             R.id.fragment_container,
                             FullNameFragment(startHeight, screenHeight)
                         )
-                        .addToBackStack(null)
+                        .addToBackStack(TAG_FRAGMENT)
                         .commit()
                 }
             }

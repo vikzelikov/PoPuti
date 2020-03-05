@@ -3,6 +3,8 @@ package bonch.dev.view.signup
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -113,7 +115,7 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
         nextBtn.setOnClickListener {
             hideKeyboard(activity!!, root)
 
-            if (signupPresenter != null) {
+            if (signupPresenter != null && isValidName()) {
                 val fm = (activity as MainActivity).supportFragmentManager
                 signupPresenter!!.clickNextBtn(FULL_NAME_VIEW, fm)
             }
@@ -127,6 +129,34 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
                 signupPresenter!!.clickBackBtn(fm)
             }
         }
+
+        firstName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(isValidName()){
+                    nextBtn.setBackgroundResource(R.drawable.btn_style_blue)
+                }else{
+                    nextBtn.setBackgroundResource(R.drawable.btn_style_gray)
+                }
+            }
+        })
+
+        lastName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(isValidName()){
+                    nextBtn.setBackgroundResource(R.drawable.btn_style_blue)
+                }else{
+                    nextBtn.setBackgroundResource(R.drawable.btn_style_gray)
+                }
+            }
+        })
     }
 
 
@@ -136,5 +166,17 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
         backBtn = root.findViewById(R.id.back_btn)
         nextBtn = root.findViewById(R.id.next)
     }
+
+
+    private fun isValidName(): Boolean {
+        var result = false
+
+        if (firstName.text.toString().trim().isNotEmpty() && lastName.text.toString().trim().isNotEmpty()) {
+            result = true
+        }
+
+        return result
+    }
+
 
 }

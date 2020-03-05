@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import bonch.dev.view.MainFragment
+import bonch.dev.view.getdriver.DetailRideView
+import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.signup.PhoneFragment
 
 
@@ -18,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     private val LOCATION_PERMISSION_NAME = "android.permission.ACCESS_FINE_LOCATION"
     private val LOCATION_PERMISSION_REQUEST = 1
+    private val TAG_FRAGMENT = "TAG_FRAGMENT"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,6 +166,16 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+
+//    override fun onBackPressed() {
+//        val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT) as GetDriverView?
+//
+//        if(fragment!!.backPressed()){
+//            Toast.makeText(this, "AA", Toast.LENGTH_SHORT).show()
+//            super.onBackPressed()
+//        }
+//    }
 
 
     override fun onPause() {
