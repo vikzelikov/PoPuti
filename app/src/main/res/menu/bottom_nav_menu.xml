@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/regular_driving"
         android:icon="@drawable/ic_regular_driving"
         android:title="@string/regular_driving" />
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/get_driver"
         android:icon="@drawable/ic_get_driver"
         android:title="@string/get_driver" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/profile"
         android:icon="@drawable/ic_profile"
         android:title="@string/profile" />
 

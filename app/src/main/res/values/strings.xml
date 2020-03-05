@@ -39,4 +39,5 @@
     <string name="positive">Выгодно</string>
     <string name="negative">Невыгодно</string>
     <string name="errorCode">Неверный код</string>
+
 </resources>

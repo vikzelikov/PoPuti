@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.DetailRideView
 import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.signup.PhoneFragment
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, PhoneFragment())
+            .add(R.id.fragment_container, MainFragment())
             .commit()
 
     }

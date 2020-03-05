@@ -14,7 +14,10 @@ import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.AddBankCardView
 import bonch.dev.view.getdriver.DetailRideView
+import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.getdriver.OfferPriceView
+import bonch.dev.view.profile.ProfileView
+import bonch.dev.view.regulardrive.RegularDriveView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
 
@@ -24,6 +27,9 @@ class Coordinator {
     companion object {
 
         private val TAG_FRAGMENT = "TAG_FRAGMENT"
+        private var regularDrving: RegularDriveView? = null
+        private var getDriver: GetDriverView? = null
+        private var profile: ProfileView? = null
 
         fun replaceFragment(id: Int, bundle: Bundle, fm: FragmentManager) {
             when (id) {

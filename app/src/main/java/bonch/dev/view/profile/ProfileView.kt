@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import bonch.dev.R
 
-class ProfileFragment : Fragment() {
+class ProfileView : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
