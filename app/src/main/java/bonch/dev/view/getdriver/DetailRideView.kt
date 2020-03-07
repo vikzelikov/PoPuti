@@ -1,54 +1,40 @@
 package bonch.dev.view.getdriver
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
 import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
-import bonch.dev.Coordinator
-import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.PaymentCard
+import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.presenter.getdriver.DetailRidePresenter
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.yandex.mapkit.Animation
-import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.directions.DirectionsFactory
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.search.SearchFactory
 
 
-class DetailRideView : Fragment() {
+class DetailRideView(val getDriverView: GetDriverView, val root: View) {
 
-    private val API_KEY = "6e2e73e8-4a73-42f5-9bf1-35259708af3c"
     private val OFFER_PRICE = "OFFER_PRICE"
     private val CARD_NUMBER = "CARD_NUMBER"
     private val VALID_UNTIL = "VALID_UNTIL"
     private val BANK_IMG = "BANK_IMG"
     private val CVC = "CVC"
 
-
-    var mapView: MapView? = null
     private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
     private var detailRidePresenter: DetailRidePresenter? = null
-
 
     private lateinit var getDriverBtn: Button
     private lateinit var backBtn: ImageButton
@@ -73,40 +59,26 @@ class DetailRideView : Fragment() {
     private lateinit var mainInfoLayout: LinearLayout
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    fun onCreateView(fromAddress: Ride, toAddress: Ride) {
+        val activity = getDriverView.activity!!
 
-        MapKitFactory.setApiKey(API_KEY)
-        MapKitFactory.initialize(context)
-        SearchFactory.initialize(context)
-        DirectionsFactory.initialize(context)
-
-        //val mapKit = MapKitFactory.getInstance()
-        val root = inflater.inflate(R.layout.detail_ride_fragment, container, false)
         initViews(root)
 
-        setListener(root)
+        setListener(activity, root)
 
-        setBottomSheet(root)
+        setBottomSheet(activity, root)
 
         initialize()
 
-        val bundle = this.arguments
-        if (bundle != null && detailRidePresenter != null) {
-            detailRidePresenter!!.receiveAddresses(bundle)
+        if (detailRidePresenter != null) {
+            detailRidePresenter!!.receiveAddresses(fromAddress, toAddress)
         }
 
         initBankCardRecycler()
-
-        return root
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    fun onActivityResult(context: Context, requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == OFFER_PRICE_VIEW && resultCode == RESULT_OK) {
             val strPrice = data!!.getStringExtra(OFFER_PRICE)
 
@@ -115,13 +87,13 @@ class DetailRideView : Fragment() {
             offerPrice.typeface = Typeface.DEFAULT_BOLD
 
             if (isPositiveOfferPrice(strPrice!!.toInt())) {
-                priceLabelColor.text = getString(R.string.positive)
+                priceLabelColor.text = getDriverView.getString(R.string.positive)
                 priceLabelColor.background =
-                    ContextCompat.getDrawable(context!!, R.drawable.offer_price_positive)
+                    ContextCompat.getDrawable(context, R.drawable.offer_price_positive)
             } else {
-                priceLabelColor.text = getString(R.string.negative)
+                priceLabelColor.text = getDriverView.getString(R.string.negative)
                 priceLabelColor.background =
-                    ContextCompat.getDrawable(context!!, R.drawable.offer_price_negative)
+                    ContextCompat.getDrawable(context, R.drawable.offer_price_negative)
             }
 
             priceLabelColor.visibility = View.VISIBLE
@@ -169,16 +141,16 @@ class DetailRideView : Fragment() {
     }
 
 
-    private fun setListener(root: View) {
+    private fun setListener(activity: FragmentActivity, root: View) {
         offerPrice.setOnClickListener {
             if (detailRidePresenter != null) {
-                detailRidePresenter!!.clickOfferPriceBtn(this)
+                detailRidePresenter!!.clickOfferPriceBtn(getDriverView)
             }
         }
 
         addCard.setOnClickListener {
             if (detailRidePresenter != null) {
-                detailRidePresenter!!.clickAddBankCardBtn(this)
+                detailRidePresenter!!.clickAddBankCardBtn(getDriverView)
             }
         }
 
@@ -188,12 +160,12 @@ class DetailRideView : Fragment() {
 
             if (!commentText.isFocused) {
                 commentText.requestFocus()
-                showKeyboard(activity!!)
+                showKeyboard(activity)
             }
         }
 
         commentBackBtn.setOnClickListener {
-            hideKeyboard(activity!!, root)
+            hideKeyboard(activity, root)
             commentText.clearFocus()
             commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -205,7 +177,7 @@ class DetailRideView : Fragment() {
                 commentMinText.text = comment
             }
 
-            hideKeyboard(activity!!, root)
+            hideKeyboard(getDriverView.activity!!, root)
             commentText.clearFocus()
             commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -219,7 +191,7 @@ class DetailRideView : Fragment() {
         }
 
         onMapView.setOnClickListener {
-            hideKeyboard(activity!!, root)
+            hideKeyboard(activity, root)
             commentText.clearFocus()
 
             commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -235,7 +207,7 @@ class DetailRideView : Fragment() {
     }
 
 
-    private fun setBottomSheet(root: View) {
+    private fun setBottomSheet(activity: FragmentActivity, root: View) {
         commentBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
@@ -247,7 +219,7 @@ class DetailRideView : Fragment() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    hideKeyboard(activity!!, root)
+                    hideKeyboard(activity, root)
                     commentText.clearFocus()
                 }
 
@@ -273,7 +245,7 @@ class DetailRideView : Fragment() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    hideKeyboard(activity!!, root)
+                    hideKeyboard(activity, root)
                     commentText.clearFocus()
                 }
 
@@ -285,21 +257,19 @@ class DetailRideView : Fragment() {
                     mainInfoLayout.elevation = 0f
                 }
             }
-
         })
     }
 
 
     private fun initialize() {
         if (detailRidePresenter == null) {
-            detailRidePresenter = DetailRidePresenter(context!!, this)
+            detailRidePresenter = DetailRidePresenter(getDriverView.context!!, this)
         }
     }
 
 
     private fun initViews(root: View) {
-        mapView = root.findViewById(R.id.map) as MapView
-        backBtn = root.findViewById(R.id.back_btn)
+        //backBtn = root.findViewById(R.id.back_btn)
         getDriverBtn = root.findViewById(R.id.get_driver_btn)
         offerPrice = root.findViewById(R.id.offer_price)
         commentBtn = root.findViewById(R.id.comment_btn)
@@ -318,7 +288,7 @@ class DetailRideView : Fragment() {
         paymentMethodImg = root.findViewById(R.id.payment_method_img)
         cardNumberText = root.findViewById(R.id.number_card)
         priceLabelColor = root.findViewById(R.id.price_label_color)
-        onMapView = root.findViewById(R.id.on_map_view)
+        onMapView = root.findViewById(R.id.on_map_view_detail_ride)
         mainInfoLayout = root.findViewById(R.id.main_info_layout)
 
         cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(cardsBottomSheet)
@@ -329,27 +299,25 @@ class DetailRideView : Fragment() {
     private fun initBankCardRecycler() {
         val list = arrayListOf<PaymentCard>()
 
-        list.add(PaymentCard("", "", "", R.drawable.google_pay))
+        list.add(PaymentCard(null, null, null, R.drawable.google_pay))
         paymentsListAdapter =
             PaymentsListAdapter(
                 recyclerPayments,
                 list,
-                context!!,
+                getDriverView.context!!,
                 this
             )
 
         recyclerPayments.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(getDriverView.context, LinearLayoutManager.VERTICAL, false)
         recyclerPayments.adapter = paymentsListAdapter
     }
 
 
-    private fun moveCamera(point: Point) {
-        mapView!!.map.move(
-            CameraPosition(point, 35.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
+    fun removeRoute() {
+        if (detailRidePresenter != null) {
+            detailRidePresenter!!.removeRoute()
+        }
     }
 
 }

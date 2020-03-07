@@ -131,7 +131,7 @@ class PhoneFragment : Fragment() {
             val phone = phoneEditText.text.toString().trim()
 
             if (signupPresenter != null && phone.length > 15) {
-                sendSms(phone)
+                //sendSms(phone)
 
                 hideKeyboard(activity!!, root)
 
@@ -167,6 +167,7 @@ class PhoneFragment : Fragment() {
 
         CoroutineScope(Dispatchers.IO).launch {
             response = service.sendPhone(phone)
+            println(response)
             try {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {

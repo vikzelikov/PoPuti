@@ -2,6 +2,7 @@ package bonch.dev.presenter.getdriver
 
 import android.content.Context
 import bonch.dev.view.getdriver.DetailRideView
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.RequestPoint
 import com.yandex.mapkit.RequestPointType
 import com.yandex.mapkit.directions.DirectionsFactory
@@ -12,12 +13,14 @@ import com.yandex.mapkit.directions.driving.DrivingSession
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.Error
 import java.util.*
 
 class Routing(var context: Context, var detailRideView: DetailRideView) :
     DrivingSession.DrivingRouteListener {
 
+    private var mapView: MapView? = null
     private var screenCenter: Point? = null
     private var mapObjects: MapObjectCollection? = null
     private var drivingRouter: DrivingRouter? = null
@@ -25,9 +28,10 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
 
 
     init {
+        mapView = detailRideView.getDriverView.mapView!!
         DirectionsFactory.initialize(context)
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
-        mapObjects = detailRideView.mapView!!.map.mapObjects.addCollection()
+        mapObjects = mapView!!.map.mapObjects.addCollection()
     }
 
 
@@ -39,18 +43,18 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
             mapObjects!!.addPolyline(route.geometry)
         }
 
-        detailRideView.mapView!!.map.move(
-            CameraPosition(
-                screenCenter!!, 13f, 0f, 0f
-            )
+        detailRideView.getDriverView.mapView!!.map.move(
+            CameraPosition(screenCenter!!, 9f, 0f, 0f),
+            Animation(Animation.Type.SMOOTH, 1f),
+            null
         )
     }
 
 
     fun submitRequest(startLocation: Point, endLocation: Point) {
         val drivingOptions = DrivingOptions()
-        drivingOptions.alternativeCount = 1
         val requestPoints = ArrayList<RequestPoint>()
+        drivingOptions.alternativeCount = 1
 
         screenCenter = Point(
             (startLocation.latitude + endLocation.latitude) / 2,
@@ -64,6 +68,7 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
                 null
             )
         )
+
         requestPoints.add(
             RequestPoint(
                 endLocation,
@@ -73,5 +78,10 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
         )
 
         drivingSession = drivingRouter!!.requestRoutes(requestPoints, drivingOptions, this)
+    }
+
+
+    fun removeRoute() {
+        mapView!!.map.mapObjects.remove(mapObjects!!)
     }
 }

@@ -1,6 +1,7 @@
 package bonch.dev.view.getdriver
 
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.drawable.GradientDrawable
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,21 +40,25 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 
-class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
+class GetDriverView(val navView: View) : Fragment(), UserLocationObjectListener, CameraListener {
 
     private val API_KEY = "6e2e73e8-4a73-42f5-9bf1-35259708af3c"
 
-    private var mapView: MapView? = null
+    var mapView: MapView? = null
     var getDriverPresenter: GetDriverPresenter? = null
     var addressesListAdapter: AddressesListAdapter? = null
     private var bottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var userLocationLayer: UserLocationLayer? = null
 
+    var isMapSearchGestures = false
     var isFromMapSearch = true
 
     lateinit var toAddress: EditText
     lateinit var fromAddress: EditText
-    lateinit var addressMapEditText: TextView
+    lateinit var addressMapText: TextView
+    lateinit var getDriverLayout: CoordinatorLayout
+    lateinit var detailRideLayout: RelativeLayout
+    lateinit var onMapView: View
     private lateinit var myPos: ImageButton
     private lateinit var bottomSheet: RelativeLayout
     private lateinit var centerPosition: ImageView
@@ -62,7 +68,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     private lateinit var toMapBtn: TextView
     private lateinit var crossFromDelete: ImageView
     private lateinit var crossToDelete: ImageView
-    private lateinit var onMapView: View
     private lateinit var containerAddresses: LinearLayout
     private lateinit var addressesMapMarkerLayout: LinearLayout
     private lateinit var addressMapMarkerBtn: Button
@@ -74,7 +79,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        //init map
         MapKitFactory.setApiKey(API_KEY)
         MapKitFactory.initialize(context)
         SearchFactory.initialize(context)
@@ -86,16 +91,20 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         initViews(root)
 
         if (getDriverPresenter == null) {
-            getDriverPresenter = GetDriverPresenter(this)
+            getDriverPresenter = GetDriverPresenter(this, root)
         }
 
+        //for correct user show position
         mapView!!.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
 
+        //init user location service
         userLocationLayer = mapKit.createUserLocationLayer(mapView!!.mapWindow)
         userLocationLayer!!.isHeadingEnabled = false
         userLocationLayer!!.isVisible = true
         userLocationLayer!!.setObjectListener(this)
         mapView!!.map.addCameraListener(this)
+
+        mapView!!.map.isRotateGesturesEnabled = false
 
         setListeners(root)
 
@@ -107,6 +116,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
+    //center screen position
     override fun onCameraPositionChanged(
         p0: Map,
         p1: CameraPosition,
@@ -127,7 +137,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     override fun onObjectRemoved(view: UserLocationView) {}
 
-
+    //add user location icon
     override fun onObjectAdded(userLocationView: UserLocationView) {
         val pinIcon = userLocationView.pin.useCompositeIcon()
         //TODO change to svg
@@ -281,6 +291,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             addressesMapMarkerLayout.visibility = View.VISIBLE
 
             isFromMapSearch = true
+            isMapSearchGestures = true
+            addressMapText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker)
             circleMarker.setImageResource(R.drawable.input_marker_from)
             addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_blue)
@@ -295,26 +307,27 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             addressesMapMarkerLayout.visibility = View.VISIBLE
 
             isFromMapSearch = false
+            isMapSearchGestures = true
+            addressMapText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker_black)
             circleMarker.setImageResource(R.drawable.input_marker_to)
             addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_black)
 
             bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             toAddress.clearFocus()
+            addressMapText.text = ""
             hideKeyboard(activity!!, root)
-
-
         }
 
         addressMapMarkerBtn.setOnClickListener {
             if (addressesListAdapter!!.fromAdr != null && addressesListAdapter!!.toAdr != null) {
+                //addresses filled
                 getDriverPresenter!!.addressesDone()
             } else {
                 centerPosition.setImageResource(R.drawable.ic_map_marker)
                 containerAddresses.visibility = View.VISIBLE
                 addressesMapMarkerLayout.visibility = View.GONE
                 bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-                fromAddress.requestFocus()
             }
         }
     }
@@ -331,6 +344,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
+    //move Map camera
     fun moveCamera(point: Point) {
         mapView!!.map.move(
             CameraPosition(point, 35.0f, 0.0f, 0.0f),
@@ -355,9 +369,11 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         onMapView = root.findViewById(R.id.on_map_view)
         containerAddresses = root.findViewById(R.id.main_addresses_layout)
         addressesMapMarkerLayout = root.findViewById(R.id.address_map_marker_layout)
-        addressMapEditText = root.findViewById(R.id.address_map_text)
+        addressMapText = root.findViewById(R.id.address_map_text)
         addressMapMarkerBtn = root.findViewById(R.id.address_map_marker_btn)
         circleMarker = root.findViewById(R.id.circle_marker)
+        getDriverLayout = root.findViewById(R.id.get_driver_layout)
+        detailRideLayout = root.findViewById(R.id.detail_layout)
 
         addressesListAdapter =
             AddressesListAdapter(
@@ -376,13 +392,24 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         recyclerAddresses.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerAddresses.adapter = addressesListAdapter
+    }
 
-        if (getDriverPresenter == null) {
-            getDriverPresenter = GetDriverPresenter(this)
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (getDriverPresenter!!.detailRideView != null) {
+            getDriverPresenter!!.detailRideView!!.onActivityResult(
+                context!!,
+                requestCode,
+                resultCode,
+                data
+            )
         }
     }
 
 
+    //set behaviour BottomSheet
     private fun setBottomSheet(root: View) {
         var expandedValue: Int
         val shape = GradientDrawable()
@@ -447,6 +474,39 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         super.onStart()
         MapKitFactory.getInstance().onStart()
         mapView!!.onStart()
+    }
+
+
+    //listener onBackPressed key
+    fun backPressed(): Boolean {
+        var result = true
+
+        if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            result = false
+        }
+
+        if (isMapSearchGestures) {
+            centerPosition.setImageResource(R.drawable.ic_map_marker)
+            containerAddresses.visibility = View.VISIBLE
+            addressesMapMarkerLayout.visibility = View.GONE
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+            isMapSearchGestures = false
+            result = false
+        }
+
+        if(getDriverPresenter!!.detailRideView != null){
+            navView.visibility = View.VISIBLE
+            detailRideLayout.visibility = View.GONE
+            getDriverLayout.visibility = View.VISIBLE
+            onMapView.visibility = View.GONE
+            getDriverPresenter!!.clickBackGetDriver()
+            toAddress.setText("")
+
+            result = false
+        }
+
+        return result
     }
 
 

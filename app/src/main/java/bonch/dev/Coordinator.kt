@@ -13,11 +13,7 @@ import bonch.dev.Constant.Companion.MAIN_FRAGMENT
 import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.AddBankCardView
-import bonch.dev.view.getdriver.DetailRideView
-import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.getdriver.OfferPriceView
-import bonch.dev.view.profile.ProfileView
-import bonch.dev.view.regulardrive.RegularDriveView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
 
@@ -25,12 +21,6 @@ class Coordinator {
 
 
     companion object {
-
-        private val TAG_FRAGMENT = "TAG_FRAGMENT"
-        private var regularDrving: RegularDriveView? = null
-        private var getDriver: GetDriverView? = null
-        private var profile: ProfileView? = null
-
         fun replaceFragment(id: Int, bundle: Bundle, fm: FragmentManager) {
             when (id) {
                 MAIN_FRAGMENT -> {
@@ -38,23 +28,12 @@ class Coordinator {
                     fragment.arguments = bundle
 
                     fm.beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(TAG_FRAGMENT)
-                        .commit()
-                }
-
-                DETAIL_RIDE_VIEW -> {
-                    val fragment = DetailRideView()
-                    fragment.arguments = bundle
-
-                    fm.beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(TAG_FRAGMENT)
+                        .replace(R.id.fragment_container, fragment, MAIN_FRAGMENT.toString())
+                        .addToBackStack(null)
                         .commit()
                 }
             }
         }
-
 
         fun replaceFragment(id: Int, startHeight: Int, screenHeight: Int, fm: FragmentManager) {
             when (id) {
@@ -62,9 +41,10 @@ class Coordinator {
                     fm.beginTransaction()
                         .replace(
                             R.id.fragment_container,
-                            ConfirmPhoneFragment(startHeight, screenHeight)
+                            ConfirmPhoneFragment(startHeight, screenHeight),
+                            CONFIRM_PHONE_VIEW.toString()
                         )
-                        .addToBackStack(TAG_FRAGMENT)
+                        .addToBackStack(null)
                         .commit()
                 }
 
@@ -72,9 +52,10 @@ class Coordinator {
                     fm.beginTransaction()
                         .replace(
                             R.id.fragment_container,
-                            FullNameFragment(startHeight, screenHeight)
+                            FullNameFragment(startHeight, screenHeight),
+                            FULL_NAME_VIEW.toString()
                         )
-                        .addToBackStack(TAG_FRAGMENT)
+                        .addToBackStack(null)
                         .commit()
                 }
             }

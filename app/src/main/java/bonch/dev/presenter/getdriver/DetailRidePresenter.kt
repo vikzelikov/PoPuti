@@ -2,7 +2,6 @@ package bonch.dev.presenter.getdriver
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
 import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
@@ -13,9 +12,6 @@ import bonch.dev.view.getdriver.DetailRideView
 import com.yandex.mapkit.geometry.Point
 
 class DetailRidePresenter(val context: Context, val detailRideView: DetailRideView) {
-
-    private val FROM = "FROM"
-    private val TO = "TO"
 
     private var searchPlace: SearchPlace? = null
     private var routing: Routing? = null
@@ -32,44 +28,38 @@ class DetailRidePresenter(val context: Context, val detailRideView: DetailRideVi
     }
 
 
-    fun receiveAddresses(bundle: Bundle) {
-        val fromAddress = bundle.getParcelable<Ride>(FROM)
-        val fromUri = fromAddress?.uri
-        val toAddress = bundle.getParcelable<Ride>(TO)
-        val toUri = toAddress?.uri
+    fun receiveAddresses(fromAddress: Ride, toAddress: Ride) {
+        val fromUri = fromAddress.uri
+        val toUri = toAddress.uri
 
+        detailRideView.setAddresses(fromAddress.address!!, toAddress.address!!)
 
-        if (fromAddress != null && toAddress != null) {
-            detailRideView.setAddresses(fromAddress.address!!, toAddress.address!!)
+        if (fromAddress.point != null) {
+            fromPoint = fromAddress.point
+        }
 
-            if (fromAddress.lat != null) {
-                fromPoint = Point(fromAddress.lat!!, fromAddress.long!!)
-            }
+        if (toAddress.point != null) {
+            toPoint = toAddress.point
+        }
 
-            if (toAddress.lat != null) {
-                toPoint = Point(toAddress.lat!!, toAddress.long!!)
-            }
-
-            if (fromUri != null) {
-                if (fromUri.length > 50) {
-                    fromPoint = getPoint(fromUri)
-                } else {
-                    searchPlace!!.request(fromUri)
-                }
-            }
-
-            if (toUri != null) {
-                if (toUri.length > 50) {
-                    toPoint = getPoint(toUri)
-                } else {
-                    searchPlace!!.request(toUri)
-                }
+        if (fromUri != null) {
+            if (fromUri.length > 50) {
+                fromPoint = getPoint(fromUri)
+            } else {
+                searchPlace!!.request(fromUri)
             }
         }
 
+        if (toUri != null) {
+            //TODO
+            if (toUri.length > 50) {
+                toPoint = getPoint(toUri)
+            } else {
+                searchPlace!!.request(toUri)
+            }
+        }
 
         submitRouting()
-
     }
 
 
@@ -98,6 +88,13 @@ class DetailRidePresenter(val context: Context, val detailRideView: DetailRideVi
         }
 
         return coordinate
+    }
+
+
+    fun removeRoute(){
+        if(routing != null){
+            routing!!.removeRoute()
+        }
     }
 
 
