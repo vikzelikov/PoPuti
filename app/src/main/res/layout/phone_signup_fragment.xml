@@ -18,7 +18,7 @@
         android:background="@drawable/back_btn"
         android:elevation="12dp"
         android:padding="13dp"
-        android:src="@drawable/back_arrow"
+        android:src="@drawable/ic_back_arrow"
         android:visibility="invisible" />
 
     <LinearLayout
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:background="@drawable/edt_bg_selector"
+            android:background="@drawable/bg_et_selector"
             android:cursorVisible="true"
             android:inputType="phone"
             android:maxWidth="200dp"
@@ -61,7 +61,7 @@
             android:paddingEnd="0dp"
             android:textColor="@android:color/black"
             android:textColorHint="#60000000"
-            android:textCursorDrawable="@drawable/color_cursor"
+            android:textCursorDrawable="@drawable/bg_color_cursor"
             android:textSize="16sp"
             mask:allowed_chars="1234567890"
             mask:mask="+7(###)###-##-##" />
@@ -98,7 +98,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/btn_style_gray"
+            android:background="@drawable/bg_btn_gray"
             android:fontFamily="@font/roboto"
             android:text="@string/next"
             android:textAllCaps="false"

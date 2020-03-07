@@ -15,7 +15,7 @@
         android:background="@drawable/back_btn"
         android:elevation="12dp"
         android:padding="13dp"
-        android:src="@drawable/back_arrow" />
+        android:src="@drawable/ic_back_arrow" />
 
 
     <LinearLayout
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_weight="2"
-                android:background="@drawable/edt_bg_selector"
+                android:background="@drawable/bg_et_selector"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:inputType="number"
@@ -67,7 +67,7 @@
                 android:maxLines="1"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textCursorDrawable="@drawable/color_cursor"
+                android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
             <bonch.dev.view.EditTextCode
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="2"
-                android:background="@drawable/edt_bg_selector"
+                android:background="@drawable/bg_et_selector"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:inputType="number"
@@ -84,7 +84,7 @@
                 android:maxLines="1"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textCursorDrawable="@drawable/color_cursor"
+                android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
             <bonch.dev.view.EditTextCode
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_weight="2"
-                android:background="@drawable/edt_bg_selector"
+                android:background="@drawable/bg_et_selector"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:inputType="number"
@@ -101,7 +101,7 @@
                 android:maxLines="1"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textCursorDrawable="@drawable/color_cursor"
+                android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
             <bonch.dev.view.EditTextCode
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_weight="2"
-                android:background="@drawable/edt_bg_selector"
+                android:background="@drawable/bg_et_selector"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:inputType="number"
@@ -118,7 +118,7 @@
                 android:maxLines="1"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textCursorDrawable="@drawable/color_cursor"
+                android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
         </LinearLayout>
@@ -158,7 +158,7 @@
             android:layout_marginTop="14dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="20dp"
-            android:background="@drawable/btn_style_gray"
+            android:background="@drawable/bg_btn_gray"
             android:fontFamily="@font/roboto"
             android:text="@string/next"
             android:textAllCaps="false"

@@ -1,6 +1,5 @@
 package bonch.dev.view.signup
 
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
@@ -8,15 +7,11 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
-import bonch.dev.Constant
 import bonch.dev.Constant.Companion.FULL_NAME_VIEW
-import bonch.dev.Constant.Companion.MAIN_FRAGMENT
-import bonch.dev.Coordinator
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
@@ -137,9 +132,9 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if(isValidName()){
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_blue)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
                 }else{
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_gray)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
                 }
             }
         })
@@ -151,9 +146,9 @@ class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fr
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if(isValidName()){
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_blue)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
                 }else{
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_gray)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
                 }
             }
         })

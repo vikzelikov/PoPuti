@@ -64,17 +64,17 @@ class AddBankCardView : AppCompatActivity() {
 
                 when (cardNumber[0].toString().toInt()) {
                     VISA -> {
-                        img = R.drawable.visa
+                        img = R.drawable.ic_visa
                         cardNumber = "•••• " + cardNumber.substring(15, 19)
                     }
 
                     MC -> {
-                        img = R.drawable.mastercard
+                        img = R.drawable.ic_mastercard
                         cardNumber = "•••• " + cardNumber.substring(15, 19)
                     }
 
                     RUS_WORLD -> {
-                        img = R.drawable.pay_world
+                        img = R.drawable.ic_pay_world
                         cardNumber = "•••• " + cardNumber.substring(15, 19)
                     }
 

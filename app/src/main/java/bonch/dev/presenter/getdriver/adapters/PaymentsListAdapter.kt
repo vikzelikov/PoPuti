@@ -83,7 +83,7 @@ class PaymentsListAdapter(
             if (post.img != null) {
                 val img = post.img!!
 
-                if (img == R.drawable.visa || img == R.drawable.mastercard || img == R.drawable.pay_world || img == R.drawable.google_pay) {
+                if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world || img == R.drawable.ic_google_pay) {
                     paymentImg.setImageResource(post.img!!)
                 }
             }

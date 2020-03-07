@@ -82,6 +82,8 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
 
 
     fun removeRoute() {
-        mapView!!.map.mapObjects.remove(mapObjects!!)
+        if (mapView != null) {
+            mapView!!.map.mapObjects.remove(mapObjects!!)
+        }
     }
 }

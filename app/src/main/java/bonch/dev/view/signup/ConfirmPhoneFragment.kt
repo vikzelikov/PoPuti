@@ -203,9 +203,9 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
                 }
 
                 if (isCodeEnter()) {
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_blue)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
                 } else {
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_gray)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
                 }
 
                 errorCode.visibility = View.INVISIBLE

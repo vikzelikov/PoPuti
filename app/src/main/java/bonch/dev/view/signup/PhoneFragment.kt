@@ -148,9 +148,9 @@ class PhoneFragment : Fragment() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 val phone = s.toString().trim()
                 if(phone.length > 15){
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_blue)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
                 }else{
-                    nextBtn.setBackgroundResource(R.drawable.btn_style_gray)
+                    nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
                 }
             }
         })

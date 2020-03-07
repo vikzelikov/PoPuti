@@ -17,7 +17,7 @@
         android:background="@drawable/back_btn"
         android:elevation="12dp"
         android:padding="13dp"
-        android:src="@drawable/back_arrow" />
+        android:src="@drawable/ic_back_arrow" />
 
 
     <LinearLayout
@@ -40,7 +40,7 @@
                 android:id="@+id/price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/edt_bg_selector"
+                android:background="@drawable/bg_et_selector"
                 android:cursorVisible="true"
                 android:hint="100"
                 android:inputType="number"
@@ -51,7 +51,7 @@
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textColorHint="#60000000"
-                android:textCursorDrawable="@drawable/color_cursor"
+                android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="40sp" />
 
             <TextView
@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/btn_style_blue"
+            android:background="@drawable/bg_btn_blue"
             android:fontFamily="@font/roboto"
             android:shadowColor="@color/colorBlue"
             android:text="@string/offerPrice"

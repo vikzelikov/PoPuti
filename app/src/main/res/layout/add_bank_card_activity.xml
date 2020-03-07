@@ -17,7 +17,7 @@
         android:background="@drawable/back_btn"
         android:elevation="12dp"
         android:padding="13dp"
-        android:src="@drawable/back_arrow" />
+        android:src="@drawable/ic_back_arrow" />
 
     <TextView
         android:layout_width="match_parent"
@@ -60,7 +60,7 @@
                     android:id="@+id/card_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/edt_bg_selector"
+                    android:background="@drawable/bg_et_selector"
                     android:cursorVisible="true"
                     android:inputType="number"
                     android:maxLength="19"
@@ -70,7 +70,7 @@
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textColorHint="#60000000"
-                    android:textCursorDrawable="@drawable/color_cursor"
+                    android:textCursorDrawable="@drawable/bg_color_cursor"
                     android:textSize="16sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -95,7 +95,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="13dp"
-                        android:background="@drawable/edt_bg_selector"
+                        android:background="@drawable/bg_et_selector"
                         android:cursorVisible="true"
                         android:hint="@string/valid_until"
                         android:inputType="number"
@@ -106,7 +106,7 @@
                         android:singleLine="true"
                         android:textColor="@android:color/black"
                         android:textColorHint="#60000000"
-                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textCursorDrawable="@drawable/bg_color_cursor"
                         android:textSize="16sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -124,7 +124,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="13dp"
-                        android:background="@drawable/edt_bg_selector"
+                        android:background="@drawable/bg_et_selector"
                         android:cursorVisible="true"
                         android:hint="@string/cvc_cvv"
                         android:inputType="number"
@@ -135,7 +135,7 @@
                         android:singleLine="true"
                         android:textColor="@android:color/black"
                         android:textColorHint="#60000000"
-                        android:textCursorDrawable="@drawable/color_cursor"
+                        android:textCursorDrawable="@drawable/bg_color_cursor"
                         android:textSize="16sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -159,7 +159,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/btn_style_blue"
+                android:background="@drawable/bg_btn_blue"
                 android:fontFamily="@font/roboto"
                 android:shadowColor="@color/colorBlue"
                 android:text="@string/addCard"

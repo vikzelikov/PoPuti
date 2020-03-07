@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/corners_layout"
+        android:background="@drawable/bg_corners_layout"
         android:elevation="30dp"
         android:orientation="vertical">
 
@@ -36,19 +36,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:src="@drawable/input_marker_from" />
+                    android:src="@drawable/ic_input_marker_from" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
-                    android:src="@drawable/input_line" />
+                    android:src="@drawable/ic_input_line" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/input_marker_to" />
+                    android:src="@drawable/ic_input_marker_to" />
 
 
             </LinearLayout>
@@ -141,7 +141,7 @@
                 android:id="@+id/price_label_color"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/offer_price_positive"
+                android:background="@drawable/bg_offer_price_positive"
                 android:gravity="center"
                 android:paddingStart="20dp"
                 android:paddingTop="10dp"
@@ -258,7 +258,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="20dp"
-            android:background="@drawable/btn_style_blue"
+            android:background="@drawable/bg_btn_blue"
             android:fontFamily="@font/roboto"
             android:shadowColor="@color/colorBlue"
             android:text="@string/getdriver"
@@ -279,7 +279,7 @@
             android:id="@+id/cards_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/corners_layout"
+            android:background="@drawable/bg_corners_layout"
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
@@ -290,7 +290,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/bottom_sheet_arrow" />
+                android:src="@drawable/ic_bottom_sheet_arrow" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/payments_list"
@@ -303,7 +303,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
-                android:drawableEnd="@drawable/arrow_right"
+                android:drawableEnd="@drawable/ic_arrow_right"
                 android:paddingStart="70dp"
                 android:paddingTop="27dp"
                 android:paddingBottom="27dp"
@@ -318,7 +318,7 @@
             android:id="@+id/comment_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="450dp"
-            android:background="@drawable/corners_layout"
+            android:background="@drawable/bg_corners_layout"
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
@@ -339,7 +339,7 @@
                     android:paddingTop="15dp"
                     android:paddingEnd="50dp"
                     android:gravity="start"
-                    android:src="@drawable/arrow_left" />
+                    android:src="@drawable/ic_arrow_left" />
 
 
                 <TextView
@@ -369,7 +369,7 @@
                 android:inputType="textMultiLine"
                 android:textColor="@android:color/black"
                 android:textColorHint="#60000000"
-                android:textCursorDrawable="@drawable/color_cursor" />
+                android:textCursorDrawable="@drawable/bg_color_cursor" />
 
 
         </LinearLayout>

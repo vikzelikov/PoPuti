@@ -294,8 +294,8 @@ class GetDriverView(val navView: View) : Fragment(), UserLocationObjectListener,
             isMapSearchGestures = true
             addressMapText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker)
-            circleMarker.setImageResource(R.drawable.input_marker_from)
-            addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_blue)
+            circleMarker.setImageResource(R.drawable.ic_input_marker_from)
+            addressMapMarkerBtn.setBackgroundResource(R.drawable.bg_btn_blue)
 
             bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             fromAddress.clearFocus()
@@ -310,8 +310,8 @@ class GetDriverView(val navView: View) : Fragment(), UserLocationObjectListener,
             isMapSearchGestures = true
             addressMapText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker_black)
-            circleMarker.setImageResource(R.drawable.input_marker_to)
-            addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_black)
+            circleMarker.setImageResource(R.drawable.ic_input_marker_to)
+            addressMapMarkerBtn.setBackgroundResource(R.drawable.bg_btn_black)
 
             bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             toAddress.clearFocus()
@@ -495,12 +495,13 @@ class GetDriverView(val navView: View) : Fragment(), UserLocationObjectListener,
             result = false
         }
 
-        if(getDriverPresenter!!.detailRideView != null){
+        if (getDriverPresenter!!.detailRideView != null) {
             navView.visibility = View.VISIBLE
             detailRideLayout.visibility = View.GONE
             getDriverLayout.visibility = View.VISIBLE
             onMapView.visibility = View.GONE
             getDriverPresenter!!.clickBackGetDriver()
+            getDriverPresenter!!.detailRideView = null
             toAddress.setText("")
 
             result = false

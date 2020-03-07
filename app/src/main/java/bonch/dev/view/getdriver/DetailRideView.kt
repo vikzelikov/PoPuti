@@ -89,11 +89,11 @@ class DetailRideView(val getDriverView: GetDriverView, val root: View) {
             if (isPositiveOfferPrice(strPrice!!.toInt())) {
                 priceLabelColor.text = getDriverView.getString(R.string.positive)
                 priceLabelColor.background =
-                    ContextCompat.getDrawable(context, R.drawable.offer_price_positive)
+                    ContextCompat.getDrawable(context, R.drawable.bg_offer_price_positive)
             } else {
                 priceLabelColor.text = getDriverView.getString(R.string.negative)
                 priceLabelColor.background =
-                    ContextCompat.getDrawable(context, R.drawable.offer_price_negative)
+                    ContextCompat.getDrawable(context, R.drawable.bg_offer_price_negative)
             }
 
             priceLabelColor.visibility = View.VISIBLE
@@ -105,7 +105,7 @@ class DetailRideView(val getDriverView: GetDriverView, val root: View) {
             val validUntil = data.getStringExtra(VALID_UNTIL)
             val cvc = data.getStringExtra(CVC)
             //TODO
-            val img = data.getIntExtra(BANK_IMG, R.drawable.visa)
+            val img = data.getIntExtra(BANK_IMG, R.drawable.ic_visa)
 
             val paymentCard = PaymentCard(cardNumber, validUntil, cvc, img)
 
@@ -299,7 +299,7 @@ class DetailRideView(val getDriverView: GetDriverView, val root: View) {
     private fun initBankCardRecycler() {
         val list = arrayListOf<PaymentCard>()
 
-        list.add(PaymentCard(null, null, null, R.drawable.google_pay))
+        list.add(PaymentCard(null, null, null, R.drawable.ic_google_pay))
         paymentsListAdapter =
             PaymentsListAdapter(
                 recyclerPayments,

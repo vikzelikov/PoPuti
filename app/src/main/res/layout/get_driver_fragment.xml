@@ -50,7 +50,7 @@
             android:background="@drawable/back_btn"
             android:elevation="10dp"
             android:padding="18dp"
-            android:src="@drawable/my_position" />
+            android:src="@drawable/ic_my_position" />
 
         <ImageView
             android:id="@+id/center_position"
@@ -64,7 +64,7 @@
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="650dp"
-            android:background="@drawable/bottom_sheet_collapsed"
+            android:background="@drawable/ic_bottom_sheet_collapsed"
             app:behavior_peekHeight="190dp"
             app:layout_behavior=".view.getdriver.MBottomSheet">
 
@@ -78,7 +78,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:alpha="0"
-                android:src="@drawable/bottom_sheet_arrow" />
+                android:src="@drawable/ic_bottom_sheet_arrow" />
 
 
             <LinearLayout
@@ -88,7 +88,7 @@
                 android:layout_below="@id/bottom_sheet_arrow"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:background="@drawable/inputs_layout"
+                android:background="@drawable/bg_inputs_layout"
                 android:elevation="10dp"
                 android:orientation="horizontal"
                 android:paddingTop="15dp"
@@ -108,19 +108,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:src="@drawable/input_marker_from" />
+                        android:src="@drawable/ic_input_marker_from" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
-                        android:src="@drawable/input_line" />
+                        android:src="@drawable/ic_input_line" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/input_marker_to" />
+                        android:src="@drawable/ic_input_marker_to" />
 
 
                 </LinearLayout>
@@ -149,7 +149,7 @@
                             android:singleLine="true"
                             android:textColor="@android:color/black"
                             android:textColorHint="#70000000"
-                            android:textCursorDrawable="@drawable/color_cursor"
+                            android:textCursorDrawable="@drawable/bg_color_cursor"
                             android:textSize="16sp" />
 
 
@@ -163,14 +163,14 @@
                             android:paddingTop="13dp"
                             android:paddingEnd="12dp"
                             android:paddingBottom="12dp"
-                            android:src="@drawable/cross"
+                            android:src="@drawable/ic_cross"
                             android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/btn_map_from"
                             android:layout_width="70dp"
                             android:layout_height="match_parent"
-                            android:background="@drawable/inputs_layout_map_btn"
+                            android:background="@drawable/bg_inputs_layout_map_btn"
                             android:gravity="center"
                             android:text="@string/map"
                             android:textColor="@android:color/black"
@@ -206,7 +206,7 @@
                             android:singleLine="true"
                             android:textColor="@android:color/black"
                             android:textColorHint="#70000000"
-                            android:textCursorDrawable="@drawable/color_cursor"
+                            android:textCursorDrawable="@drawable/bg_color_cursor"
                             android:textSize="16sp" />
 
 
@@ -220,7 +220,7 @@
                             android:paddingTop="13dp"
                             android:paddingEnd="12dp"
                             android:paddingBottom="12dp"
-                            android:src="@drawable/cross"
+                            android:src="@drawable/ic_cross"
                             android:visibility="gone" />
 
 
@@ -228,7 +228,7 @@
                             android:id="@+id/btn_map_to"
                             android:layout_width="70dp"
                             android:layout_height="match_parent"
-                            android:background="@drawable/inputs_layout_map_btn"
+                            android:background="@drawable/bg_inputs_layout_map_btn"
                             android:gravity="center"
                             android:text="@string/map"
                             android:textColor="@android:color/black"
@@ -258,7 +258,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@drawable/inputs_layout"
+                    android:background="@drawable/bg_inputs_layout"
                     android:elevation="10dp"
                     android:orientation="horizontal"
                     android:paddingTop="10dp"
@@ -272,7 +272,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginTop="1dp"
-                        android:src="@drawable/input_marker_to" />
+                        android:src="@drawable/ic_input_marker_to" />
 
 
                     <TextView
@@ -302,7 +302,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="14dp"
                     android:layout_marginEnd="15dp"
-                    android:background="@drawable/btn_style_black"
+                    android:background="@drawable/bg_btn_black"
                     android:fontFamily="@font/roboto"
                     android:shadowColor="@color/colorBlue"
                     android:text="@string/ready"
