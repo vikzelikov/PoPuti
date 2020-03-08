@@ -11,11 +11,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
-import bonch.dev.Constant.Companion.FULL_NAME_VIEW
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.signup.SignupPresenter
+import bonch.dev.utils.Constants.FULL_NAME_VIEW
 
 class FullNameFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fragment() {
 

@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
-import bonch.dev.Constant.Companion.GET_DRIVER_VIEW
-import bonch.dev.Constant.Companion.PROFILE_VIEW
-import bonch.dev.Constant.Companion.REGULAR_DRIVING_VIEW
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.utils.Constants.GET_DRIVER_VIEW
+import bonch.dev.utils.Constants.PROFILE_VIEW
+import bonch.dev.utils.Constants.REGULAR_DRIVING_VIEW
 import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.profile.ProfileView
 import bonch.dev.view.regulardrive.RegularDriveView

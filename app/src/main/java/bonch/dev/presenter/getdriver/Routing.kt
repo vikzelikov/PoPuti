@@ -28,7 +28,7 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
 
 
     init {
-        mapView = detailRideView.getDriverView.mapView!!
+        mapView = detailRideView.getDriverView.mapView
         DirectionsFactory.initialize(context)
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
         mapObjects = mapView!!.map.mapObjects.addCollection()
@@ -40,11 +40,11 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
 
     override fun onDrivingRoutes(routes: MutableList<DrivingRoute>) {
         for (route in routes) {
-            mapObjects!!.addPolyline(route.geometry)
+            mapObjects?.addPolyline(route.geometry)
         }
 
         detailRideView.getDriverView.mapView!!.map.move(
-            CameraPosition(screenCenter!!, 9f, 0f, 0f),
+            CameraPosition(screenCenter!!, 13f, 0f, 0f),
             Animation(Animation.Type.SMOOTH, 1f),
             null
         )

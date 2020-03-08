@@ -14,12 +14,12 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import bonch.dev.Constant.Companion.CONFIRM_PHONE_VIEW
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.signup.SignupPresenter
+import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.view.EditTextCode
 
 

@@ -2,13 +2,12 @@ package bonch.dev.presenter.signup
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
-import bonch.dev.Constant.Companion.CONFIRM_PHONE_VIEW
-import bonch.dev.Constant.Companion.FULL_NAME_VIEW
-import bonch.dev.Constant.Companion.MAIN_FRAGMENT
-import bonch.dev.Constant.Companion.PHONE_VIEW
-import bonch.dev.Coordinator.Companion.previousFragment
-import bonch.dev.Coordinator.Companion.replaceFragment
-import bonch.dev.MainActivity
+import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
+import bonch.dev.utils.Constants.FULL_NAME_VIEW
+import bonch.dev.utils.Constants.MAIN_FRAGMENT
+import bonch.dev.utils.Constants.PHONE_VIEW
+import bonch.dev.utils.Coordinator.previousFragment
+import bonch.dev.utils.Coordinator.replaceFragment
 
 class SignupPresenter {
 

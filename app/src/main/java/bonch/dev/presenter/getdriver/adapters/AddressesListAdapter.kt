@@ -2,38 +2,24 @@ package bonch.dev.presenter.getdriver.adapters
 
 
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.PointerIcon
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.Constant
-import bonch.dev.Constant.Companion.DETAIL_RIDE_VIEW
-import bonch.dev.Coordinator
-import bonch.dev.Coordinator.Companion.replaceFragment
-import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Ride
-import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.view.getdriver.GetDriverView
-import com.yandex.mapkit.geometry.Point
+import kotlinx.android.synthetic.main.get_driver_fragment.*
+import kotlinx.android.synthetic.main.get_driver_layout.*
 
 
 class AddressesListAdapter(
     val getDriverView: GetDriverView,
     var list: ArrayList<Ride>,
-    val context: Context,
-    val root: View
+    val context: Context
 ) : RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
-
-    var fromAdr: Ride? = null
-    var toAdr: Ride? = null
-    private val fromAddressView = getDriverView.fromAddress
-    private val toAddressView = getDriverView.toAddress
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
@@ -49,34 +35,36 @@ class AddressesListAdapter(
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-        val post = list[position]
+        val getDriverPresenter = getDriverView.getDriverPresenter
 
-        holder.bind(post)
+        holder.bind(list[position])
 
         holder.itemView.setOnClickListener {
 
-            if (fromAddressView.isFocused) {
-                fromAddressView.setText(list[position].address)
-                fromAddressView.setSelection(fromAddressView.text.length)
+            val fromAdrView = getDriverView.from_adr
+            val toAdrView = getDriverView.to_adr
 
-                fromAdr = list[position]
+            if (fromAdrView.isFocused) {
+                fromAdrView.setText(list[position].address)
+                fromAdrView.setSelection(fromAdrView.text.length)
+
+                getDriverPresenter!!.fromAdr = list[position]
             }
 
-            if (toAddressView.isFocused) {
-                toAddressView.setText(list[position].address)
-                toAddressView.setSelection(toAddressView.text.length)
+            if (toAdrView.isFocused) {
+                toAdrView.setText(list[position].address)
+                toAdrView.setSelection(toAdrView.text.length)
 
-                toAdr = list[position]
+                getDriverPresenter!!.toAdr = list[position]
             }
 
-            getDriverView.getDriverPresenter!!.addressesDone()
-
+            getDriverPresenter!!.addressesDone()
         }
 
 
         holder.itemView.setOnTouchListener { _, _ ->
             val activity = getDriverView.activity!!
-            hideKeyboard(activity, root)
+            hideKeyboard(activity, getDriverView.view!!)
 
             false
         }

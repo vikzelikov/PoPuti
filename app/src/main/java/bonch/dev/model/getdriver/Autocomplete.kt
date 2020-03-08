@@ -7,7 +7,7 @@ import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 import kotlin.math.min
 
-class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point) :
+class Autocomplete(private var getDriverModel: GetDriverModel, userLocationPoint: Point?) :
     SuggestSession.SuggestListener {
 
     private val RESULT_NUMBER_LIMIT = 7
@@ -18,12 +18,12 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
 
     private val suggestResult: ArrayList<Ride> = arrayListOf()
 
-    private val CENTER = userLocationPoint
-
-    private val BOUNDING_BOX = BoundingBox(
-        Point(CENTER.latitude, CENTER.longitude),
-        Point(CENTER.latitude, CENTER.longitude)
-    )
+    private var BOUNDING_BOX = userLocationPoint?.let {
+        BoundingBox(
+            Point(it.latitude, it.longitude),
+            Point(it.latitude, it.longitude)
+        )
+    }
 
     private val SUGGEST_OPTIONS = SuggestOptions(
         SuggestType.GEO.value or SuggestType.BIZ.value or SuggestType.TRANSIT.value,
@@ -55,7 +55,6 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
             }
         }
 
-
         getDriverModel.responseSuggest(suggestResult)
 
     }
@@ -64,7 +63,11 @@ class Autocomplete(var getDriverModel: GetDriverModel, userLocationPoint: Point)
     fun requestSuggest(query: String) {
         val suggestSession: SuggestSession
 
+        if(BOUNDING_BOX == null){
+            BOUNDING_BOX = BoundingBox()
+        }
+
         suggestSession = searchManager.createSuggestSession()
-        suggestSession.suggest(query, BOUNDING_BOX, SUGGEST_OPTIONS, this)
+        suggestSession.suggest(query, BOUNDING_BOX!!, SUGGEST_OPTIONS, this)
     }
 }

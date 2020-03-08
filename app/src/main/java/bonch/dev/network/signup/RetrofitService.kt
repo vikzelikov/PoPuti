@@ -1,4 +1,4 @@
-package bonch.dev.request.signup
+package bonch.dev.network.signup
 
 
 import retrofit2.Response

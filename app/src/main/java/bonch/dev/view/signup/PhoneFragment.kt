@@ -15,13 +15,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import bonch.dev.Constant.Companion.PHONE_VIEW
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.signup.SignupPresenter
-import bonch.dev.request.signup.RetrofitNetwork.Companion.makeRetrofitService
-import bonch.dev.request.signup.RetrofitService
+import bonch.dev.network.signup.RetrofitService
+import bonch.dev.utils.Constants.PHONE_VIEW
+import bonch.dev.utils.NetworkUtil.makeRetrofitService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

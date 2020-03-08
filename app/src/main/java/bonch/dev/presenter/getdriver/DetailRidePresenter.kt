@@ -1,13 +1,12 @@
 package bonch.dev.presenter.getdriver
 
 import android.content.Context
-import android.os.Bundle
 import androidx.fragment.app.Fragment
-import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
-import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
-import bonch.dev.Coordinator.Companion.openActivity
 import bonch.dev.model.getdriver.SearchPlace
 import bonch.dev.model.getdriver.pojo.Ride
+import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
+import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
+import bonch.dev.utils.Coordinator.openActivity
 import bonch.dev.view.getdriver.DetailRideView
 import com.yandex.mapkit.geometry.Point
 
@@ -91,8 +90,8 @@ class DetailRidePresenter(val context: Context, val detailRideView: DetailRideVi
     }
 
 
-    fun removeRoute(){
-        if(routing != null){
+    fun removeRoute() {
+        if (routing != null) {
             routing!!.removeRoute()
         }
     }

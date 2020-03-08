@@ -11,7 +11,7 @@ class GetDriverModel(
     private var autocomplete: Autocomplete? = null
     private var geocoder: Geocoder? = null
 
-    fun requestSuggest(query: String, userLocationPoint: Point) {
+    fun requestSuggest(query: String, userLocationPoint: Point?) {
 
         if (autocomplete == null) {
             autocomplete = Autocomplete(this, userLocationPoint)

@@ -10,19 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import bonch.dev.Constant.Companion.DETAIL_RIDE_VIEW
-import bonch.dev.Constant.Companion.GET_DRIVER_VIEW
-import bonch.dev.Constant.Companion.REGULAR_DRIVING_VIEW
+import bonch.dev.utils.Constants.GET_DRIVER_VIEW
+import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
+import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.GetDriverView
-import bonch.dev.view.regulardrive.RegularDriveView
-import bonch.dev.view.signup.PhoneFragment
 
 
 class MainActivity : AppCompatActivity() {
-
-    private val LOCATION_PERMISSION_NAME = "android.permission.ACCESS_FINE_LOCATION"
-    private val LOCATION_PERMISSION_REQUEST = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

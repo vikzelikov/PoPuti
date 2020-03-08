@@ -11,8 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
-import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
@@ -20,19 +18,20 @@ import bonch.dev.model.getdriver.pojo.PaymentCard
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.presenter.getdriver.DetailRidePresenter
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
+import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
+import bonch.dev.utils.Constants.BANK_IMG
+import bonch.dev.utils.Constants.CARD_NUMBER
+import bonch.dev.utils.Constants.CVC
+import bonch.dev.utils.Constants.OFFER_PRICE
+import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
+import bonch.dev.utils.Constants.VALID_UNTIL
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 
 class DetailRideView(val getDriverView: GetDriverView, val root: View) {
 
-    private val OFFER_PRICE = "OFFER_PRICE"
-    private val CARD_NUMBER = "CARD_NUMBER"
-    private val VALID_UNTIL = "VALID_UNTIL"
-    private val BANK_IMG = "BANK_IMG"
-    private val CVC = "CVC"
-
-    private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
-    private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
     private var detailRidePresenter: DetailRidePresenter? = null
 
