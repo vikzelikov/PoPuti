@@ -31,8 +31,9 @@ class MainFragment : Fragment() {
         val root = inflater.inflate(R.layout.main_fragment, container, false)
         val navView: BottomNavigationView = root.findViewById(R.id.nav_view)
 
-        initialize(navView)
+        initialize()
 
+        getDriver!!.navView = navView
         active = getDriver
         navView.selectedItemId = R.id.get_driver
 
@@ -76,7 +77,7 @@ class MainFragment : Fragment() {
         }
 
 
-    private fun initialize(navView: View) {
+    private fun initialize() {
         fm = (activity as MainActivity).supportFragmentManager
 
         if (regularDriving == null) {
@@ -84,7 +85,7 @@ class MainFragment : Fragment() {
         }
 
         if (getDriver == null) {
-            getDriver = GetDriverView(navView)
+            getDriver = GetDriverView()
         }
 
         if (profile == null) {

@@ -38,11 +38,12 @@ class PaymentsListAdapter(
         holder.bind(post)
 
         holder.itemView.setOnClickListener {
+            val detailRidePresenter = detailRideView.detailRidePresenter
             removeTickSelected()
 
             setTickSelected(holder.itemView)
             post.isSelect = true
-            detailRideView.setSelectedBankCard(post)
+            detailRidePresenter!!.setSelectedBankCard(post)
         }
 
         if (position == 0) {

@@ -17,6 +17,7 @@ import bonch.dev.R
 import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.utils.Constants.API_KEY
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -32,16 +33,16 @@ import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider.fromResource
 import kotlinx.android.synthetic.main.get_driver_fragment.*
-import kotlinx.android.synthetic.main.get_driver_fragment.view.*
 import kotlinx.android.synthetic.main.get_driver_layout.*
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
 
-class GetDriverView(val navView: View) : Fragment(), UserLocationObjectListener, CameraListener {
+class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     var mapView: MapView? = null
     var addressesListAdapter: AddressesListAdapter? = null
     var bottomSheetBehavior: BottomSheetBehavior<*>? = null
     var getDriverPresenter: GetDriverPresenter? = null
+    var navView: BottomNavigationView? = null
     private var userLocationLayer: UserLocationLayer? = null
 
     init {
@@ -267,7 +268,6 @@ class GetDriverView(val navView: View) : Fragment(), UserLocationObjectListener,
         super.onActivityResult(requestCode, resultCode, data)
 
         getDriverPresenter?.detailRideView?.onActivityResult(
-            context!!,
             requestCode,
             resultCode,
             data

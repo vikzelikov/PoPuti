@@ -26,297 +26,170 @@ import bonch.dev.utils.Constants.OFFER_PRICE
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.VALID_UNTIL
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.add_bank_card_activity.*
+import kotlinx.android.synthetic.main.detail_ride_layout.*
+import kotlinx.android.synthetic.main.detail_ride_layout.add_card
 
 
-class DetailRideView(val getDriverView: GetDriverView, val root: View) {
+class DetailRideView(val getDriverView: GetDriverView) {
 
     var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    var detailRidePresenter: DetailRidePresenter? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
-    private var detailRidePresenter: DetailRidePresenter? = null
 
-    private lateinit var getDriverBtn: Button
-    private lateinit var backBtn: ImageButton
-    private lateinit var offerPrice: TextView
-    private lateinit var addCard: TextView
-    private lateinit var commentBtn: TextView
-    private lateinit var commentDoneBtn: TextView
-    private lateinit var commentBackBtn: ImageView
-    private lateinit var paymentMethod: TextView
-    private lateinit var cardsBottomSheet: LinearLayout
-    private lateinit var commentBottomSheet: LinearLayout
-    private lateinit var recyclerPayments: RecyclerView
-    private lateinit var commentText: EditText
-    private lateinit var commentMinText: TextView
-    private lateinit var toAddress: TextView
-    private lateinit var fromAddress: TextView
-    private lateinit var selectedPaymentMethod: LinearLayout
-    private lateinit var paymentMethodImg: ImageView
-    private lateinit var cardNumberText: TextView
-    private lateinit var priceLabelColor: TextView
-    private lateinit var onMapView: View
-    private lateinit var mainInfoLayout: LinearLayout
+
+    init {
+        if (detailRidePresenter == null) {
+            detailRidePresenter = DetailRidePresenter(this)
+        }
+    }
 
 
     fun onCreateView(fromAddress: Ride, toAddress: Ride) {
         val activity = getDriverView.activity!!
+        val root = getDriverView.view!!
 
-        initViews(root)
-
-        setListener(activity, root)
+        setListeners(activity, root)
 
         setBottomSheet(activity, root)
 
-        initialize()
-
-        if (detailRidePresenter != null) {
-            detailRidePresenter!!.receiveAddresses(fromAddress, toAddress)
-        }
+        detailRidePresenter?.receiveAddresses(fromAddress, toAddress)
 
         initBankCardRecycler()
     }
 
 
-    fun onActivityResult(context: Context, requestCode: Int, resultCode: Int, data: Intent?) {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == OFFER_PRICE_VIEW && resultCode == RESULT_OK) {
-            val strPrice = data!!.getStringExtra(OFFER_PRICE)
-
-            offerPrice.textSize = 22f
-            offerPrice.setTextColor(Color.parseColor("#000000"))
-            offerPrice.typeface = Typeface.DEFAULT_BOLD
-
-            if (isPositiveOfferPrice(strPrice!!.toInt())) {
-                priceLabelColor.text = getDriverView.getString(R.string.positive)
-                priceLabelColor.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_offer_price_positive)
-            } else {
-                priceLabelColor.text = getDriverView.getString(R.string.negative)
-                priceLabelColor.background =
-                    ContextCompat.getDrawable(context, R.drawable.bg_offer_price_negative)
-            }
-
-            priceLabelColor.visibility = View.VISIBLE
-            offerPrice.text = strPrice
+            detailRidePresenter?.offerPriceDone(getView().context!!, data)
         }
 
         if (requestCode == ADD_BANK_CARD_VIEW && resultCode == RESULT_OK) {
-            val cardNumber = data!!.getStringExtra(CARD_NUMBER)
-            val validUntil = data.getStringExtra(VALID_UNTIL)
-            val cvc = data.getStringExtra(CVC)
-            //TODO
-            val img = data.getIntExtra(BANK_IMG, R.drawable.ic_visa)
-
-            val paymentCard = PaymentCard(cardNumber, validUntil, cvc, img)
-
-            paymentsListAdapter!!.list.add(paymentCard)
-            paymentsListAdapter!!.notifyDataSetChanged()
-
+            detailRidePresenter?.addBankCardDone(data)
         }
     }
 
 
-    private fun isPositiveOfferPrice(price: Int): Boolean {
-        var isPositive = false
-        //TODO
-
-        if (price > 300) {
-            isPositive = true
-        }
-
-        return isPositive
-    }
-
-
-    fun setSelectedBankCard(paymentCard: PaymentCard) {
-        selectedPaymentMethod.visibility = View.VISIBLE
-        paymentMethod.visibility = View.GONE
-
-        cardNumberText.text = paymentCard.numberCard
-        if (paymentCard.img != null) {
-            paymentMethodImg.setImageResource(paymentCard.img!!)
-        }
-
-        cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-    }
+    private fun setListeners(activity: FragmentActivity, root: View) {
+        val offerPrice = getView().offer_price
+        val addCard = getView().add_card
+        val commentBtn = getView().comment_btn
+        val commentText = getView().comment_text
+        val commentMinText = getView().comment_min_text
+        val commentBackBtn = getView().comment_back_btn
+        val commentDone = getView().comment_done
+        val paymentMethod = getView().payment_method
+        val selectedPaymentMethod = getView().selected_payment_method
+        val onMapView = getView().on_map_view
 
 
-    private fun setListener(activity: FragmentActivity, root: View) {
         offerPrice.setOnClickListener {
-            if (detailRidePresenter != null) {
-                detailRidePresenter!!.clickOfferPriceBtn(getDriverView)
-            }
+            detailRidePresenter?.offerPrice(getDriverView)
+
         }
 
         addCard.setOnClickListener {
-            if (detailRidePresenter != null) {
-                detailRidePresenter!!.clickAddBankCardBtn(getDriverView)
-            }
+            detailRidePresenter?.addBankCard(getDriverView)
         }
 
 
         commentBtn.setOnClickListener {
-            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-
-            if (!commentText.isFocused) {
-                commentText.requestFocus()
-                showKeyboard(activity)
-            }
+            detailRidePresenter?.commentStart(activity)
         }
 
         commentBackBtn.setOnClickListener {
-            hideKeyboard(activity, root)
-            commentText.clearFocus()
-            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            detailRidePresenter?.commentDone(activity, root)
         }
 
-        commentDoneBtn.setOnClickListener {
+        commentDone.setOnClickListener {
             val comment = commentText.text.toString()
 
             if (comment.trim().isNotEmpty()) {
                 commentMinText.text = comment
             }
 
-            hideKeyboard(getDriverView.activity!!, root)
-            commentText.clearFocus()
-            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            detailRidePresenter?.commentDone(activity, root)
         }
 
         paymentMethod.setOnClickListener {
-            cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+            detailRidePresenter?.getPaymentMethods()
         }
 
         selectedPaymentMethod.setOnClickListener {
-            cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+            detailRidePresenter?.getPaymentMethods()
         }
 
         onMapView.setOnClickListener {
-            hideKeyboard(activity, root)
-            commentText.clearFocus()
-
-            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            detailRidePresenter?.commentDone(activity, root)
         }
-
     }
 
 
     fun setAddresses(fromAddress: String, toAddress: String) {
-        this.fromAddress.text = fromAddress
-        this.toAddress.text = toAddress
+        getView().from_address.text = fromAddress
+        getView().to_address.text = toAddress
     }
 
 
     private fun setBottomSheet(activity: FragmentActivity, root: View) {
+        cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().cards_bottom_sheet)
+        commentBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().comment_bottom_sheet)
+
         commentBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                if (slideOffset > 0) {
-                    onMapView.alpha = slideOffset * 0.8f
-                }
+                detailRidePresenter?.onSlideBottomSheet(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    hideKeyboard(activity, root)
-                    commentText.clearFocus()
-                }
-
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    onMapView.visibility = View.GONE
-                    mainInfoLayout.elevation = 30f
-                } else {
-                    onMapView.visibility = View.VISIBLE
-                    mainInfoLayout.elevation = 0f
-                }
+                detailRidePresenter?.onStateChangedBottomSheet(newState, activity, root)
             }
-
         })
 
         cardsBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                if (slideOffset > 0) {
-                    onMapView.alpha = slideOffset * 0.8f
-                }
+                detailRidePresenter?.onSlideBottomSheet(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    hideKeyboard(activity, root)
-                    commentText.clearFocus()
-                }
-
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    onMapView.visibility = View.GONE
-                    mainInfoLayout.elevation = 30f
-                } else {
-                    onMapView.visibility = View.VISIBLE
-                    mainInfoLayout.elevation = 0f
-                }
+                detailRidePresenter?.onStateChangedBottomSheet(newState, activity, root)
             }
         })
     }
 
 
-    private fun initialize() {
-        if (detailRidePresenter == null) {
-            detailRidePresenter = DetailRidePresenter(getDriverView.context!!, this)
-        }
-    }
-
-
-    private fun initViews(root: View) {
-        //backBtn = root.findViewById(R.id.back_btn)
-        getDriverBtn = root.findViewById(R.id.get_driver_btn)
-        offerPrice = root.findViewById(R.id.offer_price)
-        commentBtn = root.findViewById(R.id.comment_btn)
-        commentDoneBtn = root.findViewById(R.id.comment_done)
-        commentBackBtn = root.findViewById(R.id.comment_back_btn)
-        commentText = root.findViewById(R.id.comment_text)
-        commentMinText = root.findViewById(R.id.comment_min_text)
-        paymentMethod = root.findViewById(R.id.payment_method)
-        cardsBottomSheet = root.findViewById(R.id.cards_bottom_sheet)
-        commentBottomSheet = root.findViewById(R.id.comment_bottom_sheet)
-        recyclerPayments = root.findViewById(R.id.payments_list)
-        addCard = root.findViewById(R.id.add_card)
-        fromAddress = root.findViewById(R.id.fromAddress)
-        toAddress = root.findViewById(R.id.toAddress)
-        selectedPaymentMethod = root.findViewById(R.id.selected_payment_method)
-        paymentMethodImg = root.findViewById(R.id.payment_method_img)
-        cardNumberText = root.findViewById(R.id.number_card)
-        priceLabelColor = root.findViewById(R.id.price_label_color)
-        onMapView = root.findViewById(R.id.on_map_view_detail_ride)
-        mainInfoLayout = root.findViewById(R.id.main_info_layout)
-
-        cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(cardsBottomSheet)
-        commentBottomSheetBehavior = BottomSheetBehavior.from<View>(commentBottomSheet)
-    }
-
-
     private fun initBankCardRecycler() {
+        val paymentList = getView().payments_list
         val list = arrayListOf<PaymentCard>()
 
         list.add(PaymentCard(null, null, null, R.drawable.ic_google_pay))
         paymentsListAdapter =
             PaymentsListAdapter(
-                recyclerPayments,
+                paymentList,
                 list,
                 getDriverView.context!!,
                 this
             )
 
-        recyclerPayments.layoutManager =
+        paymentList.layoutManager =
             LinearLayoutManager(getDriverView.context, LinearLayoutManager.VERTICAL, false)
-        recyclerPayments.adapter = paymentsListAdapter
+        paymentList.adapter = paymentsListAdapter
+
+        detailRidePresenter!!.paymentsListAdapter = paymentsListAdapter
     }
 
 
     fun removeRoute() {
-        if (detailRidePresenter != null) {
-            detailRidePresenter!!.removeRoute()
-        }
+        detailRidePresenter?.removeRoute()
+    }
+
+
+    fun getView(): GetDriverView {
+        return getDriverView
     }
 
 }

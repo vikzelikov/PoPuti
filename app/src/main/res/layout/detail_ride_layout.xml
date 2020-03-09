@@ -64,7 +64,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/fromAddress"
+                        android:id="@+id/from_address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@null"
@@ -94,7 +94,7 @@
                     android:weightSum="1">
 
                     <TextView
-                        android:id="@+id/toAddress"
+                        android:id="@+id/to_address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@null"
@@ -377,7 +377,7 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <View
-        android:id="@+id/on_map_view_detail_ride"
+        android:id="@+id/on_map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0"
