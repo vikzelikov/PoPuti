@@ -134,69 +134,55 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
     }
 
 
-    fun touchFromAddress() {
+    fun touchAddress(isFrom: Boolean) {
         val fromAddress = getView().from_adr
-        val btnMapFrom = getView().btn_map_from
-        val btnMapTo = getView().btn_map_to
-        val toCross = getView().to_cross
-        val fromCross = getView().from_cross
-
-        if (getView().to_adr.isFocused) {
-            addressesListAdapter?.list?.clear()
-            addressesListAdapter?.notifyDataSetChanged()
-        }
-
-        getView().bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-
-        if (!fromAddress.isFocused) {
-            fromAddress.requestFocus()
-            showKeyboard(getActivity())
-        }
-
-        btnMapFrom.visibility = View.VISIBLE
-        btnMapTo.visibility = View.GONE
-        toCross.visibility = View.GONE
-
-        if (fromAddress.text.isNotEmpty()) {
-            fromCross.visibility = View.VISIBLE
-        } else {
-            fromCross.visibility = View.GONE
-        }
-    }
-
-
-    fun touchToAddress() {
         val toAddress = getView().to_adr
         val btnMapFrom = getView().btn_map_from
         val btnMapTo = getView().btn_map_to
         val toCross = getView().to_cross
         val fromCross = getView().from_cross
 
-        if (toAddress.isFocused) {
-            addressesListAdapter?.list?.clear()
-            addressesListAdapter?.notifyDataSetChanged()
+        if (isFrom){
+            if (toAddress.isFocused) {
+                addressesListAdapter?.list?.clear()
+                addressesListAdapter?.notifyDataSetChanged()
+                fromAddress.requestFocus()
+                showKeyboard(getActivity())
+            }
+
+            btnMapFrom.visibility = View.VISIBLE
+            btnMapTo.visibility = View.GONE
+            toCross.visibility = View.GONE
+
+            if (fromAddress.text.isNotEmpty()) {
+                fromCross.visibility = View.VISIBLE
+            } else {
+                fromCross.visibility = View.GONE
+            }
+        }else{
+            if (fromAddress.isFocused) {
+                addressesListAdapter?.list?.clear()
+                addressesListAdapter?.notifyDataSetChanged()
+                toAddress.requestFocus()
+                showKeyboard(getActivity())
+            }
+
+            btnMapFrom.visibility = View.GONE
+            btnMapTo.visibility = View.VISIBLE
+            fromCross.visibility = View.GONE
+
+            if (toAddress.text.isNotEmpty()) {
+                toCross.visibility = View.VISIBLE
+            } else {
+                toCross.visibility = View.GONE
+            }
         }
 
         getView().bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-
-        if (!getView().to_adr.isFocused) {
-            getView().to_adr.requestFocus()
-            showKeyboard(getActivity())
-        }
-
-        btnMapFrom.visibility = View.GONE
-        btnMapTo.visibility = View.VISIBLE
-        fromCross.visibility = View.GONE
-
-        if (toAddress.text.isNotEmpty()) {
-            toCross.visibility = View.VISIBLE
-        } else {
-            toCross.visibility = View.GONE
-        }
     }
 
 
-    fun touchFromMapBtn() {
+    fun touchMapBtn(isFrom: Boolean) {
         val fromAddress = getView().from_adr
         val mainAddressesLayout = getView().main_addresses_layout
         val addressMapMarkerLayout = getView().address_map_marker_layout
@@ -208,41 +194,26 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
         mainAddressesLayout.visibility = View.GONE
         addressMapMarkerLayout.visibility = View.VISIBLE
 
-        isFromMapSearch = true
-        addressMapText.isSelected = true
-        centerPosition.setImageResource(R.drawable.ic_map_marker)
-        circleMarker.setImageResource(R.drawable.ic_input_marker_from)
-        addressMapMarkerBtn.setBackgroundResource(R.drawable.bg_btn_blue)
+        if(isFrom){
+            isFromMapSearch = true
+            addressMapText.isSelected = true
+            centerPosition.setImageResource(R.drawable.ic_map_marker)
+            circleMarker.setImageResource(R.drawable.ic_input_marker_from)
+            addressMapMarkerBtn.setBackgroundResource(R.drawable.bg_btn_blue)
+        }else{
+            isFromMapSearch = false
+            addressMapText.isSelected = true
+            centerPosition.setImageResource(R.drawable.ic_map_marker_black)
+            circleMarker.setImageResource(R.drawable.ic_input_marker_to)
+            addressMapMarkerBtn.setBackgroundResource(R.drawable.bg_btn_black)
+        }
 
         getView().bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         fromAddress.clearFocus()
         hideKeyboard(getActivity(), getView().view!!)
     }
 
-
-    fun touchToMapBtn() {
-        val toAddress = getView().to_adr
-        val mainAddressesLayout = getView().main_addresses_layout
-        val addressMapMarkerLayout = getView().address_map_marker_layout
-        val addressMapMarkerBtn = getView().address_map_marker_btn
-        val circleMarker = getView().circle_marker
-        val centerPosition = getView().center_position
-        val addressMapText = getView().address_map_text
-
-        mainAddressesLayout.visibility = View.GONE
-        addressMapMarkerLayout.visibility = View.VISIBLE
-
-        isFromMapSearch = false
-        addressMapText.isSelected = true
-        centerPosition.setImageResource(R.drawable.ic_map_marker_black)
-        circleMarker.setImageResource(R.drawable.ic_input_marker_to)
-        addressMapMarkerBtn.setBackgroundResource(R.drawable.bg_btn_black)
-
-        getView().bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-        toAddress.clearFocus()
-        hideKeyboard(getActivity(), getView().view!!)
-    }
-
+    //TODO ask DANIL
 
     fun touchAddressMapMarkerBtn() {
         if (fromAdr != null && toAdr != null) {
@@ -298,9 +269,9 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
                     (it.bottomSheetBehavior as MBottomSheet<*>).swipeEnabled = false
                 }
             }
-        } else
+        } else{
             getView().on_map_view.visibility = View.VISIBLE
-
+        }
     }
 
 
@@ -346,6 +317,7 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
                 toAddress.setText("")
                 //clear routing from map
                 clearMapObjects()
+
                 isMapSearchGestures = true
                 toAdr = null
                 detailRideView = null

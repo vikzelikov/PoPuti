@@ -187,13 +187,13 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         })
 
         from_adr.setOnTouchListener { _, _ ->
-            getDriverPresenter?.touchFromAddress()
+            getDriverPresenter?.touchAddress(true)
 
             false
         }
 
         to_adr.setOnTouchListener { _, _ ->
-            getDriverPresenter?.touchToAddress()
+            getDriverPresenter?.touchAddress(false)
 
             false
         }
@@ -208,11 +208,11 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         }
 
         btn_map_from.setOnClickListener {
-            getDriverPresenter?.touchFromMapBtn()
+            getDriverPresenter?.touchMapBtn(true)
         }
 
         btn_map_to.setOnClickListener {
-            getDriverPresenter?.touchToMapBtn()
+            getDriverPresenter?.touchMapBtn(false)
         }
 
         address_map_marker_btn.setOnClickListener {

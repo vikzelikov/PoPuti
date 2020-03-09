@@ -26,6 +26,7 @@ import bonch.dev.view.getdriver.GetDriverView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.detail_ride_layout.*
+import kotlinx.android.synthetic.main.get_driver_fragment.*
 
 class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
@@ -199,7 +200,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     fun commentDone(activity: FragmentActivity, root: View) {
         val commentText = getView().comment_text
 
-        commentText.clearFocus()
+        commentText?.clearFocus()
         hideKeyboard(activity, root)
         detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -207,7 +208,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
 
     fun onSlideBottomSheet(slideOffset: Float){
-        val onMapView = getView().on_map_view
+        val onMapView = getView().on_map_view_detail
 
         if (slideOffset > 0) {
             onMapView.alpha = slideOffset * 0.8f
@@ -217,7 +218,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
     fun onStateChangedBottomSheet(newState: Int, activity: FragmentActivity, root: View){
         val commentText = getView().comment_text
-        val onMapView = getView().on_map_view
+        val onMapView = getView().on_map_view_detail
         val mainInfoLayout = getView().main_info_layout
 
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {

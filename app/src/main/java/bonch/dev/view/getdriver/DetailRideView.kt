@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.add_bank_card_activity.*
 import kotlinx.android.synthetic.main.detail_ride_layout.*
 import kotlinx.android.synthetic.main.detail_ride_layout.add_card
+import kotlinx.android.synthetic.main.get_driver_fragment.*
 
 
 class DetailRideView(val getDriverView: GetDriverView) {
@@ -81,7 +82,7 @@ class DetailRideView(val getDriverView: GetDriverView) {
         val commentDone = getView().comment_done
         val paymentMethod = getView().payment_method
         val selectedPaymentMethod = getView().selected_payment_method
-        val onMapView = getView().on_map_view
+        val onMapView = getView().on_map_view_detail
 
 
         offerPrice.setOnClickListener {
