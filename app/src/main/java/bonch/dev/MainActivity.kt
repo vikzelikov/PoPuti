@@ -15,6 +15,7 @@ import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.GetDriverView
+import bonch.dev.view.signup.PhoneFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, MainFragment())
+            .add(R.id.fragment_container, PhoneFragment())
             .commit()
 
     }

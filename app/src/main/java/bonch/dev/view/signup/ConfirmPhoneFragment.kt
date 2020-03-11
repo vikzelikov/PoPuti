@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +19,17 @@ import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
+import bonch.dev.network.signup.RetrofitService
 import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
+import bonch.dev.utils.NetworkUtil.makeRetrofitService
 import bonch.dev.view.EditTextCode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import retrofit2.Response
 
 
 class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) : Fragment(),
@@ -250,10 +259,36 @@ class ConfirmPhoneFragment(var startHeight: Int = 0, var screenHeight: Int = 0) 
         val code3 = code3EditText.text.toString().trim()
         val code4 = code4EditText.text.toString().trim()
 
-        val code = code1 + code2 + code3 + code4
+        var code = code1 + code2 + code3 + code4
         if (code == "0000") {
             result = true
         }
+
+        //test code
+
+        var service: RetrofitService? = null
+        var response: Response<*>
+
+        if (service == null) {
+            service = makeRetrofitService()
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            response = service.checkCode(phone, code)
+            println(response)
+            try {
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        println(response.message())
+                    } else {
+                        println(response.code())
+                    }
+                }
+            } catch (err: HttpException) {
+                Log.e("Retrofit", "${err.printStackTrace()}")
+            }
+        }
+
 
         return result
     }

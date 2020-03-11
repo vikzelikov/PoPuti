@@ -38,7 +38,8 @@ class DetailRideView(val getDriverView: GetDriverView) {
     var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var detailRidePresenter: DetailRidePresenter? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
-
+    private val from = getView().view!!.findViewById<TextView>(R.id.from_address)
+    private val to = getView().view!!.findViewById<TextView>(R.id.to_address)
 
     init {
         if (detailRidePresenter == null) {
@@ -128,8 +129,8 @@ class DetailRideView(val getDriverView: GetDriverView) {
 
 
     fun setAddresses(fromAddress: String, toAddress: String) {
-        getView().from_address.text = fromAddress
-        getView().to_address.text = toAddress
+        from.text = fromAddress
+        to.text = toAddress
     }
 
 

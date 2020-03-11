@@ -14,8 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
-        tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.getdriver.AddBankCardView"></activity>
+        tools:targetApi="m">
+        <activity android:name=".view.getdriver.AddBankCardView" />
         <activity android:name=".view.getdriver.OfferPriceView" />
 
         <meta-data
