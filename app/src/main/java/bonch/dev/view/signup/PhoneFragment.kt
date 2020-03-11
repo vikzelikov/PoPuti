@@ -47,7 +47,6 @@ class PhoneFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.phone_signup_fragment, container, false)
 
-
         initViews(root)
 
         setListener(root)
