@@ -47,7 +47,6 @@ class AddressesListAdapter(
             if (fromAdrView.isFocused) {
                 fromAdrView.setText(list[position].address)
                 fromAdrView.setSelection(fromAdrView.text.length)
-
                 getDriverPresenter!!.fromAdr = list[position]
             }
 

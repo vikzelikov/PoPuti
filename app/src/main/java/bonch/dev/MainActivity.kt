@@ -15,6 +15,7 @@ import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.GetDriverView
+import bonch.dev.view.regulardrive.RegularDriveView
 import bonch.dev.view.signup.PhoneFragment
 
 

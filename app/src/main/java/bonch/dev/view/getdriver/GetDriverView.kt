@@ -36,7 +36,7 @@ import kotlinx.android.synthetic.main.get_driver_fragment.*
 import kotlinx.android.synthetic.main.get_driver_layout.*
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
 
-class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
+class GetDriverView (val mainRoot: View) : Fragment(), UserLocationObjectListener, CameraListener {
 
     var mapView: MapView? = null
     var addressesListAdapter: AddressesListAdapter? = null

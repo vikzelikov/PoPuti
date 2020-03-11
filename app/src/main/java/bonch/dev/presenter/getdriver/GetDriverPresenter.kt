@@ -22,6 +22,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 
+
 class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
     private var view: View? = null

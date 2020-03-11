@@ -20,7 +20,6 @@
         android:background="@android:color/black"
         android:visibility="gone" />
 
-
     <include
         android:id="@+id/get_driver_layout"
         layout="@layout/get_driver_layout" />

@@ -1,35 +1,22 @@
 package bonch.dev.view.getdriver
 
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.view.View
 import android.widget.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.MainActivity.Companion.hideKeyboard
-import bonch.dev.MainActivity.Companion.showKeyboard
+
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.PaymentCard
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.presenter.getdriver.DetailRidePresenter
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
-import bonch.dev.utils.Constants.BANK_IMG
-import bonch.dev.utils.Constants.CARD_NUMBER
-import bonch.dev.utils.Constants.CVC
-import bonch.dev.utils.Constants.OFFER_PRICE
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
-import bonch.dev.utils.Constants.VALID_UNTIL
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.add_bank_card_activity.*
 import kotlinx.android.synthetic.main.detail_ride_layout.*
-import kotlinx.android.synthetic.main.detail_ride_layout.add_card
-import kotlinx.android.synthetic.main.get_driver_fragment.*
 
 
 class DetailRideView(val getDriverView: GetDriverView) {
@@ -40,6 +27,7 @@ class DetailRideView(val getDriverView: GetDriverView) {
     private var paymentsListAdapter: PaymentsListAdapter? = null
     private val from = getView().view!!.findViewById<TextView>(R.id.from_address)
     private val to = getView().view!!.findViewById<TextView>(R.id.to_address)
+
 
     init {
         if (detailRidePresenter == null) {
@@ -193,5 +181,6 @@ class DetailRideView(val getDriverView: GetDriverView) {
     fun getView(): GetDriverView {
         return getDriverView
     }
+
 
 }

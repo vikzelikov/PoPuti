@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
@@ -29,6 +30,20 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.main_fragment, container, false)
+
+
+        if (regularDriving == null) {
+            regularDriving = RegularDriveView()
+        }
+
+        if (getDriver == null) {
+            getDriver = GetDriverView(root)
+        }
+
+        if (profile == null) {
+            profile = ProfileView()
+        }
+
         val navView: BottomNavigationView = root.findViewById(R.id.nav_view)
 
         initialize()
@@ -84,13 +99,6 @@ class MainFragment : Fragment() {
             regularDriving = RegularDriveView()
         }
 
-        if (getDriver == null) {
-            getDriver = GetDriverView()
-        }
-
-        if (profile == null) {
-            profile = ProfileView()
-        }
     }
 
 }
