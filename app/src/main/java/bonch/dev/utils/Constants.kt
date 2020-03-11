@@ -10,7 +10,7 @@ object Constants {
     const val REGULAR_DRIVING_VIEW = 2
     const val GET_DRIVER_VIEW = 3
     const val PROFILE_VIEW = 4
-    //const val DETAIL_RIDE_VIEW = 5
+    const val DETAIL_RIDE_VIEW = 5
     const val OFFER_PRICE_VIEW = 6
     const val ADD_BANK_CARD_VIEW = 7
     const val PHONE_VIEW = 8
