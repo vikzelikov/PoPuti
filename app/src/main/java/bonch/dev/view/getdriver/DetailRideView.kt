@@ -14,8 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.Constant.Companion.ADD_BANK_CARD_VIEW
+import bonch.dev.Constant.Companion.MAIN_FRAGMENT
 import bonch.dev.Constant.Companion.OFFER_PRICE_VIEW
 import bonch.dev.Coordinator
+import bonch.dev.Coordinator.Companion.replaceFragment
 import bonch.dev.MainActivity
 import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.MainActivity.Companion.showKeyboard
@@ -42,13 +44,11 @@ class DetailRideView : Fragment() {
     private val BANK_IMG = "BANK_IMG"
     private val CVC = "CVC"
 
-
     var mapView: MapView? = null
     private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
     private var detailRidePresenter: DetailRidePresenter? = null
-
 
     private lateinit var getDriverBtn: Button
     private lateinit var backBtn: ImageButton
@@ -84,7 +84,6 @@ class DetailRideView : Fragment() {
         SearchFactory.initialize(context)
         DirectionsFactory.initialize(context)
 
-        //val mapKit = MapKitFactory.getInstance()
         val root = inflater.inflate(R.layout.detail_ride_fragment, container, false)
         initViews(root)
 
@@ -344,12 +343,16 @@ class DetailRideView : Fragment() {
     }
 
 
-    private fun moveCamera(point: Point) {
-        mapView!!.map.move(
-            CameraPosition(point, 35.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
+    fun backPressed(): Boolean {
+        var result = true
+
+        if (cardsBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
+            cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            result = false
+        }
+
+        return result
     }
+
 
 }

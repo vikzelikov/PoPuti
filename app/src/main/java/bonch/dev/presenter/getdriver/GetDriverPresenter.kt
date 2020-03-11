@@ -1,13 +1,17 @@
 package bonch.dev.presenter.getdriver
 
 import android.os.Bundle
+import android.view.View
 import bonch.dev.Constant
 import bonch.dev.Coordinator
 import bonch.dev.MainActivity
+import bonch.dev.R
 import bonch.dev.model.getdriver.GetDriverModel
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.view.getdriver.GetDriverView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.yandex.mapkit.geometry.Point
+import kotlinx.android.synthetic.main.main_fragment.view.*
 
 class GetDriverPresenter(val getDriverView: GetDriverView) {
 
@@ -19,17 +23,17 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     private val TO = "TO"
 
     fun addressesDone() {
-//TODO
+
         fromAdr = addressesListAdapter!!.fromAdr
         toAdr = addressesListAdapter.toAdr
 
-        if (fromAdr != null && toAdr != null) {
+        if (true) {
             val bundle = Bundle()
             bundle.putParcelable(FROM, fromAdr)
             bundle.putParcelable(TO, toAdr)
-
-            val fm = (getDriverView.activity as MainActivity).supportFragmentManager
-            Coordinator.replaceFragment(Constant.DETAIL_RIDE_VIEW, bundle, fm)
+            getDriverView.mainRoot.findViewById<BottomNavigationView>(R.id.nav_view).visibility = View.GONE
+//            val fm = (getDriverView.activity as MainActivity).supportFragmentManager
+//            Coordinator.replaceFragment(Constant.DETAIL_RIDE_VIEW, bundle, fm)
         }
     }
 

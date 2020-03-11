@@ -64,11 +64,12 @@ class AddressesListAdapter(
 
             if (toAddressView.isFocused) {
                 toAddressView.setText(list[position].address)
+                toAddressView.setSelection(toAddressView.text.length)
 
                 toAdr = list[position]
-
-                getDriverView.getDriverPresenter!!.addressesDone()
             }
+
+            getDriverView.getDriverPresenter!!.addressesDone()
 
         }
 
@@ -91,7 +92,6 @@ class AddressesListAdapter(
             address.text = post.address
             city.text = post.city
         }
-
     }
 
 }

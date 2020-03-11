@@ -38,7 +38,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 
-class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
+class GetDriverView (val mainRoot: View) : Fragment(), UserLocationObjectListener, CameraListener {
 
     private val API_KEY = "6e2e73e8-4a73-42f5-9bf1-35259708af3c"
 
@@ -48,6 +48,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     private var bottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var userLocationLayer: UserLocationLayer? = null
 
+    var isMapSearchGestures = false
     var isFromMapSearch = true
 
     lateinit var toAddress: EditText
@@ -74,7 +75,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        //init map
         MapKitFactory.setApiKey(API_KEY)
         MapKitFactory.initialize(context)
         SearchFactory.initialize(context)
@@ -89,13 +90,17 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             getDriverPresenter = GetDriverPresenter(this)
         }
 
+        //for correct user show position
         mapView!!.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
 
+        //init user location service
         userLocationLayer = mapKit.createUserLocationLayer(mapView!!.mapWindow)
         userLocationLayer!!.isHeadingEnabled = false
         userLocationLayer!!.isVisible = true
         userLocationLayer!!.setObjectListener(this)
         mapView!!.map.addCameraListener(this)
+
+        mapView!!.map.isRotateGesturesEnabled = false
 
         setListeners(root)
 
@@ -107,6 +112,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
+    //center screen position
     override fun onCameraPositionChanged(
         p0: Map,
         p1: CameraPosition,
@@ -127,7 +133,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     override fun onObjectRemoved(view: UserLocationView) {}
 
-
+    //add user location icon
     override fun onObjectAdded(userLocationView: UserLocationView) {
         val pinIcon = userLocationView.pin.useCompositeIcon()
         //TODO change to svg
@@ -281,6 +287,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             addressesMapMarkerLayout.visibility = View.VISIBLE
 
             isFromMapSearch = true
+            isMapSearchGestures = true
+            addressMapEditText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker)
             circleMarker.setImageResource(R.drawable.input_marker_from)
             addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_blue)
@@ -295,6 +303,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             addressesMapMarkerLayout.visibility = View.VISIBLE
 
             isFromMapSearch = false
+            isMapSearchGestures = true
+            addressMapEditText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker_black)
             circleMarker.setImageResource(R.drawable.input_marker_to)
             addressMapMarkerBtn.setBackgroundResource(R.drawable.btn_style_black)
@@ -302,19 +312,17 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             toAddress.clearFocus()
             hideKeyboard(activity!!, root)
-
-
         }
 
         addressMapMarkerBtn.setOnClickListener {
             if (addressesListAdapter!!.fromAdr != null && addressesListAdapter!!.toAdr != null) {
+                //addresses filled
                 getDriverPresenter!!.addressesDone()
             } else {
                 centerPosition.setImageResource(R.drawable.ic_map_marker)
                 containerAddresses.visibility = View.VISIBLE
                 addressesMapMarkerLayout.visibility = View.GONE
                 bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-                fromAddress.requestFocus()
             }
         }
     }
@@ -331,6 +339,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
+    //move Map camera
     fun moveCamera(point: Point) {
         mapView!!.map.move(
             CameraPosition(point, 35.0f, 0.0f, 0.0f),
@@ -383,6 +392,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
+    //set behaviour BottomSheet
     private fun setBottomSheet(root: View) {
         var expandedValue: Int
         val shape = GradientDrawable()
@@ -447,6 +457,28 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         super.onStart()
         MapKitFactory.getInstance().onStart()
         mapView!!.onStart()
+    }
+
+
+    //listener onBackPressed key
+    fun backPressed(): Boolean{
+        var result = true
+
+        if(bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED){
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            result = false
+        }
+
+        if(isMapSearchGestures){
+            centerPosition.setImageResource(R.drawable.ic_map_marker)
+            containerAddresses.visibility = View.VISIBLE
+            addressesMapMarkerLayout.visibility = View.GONE
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+            isMapSearchGestures = false
+            result = false
+        }
+
+        return result
     }
 
 

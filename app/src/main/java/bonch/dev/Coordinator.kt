@@ -26,20 +26,16 @@ class Coordinator {
 
     companion object {
 
-        private val TAG_FRAGMENT = "TAG_FRAGMENT"
-        private var regularDrving: RegularDriveView? = null
-        private var getDriver: GetDriverView? = null
-        private var profile: ProfileView? = null
+        val mainFragment = MainFragment()
 
         fun replaceFragment(id: Int, bundle: Bundle, fm: FragmentManager) {
             when (id) {
                 MAIN_FRAGMENT -> {
-                    val fragment = MainFragment()
-                    fragment.arguments = bundle
+                    mainFragment.arguments = bundle
 
                     fm.beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(TAG_FRAGMENT)
+                        .replace(R.id.fragment_container, mainFragment, MAIN_FRAGMENT.toString())
+                        .addToBackStack(null)
                         .commit()
                 }
 
@@ -48,13 +44,13 @@ class Coordinator {
                     fragment.arguments = bundle
 
                     fm.beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(TAG_FRAGMENT)
+                        .replace(R.id.fragment_container, fragment, DETAIL_RIDE_VIEW.toString())
+                        .addToBackStack(null)
                         .commit()
+
                 }
             }
         }
-
 
         fun replaceFragment(id: Int, startHeight: Int, screenHeight: Int, fm: FragmentManager) {
             when (id) {
@@ -62,9 +58,10 @@ class Coordinator {
                     fm.beginTransaction()
                         .replace(
                             R.id.fragment_container,
-                            ConfirmPhoneFragment(startHeight, screenHeight)
+                            ConfirmPhoneFragment(startHeight, screenHeight),
+                            CONFIRM_PHONE_VIEW.toString()
                         )
-                        .addToBackStack(TAG_FRAGMENT)
+                        .addToBackStack(null)
                         .commit()
                 }
 
@@ -72,9 +69,10 @@ class Coordinator {
                     fm.beginTransaction()
                         .replace(
                             R.id.fragment_container,
-                            FullNameFragment(startHeight, screenHeight)
+                            FullNameFragment(startHeight, screenHeight),
+                            FULL_NAME_VIEW.toString()
                         )
-                        .addToBackStack(TAG_FRAGMENT)
+                        .addToBackStack(null)
                         .commit()
                 }
             }

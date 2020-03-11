@@ -7,6 +7,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import bonch.dev.Constant.Companion.GET_DRIVER_VIEW
+import bonch.dev.Constant.Companion.PROFILE_VIEW
+import bonch.dev.Constant.Companion.REGULAR_DRIVING_VIEW
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.view.getdriver.GetDriverView
@@ -29,6 +32,20 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.main_fragment, container, false)
+
+
+        if (regularDriving == null) {
+            regularDriving = RegularDriveView()
+        }
+
+        if (getDriver == null) {
+            getDriver = GetDriverView(root)
+        }
+
+        if (profile == null) {
+            profile = ProfileView()
+        }
+
         val navView: BottomNavigationView = root.findViewById(R.id.nav_view)
 
         fm = (activity as MainActivity).supportFragmentManager
@@ -36,9 +53,13 @@ class MainFragment : Fragment() {
         active = getDriver
         navView.selectedItemId = R.id.get_driver
 
-        fm!!.beginTransaction().add(R.id.nav_host_fragment, profile!!).hide(profile!!).commit()
-        fm!!.beginTransaction().add(R.id.nav_host_fragment, regularDriving!!).hide(regularDriving!!).commit()
-        fm!!.beginTransaction().add(R.id.nav_host_fragment, getDriver!!).commit()
+        fm!!.beginTransaction().add(R.id.nav_host_fragment, profile!!, PROFILE_VIEW.toString())
+            .hide(profile!!).commit()
+        fm!!.beginTransaction()
+            .add(R.id.nav_host_fragment, regularDriving!!, REGULAR_DRIVING_VIEW.toString())
+            .hide(regularDriving!!).commit()
+        fm!!.beginTransaction()
+            .add(R.id.nav_host_fragment, getDriver!!, GET_DRIVER_VIEW.toString()).commit()
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
@@ -73,17 +94,7 @@ class MainFragment : Fragment() {
 
 
     init {
-        if (regularDriving == null) {
-            regularDriving = RegularDriveView()
-        }
 
-        if (getDriver == null) {
-            getDriver = GetDriverView()
-        }
-
-        if (profile == null) {
-            profile = ProfileView()
-        }
     }
 
 }
