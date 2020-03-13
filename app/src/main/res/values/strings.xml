@@ -39,5 +39,9 @@
     <string name="positive">Выгодно</string>
     <string name="negative">Невыгодно</string>
     <string name="errorCode">Неверный код</string>
+    <string name="showPhone">Мы отправили его на номер</string>
+    <string name="retrySms">Повторить СМС</string>
+    <string name="retrySmsIn">Повторить СМС через</string>
+
 
 </resources>

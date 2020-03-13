@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.MainActivity
-import bonch.dev.MainActivity.Companion.hideKeyboard
-import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.GetDriverModel
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
+import bonch.dev.utils.ChangeOpacity.getOpacity
+import bonch.dev.utils.Keyboard.hideKeyboard
+import bonch.dev.utils.Keyboard.showKeyboard
 import bonch.dev.view.getdriver.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
@@ -236,7 +237,7 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
         if (slideOffset > 0) {
             expandedValue = floor((abs(slideOffset)) * 180).toInt()
-            shape.setColor(Color.parseColor("#${MainActivity.getOpacity(expandedValue!!)}FFFFFF"))
+            shape.setColor(Color.parseColor("#${getOpacity(expandedValue!!)}FFFFFF"))
             bottomSheet.background = shape
             getView().let {
                 it.my_pos.alpha = 1 - slideOffset * 3

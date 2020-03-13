@@ -1,6 +1,6 @@
 package bonch.dev.model.getdriver.pojo
 
-class PaymentCard(
+data class PaymentCard(
     var numberCard: String? = null,
     var validUntil: String? = null,
     var cvc: String? = null,

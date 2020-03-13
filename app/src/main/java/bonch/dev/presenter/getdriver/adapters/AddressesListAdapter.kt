@@ -7,11 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Ride
+import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.getdriver.GetDriverView
-import kotlinx.android.synthetic.main.get_driver_fragment.*
 import kotlinx.android.synthetic.main.get_driver_layout.*
 
 

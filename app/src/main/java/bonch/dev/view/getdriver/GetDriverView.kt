@@ -12,11 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.utils.Constants.API_KEY
+import bonch.dev.utils.Keyboard.hideKeyboard
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation

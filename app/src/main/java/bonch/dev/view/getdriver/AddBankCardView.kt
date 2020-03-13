@@ -10,9 +10,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import bonch.dev.MainActivity.Companion.hideKeyboard
-import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
+import bonch.dev.utils.Keyboard.hideKeyboard
+import bonch.dev.utils.Keyboard.showKeyboard
 
 
 class AddBankCardView : AppCompatActivity() {

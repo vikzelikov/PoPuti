@@ -8,25 +8,22 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import bonch.dev.MainActivity
-import bonch.dev.MainActivity.Companion.hideKeyboard
-import bonch.dev.MainActivity.Companion.showKeyboard
 import bonch.dev.R
 import bonch.dev.model.getdriver.SearchPlace
 import bonch.dev.model.getdriver.pojo.PaymentCard
 import bonch.dev.model.getdriver.pojo.Ride
-import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Coordinator.openActivity
+import bonch.dev.utils.Keyboard.hideKeyboard
+import bonch.dev.utils.Keyboard.showKeyboard
 import bonch.dev.view.getdriver.DetailRideView
 import bonch.dev.view.getdriver.GetDriverView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.detail_ride_layout.*
-import kotlinx.android.synthetic.main.get_driver_fragment.*
 
 class DetailRidePresenter(private val detailRideView: DetailRideView) {
 

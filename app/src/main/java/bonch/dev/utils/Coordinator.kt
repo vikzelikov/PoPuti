@@ -30,28 +30,40 @@ object Coordinator {
                     .addToBackStack(null)
                     .commit()
             }
-        }
-    }
 
-    fun replaceFragment(id: Int, startHeight: Int, screenHeight: Int, fm: FragmentManager) {
-        when (id) {
-            CONFIRM_PHONE_VIEW -> {
+            FULL_NAME_VIEW -> {
+                val fragment = FullNameFragment()
+                fragment.arguments = bundle
+
                 fm.beginTransaction()
                     .replace(
                         R.id.fragment_container,
-                        ConfirmPhoneFragment(startHeight, screenHeight),
-                        CONFIRM_PHONE_VIEW.toString()
+                        fragment,
+                        FULL_NAME_VIEW.toString()
                     )
                     .addToBackStack(null)
                     .commit()
             }
+        }
+    }
 
-            FULL_NAME_VIEW -> {
+    fun replaceFragment(
+        id: Int,
+        fm: FragmentManager,
+        startHeight: Int,
+        screenHeight: Int,
+        bundle: Bundle
+    ) {
+        when (id) {
+            CONFIRM_PHONE_VIEW -> {
+                val fragment = ConfirmPhoneFragment(startHeight, screenHeight)
+                fragment.arguments = bundle
+
                 fm.beginTransaction()
                     .replace(
                         R.id.fragment_container,
-                        FullNameFragment(startHeight, screenHeight),
-                        FULL_NAME_VIEW.toString()
+                        fragment,
+                        CONFIRM_PHONE_VIEW.toString()
                     )
                     .addToBackStack(null)
                     .commit()

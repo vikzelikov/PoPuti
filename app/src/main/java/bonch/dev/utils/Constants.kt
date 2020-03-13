@@ -22,4 +22,11 @@ object Constants {
     const val VALID_UNTIL = "VALID_UNTIL"
     const val BANK_IMG = "BANK_IMG"
     const val CVC = "CVC"
+    const val PHONE = "PHONE"
+
+    //mil sec
+    const val SIGNUP_INTERVAL_SMS = 15000L
+    const val SIGNUP_MAX_INTERVAL_SMS = 60000L
+
+    const val ACCESS_TOKEN = "ACCESS_TOKEN"
 }

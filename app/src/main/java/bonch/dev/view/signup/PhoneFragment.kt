@@ -1,44 +1,30 @@
 package bonch.dev.view.signup
 
-import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import bonch.dev.MainActivity
-import bonch.dev.MainActivity.Companion.hideKeyboard
 import bonch.dev.R
 import bonch.dev.presenter.signup.SignupPresenter
-import bonch.dev.network.signup.RetrofitService
 import bonch.dev.utils.Constants.PHONE_VIEW
-import bonch.dev.utils.NetworkUtil.makeRetrofitService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import retrofit2.Response
+import kotlinx.android.synthetic.main.phone_signup_fragment.view.*
 
 class PhoneFragment : Fragment() {
 
     private var signupPresenter: SignupPresenter? = null
 
-    private lateinit var nextBtn: Button
-    private lateinit var termsTextView: TextView
-    private lateinit var phoneEditText: EditText
-    private var startHeight = 0
-    private var screenHeight = 0
-
+    init {
+        if (signupPresenter == null) {
+            signupPresenter = SignupPresenter(this)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,58 +33,20 @@ class PhoneFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.phone_signup_fragment, container, false)
 
-        initViews(root)
+        signupPresenter?.attachView(root)
 
         setListener(root)
 
         //set listener to move button in relation to keyboard on/off
-        setMovingButtonListener(root)
+        signupPresenter?.setMovingButtonListener(PHONE_VIEW)
 
         //active links
-        termsTextView.movementMethod = LinkMovementMethod.getInstance()
-        removeUnderline(termsTextView)
+        val terms = root.terms
+        terms.movementMethod = LinkMovementMethod.getInstance()
+        removeUnderline(terms)
 
-        if (signupPresenter == null) {
-            signupPresenter = SignupPresenter()
-        }
 
         return root
-    }
-
-
-    private fun setMovingButtonListener(root: View) {
-        var heightDiff: Int
-        var btnDefaultPosition = 0.0f
-
-        root.viewTreeObserver
-            .addOnGlobalLayoutListener {
-                val rect = Rect()
-
-                root.getWindowVisibleDisplayFrame(rect)
-                heightDiff = screenHeight - (rect.bottom - rect.top)
-
-                if (screenHeight == 0) {
-                    screenHeight = root.rootView.height
-                }
-
-                if (btnDefaultPosition == 0.0f) {
-                    //init default position of button
-                    btnDefaultPosition = nextBtn.y
-                }
-
-                if (startHeight == 0) {
-                    startHeight = screenHeight - (rect.bottom - rect.top)
-                }
-
-
-                if (heightDiff > startHeight) {
-                    //move UP
-                    nextBtn.y = btnDefaultPosition - heightDiff + startHeight
-                } else {
-                    //move DOWN
-                    nextBtn.y = btnDefaultPosition
-                }
-            }
     }
 
 
@@ -117,26 +65,13 @@ class PhoneFragment : Fragment() {
     }
 
 
-    private fun initViews(root: View) {
-        nextBtn = root.findViewById(R.id.next)
-        termsTextView = root.findViewById(R.id.terms)
-        phoneEditText = root.findViewById(R.id.phone_number)
-    }
-
-
     private fun setListener(root: View) {
+        val nextBtn = root.next_btn_phone
+        val phoneEditText = root.phone_number
 
         nextBtn.setOnClickListener {
             val phone = phoneEditText.text.toString().trim()
-
-            if (signupPresenter != null && phone.length > 15) {
-                sendSms(phone)
-
-                hideKeyboard(activity!!, root)
-
-                val fm = (activity as MainActivity).supportFragmentManager
-                signupPresenter!!.clickNextBtn(PHONE_VIEW, startHeight, screenHeight, fm)
-            }
+            signupPresenter?.getCode(phone)
         }
 
         phoneEditText.addTextChangedListener(object : TextWatcher {
@@ -146,42 +81,10 @@ class PhoneFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 val phone = s.toString().trim()
-                if(phone.length > 15){
-                    nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
-                }else{
-                    nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
-                }
+                signupPresenter?.isPhoneEntered(phone)
             }
         })
     }
-
-
-    private fun sendSms(phone: String) {
-        var service: RetrofitService? = null
-        var response: Response<*>
-
-        if(service == null){
-            service = makeRetrofitService()
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            response = service.sendPhone(phone)
-            println(response)
-            try {
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        println(response.message())
-                    } else {
-                        println(response.code())
-                    }
-                }
-            } catch (err: HttpException) {
-                Log.e("Retrofit", "${err.printStackTrace()}")
-            }
-        }
-    }
-
-
 }
 
 
