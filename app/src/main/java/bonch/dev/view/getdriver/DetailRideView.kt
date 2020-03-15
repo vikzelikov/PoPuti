@@ -3,11 +3,9 @@ package bonch.dev.view.getdriver
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.View
-import android.widget.*
+import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.PaymentCard
 import bonch.dev.model.getdriver.pojo.Ride

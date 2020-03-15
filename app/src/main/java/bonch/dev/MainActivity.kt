@@ -1,22 +1,21 @@
 package bonch.dev
 
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
+import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.PHONE_VIEW
+import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
-import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
@@ -27,10 +26,6 @@ import com.google.gson.reflect.TypeToken
 
 class MainActivity : AppCompatActivity() {
 
-    private val caseType = object : TypeToken<String>() {}.type
-    private lateinit var gson: Gson
-    private lateinit var pref: SharedPreferences
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,29 +34,25 @@ class MainActivity : AppCompatActivity() {
         accessUserGeo()
 
         val accessToken = getToken()
-        val fragment: Fragment?
 
-        fragment = if (accessToken == null) {
-            PhoneFragment()
+        if (accessToken == null) {
+            //to signup
+            addFragment(PHONE_VIEW, supportFragmentManager)
         } else {
-            MainFragment()
+            //redirect to full app
+            addFragment(MAIN_FRAGMENT, supportFragmentManager)
         }
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, fragment, PHONE_VIEW.toString())
-            .commit()
-
     }
 
 
     private fun getToken(): String? {
-        pref = getPreferences(MODE_PRIVATE)
-        gson = Gson()
+        val caseType = object : TypeToken<String>() {}.type
+        val pref = getPreferences(MODE_PRIVATE)
 
         var accessToken: String? = null
         if (pref.contains(Constants.ACCESS_TOKEN)) {
             val json: String? = pref.getString(Constants.ACCESS_TOKEN, "")
-            accessToken = gson.fromJson(json, caseType)
+            accessToken = Gson().fromJson(json, caseType)
         }
 
         return accessToken

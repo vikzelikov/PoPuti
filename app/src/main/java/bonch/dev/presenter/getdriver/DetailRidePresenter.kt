@@ -204,7 +204,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun onSlideBottomSheet(slideOffset: Float){
+    fun onSlideBottomSheet(slideOffset: Float) {
         val onMapView = getView().on_map_view_detail
 
         if (slideOffset > 0) {
@@ -213,7 +213,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun onStateChangedBottomSheet(newState: Int, activity: FragmentActivity, root: View){
+    fun onStateChangedBottomSheet(newState: Int, activity: FragmentActivity, root: View) {
         val commentText = getView().comment_text
         val onMapView = getView().on_map_view_detail
         val mainInfoLayout = getView().main_info_layout
@@ -231,7 +231,6 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             mainInfoLayout.elevation = 0f
         }
     }
-
 
 
     private fun isPositiveOfferPrice(price: Int): Boolean {

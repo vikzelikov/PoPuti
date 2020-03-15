@@ -7,12 +7,14 @@ import android.graphics.PointF
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.R
+import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.utils.Constants.API_KEY
@@ -35,8 +37,12 @@ import com.yandex.runtime.image.ImageProvider.fromResource
 import kotlinx.android.synthetic.main.get_driver_fragment.*
 import kotlinx.android.synthetic.main.get_driver_layout.*
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class GetDriverView (val mainRoot: View) : Fragment(), UserLocationObjectListener, CameraListener {
+class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     var mapView: MapView? = null
     var addressesListAdapter: AddressesListAdapter? = null
@@ -86,7 +92,7 @@ class GetDriverView (val mainRoot: View) : Fragment(), UserLocationObjectListene
         p2: CameraUpdateSource,
         p3: Boolean
     ) {
-        if (p2 == CameraUpdateSource.GESTURES && p3) {
+        if ((p2 == CameraUpdateSource.GESTURES && p3) || getDriverPresenter?.fromAdr == null) {
             getDriverPresenter?.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
         }
 
@@ -133,21 +139,21 @@ class GetDriverView (val mainRoot: View) : Fragment(), UserLocationObjectListene
     private fun setListeners(root: View) {
 
         my_pos.setOnClickListener {
-            val userPoint = userLocationPoint()!!
+            val userPoint = userLocationPoint()
 
             mapView!!.map.move(
-                CameraPosition(userPoint, 35.0f, 0.0f, 0.0f),
+                CameraPosition(userPoint!!, 35.0f, 0.0f, 0.0f),
                 Animation(Animation.Type.SMOOTH, 1f),
                 null
             )
         }
 
         from_cross.setOnClickListener {
-            from_adr.setText("")
+            getDriverPresenter?.touchCrossFrom(true)
         }
 
         to_cross.setOnClickListener {
-            to_adr.setText("")
+            getDriverPresenter?.touchCrossFrom(false)
         }
 
         from_adr.addTextChangedListener(object : TextWatcher {

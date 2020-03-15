@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentActivity
-import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.GetDriverModel
 import bonch.dev.model.getdriver.pojo.Ride
@@ -14,7 +13,9 @@ import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.utils.ChangeOpacity.getOpacity
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
-import bonch.dev.view.getdriver.*
+import bonch.dev.view.getdriver.DetailRideView
+import bonch.dev.view.getdriver.GetDriverView
+import bonch.dev.view.getdriver.MBottomSheet
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.get_driver_fragment.*
@@ -23,13 +24,13 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 
-
 class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
     private var view: View? = null
     private var getDriverModel: GetDriverModel? = null
     var addressesListAdapter: AddressesListAdapter? = null
     var detailRideView: DetailRideView? = null
+    var firstAddress: Ride? = null
     var fromAdr: Ride? = null
     var toAdr: Ride? = null
 
@@ -79,7 +80,7 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
     fun requestGeocoder(point: Point) {
         if (isMapSearchGestures) {
-            getDriverModel!!.requestGeocoder(point)
+            getDriverModel?.requestGeocoder(point)
         }
     }
 
@@ -96,6 +97,10 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
                 if (point != null && addressesListAdapter != null) {
                     ride = Ride(address, null, null, point)
+                    if(fromAdr == null){
+                        //write for set address in case empty field "FROM"
+                        firstAddress = ride
+                    }
                     fromAdr = ride
                 }
             } else {
@@ -136,6 +141,17 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
     }
 
 
+    fun touchCrossFrom(isFrom: Boolean) {
+        if (isFrom) {
+            getView().from_adr.setText("")
+            fromAdr = null
+        } else {
+            getView().to_adr.setText("")
+            toAdr = null
+        }
+    }
+
+
     fun touchAddress(isFrom: Boolean) {
         val fromAddress = getView().from_adr
         val toAddress = getView().to_adr
@@ -144,7 +160,7 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
         val toCross = getView().to_cross
         val fromCross = getView().from_cross
 
-        if (isFrom){
+        if (isFrom) {
             if (toAddress.isFocused) {
                 addressesListAdapter?.list?.clear()
                 addressesListAdapter?.notifyDataSetChanged()
@@ -161,7 +177,7 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
             } else {
                 fromCross.visibility = View.GONE
             }
-        }else{
+        } else {
             if (fromAddress.isFocused) {
                 addressesListAdapter?.list?.clear()
                 addressesListAdapter?.notifyDataSetChanged()
@@ -185,7 +201,6 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
 
     fun touchMapBtn(isFrom: Boolean) {
-        val fromAddress = getView().from_adr
         val mainAddressesLayout = getView().main_addresses_layout
         val addressMapMarkerLayout = getView().address_map_marker_layout
         val addressMapMarkerBtn = getView().address_map_marker_btn
@@ -196,13 +211,18 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
         mainAddressesLayout.visibility = View.GONE
         addressMapMarkerLayout.visibility = View.VISIBLE
 
-        if(isFrom){
+        if (isFrom) {
             isFromMapSearch = true
             addressMapText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker)
             circleMarker.setImageResource(R.drawable.ic_input_marker_from)
             addressMapMarkerBtn.setBackgroundResource(R.drawable.bg_btn_blue)
-        }else{
+        } else {
+            //set to address
+            if (fromAdr == null) {
+                fromAdr = firstAddress
+            }
+
             isFromMapSearch = false
             addressMapText.isSelected = true
             centerPosition.setImageResource(R.drawable.ic_map_marker_black)
@@ -211,7 +231,6 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
         }
 
         getView().bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-        fromAddress.clearFocus()
         hideKeyboard(getActivity(), getView().view!!)
     }
 
@@ -271,7 +290,7 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
                     (it.bottomSheetBehavior as MBottomSheet<*>).swipeEnabled = false
                 }
             }
-        } else{
+        } else {
             getView().on_map_view.visibility = View.VISIBLE
         }
     }

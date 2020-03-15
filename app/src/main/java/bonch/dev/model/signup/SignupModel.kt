@@ -2,7 +2,6 @@ package bonch.dev.model.signup
 
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
-import android.widget.Toast
 import bonch.dev.MainActivity
 import bonch.dev.model.signup.pojo.Token
 import bonch.dev.network.signup.RetrofitService
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Response
-import java.net.UnknownServiceException
 
 class SignupModel(private val signupPresenter: SignupPresenter) {
 

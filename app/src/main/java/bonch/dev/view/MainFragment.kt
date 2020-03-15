@@ -37,7 +37,7 @@ class MainFragment : Fragment() {
         }
 
         if (getDriver == null) {
-            getDriver = GetDriverView(root)
+            getDriver = GetDriverView()
         }
 
         if (profile == null) {

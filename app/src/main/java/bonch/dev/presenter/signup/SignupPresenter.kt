@@ -53,7 +53,7 @@ class SignupPresenter(val fragment: Fragment) {
     fun nextBtn(id: Int, fm: FragmentManager) {
         when (id) {
             FULL_NAME_VIEW -> {
-                replaceFragment(MAIN_FRAGMENT, Bundle(), fm)
+                replaceFragment(MAIN_FRAGMENT, null, fm)
             }
         }
     }

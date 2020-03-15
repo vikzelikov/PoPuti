@@ -11,15 +11,42 @@ import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
+import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.AddBankCardView
 import bonch.dev.view.getdriver.OfferPriceView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
+import bonch.dev.view.signup.PhoneFragment
 
 
 object Coordinator {
-    fun replaceFragment(id: Int, bundle: Bundle, fm: FragmentManager) {
+
+    fun addFragment(id: Int, fm: FragmentManager) {
+        when (id) {
+            MAIN_FRAGMENT -> {
+                val fragment = MainFragment()
+
+                fm.beginTransaction()
+                    .add(R.id.fragment_container, fragment, MAIN_FRAGMENT.toString())
+                    .commit()
+            }
+
+            PHONE_VIEW -> {
+                val fragment = PhoneFragment()
+
+                fm.beginTransaction()
+                    .add(
+                        R.id.fragment_container,
+                        fragment,
+                        PHONE_VIEW.toString()
+                    )
+                    .commit()
+            }
+        }
+    }
+
+    fun replaceFragment(id: Int, bundle: Bundle?, fm: FragmentManager) {
         when (id) {
             MAIN_FRAGMENT -> {
                 val fragment = MainFragment()
@@ -40,6 +67,20 @@ object Coordinator {
                         R.id.fragment_container,
                         fragment,
                         FULL_NAME_VIEW.toString()
+                    )
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+            PHONE_VIEW -> {
+                val fragment = PhoneFragment()
+                fragment.arguments = bundle
+
+                fm.beginTransaction()
+                    .replace(
+                        R.id.fragment_container,
+                        fragment,
+                        PHONE_VIEW.toString()
                     )
                     .addToBackStack(null)
                     .commit()
