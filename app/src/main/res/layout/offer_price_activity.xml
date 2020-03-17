@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/back_btn"
+        android:background="@drawable/bg_back_btn"
         android:elevation="12dp"
         android:padding="13dp"
         android:src="@drawable/ic_back_arrow" />
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/bg_btn_blue"
+            android:background="@drawable/bg_btn_gray"
             android:fontFamily="@font/roboto"
             android:shadowColor="@color/colorBlue"
             android:text="@string/offerPrice"

@@ -17,26 +17,29 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.detail_ride_layout.*
 
 
-class DetailRideView(val getDriverView: GetDriverView) {
+class DetailRideView(val createRideView: CreateRideView) {
 
     var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var detailRidePresenter: DetailRidePresenter? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
-    private val from = getView().view!!.findViewById<TextView>(R.id.from_address)
-    private val to = getView().view!!.findViewById<TextView>(R.id.to_address)
+    private val from: TextView
+    private val to: TextView
 
 
     init {
         if (detailRidePresenter == null) {
             detailRidePresenter = DetailRidePresenter(this)
         }
+
+        from = getRootView().findViewById(R.id.from_address)
+        to = getRootView().findViewById(R.id.to_address)
     }
 
 
     fun onCreateView(fromAddress: Ride, toAddress: Ride) {
-        val activity = getDriverView.activity!!
-        val root = getDriverView.view!!
+        val activity = createRideView.activity!!
+        val root = createRideView.view!!
 
         setListeners(activity, root)
 
@@ -50,7 +53,7 @@ class DetailRideView(val getDriverView: GetDriverView) {
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == OFFER_PRICE_VIEW && resultCode == RESULT_OK) {
-            detailRidePresenter?.offerPriceDone(getView().context!!, data)
+            detailRidePresenter?.offerPriceDone(data)
         }
 
         if (requestCode == ADD_BANK_CARD_VIEW && resultCode == RESULT_OK) {
@@ -59,9 +62,15 @@ class DetailRideView(val getDriverView: GetDriverView) {
     }
 
 
+    fun removeRoute() {
+        detailRidePresenter?.removeRoute()
+    }
+
+
     private fun setListeners(activity: FragmentActivity, root: View) {
         val offerPrice = getView().offer_price
         val addCard = getView().add_card
+        val getDriverBtn = getView().get_driver_btn
         val commentBtn = getView().comment_btn
         val commentText = getView().comment_text
         val commentMinText = getView().comment_min_text
@@ -71,14 +80,17 @@ class DetailRideView(val getDriverView: GetDriverView) {
         val selectedPaymentMethod = getView().selected_payment_method
         val onMapView = getView().on_map_view_detail
 
+        getDriverBtn.setOnClickListener {
+            detailRidePresenter?.getDriver()
+        }
 
         offerPrice.setOnClickListener {
-            detailRidePresenter?.offerPrice(getDriverView)
+            detailRidePresenter?.offerPrice(createRideView)
 
         }
 
         addCard.setOnClickListener {
-            detailRidePresenter?.addBankCard(getDriverView)
+            detailRidePresenter?.addBankCard(createRideView)
         }
 
 
@@ -159,25 +171,24 @@ class DetailRideView(val getDriverView: GetDriverView) {
             PaymentsListAdapter(
                 paymentList,
                 list,
-                getDriverView.context!!,
+                createRideView.context!!,
                 this
             )
 
         paymentList.layoutManager =
-            LinearLayoutManager(getDriverView.context, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(createRideView.context, LinearLayoutManager.VERTICAL, false)
         paymentList.adapter = paymentsListAdapter
 
         detailRidePresenter!!.paymentsListAdapter = paymentsListAdapter
     }
 
 
-    fun removeRoute() {
-        detailRidePresenter?.removeRoute()
+    fun getView(): CreateRideView {
+        return createRideView
     }
 
-
-    fun getView(): GetDriverView {
-        return getDriverView
+    private fun getRootView(): View {
+        return createRideView.view!!
     }
 
 

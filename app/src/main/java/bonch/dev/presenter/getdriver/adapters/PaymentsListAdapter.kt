@@ -47,7 +47,7 @@ class PaymentsListAdapter(
         }
 
         if (position == 0) {
-            val lineDialog: View = holder.itemView.findViewById<View>(R.id.line_payment)
+            val lineDialog: View = holder.itemView.findViewById(R.id.line_payment)
             val params: LinearLayout.LayoutParams =
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1)
             params.setMargins(30, 0, 30, 0)

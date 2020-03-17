@@ -1,29 +1,41 @@
 package bonch.dev.presenter.getdriver
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.SearchPlace
 import bonch.dev.model.getdriver.pojo.PaymentCard
 import bonch.dev.model.getdriver.pojo.Ride
+import bonch.dev.model.getdriver.pojo.RideDetailInfo
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
+import bonch.dev.utils.Constants.CARD_IMG
+import bonch.dev.utils.Constants.FROM
+import bonch.dev.utils.Constants.GET_DRIVER_VIEW
+import bonch.dev.utils.Constants.OFFER_PRICE
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
+import bonch.dev.utils.Constants.RIDE_DETAIL_INFO
+import bonch.dev.utils.Constants.TO
 import bonch.dev.utils.Coordinator.openActivity
+import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
+import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.getdriver.DetailRideView
-import bonch.dev.view.getdriver.GetDriverView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.detail_ride_layout.*
+import kotlinx.android.synthetic.main.detail_ride_layout.comment_min_text
+import kotlinx.android.synthetic.main.detail_ride_layout.main_info_layout
+import kotlinx.android.synthetic.main.detail_ride_layout.offer_price
+import kotlinx.android.synthetic.main.get_driver_layout.*
 
 class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
@@ -65,11 +77,11 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         detailRideView.setAddresses(fromAddress.address!!, toAddress.address!!)
 
         if (fromAddress.point != null) {
-            fromPoint = fromAddress.point
+            fromPoint = Point(fromAddress.point!!.latitude, fromAddress.point!!.longitude)
         }
 
         if (toAddress.point != null) {
-            toPoint = toAddress.point
+            toPoint = Point(toAddress.point!!.latitude, toAddress.point!!.longitude)
         }
 
         if (fromUri != null) {
@@ -128,7 +140,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun offerPriceDone(context: Context, data: Intent?) {
+    fun offerPriceDone(data: Intent?) {
         val offerPrice = getView().offer_price
         val priceLabelColor = getView().price_label_color
         val strPrice = data!!.getStringExtra(Constants.OFFER_PRICE)
@@ -138,17 +150,15 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         offerPrice.typeface = Typeface.DEFAULT_BOLD
 
         if (isPositiveOfferPrice(strPrice!!.toInt())) {
-            priceLabelColor.text = getView().getString(R.string.positive)
-            priceLabelColor.background =
-                ContextCompat.getDrawable(context, R.drawable.bg_offer_price_positive)
+            priceLabelColor.visibility = View.GONE
         } else {
-            priceLabelColor.text = getView().getString(R.string.negative)
-            priceLabelColor.background =
-                ContextCompat.getDrawable(context, R.drawable.bg_offer_price_negative)
+            priceLabelColor.visibility = View.VISIBLE
         }
 
-        priceLabelColor.visibility = View.VISIBLE
         offerPrice.text = strPrice
+
+        //change btn enabled in case completed detail info
+        isDataComplete()
     }
 
 
@@ -156,7 +166,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         val cardNumber = data?.getStringExtra(Constants.CARD_NUMBER)
         val validUntil = data?.getStringExtra(Constants.VALID_UNTIL)
         val cvc = data?.getStringExtra(Constants.CVC)
-        val img = data?.getIntExtra(Constants.BANK_IMG, R.drawable.ic_visa)
+        val img = data?.getIntExtra(CARD_IMG, R.drawable.ic_visa)
 
         val paymentCard = PaymentCard(cardNumber, validUntil, cvc, img)
 
@@ -174,7 +184,8 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             getView().payment_method_img.setImageResource(paymentCard.img!!)
         }
 
-        detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        //change btn enabled in case completed detail info
+        isDataComplete()
     }
 
 
@@ -233,6 +244,40 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
+    fun getDriver() {
+        if (isDataComplete()) {
+            val bundle = Bundle()
+            val fromAdr = getView().createRidePresenter?.fromAdr
+            val toAdr = getView().createRidePresenter?.toAdr
+            val fm = (getView().activity as MainActivity).supportFragmentManager
+            val comment = getView().comment_min_text.text.toString().trim()
+            val price = getView().offer_price.text.toString().trim()
+
+            bundle.putParcelable(FROM, fromAdr)
+            bundle.putParcelable(TO, toAdr)
+            bundle.putParcelable(RIDE_DETAIL_INFO, RideDetailInfo(price, comment))
+
+            replaceFragment(GET_DRIVER_VIEW, bundle, fm)
+        }
+    }
+
+
+    private fun isDataComplete(): Boolean {
+        val isComplete: Boolean
+        val offerPrice = getView().offer_price.text.toString().trim()
+
+        if (getView().selected_payment_method.visibility == View.VISIBLE && offerPrice.length < 5) {
+            isComplete = true
+            changeBtnEnable(true)
+        } else {
+            isComplete = false
+            changeBtnEnable(false)
+        }
+
+        return isComplete
+    }
+
+
     private fun isPositiveOfferPrice(price: Int): Boolean {
         var isPositive = false
         //TODO
@@ -245,7 +290,18 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    private fun getView(): GetDriverView {
+    private fun changeBtnEnable(isEnable: Boolean) {
+        val nextBtn = getView().get_driver_btn
+
+        if (isEnable) {
+            nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
+        } else {
+            nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
+        }
+    }
+
+
+    private fun getView(): CreateRideView {
         return detailRideView.getView()
     }
 }

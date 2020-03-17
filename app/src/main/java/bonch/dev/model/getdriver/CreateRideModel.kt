@@ -1,11 +1,11 @@
 package bonch.dev.model.getdriver
 
 import bonch.dev.model.getdriver.pojo.Ride
-import bonch.dev.presenter.getdriver.GetDriverPresenter
+import bonch.dev.presenter.getdriver.CreateRidePresenter
 import com.yandex.mapkit.geometry.Point
 
-class GetDriverModel(
-    private val getDriverPresenter: GetDriverPresenter
+class CreateRideModel(
+    private val createRidePresenter: CreateRidePresenter
 ) {
 
     private var autocomplete: Autocomplete? = null
@@ -23,7 +23,7 @@ class GetDriverModel(
 
 
     fun responseSuggest(suggestResult: ArrayList<Ride>) {
-        getDriverPresenter.setRecyclerSuggest(suggestResult)
+        createRidePresenter.setRecyclerSuggest(suggestResult)
     }
 
 
@@ -37,7 +37,7 @@ class GetDriverModel(
 
 
     fun responseGeocoder(address: String?, point: Point?){
-        getDriverPresenter.responseGeocoder(address, point)
+        createRidePresenter.responseGeocoder(address, point)
     }
 
 }

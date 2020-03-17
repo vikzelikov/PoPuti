@@ -4,7 +4,7 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 
-class Geocoder(val getDriverModel: GetDriverModel) : Session.SearchListener {
+class Geocoder(val createRideModel: CreateRideModel) : Session.SearchListener {
 
     private var searchSession: Session? = null
     private var searchManager: SearchManager =
@@ -31,7 +31,7 @@ class Geocoder(val getDriverModel: GetDriverModel) : Session.SearchListener {
         val point = response.collection.children[0].obj?.geometry?.first()?.point
         val address = response.collection.children[0].obj!!.name
 
-        getDriverModel.responseGeocoder(address, point)
+        createRideModel.responseGeocoder(address, point)
     }
 }
 

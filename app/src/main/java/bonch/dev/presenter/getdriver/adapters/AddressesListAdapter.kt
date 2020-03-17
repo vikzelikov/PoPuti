@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.utils.Keyboard.hideKeyboard
-import bonch.dev.view.getdriver.GetDriverView
-import kotlinx.android.synthetic.main.get_driver_layout.*
+import bonch.dev.view.getdriver.CreateRideView
+import kotlinx.android.synthetic.main.create_ride_layout.*
 
 
 class AddressesListAdapter(
-    val getDriverView: GetDriverView,
+    val createRideView: CreateRideView,
     var list: ArrayList<Ride>,
     val context: Context
 ) : RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
@@ -34,14 +34,14 @@ class AddressesListAdapter(
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-        val getDriverPresenter = getDriverView.getDriverPresenter
+        val getDriverPresenter = createRideView.createRidePresenter
 
         holder.bind(list[position])
 
         holder.itemView.setOnClickListener {
 
-            val fromAdrView = getDriverView.from_adr
-            val toAdrView = getDriverView.to_adr
+            val fromAdrView = createRideView.from_adr
+            val toAdrView = createRideView.to_adr
 
             if (fromAdrView.isFocused) {
                 fromAdrView.setText(list[position].address)
@@ -61,8 +61,8 @@ class AddressesListAdapter(
 
 
         holder.itemView.setOnTouchListener { _, _ ->
-            val activity = getDriverView.activity!!
-            hideKeyboard(activity, getDriverView.view!!)
+            val activity = createRideView.activity!!
+            hideKeyboard(activity, createRideView.view!!)
 
             false
         }

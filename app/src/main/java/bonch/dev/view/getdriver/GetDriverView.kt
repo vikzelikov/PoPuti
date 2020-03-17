@@ -1,27 +1,19 @@
 package bonch.dev.view.getdriver
 
-
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.R
-import bonch.dev.model.getdriver.pojo.Ride
+import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.presenter.getdriver.GetDriverPresenter
-import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
-import bonch.dev.utils.Constants.API_KEY
-import bonch.dev.utils.Keyboard.hideKeyboard
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
+import bonch.dev.utils.Constants
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
@@ -33,23 +25,22 @@ import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.runtime.image.ImageProvider.fromResource
-import kotlinx.android.synthetic.main.get_driver_fragment.*
-import kotlinx.android.synthetic.main.get_driver_layout.*
+import com.yandex.runtime.image.ImageProvider
+import kotlinx.android.synthetic.main.create_ride_layout.view.*
+import kotlinx.android.synthetic.main.driver_info_layout.view.*
+import kotlinx.android.synthetic.main.driver_info_layout.view.cancel_ride
+import kotlinx.android.synthetic.main.driver_info_layout.view.reason_btn
+import kotlinx.android.synthetic.main.driver_info_layout.view.reasons_bottom_sheet
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     var mapView: MapView? = null
-    var addressesListAdapter: AddressesListAdapter? = null
-    var bottomSheetBehavior: BottomSheetBehavior<*>? = null
-    var getDriverPresenter: GetDriverPresenter? = null
-    var navView: BottomNavigationView? = null
+    var driversListAdapter: DriversListAdapter? = null
+    var cancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var userLocationLayer: UserLocationLayer? = null
+    private var getDriverPresenter: GetDriverPresenter? = null
+
 
     init {
         if (getDriverPresenter == null) {
@@ -64,7 +55,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         savedInstanceState: Bundle?
     ): View? {
         //init map
-        MapKitFactory.setApiKey(API_KEY)
+        MapKitFactory.setApiKey(Constants.API_KEY)
         MapKitFactory.initialize(context)
         SearchFactory.initialize(context)
         DirectionsFactory.initialize(context)
@@ -72,33 +63,21 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         val root = inflater.inflate(R.layout.get_driver_fragment, container, false)
         mapView = root.findViewById(R.id.map) as MapView
 
-        initialize(root)
-
         setUserLocation()
 
         mapView!!.map.addCameraListener(this)
         mapView!!.map.isRotateGesturesEnabled = false
 
-        setBottomSheet()
+        getDriverPresenter?.receiveUserData(arguments, root)
+
+        setBottomSheet(root)
+
+        setListeners(root)
+
+        initialize(root)
+
 
         return root
-    }
-
-
-    //center screen position
-    override fun onCameraPositionChanged(
-        p0: Map,
-        p1: CameraPosition,
-        p2: CameraUpdateSource,
-        p3: Boolean
-    ) {
-        if ((p2 == CameraUpdateSource.GESTURES && p3) || getDriverPresenter?.fromAdr == null) {
-            getDriverPresenter?.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
-        }
-
-        if (p3) {
-            userLocationLayer?.resetAnchor()
-        }
     }
 
 
@@ -108,7 +87,13 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     override fun onObjectAdded(userLocationView: UserLocationView) {
         val pinIcon = userLocationView.pin.useCompositeIcon()
         //TODO change to svg
-        userLocationView.arrow.setIcon(fromResource(context, R.drawable.ic_user_mark, true))
+        userLocationView.arrow.setIcon(
+            ImageProvider.fromResource(
+                context,
+                R.drawable.ic_user_mark,
+                true
+            )
+        )
 
         userLocationLayer!!.setAnchor(
             PointF(
@@ -123,7 +108,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         pinIcon.setIcon(
             "pin",
-            fromResource(context, R.drawable.ic_user_mark),
+            ImageProvider.fromResource(context, R.drawable.ic_user_mark),
             IconStyle().setAnchor(PointF(0.5f, 0.5f))
                 .setRotationType(RotationType.ROTATE)
                 .setZIndex(1f)
@@ -134,108 +119,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
-
-
-    private fun setListeners(root: View) {
-
-        my_pos.setOnClickListener {
-            val userPoint = userLocationPoint()
-
-            mapView!!.map.move(
-                CameraPosition(userPoint!!, 35.0f, 0.0f, 0.0f),
-                Animation(Animation.Type.SMOOTH, 1f),
-                null
-            )
-        }
-
-        from_cross.setOnClickListener {
-            getDriverPresenter?.touchCrossFrom(true)
-        }
-
-        to_cross.setOnClickListener {
-            getDriverPresenter?.touchCrossFrom(false)
-        }
-
-        from_adr.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    getDriverPresenter!!.requestSuggest(from_adr.text.toString())
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.isNotEmpty() && bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    from_cross.visibility = View.VISIBLE
-                } else {
-                    from_cross.visibility = View.GONE
-                }
-            }
-        })
-
-        to_adr.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    getDriverPresenter!!.requestSuggest(to_adr.text.toString())
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.isNotEmpty() && bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    to_cross.visibility = View.VISIBLE
-                } else {
-                    to_cross.visibility = View.GONE
-                }
-            }
-        })
-
-        from_adr.setOnTouchListener { _, _ ->
-            getDriverPresenter?.touchAddress(true)
-
-            false
-        }
-
-        to_adr.setOnTouchListener { _, _ ->
-            getDriverPresenter?.touchAddress(false)
-
-            false
-        }
-
-        on_map_view.setOnClickListener {
-            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            hideKeyboard(activity!!, root)
-        }
-
-        main_addresses_layout.setOnClickListener {
-            //to do nothing
-        }
-
-        btn_map_from.setOnClickListener {
-            getDriverPresenter?.touchMapBtn(true)
-        }
-
-        btn_map_to.setOnClickListener {
-            getDriverPresenter?.touchMapBtn(false)
-        }
-
-        address_map_marker_btn.setOnClickListener {
-            getDriverPresenter?.touchAddressMapMarkerBtn()
-        }
-    }
-
-
-    fun userLocationPoint(): Point? {
-        var point: Point? = null
-
-        if (userLocationLayer?.cameraPosition() != null) {
-            point = userLocationLayer!!.cameraPosition()!!.target
-        }
-
-        return point
-    }
 
 
     private fun setUserLocation() {
@@ -252,75 +135,69 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    private fun initialize(root: View) {
-        addressesListAdapter =
-            AddressesListAdapter(
-                this,
-                ArrayList(),
-                context!!
-            )
-
-        bottomSheetBehavior = BottomSheetBehavior.from<View>(root.bottom_sheet_addresses)
-
-        root.addresses_list.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        root.addresses_list.adapter = addressesListAdapter
-
-        getDriverPresenter!!.addressesListAdapter = addressesListAdapter
+    override fun onCameraPositionChanged(
+        p0: Map,
+        p1: CameraPosition,
+        p2: CameraUpdateSource,
+        p3: Boolean
+    ) {
+        if (p3) {
+            userLocationLayer?.resetAnchor()
+        }
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    private fun setListeners(root: View) {
+        val cancelRideBtn = root.cancel_ride
+        val cancelRideBtnDone = root.reason_btn
 
-        getDriverPresenter?.detailRideView?.onActivityResult(
-            requestCode,
-            resultCode,
-            data
-        )
+        cancelRideBtn.setOnClickListener {
+            getDriverPresenter?.getCancelReason()
+        }
+
+        cancelRideBtnDone.setOnClickListener {
+            getDriverPresenter?.cancelDone()
+        }
     }
 
 
-    //set behaviour BottomSheet
-    private fun setBottomSheet() {
-        bottomSheetBehavior!!.addBottomSheetCallback(object :
+    private fun setBottomSheet(root: View) {
+        cancelBottomSheetBehavior = BottomSheetBehavior.from<View>(root.reasons_bottom_sheet)
+
+        cancelBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideBottomSheet(bottomSheet, slideOffset)
+                getDriverPresenter?.onSlideBottomSheet(slideOffset, root)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onStateChangedBottomSheet(newState)
+                getDriverPresenter?.onStateChangedBottomSheet(newState, root)
             }
         })
     }
 
 
-    override fun onStop() {
-        super.onStop()
-        MapKitFactory.getInstance().onStop()
-        mapView!!.onStop()
+    private fun initialize(root: View) {
+        val list = arrayListOf<Driver>()
+        for (i in 0..10){
+            list.add(Driver())
+        }
+
+        driversListAdapter =
+            DriversListAdapter(
+                list,
+                context!!,
+                this
+            )
+
+
+        root.driver_list.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        root.driver_list.adapter = driversListAdapter
+        root.driver_list.visibility = View.VISIBLE
+
+        //createRidePresenter!!.addressesListAdapter = addressesListAdapter
     }
-
-
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-        mapView!!.onStart()
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        setListeners(this.view!!)
-    }
-
-
-    //listener onBackPressed key
-    fun backPressed(): Boolean {
-        return getDriverPresenter?.backPressed()!!
-    }
-
 
 }

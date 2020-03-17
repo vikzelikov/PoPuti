@@ -5,24 +5,29 @@
     android:layout_height="match_parent"
     tools:context=".view.getdriver.GetDriverView">
 
-
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="false" />
 
-    <View
-        android:id="@+id/on_map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        android:background="@android:color/black"
-        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/get_driver_center_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="40dp"
+        android:fontFamily="@font/roboto"
+        android:gravity="center_vertical"
+        android:text="@string/offerYourPrice"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="24sp" />
 
     <include
         android:id="@+id/get_driver_layout"
         layout="@layout/get_driver_layout" />
-
 
 </RelativeLayout>

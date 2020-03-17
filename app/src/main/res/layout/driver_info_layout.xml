@@ -6,14 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".view.getdriver.GetDriverView">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/driver_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/main_info_layout"
-        android:paddingTop="8dp"
-        android:visibility="gone" />
-
     <LinearLayout
         android:id="@+id/main_info_layout"
         android:layout_width="match_parent"
@@ -21,105 +13,8 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_corners_layout"
         android:elevation="30dp"
-        android:orientation="vertical">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="15dp"
-            android:translationZ="5dp">
-
-
-            <LinearLayout
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:src="@drawable/ic_input_marker_from" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:src="@drawable/ic_input_line" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_input_marker_to" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/from_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:fontFamily="@font/roboto"
-                        android:padding="10dp"
-                        android:paddingStart="0dp"
-                        android:singleLine="true"
-                        android:text="Address 1"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp" />
-
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="#30000000" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <TextView
-                        android:id="@+id/to_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:fontFamily="@font/roboto"
-                        android:padding="10dp"
-                        android:paddingStart="0dp"
-                        android:singleLine="true"
-                        android:text="Address 2"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp" />
-
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-        </LinearLayout>
+        android:orientation="vertical"
+        android:paddingTop="20dp">
 
 
         <LinearLayout
@@ -131,51 +26,90 @@
             android:weightSum="1">
 
 
-            <TextView
-                android:id="@+id/offer_price"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:drawableStart="@drawable/ic_ruble"
-                android:drawablePadding="17dp"
-                android:paddingTop="15dp"
-                android:paddingBottom="25dp"
-                android:text="320"
-                android:textColor="#000000"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/img_driver"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ava" />
+
+                <TextView
+                    android:id="@+id/driver_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Николай"
+                    android:layout_marginTop="5dp"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
 
 
             <LinearLayout
-                android:id="@+id/comment_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:layout_weight="1"
+                android:gravity="end"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/car_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:fontFamily="@font/roboto"
-                    android:gravity="end"
-                    android:paddingTop="23dp"
-                    android:text="@string/comment"
-                    android:textColor="@android:color/black" />
+                    android:background="@drawable/bg_car_number"
+                    android:paddingStart="9dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="9dp"
+                    android:paddingBottom="2dp"
+                    android:layout_marginTop="30dp"
+                    android:text="HR34HERG"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
 
                 <TextView
-                    android:id="@+id/comment_min_text"
+                    android:id="@+id/car_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/roboto"
-                    android:gravity="end"
-                    android:maxLines="1"
-                    android:paddingStart="18dp"
-                    android:singleLine="true"
-                    android:textColor="#60000000"
-                    android:textSize="13sp" />
+                    android:text="Kia Rio"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#70000000"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/phone_call_driver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/bg_back_btn"
+                        android:elevation="12dp"
+                        android:padding="13dp"
+                        android:src="@drawable/ic_call_phone_driver" />
+
+                    <ImageButton
+                        android:id="@+id/message_driver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/bg_back_btn"
+                        android:elevation="12dp"
+                        android:padding="13dp"
+                        android:src="@drawable/is_message_driver" />
+                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -295,7 +229,7 @@
                 android:background="@drawable/bg_btn_black"
                 android:fontFamily="@font/roboto"
                 android:shadowColor="@color/colorBlue"
-                android:text="@string/ready"
+                android:text="@string/getDriver"
                 android:textAllCaps="false"
                 android:textSize="16sp" />
 
@@ -303,13 +237,5 @@
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <View
-        android:id="@+id/on_map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        android:background="@android:color/black"
-        android:visibility="gone" />
 
 </RelativeLayout>

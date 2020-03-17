@@ -8,19 +8,22 @@ object Constants {
 
     const val MAIN_FRAGMENT = 1
     const val REGULAR_DRIVING_VIEW = 2
-    const val GET_DRIVER_VIEW = 3
+    const val CREATE_RIDE_VIEW = 3
     const val PROFILE_VIEW = 4
-    //const val DETAIL_RIDE_VIEW = 5
+    const val GET_DRIVER_VIEW = 5
     const val OFFER_PRICE_VIEW = 6
     const val ADD_BANK_CARD_VIEW = 7
     const val PHONE_VIEW = 8
     const val CONFIRM_PHONE_VIEW = 9
     const val FULL_NAME_VIEW = 10
 
+    const val FROM = "FROM"
+    const val TO = "TO"
+    const val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
     const val OFFER_PRICE = "OFFER_PRICE"
     const val CARD_NUMBER = "CARD_NUMBER"
     const val VALID_UNTIL = "VALID_UNTIL"
-    const val BANK_IMG = "BANK_IMG"
+    const val CARD_IMG = "CARD_IMG"
     const val CVC = "CVC"
     const val PHONE = "PHONE"
 

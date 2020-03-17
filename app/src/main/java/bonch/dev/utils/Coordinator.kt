@@ -9,11 +9,13 @@ import bonch.dev.R
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
+import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.AddBankCardView
+import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.getdriver.OfferPriceView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
@@ -54,7 +56,6 @@ object Coordinator {
 
                 fm.beginTransaction()
                     .replace(R.id.fragment_container, fragment, MAIN_FRAGMENT.toString())
-                    .addToBackStack(null)
                     .commit()
             }
 
@@ -83,6 +84,19 @@ object Coordinator {
                         PHONE_VIEW.toString()
                     )
                     .addToBackStack(null)
+                    .commit()
+            }
+
+            GET_DRIVER_VIEW -> {
+                val fragment = GetDriverView()
+                fragment.arguments = bundle
+
+                fm.beginTransaction()
+                    .replace(
+                        R.id.fragment_container,
+                        fragment,
+                        GET_DRIVER_VIEW.toString()
+                    )
                     .commit()
             }
         }

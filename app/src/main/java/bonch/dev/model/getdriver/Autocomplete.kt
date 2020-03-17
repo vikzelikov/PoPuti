@@ -7,7 +7,7 @@ import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 import kotlin.math.min
 
-class Autocomplete(private var getDriverModel: GetDriverModel, userLocationPoint: Point?) :
+class Autocomplete(private var createRideModel: CreateRideModel, userLocationPoint: Point?) :
     SuggestSession.SuggestListener {
 
     private val RESULT_NUMBER_LIMIT = 7
@@ -55,7 +55,7 @@ class Autocomplete(private var getDriverModel: GetDriverModel, userLocationPoint
             }
         }
 
-        getDriverModel.responseSuggest(suggestResult)
+        createRideModel.responseSuggest(suggestResult)
 
     }
 

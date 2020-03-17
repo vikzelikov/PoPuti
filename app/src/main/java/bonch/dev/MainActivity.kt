@@ -9,14 +9,14 @@ import androidx.core.content.ContextCompat
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
-import bonch.dev.utils.Constants.GET_DRIVER_VIEW
+import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
-import bonch.dev.view.getdriver.GetDriverView
+import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
 import bonch.dev.view.signup.PhoneFragment
@@ -79,8 +79,8 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        val getDriverView =
-            supportFragmentManager.findFragmentByTag(GET_DRIVER_VIEW.toString()) as GetDriverView?
+        val createRideView =
+            supportFragmentManager.findFragmentByTag(CREATE_RIDE_VIEW.toString()) as CreateRideView?
         val phoneFragment =
             supportFragmentManager.findFragmentByTag(PHONE_VIEW.toString()) as PhoneFragment?
         val confirmPhoneFragment =
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentByTag(FULL_NAME_VIEW.toString()) as FullNameFragment?
 
 
-        if (getDriverView?.view != null && getDriverView.backPressed()) {
+        if (createRideView?.view != null && createRideView.backPressed()) {
             super.onBackPressed()
         }
 
