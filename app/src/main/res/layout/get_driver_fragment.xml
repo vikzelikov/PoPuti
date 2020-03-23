@@ -26,8 +26,18 @@
         android:textColor="@android:color/black"
         android:textSize="24sp" />
 
+    <View
+        android:id="@+id/on_map_view_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="@android:color/black" />
+
     <include
         android:id="@+id/get_driver_layout"
         layout="@layout/get_driver_layout" />
+
 
 </RelativeLayout>

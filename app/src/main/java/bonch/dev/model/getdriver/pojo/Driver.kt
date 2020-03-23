@@ -6,5 +6,6 @@ data class Driver(
     var carNumber: String? = null,
     var rating: Double? = null,
     var imgDriver: Int? = null,
-    var price: Int? = null
+    var price: Int? = null,
+    var timeLine: Int? = null
 )

@@ -42,12 +42,16 @@
     <string name="showPhone">Мы отправили его на номер</string>
     <string name="retrySms">Повторить СМС</string>
     <string name="retrySmsIn">Повторить СМС через</string>
-    <string name="recommendDownPrice">Рекомендуем повысить цену</string>
     <string name="cancelRide">Отменить поездку</string>
     <string name="reasonCancel">Причина отмены</string>
     <string name="accept">Принять</string>
     <string name="offerYourPrice">Предлагаем вашу цену водителям, ожидайте</string>
     <string name="driverInWay">Водитель уже в пути</string>
     <string name="driverArrived">Водитель приехал</string>
+    <string name="cancelRideQuestion">Отменить поездку?</string>
+    <string name="notCancel">Не отменять</string>
+    <string name="cancel">Отменить</string>
+    <string name="tooLowPrice">Вы установили слишком \nнизкую цену</string>
+    <string name="recommendRisePrice">Рекомендуем повысить цену, чтобы\n заинтересовать водителей</string>
 
 </resources>

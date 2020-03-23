@@ -136,17 +136,15 @@
                 android:textColor="#50000000"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/price_label_color"
+            <ImageButton
+                android:id="@+id/info_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/recommendDownPrice"
-                android:textSize="14sp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:textColor="#FF532E"
+                android:layout_marginTop="18dp"
+                android:background="@android:color/white"
+                android:src="@drawable/ic_info_price"
                 android:visibility="gone" />
+
 
         </LinearLayout>
 
@@ -366,6 +364,53 @@
                 android:textColor="@android:color/black"
                 android:textColorHint="#60000000"
                 android:textCursorDrawable="@drawable/bg_color_cursor" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/info_price_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".view.getdriver.MBottomSheet">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_bottom_sheet_arrow" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/roboto"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/tooLowPrice"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:fontFamily="@font/roboto"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/recommendRisePrice"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
 
 
         </LinearLayout>

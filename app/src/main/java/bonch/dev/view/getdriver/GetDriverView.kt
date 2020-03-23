@@ -3,6 +3,7 @@ package bonch.dev.view.getdriver
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Driver
+import bonch.dev.model.getdriver.pojo.RidePoint
 import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Constants.USER_POINT
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
@@ -26,20 +30,18 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
-import kotlinx.android.synthetic.main.create_ride_layout.view.*
-import kotlinx.android.synthetic.main.driver_info_layout.view.*
 import kotlinx.android.synthetic.main.driver_info_layout.view.cancel_ride
-import kotlinx.android.synthetic.main.driver_info_layout.view.reason_btn
 import kotlinx.android.synthetic.main.driver_info_layout.view.reasons_bottom_sheet
+import kotlinx.android.synthetic.main.get_driver_fragment.view.*
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
 
 class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     var mapView: MapView? = null
-    var driversListAdapter: DriversListAdapter? = null
     var cancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    var confirmCancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    var getDriverPresenter: GetDriverPresenter? = null
     private var userLocationLayer: UserLocationLayer? = null
-    private var getDriverPresenter: GetDriverPresenter? = null
 
 
     init {
@@ -74,7 +76,10 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         setListeners(root)
 
-        initialize(root)
+        //TODO
+        Handler().postDelayed({
+            getDriverPresenter?.startSearchDrivers(root)
+        }, 2500)
 
 
         return root
@@ -149,55 +154,88 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
     private fun setListeners(root: View) {
         val cancelRideBtn = root.cancel_ride
-        val cancelRideBtnDone = root.reason_btn
+        val cancelBtn = root.cancel
+        val notCancelBtn = root.not_cancel
+        val onMapView = root.on_map_view
+        val case1 = root.case1
 
         cancelRideBtn.setOnClickListener {
             getDriverPresenter?.getCancelReason()
         }
 
-        cancelRideBtnDone.setOnClickListener {
+        //TODO
+        case1.setOnClickListener {
+            getDriverPresenter?.getConfirmCancel()
+        }
+
+        cancelBtn.setOnClickListener {
             getDriverPresenter?.cancelDone()
+        }
+
+        notCancelBtn.setOnClickListener {
+            getDriverPresenter?.notCancel()
+        }
+
+        onMapView.setOnClickListener {
+            getDriverPresenter?.notCancel()
         }
     }
 
 
     private fun setBottomSheet(root: View) {
         cancelBottomSheetBehavior = BottomSheetBehavior.from<View>(root.reasons_bottom_sheet)
+        confirmCancelBottomSheetBehavior =
+            BottomSheetBehavior.from<View>(root.confirm_cancel_bottom_sheet)
 
         cancelBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideBottomSheet(slideOffset, root)
+                getDriverPresenter?.onSlideCancelReason(slideOffset, root)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onStateChangedBottomSheet(newState, root)
+                getDriverPresenter?.onChangedStateCancelReason(newState, root)
+            }
+        })
+
+
+        confirmCancelBottomSheetBehavior!!.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                getDriverPresenter?.onSlideConfirmCancel(slideOffset, root)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                getDriverPresenter?.onChangedStateConfirmCancel(newState, root)
             }
         })
     }
 
 
-    private fun initialize(root: View) {
-        val list = arrayListOf<Driver>()
-        for (i in 0..10){
-            list.add(Driver())
-        }
-
-        driversListAdapter =
-            DriversListAdapter(
-                list,
-                context!!,
-                this
-            )
+    //TODO
+    fun startAnimSearch(point: Point) {
+        val zoom = mapView!!.map.cameraPosition.zoom - 2
+        mapView!!.map.move(
+            CameraPosition(point, zoom, 0.0f, 0.0f),
+            Animation(Animation.Type.SMOOTH, 30f),
+            null
+        )
+    }
 
 
-        root.driver_list.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        root.driver_list.adapter = driversListAdapter
-        root.driver_list.visibility = View.VISIBLE
+    override fun onStop() {
+        super.onStop()
+        MapKitFactory.getInstance().onStop()
+        mapView!!.onStop()
+    }
 
-        //createRidePresenter!!.addressesListAdapter = addressesListAdapter
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+        mapView!!.onStart()
     }
 
 }

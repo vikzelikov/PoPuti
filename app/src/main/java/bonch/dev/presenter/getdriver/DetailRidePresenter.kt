@@ -13,6 +13,7 @@ import bonch.dev.model.getdriver.SearchPlace
 import bonch.dev.model.getdriver.pojo.PaymentCard
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.model.getdriver.pojo.RideDetailInfo
+import bonch.dev.model.getdriver.pojo.RidePoint
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
@@ -23,6 +24,7 @@ import bonch.dev.utils.Constants.OFFER_PRICE
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.RIDE_DETAIL_INFO
 import bonch.dev.utils.Constants.TO
+import bonch.dev.utils.Constants.USER_POINT
 import bonch.dev.utils.Coordinator.openActivity
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
@@ -142,7 +144,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
     fun offerPriceDone(data: Intent?) {
         val offerPrice = getView().offer_price
-        val priceLabelColor = getView().price_label_color
+        val priceLabelColor = getView().info_price
         val strPrice = data!!.getStringExtra(Constants.OFFER_PRICE)
 
         offerPrice.textSize = 22f
@@ -184,6 +186,8 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             getView().payment_method_img.setImageResource(paymentCard.img!!)
         }
 
+        detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+
         //change btn enabled in case completed detail info
         isDataComplete()
     }
@@ -191,6 +195,11 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
     fun getPaymentMethods() {
         detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    fun getInfoPrice(){
+        detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
@@ -212,6 +221,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         hideKeyboard(activity, root)
         detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
 
@@ -252,10 +262,12 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             val fm = (getView().activity as MainActivity).supportFragmentManager
             val comment = getView().comment_min_text.text.toString().trim()
             val price = getView().offer_price.text.toString().trim()
+            val userPoint = getView().userLocationPoint()
 
             bundle.putParcelable(FROM, fromAdr)
             bundle.putParcelable(TO, toAdr)
             bundle.putParcelable(RIDE_DETAIL_INFO, RideDetailInfo(price, comment))
+            bundle.putParcelable(USER_POINT, RidePoint(userPoint!!.latitude, userPoint.longitude))
 
             replaceFragment(GET_DRIVER_VIEW, bundle, fm)
         }

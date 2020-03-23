@@ -1,15 +1,10 @@
 package bonch.dev.presenter.getdriver
 
 import android.graphics.Rect
-import android.os.Handler
 import android.text.Editable
-import android.util.Log
 import android.view.View
 import bonch.dev.R
-import bonch.dev.utils.Constants.OFFER_PRICE
 import kotlinx.android.synthetic.main.offer_price_activity.view.*
-import java.lang.IndexOutOfBoundsException
-import java.util.*
 
 class OfferPricePresenter {
 
@@ -42,7 +37,6 @@ class OfferPricePresenter {
                     startHeight = screenHeight - (rect.bottom - rect.top)
                 }
 
-                println("$heightDiff $startHeight")
                 if (heightDiff > startHeight) {
                     //move UP
 //                    Handler().postDelayed({

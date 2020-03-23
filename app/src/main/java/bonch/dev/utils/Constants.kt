@@ -19,6 +19,7 @@ object Constants {
 
     const val FROM = "FROM"
     const val TO = "TO"
+    const val USER_POINT = "USER_POINT"
     const val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
     const val OFFER_PRICE = "OFFER_PRICE"
     const val CARD_NUMBER = "CARD_NUMBER"

@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager
 import bonch.dev.R
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
+import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
@@ -15,6 +16,7 @@ import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.view.MainFragment
 import bonch.dev.view.getdriver.AddBankCardView
+import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.getdriver.OfferPriceView
 import bonch.dev.view.signup.ConfirmPhoneFragment
@@ -96,6 +98,19 @@ object Coordinator {
                         R.id.fragment_container,
                         fragment,
                         GET_DRIVER_VIEW.toString()
+                    )
+                    .commit()
+            }
+
+            CREATE_RIDE_VIEW -> {
+                val fragment = CreateRideView()
+                fragment.arguments = bundle
+
+                fm.beginTransaction()
+                    .replace(
+                        R.id.fragment_container,
+                        fragment,
+                        CREATE_RIDE_VIEW.toString()
                     )
                     .commit()
             }

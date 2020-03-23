@@ -2,19 +2,22 @@ package bonch.dev
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.TextUtils.replace
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
-import bonch.dev.utils.Constants.FULL_NAME_VIEW
 import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
+import bonch.dev.utils.Constants.FULL_NAME_VIEW
+import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Coordinator.addFragment
+import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.signup.ConfirmPhoneFragment
@@ -40,7 +43,8 @@ class MainActivity : AppCompatActivity() {
             addFragment(PHONE_VIEW, supportFragmentManager)
         } else {
             //redirect to full app
-            addFragment(MAIN_FRAGMENT, supportFragmentManager)
+            //addFragment(MAIN_FRAGMENT, supportFragmentManager)
+            replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
         }
     }
 

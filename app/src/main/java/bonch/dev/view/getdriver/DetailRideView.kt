@@ -21,6 +21,7 @@ class DetailRideView(val createRideView: CreateRideView) {
 
     var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    var infoPriceBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var detailRidePresenter: DetailRidePresenter? = null
     private var paymentsListAdapter: PaymentsListAdapter? = null
     private val from: TextView
@@ -79,6 +80,7 @@ class DetailRideView(val createRideView: CreateRideView) {
         val paymentMethod = getView().payment_method
         val selectedPaymentMethod = getView().selected_payment_method
         val onMapView = getView().on_map_view_detail
+        val infoPrice = getView().info_price
 
         getDriverBtn.setOnClickListener {
             detailRidePresenter?.getDriver()
@@ -123,6 +125,10 @@ class DetailRideView(val createRideView: CreateRideView) {
         onMapView.setOnClickListener {
             detailRidePresenter?.commentDone(activity, root)
         }
+
+        infoPrice.setOnClickListener {
+            detailRidePresenter?.getInfoPrice()
+        }
     }
 
 
@@ -135,6 +141,7 @@ class DetailRideView(val createRideView: CreateRideView) {
     private fun setBottomSheet(activity: FragmentActivity, root: View) {
         cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().cards_bottom_sheet)
         commentBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().comment_bottom_sheet)
+        infoPriceBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().info_price_bottom_sheet)
 
         commentBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -149,6 +156,18 @@ class DetailRideView(val createRideView: CreateRideView) {
         })
 
         cardsBottomSheetBehavior!!.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                detailRidePresenter?.onSlideBottomSheet(slideOffset)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                detailRidePresenter?.onStateChangedBottomSheet(newState, activity, root)
+            }
+        })
+
+        infoPriceBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {

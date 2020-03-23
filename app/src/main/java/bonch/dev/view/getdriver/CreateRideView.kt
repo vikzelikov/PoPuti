@@ -203,10 +203,6 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             hideKeyboard(activity!!, root)
         }
 
-        main_addresses_layout.setOnClickListener {
-            //to do nothing
-        }
-
         btn_map_from.setOnClickListener {
             createRidePresenter?.touchMapBtn(true)
         }
