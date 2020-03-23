@@ -40,6 +40,8 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
     private var driverInfoView: DriverInfoView? = null
     private var driversListAdapter: DriversListAdapter? = null
     private var getDriverModel: GetDriverModel? = null
+    private var handler: Handler? = null
+
 
     init {
         if (getDriverModel == null) {
@@ -135,20 +137,18 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
 
     fun startSearchDrivers(root: View) {
-        val handler = Handler()
-
         initializeListDrivers(root)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.Main) {
-                handler.postDelayed(object : Runnable {
-                    override fun run() {
-                        getDriverModel?.getNewDriver()
-                        handler.postDelayed(this, 2000)
-                    }
-                }, 0)
+        handler = Handler()
+
+        handler!!.postDelayed(object : Runnable {
+            override fun run() {
+                getDriverModel?.getNewDriver()
+                handler?.postDelayed(this, 2000)
+                println(Thread.currentThread().name)
             }
-        }
+        }, 0)
+
 
         val arguments = getDriverView.arguments
         val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
@@ -188,6 +188,9 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
 
     fun cancelDone() {
+        //stop getting new driver
+        handler?.removeCallbacksAndMessages(null)
+
         val fm = (getDriverView.activity as MainActivity).supportFragmentManager
         replaceFragment(MAIN_FRAGMENT, null, fm)
     }

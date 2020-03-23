@@ -31,6 +31,9 @@ object Constants {
     //mil sec
     const val SIGNUP_INTERVAL_SMS = 15000L
     const val SIGNUP_MAX_INTERVAL_SMS = 60000L
+    const val TIMER_USER_GET_DRIVER = 30
+    //min
+    const val MAX_TIME_GET_DRIVER = 3L
 
     const val ACCESS_TOKEN = "ACCESS_TOKEN"
 }

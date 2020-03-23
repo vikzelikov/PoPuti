@@ -15,7 +15,7 @@ class GetDriverModel(private val getDriverPresenter: GetDriverPresenter) {
             Driver("Александр $i", "Kia Rio", "AR432V", 3.9, R.drawable.ava1, 412)
         }
 
-        if (i < 12)
+        if (i < 20)
             getDriverPresenter.setNewDriverOffer(driver)
 
         i++
