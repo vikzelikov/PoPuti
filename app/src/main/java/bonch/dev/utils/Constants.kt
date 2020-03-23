@@ -22,6 +22,7 @@ object Constants {
     const val USER_POINT = "USER_POINT"
     const val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
     const val OFFER_PRICE = "OFFER_PRICE"
+    const val AVERAGE_PRICE = "AVERAGE_PRICE"
     const val CARD_NUMBER = "CARD_NUMBER"
     const val VALID_UNTIL = "VALID_UNTIL"
     const val CARD_IMG = "CARD_IMG"

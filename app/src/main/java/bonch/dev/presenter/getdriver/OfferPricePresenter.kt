@@ -1,15 +1,30 @@
 package bonch.dev.presenter.getdriver
 
+import android.content.res.Resources
 import android.graphics.Rect
+import android.os.Build
 import android.text.Editable
+import android.text.Html
 import android.view.View
 import bonch.dev.R
+import bonch.dev.model.getdriver.OfferPriceModel
+import bonch.dev.view.getdriver.OfferPriceView
+import kotlinx.android.synthetic.main.offer_price_activity.*
 import kotlinx.android.synthetic.main.offer_price_activity.view.*
+import kotlinx.android.synthetic.main.offer_price_activity.view.average_price
 
-class OfferPricePresenter {
 
+class OfferPricePresenter(val offerPriceView: OfferPriceView) {
+
+    var offerPriceModel: OfferPriceModel? = null
     private var startHeight: Int = 0
     private var screenHeight: Int = 0
+
+    init {
+        if (offerPriceModel == null) {
+            offerPriceModel = OfferPriceModel(this)
+        }
+    }
 
     fun setMovingButtonListener(root: View) {
         val offerBtn = root.offer
@@ -17,7 +32,7 @@ class OfferPricePresenter {
         var btnDefaultPosition = 0.0f
         val rect = Rect()
 
-
+//TODO keyboard move up
         root.viewTreeObserver
             .addOnGlobalLayoutListener {
 
@@ -82,6 +97,11 @@ class OfferPricePresenter {
         } else {
             offerBtn.setBackgroundResource(R.drawable.bg_btn_gray)
         }
+    }
+
+
+    fun getAveragePrice(): Int? {
+        return offerPriceModel?.getAveragePrice()
     }
 
 

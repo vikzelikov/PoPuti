@@ -29,6 +29,7 @@
     <string name="offer_price">Предложите цену</string>
     <string name="offerPrice">Предложить цену</string>
     <string name="offer_price_text">Чтобы заинтересовать водителей, устанавливайте справедливую цену</string>
+    <string name="offer_price_average_price">Средняя цена по данному маршруту составляет</string>
     <string name="getDriver">Вызвать машину</string>
     <string name="add_payment">Добавить карту</string>
     <string name="addCard">Добавить карту</string>

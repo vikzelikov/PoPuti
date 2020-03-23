@@ -17,6 +17,7 @@ import bonch.dev.model.getdriver.pojo.RidePoint
 import bonch.dev.presenter.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
+import bonch.dev.utils.Constants.AVERAGE_PRICE
 import bonch.dev.utils.Constants.CARD_IMG
 import bonch.dev.utils.Constants.FROM
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
@@ -145,19 +146,20 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     fun offerPriceDone(data: Intent?) {
         val offerPrice = getView().offer_price
         val priceLabelColor = getView().info_price
-        val strPrice = data!!.getStringExtra(Constants.OFFER_PRICE)
+        val price = data!!.getStringExtra(OFFER_PRICE)
+        val averagePrice = data.getIntExtra(AVERAGE_PRICE, 0)
 
         offerPrice.textSize = 22f
         offerPrice.setTextColor(Color.parseColor("#000000"))
         offerPrice.typeface = Typeface.DEFAULT_BOLD
 
-        if (isPositiveOfferPrice(strPrice!!.toInt())) {
+        if (averagePrice <= (price!!.toInt())) {
             priceLabelColor.visibility = View.GONE
         } else {
             priceLabelColor.visibility = View.VISIBLE
         }
 
-        offerPrice.text = strPrice
+        offerPrice.text = price
 
         //change btn enabled in case completed detail info
         isDataComplete()
@@ -287,18 +289,6 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         }
 
         return isComplete
-    }
-
-
-    private fun isPositiveOfferPrice(price: Int): Boolean {
-        var isPositive = false
-        //TODO
-
-        if (price > 300) {
-            isPositive = true
-        }
-
-        return isPositive
     }
 
 

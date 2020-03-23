@@ -1,8 +1,11 @@
 package bonch.dev.view.getdriver
 
 import android.content.Intent
+import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.text.Html
 import android.text.TextWatcher
 import android.view.View
 import android.widget.LinearLayout
@@ -10,9 +13,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.R
 import bonch.dev.presenter.getdriver.OfferPricePresenter
+import bonch.dev.utils.Constants.AVERAGE_PRICE
 import bonch.dev.utils.Constants.OFFER_PRICE
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
+import kotlinx.android.synthetic.main.offer_price_activity.*
 import kotlinx.android.synthetic.main.offer_price_activity.view.*
 
 class OfferPriceView : AppCompatActivity() {
@@ -20,7 +25,7 @@ class OfferPriceView : AppCompatActivity() {
     private var offerPricePresenter: OfferPricePresenter? = null
 
     init {
-        offerPricePresenter = OfferPricePresenter()
+        offerPricePresenter = OfferPricePresenter(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +39,8 @@ class OfferPriceView : AppCompatActivity() {
         //set listener to move button in relation to keyboard on/off
         offerPricePresenter?.setMovingButtonListener(root)
 
+        val averagePrice = offerPricePresenter?.getAveragePrice()
+        setAveragePrice(root, averagePrice)
 
         //display keyboard and set focus
         root.price.requestFocus()
@@ -56,9 +63,11 @@ class OfferPriceView : AppCompatActivity() {
         offerBtn.setOnClickListener {
             val intent = Intent()
             val price = priceEditText.text.toString()
+            val averagePrice = offerPricePresenter?.getAveragePrice()
             if (price.length < 7 && price.isNotEmpty()) {
                 hideKeyboard(this, root)
                 intent.putExtra(OFFER_PRICE, price.substring(0, price.length - 2))
+                intent.putExtra(AVERAGE_PRICE, averagePrice)
                 setResult(RESULT_OK, intent)
                 finish()
             }
@@ -77,6 +86,24 @@ class OfferPriceView : AppCompatActivity() {
 
         priceEditText.setOnClickListener {
             offerPricePresenter?.touchPriceEditText(root)
+        }
+    }
+
+
+    private fun setAveragePrice(root: View, averagePrice: Int?) {
+        val averageTextView = root.average_price
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            averageTextView.text = Html.fromHtml(
+                resources.getString(R.string.offer_price_average_price)
+                    .plus(" <b>$averagePrice рублей</b>"), Html.FROM_HTML_MODE_COMPACT
+            )
+
+        } else {
+            averageTextView.text = Html.fromHtml(
+                resources.getString(R.string.offer_price_average_price)
+                    .plus(" <b>$averagePrice рублей</b>")
+            )
         }
     }
 

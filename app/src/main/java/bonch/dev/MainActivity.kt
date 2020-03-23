@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity() {
             addFragment(PHONE_VIEW, supportFragmentManager)
         } else {
             //redirect to full app
-            //addFragment(MAIN_FRAGMENT, supportFragmentManager)
-            replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
+            addFragment(MAIN_FRAGMENT, supportFragmentManager)
+            //replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
         }
     }
 

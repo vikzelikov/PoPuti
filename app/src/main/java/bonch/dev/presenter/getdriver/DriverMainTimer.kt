@@ -1,9 +1,12 @@
 package bonch.dev.presenter.getdriver
 
+import android.R
+import android.app.AlertDialog
 import android.os.CountDownTimer
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
 import bonch.dev.utils.Constants.MAX_TIME_GET_DRIVER
+
 
 object DriverMainTimer {
 
@@ -26,6 +29,17 @@ object DriverMainTimer {
             //TODO
             //show alert
             println("Пользователь не смог выбрать водителя для поездки")
+            AlertDialog.Builder(adapter.getDriverView.context)
+                .setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?") // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(R.string.yes
+                ) { _, _ ->
+                    // Continue with delete operation
+                } // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(R.string.no, null)
+                .setIcon(R.drawable.ic_dialog_alert)
+                .show()
         }
 
         override fun onTick(millisUntilFinished: Long) {
@@ -35,7 +49,7 @@ object DriverMainTimer {
                         list[i].timeLine = it.dec()
 
                         //if timeLine too small, remove item
-                        if(it < 20){
+                        if(it < 50){
                             adapter.rejectDriver(null, false)
                         }
                     }
