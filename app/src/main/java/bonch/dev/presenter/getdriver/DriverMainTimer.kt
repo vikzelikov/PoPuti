@@ -35,7 +35,7 @@ object DriverMainTimer {
                         list[i].timeLine = it.dec()
 
                         //if timeLine too small, remove item
-                        if(it < 10){
+                        if(it < 20){
                             adapter.rejectDriver(null, false)
                         }
                     }

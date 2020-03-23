@@ -63,7 +63,6 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
                 root.offer_price.text = rideDetailInfo.priceRide
             }
 
-
             if (rideDetailInfo?.comment!!.isNotEmpty()) {
                 root.comment_min_text.text = rideDetailInfo.comment
             } else {
@@ -122,13 +121,15 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
         getDriverView.view?.on_map_view_main?.visibility = View.GONE
 
         //dynamic replace layout
-        var view =
-            getDriverView.view!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
+        var view =  getDriverView.view!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
         val parent = view.parent as ViewGroup
         val index = parent.indexOfChild(view)
         view.visibility = View.GONE
         view = getDriverView.layoutInflater.inflate(R.layout.driver_info_layout, parent, false)
         parent.addView(view, index)
+
+        //stop getting new driver
+        handler?.removeCallbacksAndMessages(null)
 
         //create next screen
         driverInfoView = DriverInfoView(getDriverView)
@@ -144,7 +145,7 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
         handler!!.postDelayed(object : Runnable {
             override fun run() {
                 getDriverModel?.getNewDriver()
-                handler?.postDelayed(this, 2000)
+                handler?.postDelayed(this, 3000)
                 println(Thread.currentThread().name)
             }
         }, 0)
