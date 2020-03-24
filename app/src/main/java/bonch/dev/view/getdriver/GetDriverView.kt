@@ -76,10 +76,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         setListeners(root)
 
-        //TODO
-        Handler().postDelayed({
-            getDriverPresenter?.startSearchDrivers(root)
-        }, 2500)
+        getDriverPresenter?.startSearchDrivers(root)
 
 
         return root
@@ -214,14 +211,17 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    //TODO
     fun startAnimSearch(point: Point) {
+        //TODO
         val zoom = mapView!!.map.cameraPosition.zoom - 2
-        mapView!!.map.move(
-            CameraPosition(point, zoom, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 30f),
-            null
-        )
+        Handler().postDelayed({
+            mapView!!.map.move(
+                CameraPosition(point, zoom, 0.0f, 0.0f),
+                Animation(Animation.Type.SMOOTH, 30f),
+                null
+            )
+        }, 100)
+
     }
 
 

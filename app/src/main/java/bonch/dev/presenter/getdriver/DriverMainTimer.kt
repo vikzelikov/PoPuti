@@ -29,7 +29,8 @@ object DriverMainTimer {
             //TODO
             //show alert
             println("Пользователь не смог выбрать водителя для поездки")
-            AlertDialog.Builder(adapter.getDriverView.context)
+            val context = adapter.getDriverPresenter.getDriverView.context
+            AlertDialog.Builder(context)
                 .setTitle("Delete entry")
                 .setMessage("Are you sure you want to delete this entry?") // Specifying a listener allows you to take an action before dismissing the dialog.
                 // The dialog is automatically dismissed when a dialog button is clicked.

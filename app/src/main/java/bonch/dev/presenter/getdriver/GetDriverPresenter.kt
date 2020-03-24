@@ -27,7 +27,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import kotlinx.android.synthetic.main.get_driver_fragment.*
 import kotlinx.android.synthetic.main.get_driver_fragment.view.*
+import kotlinx.android.synthetic.main.get_driver_fragment.view.on_map_view_main
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class GetDriverPresenter(private val getDriverView: GetDriverView) {
+class GetDriverPresenter(val getDriverView: GetDriverView) {
 
     private var driverInfoView: DriverInfoView? = null
     private var driversListAdapter: DriversListAdapter? = null
@@ -121,7 +123,8 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
         getDriverView.view?.on_map_view_main?.visibility = View.GONE
 
         //dynamic replace layout
-        var view =  getDriverView.view!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
+        var view =
+            getDriverView.view!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
         val parent = view.parent as ViewGroup
         val index = parent.indexOfChild(view)
         view.visibility = View.GONE
@@ -138,22 +141,23 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
 
     fun startSearchDrivers(root: View) {
+        //start animation searching
+        val arguments = getDriverView.arguments
+        val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
+        getDriverView.startAnimSearch(Point(userPoint!!.latitude, userPoint.longitude))
+
+        //init recycler drivers item
         initializeListDrivers(root)
 
+        //TODO
         handler = Handler()
-
         handler!!.postDelayed(object : Runnable {
             override fun run() {
                 getDriverModel?.getNewDriver()
                 handler?.postDelayed(this, 3000)
-                println(Thread.currentThread().name)
             }
-        }, 0)
+        }, 10000)
 
-
-        val arguments = getDriverView.arguments
-        val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
-        //getDriverView.startAnimSearch(Point(userPoint!!.latitude, userPoint.longitude))
     }
 
 
@@ -165,16 +169,13 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
     private fun initializeListDrivers(root: View) {
         val context = getDriverView.context!!
 
-        driversListAdapter = DriversListAdapter(ArrayList(), context, getDriverView)
+        driversListAdapter = DriversListAdapter(ArrayList(), context, this)
 
         root.driver_list.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         root.driver_list.adapter = driversListAdapter
 
         root.driver_list.visibility = View.VISIBLE
-        root.get_driver_center_text?.visibility = View.GONE
-        root.on_map_view_main.visibility = View.VISIBLE
-        root.on_map_view_main.alpha = 0.8f
     }
 
 
@@ -203,6 +204,22 @@ class GetDriverPresenter(private val getDriverView: GetDriverView) {
 
         getDriverView.cancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         getDriverView.confirmCancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+
+    fun checkBackground(isShow: Boolean) {
+        val onMapView = getDriverView.on_map_view_main
+        val centerText = getDriverView.get_driver_center_text
+
+        if (isShow) {
+            centerText.visibility = View.GONE
+            onMapView.visibility = View.VISIBLE
+            onMapView.alpha = 0.8f
+        } else {
+            centerText.visibility = View.VISIBLE
+            onMapView.visibility = View.GONE
+            onMapView.alpha = 0f
+        }
     }
 
 }

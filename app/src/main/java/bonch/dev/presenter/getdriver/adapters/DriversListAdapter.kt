@@ -12,6 +12,7 @@ import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.presenter.getdriver.DriverItemTimer
 import bonch.dev.presenter.getdriver.DriverMainTimer
+import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.utils.Constants.TIMER_USER_GET_DRIVER
 import bonch.dev.view.getdriver.GetDriverView
 import com.bumptech.glide.Glide
@@ -23,7 +24,7 @@ import kotlinx.android.synthetic.main.get_driver_layout.view.*
 class DriversListAdapter(
     var list: ArrayList<Driver>,
     val context: Context,
-    val getDriverView: GetDriverView
+    val getDriverPresenter: GetDriverPresenter
 ) : RecyclerView.Adapter<DriversListAdapter.ItemPostHolder>() {
 
     init {
@@ -53,14 +54,13 @@ class DriversListAdapter(
         holder.driverItemTimer!!.start()
 
         holder.itemView.accept_driver.setOnClickListener {
-            val presenter = getDriverView.getDriverPresenter
-            presenter?.selectDriver(driver)
+            getDriverPresenter.selectDriver(driver)
         }
     }
 
 
     fun setNewDriver(driver: Driver) {
-        val activity = getDriverView.activity
+        val activity = getDriverPresenter.getDriverView.activity
 
         activity?.let {
             if (driver.timeLine == null) {
@@ -75,11 +75,17 @@ class DriversListAdapter(
         list.add(0, driver)
         notifyItemInserted(0)
         notifyItemChanged(0)
+
+        if (list.size != 0) {
+            getDriverPresenter.checkBackground(true)
+        }
     }
 
 
     fun rejectDriver(position: Int?, isUserAction: Boolean) {
-        getDriverView.view?.driver_list?.post {
+        val recyclerView = getDriverPresenter.getDriverView.view?.driver_list
+
+        recyclerView?.post {
             try {
                 if (isUserAction) {
                     list.removeAt(position!!)
@@ -97,6 +103,10 @@ class DriversListAdapter(
             } catch (ex: IndexOutOfBoundsException) {
                 println(ex.message)
             }
+        }
+
+        if (list.size <= 1) {
+            getDriverPresenter.checkBackground(false)
         }
     }
 
