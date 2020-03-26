@@ -95,6 +95,7 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
         val ride: Ride?
 
         if (address != null) {
+
             if (isFromMapSearch) {
                 fromAddress.setText(address)
 
@@ -134,7 +135,14 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
         println(getView().navView)
         println("!!!!!!!!!!!!!!")
 
-        getView().navView?.visibility = View.GONE
+        while (true) {
+            val visibility = getView().navView!!.visibility
+            if (visibility == View.VISIBLE) {
+                getView().navView!!.visibility = View.GONE
+                break
+            }
+        }
+
         root!!.back_btn.visibility = View.VISIBLE
         onMapView.visibility = View.GONE
 

@@ -47,8 +47,6 @@ object DriverMainTimer {
                     list[i].timeLine?.let {
                         list[i].timeLine = it.dec()
 
-                        println(list.size)
-
                         //if timeLine too small, remove item
                         if (it < 50) {
                             adapter.rejectDriver(null, false)

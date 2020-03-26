@@ -1,6 +1,8 @@
 package bonch.dev.presenter.getdriver
 
 import android.content.Context
+import android.os.Build
+import android.text.Html
 import android.view.View
 import bonch.dev.MainActivity
 import bonch.dev.R
@@ -19,6 +21,7 @@ import kotlinx.android.synthetic.main.get_driver_layout.view.on_map_view
 import kotlinx.android.synthetic.main.get_driver_layout.view.on_view_cancel_reason
 
 class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
+
 
     var isDriverArrived = false
 
@@ -84,13 +87,43 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
     fun getConfirmCancel() {
         val textMessage = driverInfoView.getRootView().text_message
 
-        if(isDriverArrived){
-            textMessage.text = driverInfoView.getView().resources.getString(R.string.messageWarningTakeMoney)
-        }else{
-            textMessage.text = driverInfoView.getView().resources.getString(R.string.messageWarningDriverIs)
+        if (isDriverArrived) {
+            val resources = driverInfoView.getRootView().resources
+            val tax = getTaxMoney()
+            val message: String =
+                driverInfoView.getView().resources.getString(R.string.messageWarningTakeMoney)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                message.plus(
+                    Html.fromHtml(
+                        resources.getString(R.string.offer_price_average_price)
+                            .plus(" <b>$tax рублей</b>"), Html.FROM_HTML_MODE_COMPACT
+                    )
+                )
+
+            } else {
+                message.plus(
+                    Html.fromHtml(
+                        resources.getString(R.string.offer_price_average_price)
+                            .plus(" <b>$tax рублей</b>")
+                    )
+                )
+            }
+
+            textMessage.text = message
+
+
+        } else {
+            textMessage.text =
+                driverInfoView.getView().resources.getString(R.string.messageWarningDriverIs)
         }
 
         driverInfoView.confirmCancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    private fun getTaxMoney(): Int {
+        return 100
     }
 
 
@@ -112,11 +145,13 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
             Constants.REASON3 -> {
                 //по ошибке
+                Coordinate.toAdr = null
                 ReasonCancel.reasonID = Constants.REASON3
             }
 
             Constants.REASON4 -> {
                 //другая причина
+                Coordinate.toAdr = null
                 ReasonCancel.reasonID = Constants.REASON4
             }
         }
@@ -126,11 +161,12 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
             //вычесть бабки
         }
 
+        //clear data
         DriverObject.driver = null
-        Coordinate.fromAdr = null
         removeDataDriver()
-        replaceFragment(Constants.MAIN_FRAGMENT, null, fm)
 
+        //redirect
+        replaceFragment(Constants.MAIN_FRAGMENT, null, fm)
     }
 
 

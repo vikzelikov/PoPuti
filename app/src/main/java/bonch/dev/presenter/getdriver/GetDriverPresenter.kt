@@ -11,6 +11,7 @@ import bonch.dev.R
 import bonch.dev.model.getdriver.GetDriverModel
 import bonch.dev.model.getdriver.pojo.*
 import bonch.dev.model.getdriver.pojo.Coordinate.fromAdr
+import bonch.dev.model.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
@@ -129,8 +130,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         root?.get_driver_center_text?.visibility = View.GONE
 
         //dynamic replace layout
-        var view =
-            root!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
+        var view = root!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
         val parent = view.parent as ViewGroup
         val index = parent.indexOfChild(view)
         view.visibility = View.GONE
@@ -220,7 +220,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         //stop getting new driver
         handler?.removeCallbacksAndMessages(null)
         DriverObject.driver = null
-        fromAdr = null
+        DriverMainTimer.getInstance()?.cancel()
         val fm = (getDriverView.activity as MainActivity).supportFragmentManager
 
         when (reasonID) {
@@ -236,11 +236,13 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
             REASON3 -> {
                 //по ошибке
+                toAdr = null
                 ReasonCancel.reasonID = REASON3
             }
 
             REASON4 -> {
                 //другая причина
+                toAdr = null
                 ReasonCancel.reasonID = REASON4
             }
         }
@@ -253,20 +255,21 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         //clear data and redirect
         handler?.removeCallbacksAndMessages(null)
         DriverObject.driver = null
-        fromAdr = null
-        val fm = (getDriverView.activity as MainActivity).supportFragmentManager
+        toAdr = null
 
+        val fm = (getDriverView.activity as MainActivity).supportFragmentManager
         replaceFragment(MAIN_FRAGMENT, null, fm)
     }
 
 
     fun notCancel() {
-        if(getDriverView.expiredTimeBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED){
+        if (getDriverView.expiredTimeBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
             getDriverView.view?.on_map_view?.visibility = View.GONE
             getDriverView.view?.on_view_cancel_reason?.visibility = View.GONE
 
             getDriverView.cancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            getDriverView.confirmCancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.confirmCancelBottomSheetBehavior!!.state =
+                BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
