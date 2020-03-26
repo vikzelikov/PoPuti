@@ -37,4 +37,11 @@ object Constants {
     const val MAX_TIME_GET_DRIVER = 3L
 
     const val ACCESS_TOKEN = "ACCESS_TOKEN"
+
+
+    //reasons id
+    const val REASON1 = 1
+    const val REASON2 = 2
+    const val REASON3 = 3
+    const val REASON4 = 4
 }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,9 +14,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.R
+import bonch.dev.model.getdriver.pojo.Coordinate
+import bonch.dev.model.getdriver.pojo.Coordinate.fromAdr
+import bonch.dev.model.getdriver.pojo.Coordinate.toAdr
+import bonch.dev.model.getdriver.pojo.ReasonCancel.reasonID
 import bonch.dev.presenter.getdriver.CreateRidePresenter
 import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
 import bonch.dev.utils.Constants.API_KEY
+import bonch.dev.utils.Constants.REASON1
+import bonch.dev.utils.Constants.REASON2
 import bonch.dev.utils.Keyboard.hideKeyboard
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -75,6 +82,17 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
         setBottomSheet()
 
+        createRidePresenter?.root = root
+
+        if (reasonID == REASON1 || reasonID == REASON2) {
+            if (fromAdr != null && toAdr != null) {
+                //in case cancel ride from GetDriverView
+                createRidePresenter?.addressesDone()
+                reasonID = null
+                fromAdr = null
+            }
+        }
+
         return root
     }
 
@@ -86,7 +104,7 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         p2: CameraUpdateSource,
         p3: Boolean
     ) {
-        if ((p2 == CameraUpdateSource.GESTURES && p3) || createRidePresenter?.fromAdr == null) {
+        if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
             createRidePresenter?.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
         }
 

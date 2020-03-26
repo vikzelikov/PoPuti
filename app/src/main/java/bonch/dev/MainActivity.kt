@@ -20,6 +20,7 @@ import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.getdriver.CreateRideView
+import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
 import bonch.dev.view.signup.PhoneFragment
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             //redirect to full app
             addFragment(MAIN_FRAGMENT, supportFragmentManager)
-            //replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
+            //replaceFragment(CREATE_RIDE_VIEW, null, supportFragmentManager)
         }
     }
 
@@ -85,6 +86,8 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val createRideView =
             supportFragmentManager.findFragmentByTag(CREATE_RIDE_VIEW.toString()) as CreateRideView?
+        val getDriverView =
+            supportFragmentManager.findFragmentByTag(GET_DRIVER_VIEW.toString()) as GetDriverView?
         val phoneFragment =
             supportFragmentManager.findFragmentByTag(PHONE_VIEW.toString()) as PhoneFragment?
         val confirmPhoneFragment =
@@ -106,6 +109,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (fullNameFragment?.view != null) {
+            super.onBackPressed()
+        }
+
+        if (getDriverView?.view != null && getDriverView.backPressed()) {
             super.onBackPressed()
         }
 

@@ -9,14 +9,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.GetDriverModel
-import bonch.dev.model.getdriver.pojo.Driver
-import bonch.dev.model.getdriver.pojo.Ride
-import bonch.dev.model.getdriver.pojo.RideDetailInfo
-import bonch.dev.model.getdriver.pojo.RidePoint
+import bonch.dev.model.getdriver.pojo.*
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
 import bonch.dev.utils.Constants.FROM
+import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
+import bonch.dev.utils.Constants.REASON1
+import bonch.dev.utils.Constants.REASON2
+import bonch.dev.utils.Constants.REASON3
+import bonch.dev.utils.Constants.REASON4
 import bonch.dev.utils.Constants.RIDE_DETAIL_INFO
 import bonch.dev.utils.Constants.TO
 import bonch.dev.utils.Coordinator.replaceFragment
@@ -43,7 +46,6 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     private var driversListAdapter: DriversListAdapter? = null
     private var getDriverModel: GetDriverModel? = null
     private var handler: Handler? = null
-
 
     init {
         if (getDriverModel == null) {
@@ -189,11 +191,34 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun cancelDone() {
+    fun cancelDone(reasonID: Int) {
+        //TODO send reason to server
         //stop getting new driver
         handler?.removeCallbacksAndMessages(null)
-
         val fm = (getDriverView.activity as MainActivity).supportFragmentManager
+
+        when (reasonID) {
+            REASON1 -> {
+                //Водитель попросил отменить
+                ReasonCancel.reasonID = REASON1
+            }
+
+            REASON2 -> {
+                //Долго ждать
+                ReasonCancel.reasonID = REASON2
+            }
+
+            REASON3 -> {
+                //по ошибке
+                ReasonCancel.reasonID = REASON3
+            }
+
+            REASON4 -> {
+                //другая причина
+                ReasonCancel.reasonID = REASON4
+            }
+        }
+
         replaceFragment(MAIN_FRAGMENT, null, fm)
     }
 

@@ -9,12 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.model.getdriver.pojo.RidePoint
 import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Constants.REASON1
+import bonch.dev.utils.Constants.REASON2
+import bonch.dev.utils.Constants.REASON3
+import bonch.dev.utils.Constants.REASON4
 import bonch.dev.utils.Constants.USER_POINT
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
@@ -77,7 +82,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         setListeners(root)
 
         getDriverPresenter?.startSearchDrivers(root)
-
 
         return root
     }
@@ -150,23 +154,42 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     private fun setListeners(root: View) {
+        var reasonID: Int = REASON4
         val cancelRideBtn = root.cancel_ride
         val cancelBtn = root.cancel
         val notCancelBtn = root.not_cancel
         val onMapView = root.on_map_view
         val case1 = root.case1
+        val case2 = root.case2
+        val case3 = root.case3
+        val case4 = root.case4
 
         cancelRideBtn.setOnClickListener {
             getDriverPresenter?.getCancelReason()
         }
 
-        //TODO
         case1.setOnClickListener {
+            reasonID = REASON1
+            getDriverPresenter?.getConfirmCancel()
+        }
+
+        case2.setOnClickListener {
+            reasonID = REASON2
+            getDriverPresenter?.getConfirmCancel()
+        }
+
+        case3.setOnClickListener {
+            reasonID = REASON3
+            getDriverPresenter?.getConfirmCancel()
+        }
+
+        case4.setOnClickListener {
+            reasonID = REASON4
             getDriverPresenter?.getConfirmCancel()
         }
 
         cancelBtn.setOnClickListener {
-            getDriverPresenter?.cancelDone()
+            getDriverPresenter?.cancelDone(reasonID)
         }
 
         notCancelBtn.setOnClickListener {
@@ -220,7 +243,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
                 Animation(Animation.Type.SMOOTH, 30f),
                 null
             )
-        }, 100)
+        }, 500)
 
     }
 
@@ -236,6 +259,11 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         super.onStart()
         MapKitFactory.getInstance().onStart()
         mapView!!.onStart()
+    }
+
+
+    fun backPressed(): Boolean {
+        return true
     }
 
 }

@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
+import bonch.dev.model.getdriver.pojo.Coordinate.fromAdr
+import bonch.dev.model.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.getdriver.CreateRideView
@@ -46,14 +48,13 @@ class AddressesListAdapter(
             if (fromAdrView.isFocused) {
                 fromAdrView.setText(list[position].address)
                 fromAdrView.setSelection(fromAdrView.text.length)
-                getDriverPresenter!!.fromAdr = list[position]
+                fromAdr = list[position]
             }
 
             if (toAdrView.isFocused) {
                 toAdrView.setText(list[position].address)
                 toAdrView.setSelection(toAdrView.text.length)
-
-                getDriverPresenter!!.toAdr = list[position]
+                toAdr = list[position]
             }
 
             getDriverPresenter!!.addressesDone()

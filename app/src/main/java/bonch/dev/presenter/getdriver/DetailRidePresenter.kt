@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentActivity
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.SearchPlace
+import bonch.dev.model.getdriver.pojo.Coordinate.fromAdr
+import bonch.dev.model.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.model.getdriver.pojo.PaymentCard
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.model.getdriver.pojo.RideDetailInfo
@@ -34,6 +36,7 @@ import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.getdriver.DetailRideView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
+import kotlinx.android.synthetic.main.create_ride_fragment.*
 import kotlinx.android.synthetic.main.detail_ride_layout.*
 import kotlinx.android.synthetic.main.detail_ride_layout.comment_min_text
 import kotlinx.android.synthetic.main.detail_ride_layout.main_info_layout
@@ -229,9 +232,11 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
     fun onSlideBottomSheet(slideOffset: Float) {
         val onMapView = getView().on_map_view_detail
+        val backBtn = getView().back_btn
 
         if (slideOffset > 0) {
             onMapView.alpha = slideOffset * 0.8f
+            backBtn.alpha = 1 - slideOffset * 0.9f
         }
     }
 
@@ -259,8 +264,6 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     fun getDriver() {
         if (isDataComplete()) {
             val bundle = Bundle()
-            val fromAdr = getView().createRidePresenter?.fromAdr
-            val toAdr = getView().createRidePresenter?.toAdr
             val fm = (getView().activity as MainActivity).supportFragmentManager
             val comment = getView().comment_min_text.text.toString().trim()
             val price = getView().offer_price.text.toString().trim()

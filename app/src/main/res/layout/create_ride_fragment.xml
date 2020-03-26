@@ -6,6 +6,19 @@
     tools:context=".view.getdriver.CreateRideView">
 
 
+    <ImageButton
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_back_btn"
+        android:elevation="12dp"
+        android:padding="13dp"
+        android:src="@drawable/ic_back_arrow"
+        android:visibility="gone" />
+
+
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"

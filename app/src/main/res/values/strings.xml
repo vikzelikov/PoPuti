@@ -54,5 +54,9 @@
     <string name="cancel">Отменить</string>
     <string name="tooLowPrice">Вы установили слишком \nнизкую цену</string>
     <string name="recommendRisePrice">Рекомендуем повысить цену, чтобы\n заинтересовать водителей</string>
+    <string name="reasonCancel1">Водитель попросил отменить</string>
+    <string name="reasonCancel2">Долго ждать</string>
+    <string name="reasonCancel3">Заказал по ошибке</string>
+    <string name="reasonCancel4">Другая причина</string>
 
 </resources>

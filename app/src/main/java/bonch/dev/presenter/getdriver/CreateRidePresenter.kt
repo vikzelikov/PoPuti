@@ -8,6 +8,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.CreateRideModel
+import bonch.dev.model.getdriver.pojo.Coordinate.fromAdr
+import bonch.dev.model.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.model.getdriver.pojo.Ride
 import bonch.dev.model.getdriver.pojo.RidePoint
 import bonch.dev.presenter.getdriver.adapters.AddressesListAdapter
@@ -20,6 +22,7 @@ import bonch.dev.view.getdriver.MBottomSheet
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.create_ride_fragment.*
+import kotlinx.android.synthetic.main.create_ride_fragment.view.*
 import kotlinx.android.synthetic.main.create_ride_layout.*
 import kotlin.math.abs
 import kotlin.math.floor
@@ -27,15 +30,12 @@ import kotlin.math.floor
 
 class CreateRidePresenter(private val createRideView: CreateRideView) {
 
+    var root: View? = null
     private var view: View? = null
     private var createRideModel: CreateRideModel? = null
     var addressesListAdapter: AddressesListAdapter? = null
     var detailRideView: DetailRideView? = null
     var firstAddress: Ride? = null
-
-    //main data for creating ride
-    var fromAdr: Ride? = null
-    var toAdr: Ride? = null
 
     var isMapSearchGestures = true
     var isFromMapSearch = true
@@ -54,7 +54,7 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
 
     fun addressesDone() {
         if (fromAdr != null && toAdr != null) {
-            showDetailView()
+            showDetailRideView()
             isMapSearchGestures = false
         }
     }
@@ -120,17 +120,22 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
     }
 
 
-    private fun showDetailView() {
-        val onMapView = getView().on_map_view
+    private fun showDetailRideView() {
+        val onMapView = root!!.on_map_view
         //dynamic add layout
-        view = getView().view!!.findViewById<CoordinatorLayout>(R.id.create_ride_layout)
+        view = root?.findViewById<CoordinatorLayout>(R.id.create_ride_layout)
         val parent = view!!.parent as ViewGroup
         val index = parent.indexOfChild(view)
         view!!.visibility = View.GONE
-        view = createRideView.layoutInflater.inflate(R.layout.detail_ride_layout, parent, false)
+        view = getView().layoutInflater.inflate(R.layout.detail_ride_layout, parent, false)
         parent.addView(view, index)
 
-        createRideView.navView?.visibility = View.GONE
+        println("!!!!!!!!!!!!!!")
+        println(getView().navView)
+        println("!!!!!!!!!!!!!!")
+
+        getView().navView?.visibility = View.GONE
+        root!!.back_btn.visibility = View.VISIBLE
         onMapView.visibility = View.GONE
 
         //create next screen
@@ -308,6 +313,7 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
         val onMapView = getView().on_map_view
         val toAddress = getView().to_adr
         val navView = getView().navView
+        val backBtn = getView().back_btn
 
         if (getView().bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
             getView().bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -334,11 +340,12 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
                 //dynamic remove layout
                 val parent = view!!.parent as ViewGroup
                 parent.removeView(view)
-                view = getView().view!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout)
+                view = getView().view!!.findViewById<CoordinatorLayout>(R.id.create_ride_layout)
                 view?.visibility = View.VISIBLE
 
                 navView?.visibility = View.VISIBLE
                 onMapView.visibility = View.GONE
+                backBtn.visibility = View.GONE
                 toAddress.setText("")
                 //clear routing from map
                 clearMapObjects()

@@ -47,6 +47,8 @@ class MainFragment : Fragment() {
         fm!!.beginTransaction()
             .add(R.id.nav_host_fragment, createRide!!, CREATE_RIDE_VIEW.toString()).commit()
 
+
+        navView.setOnNavigationItemSelectedListener(null)
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         return root
