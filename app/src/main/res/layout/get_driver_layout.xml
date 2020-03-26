@@ -366,6 +366,54 @@
 
         </LinearLayout>
 
+
+        <LinearLayout
+            android:id="@+id/time_expired_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".view.getdriver.MBottomSheet">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_bottom_sheet_arrow" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/timeExpired"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
+
+
+            <Button
+                android:id="@+id/expired_time_ok_btn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_btn_blue"
+                android:fontFamily="@font/roboto"
+                android:shadowColor="@color/colorBlue"
+                android:text="@string/ok"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+
         <View
             android:id="@+id/on_view_cancel_reason"
             android:layout_width="match_parent"

@@ -132,6 +132,8 @@ class DriversListAdapter(
 
             itemView.reject_driver.setOnClickListener {
                 driverItemTimer!!.cancel()
+                //stop main timer
+                DriverMainTimer.getInstance()?.cancel()
                 rejectDriver(adapterPosition, true)
             }
         }

@@ -60,5 +60,7 @@
     <string name="reasonCancel4">Другая причина</string>
     <string name="messageWarningDriverIs">Водитель уже нашелся! Вы уверены, что хотите отменить поездку?</string>
     <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас</string>
+    <string name="timeExpired">Время ожидания истекло</string>
+    <string name="ok">Понятно</string>
 
 </resources>

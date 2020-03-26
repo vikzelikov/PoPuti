@@ -48,6 +48,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     var mapView: MapView? = null
     var cancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var confirmCancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    var expiredTimeBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var getDriverPresenter: GetDriverPresenter? = null
     private var userLocationLayer: UserLocationLayer? = null
 
@@ -169,6 +170,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         val cancelRideBtn = root.cancel_ride
         val cancelBtn = root.cancel
         val notCancelBtn = root.not_cancel
+        val timeExpiredBtn = root.expired_time_ok_btn
         val onMapView = root.on_map_view
         val case1 = root.case1
         val case2 = root.case2
@@ -210,6 +212,10 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         onMapView.setOnClickListener {
             getDriverPresenter?.notCancel()
         }
+
+        timeExpiredBtn.setOnClickListener {
+            getDriverPresenter?.timeExpiredOk()
+        }
     }
 
 
@@ -217,6 +223,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         cancelBottomSheetBehavior = BottomSheetBehavior.from<View>(root.reasons_bottom_sheet)
         confirmCancelBottomSheetBehavior =
             BottomSheetBehavior.from<View>(root.confirm_cancel_bottom_sheet)
+        expiredTimeBottomSheetBehavior = BottomSheetBehavior.from<View>(root.time_expired_bottom_sheet)
+
 
         cancelBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -240,6 +248,19 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 getDriverPresenter?.onChangedStateConfirmCancel(newState, root)
+            }
+        })
+
+
+        expiredTimeBottomSheetBehavior!!.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                getDriverPresenter?.onSlideCancelReason(slideOffset,  root)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                getDriverPresenter?.onChangedStateCancelReason(newState, root)
             }
         })
     }

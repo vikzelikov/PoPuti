@@ -150,7 +150,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         //start animation searching
         val arguments = getDriverView.arguments
         val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
-        if(userPoint != null){
+        if (userPoint != null) {
             getDriverView.startAnimSearch(Point(userPoint.latitude, userPoint.longitude))
         }
         isAnimaionSearching = true
@@ -210,6 +210,11 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
+    fun getExpiredTimeConfirm() {
+        getDriverView.expiredTimeBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
     fun cancelDone(reasonID: Int) {
         //TODO send reason to server
         //stop getting new driver
@@ -239,6 +244,17 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
                 ReasonCancel.reasonID = REASON4
             }
         }
+
+        replaceFragment(MAIN_FRAGMENT, null, fm)
+    }
+
+
+    fun timeExpiredOk() {
+        //clear data and redirect
+        handler?.removeCallbacksAndMessages(null)
+        DriverObject.driver = null
+        fromAdr = null
+        val fm = (getDriverView.activity as MainActivity).supportFragmentManager
 
         replaceFragment(MAIN_FRAGMENT, null, fm)
     }
