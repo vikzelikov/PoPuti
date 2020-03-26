@@ -10,6 +10,7 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.GetDriverModel
 import bonch.dev.model.getdriver.pojo.*
+import bonch.dev.model.getdriver.pojo.Coordinate.fromAdr
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
@@ -46,6 +47,8 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     private var driversListAdapter: DriversListAdapter? = null
     private var getDriverModel: GetDriverModel? = null
     private var handler: Handler? = null
+    private var isAnimaionSearching = false
+    var root: View? = null
 
     init {
         if (getDriverModel == null) {
@@ -122,11 +125,12 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
 
     fun selectDriver(driver: Driver) {
-        getDriverView.view?.on_map_view_main?.visibility = View.GONE
+        root?.on_map_view_main?.visibility = View.GONE
+        root?.get_driver_center_text?.visibility = View.GONE
 
         //dynamic replace layout
         var view =
-            getDriverView.view!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
+            root!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
         val parent = view.parent as ViewGroup
         val index = parent.indexOfChild(view)
         view.visibility = View.GONE
@@ -146,7 +150,10 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         //start animation searching
         val arguments = getDriverView.arguments
         val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
-        getDriverView.startAnimSearch(Point(userPoint!!.latitude, userPoint.longitude))
+        if(userPoint != null){
+            getDriverView.startAnimSearch(Point(userPoint.latitude, userPoint.longitude))
+        }
+        isAnimaionSearching = true
 
         //init recycler drivers item
         initializeListDrivers(root)
@@ -165,6 +172,18 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
     fun setNewDriverOffer(driver: Driver) {
         driversListAdapter?.setNewDriver(driver)
+
+        if (isAnimaionSearching) {
+            //animation off
+            val arguments = getDriverView.arguments
+            val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
+            val point = Point(userPoint!!.latitude, userPoint.longitude)
+            val zoom = getDriverView.mapView!!.map.cameraPosition.zoom
+
+            getDriverView.moveCamera(zoom, point)
+
+            isAnimaionSearching = false
+        }
     }
 
 
@@ -195,6 +214,8 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         //TODO send reason to server
         //stop getting new driver
         handler?.removeCallbacksAndMessages(null)
+        DriverObject.driver = null
+        fromAdr = null
         val fm = (getDriverView.activity as MainActivity).supportFragmentManager
 
         when (reasonID) {
@@ -234,14 +255,11 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
     fun checkBackground(isShow: Boolean) {
         val onMapView = getDriverView.on_map_view_main
-        val centerText = getDriverView.get_driver_center_text
 
         if (isShow) {
-            centerText.visibility = View.GONE
             onMapView.visibility = View.VISIBLE
             onMapView.alpha = 0.8f
         } else {
-            centerText.visibility = View.VISIBLE
             onMapView.visibility = View.GONE
             onMapView.alpha = 0f
         }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Driver
+import bonch.dev.model.getdriver.pojo.DriverObject.driver
 import bonch.dev.model.getdriver.pojo.RidePoint
 import bonch.dev.presenter.getdriver.GetDriverPresenter
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
@@ -38,7 +39,9 @@ import com.yandex.runtime.image.ImageProvider
 import kotlinx.android.synthetic.main.driver_info_layout.view.cancel_ride
 import kotlinx.android.synthetic.main.driver_info_layout.view.reasons_bottom_sheet
 import kotlinx.android.synthetic.main.get_driver_fragment.view.*
+import kotlinx.android.synthetic.main.get_driver_layout.*
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
+import kotlinx.android.synthetic.main.get_driver_layout.view.driver_list
 
 class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
@@ -82,6 +85,14 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         setListeners(root)
 
         getDriverPresenter?.startSearchDrivers(root)
+
+        getDriverPresenter?.root = root
+
+        if(driver != null){
+            //ride already created
+            //TODO update driver status
+            getDriverPresenter?.selectDriver(driver!!)
+        }
 
         return root
     }
@@ -238,13 +249,18 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         //TODO
         val zoom = mapView!!.map.cameraPosition.zoom - 2
         Handler().postDelayed({
-            mapView!!.map.move(
-                CameraPosition(point, zoom, 0.0f, 0.0f),
-                Animation(Animation.Type.SMOOTH, 30f),
-                null
-            )
-        }, 500)
+            moveCamera(zoom, point)
+        }, 1500)
 
+    }
+
+
+    fun moveCamera(zoom: Float, point: Point) {
+        mapView!!.map.move(
+            CameraPosition(point, zoom, 0.0f, 0.0f),
+            Animation(Animation.Type.SMOOTH, 30f),
+            null
+        )
     }
 
 

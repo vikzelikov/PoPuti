@@ -7,5 +7,10 @@ data class Driver(
     var rating: Double? = null,
     var imgDriver: Int? = null,
     var price: Int? = null,
+    var isArrived: Boolean = false,
     var timeLine: Int? = null
 )
+
+object DriverObject{
+    var driver: Driver? = null
+}

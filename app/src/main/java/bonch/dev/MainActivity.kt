@@ -7,6 +7,8 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import bonch.dev.model.getdriver.pojo.Driver
+import bonch.dev.model.getdriver.pojo.DriverObject.driver
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
@@ -44,8 +46,15 @@ class MainActivity : AppCompatActivity() {
             addFragment(PHONE_VIEW, supportFragmentManager)
         } else {
             //redirect to full app
-            addFragment(MAIN_FRAGMENT, supportFragmentManager)
-            //replaceFragment(CREATE_RIDE_VIEW, null, supportFragmentManager)
+            driver = getDriverData()
+
+            if(driver != null){
+                //ride already created
+                replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
+            }else{
+                //not created
+                addFragment(MAIN_FRAGMENT, supportFragmentManager)
+            }
         }
     }
 
@@ -61,6 +70,34 @@ class MainActivity : AppCompatActivity() {
         }
 
         return accessToken
+    }
+
+
+    private fun getDriverData(): Driver?{
+        val caseType = object : TypeToken<String>() {}.type
+        val pref = getPreferences(MODE_PRIVATE)
+
+        var driver: Driver? = null
+
+        if (pref.contains(Constants.NAME_DRIVER)) {
+            driver = Driver()
+
+            val nameDriver: String? = pref.getString(Constants.NAME_DRIVER, "")
+            val carName: String? = pref.getString(Constants.CAR_NAME, "")
+            val carNumber: String? = pref.getString(Constants.CAR_NUMBER, "")
+            val price: Int? = pref.getInt(Constants.PRICE_DRIVER, 0)
+            val imgDriver: Int? = pref.getInt(Constants.IMG_DRIVER, 0)
+            val isDriverArrived: Boolean = pref.getBoolean(Constants.IS_DRIVER_ARRIVED, false)
+
+            driver.nameDriver = Gson().fromJson(nameDriver, caseType)
+            driver.carName = Gson().fromJson(carName, caseType)
+            driver.carNumber = Gson().fromJson(carNumber, caseType)
+            driver.price = price
+            driver.imgDriver = imgDriver
+            driver.isArrived = isDriverArrived
+        }
+
+        return driver
     }
 
 

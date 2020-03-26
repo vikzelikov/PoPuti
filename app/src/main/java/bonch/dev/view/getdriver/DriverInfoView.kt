@@ -2,8 +2,10 @@ package bonch.dev.view.getdriver
 
 import android.view.View
 import android.widget.Toast
+import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.presenter.getdriver.DriverInfoPresenter
+import bonch.dev.utils.Constants
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -29,6 +31,8 @@ class DriverInfoView(var getDriverView: GetDriverView) {
         setListeners(getRootView())
 
         driverInfoPresenter?.setInfoDriver(driver)
+
+        driverInfoPresenter?.startTrackingDriver()
     }
 
 
@@ -64,6 +68,7 @@ class DriverInfoView(var getDriverView: GetDriverView) {
 
 
     private fun setListeners(root: View) {
+        var reasonID: Int = Constants.REASON4
         val cancelRideBtn = root.cancel_ride
         val cancelBtn = root.cancel
         val notCancelBtn = root.not_cancel
@@ -71,18 +76,36 @@ class DriverInfoView(var getDriverView: GetDriverView) {
         val callDriver = root.phone_call_driver
         val chatDriver = root.message_driver
         val case1 = root.case1
+        val case2 = root.case2
+        val case3 = root.case3
+        val case4 = root.case4
 
         cancelRideBtn.setOnClickListener {
             driverInfoPresenter?.getCancelReason()
         }
 
-        //TODO
         case1.setOnClickListener {
+            reasonID = Constants.REASON1
+            driverInfoPresenter?.getConfirmCancel()
+        }
+
+        case2.setOnClickListener {
+            reasonID = Constants.REASON2
+            driverInfoPresenter?.getConfirmCancel()
+        }
+
+        case3.setOnClickListener {
+            reasonID = Constants.REASON3
+            driverInfoPresenter?.getConfirmCancel()
+        }
+
+        case4.setOnClickListener {
+            reasonID = Constants.REASON4
             driverInfoPresenter?.getConfirmCancel()
         }
 
         cancelBtn.setOnClickListener {
-            driverInfoPresenter?.cancelDone()
+            driverInfoPresenter?.cancelDone(reasonID)
         }
 
         notCancelBtn.setOnClickListener {
@@ -111,6 +134,14 @@ class DriverInfoView(var getDriverView: GetDriverView) {
         root.car_number.text = driver.carNumber
         root.car_name.text = driver.carName
 
+        if(driver.isArrived){
+            getRootView().status_driver.text = getView().resources.getString(R.string.driverArrived)
+            driverInfoPresenter?.isDriverArrived = true
+        }else{
+            getRootView().status_driver.text = getView().resources.getString(R.string.driverInWay)
+            driverInfoPresenter?.isDriverArrived = false
+        }
+
         Glide.with(root).load(driver.imgDriver)
             .apply(RequestOptions().centerCrop().circleCrop())
             .into(root.img_driver)
@@ -121,9 +152,8 @@ class DriverInfoView(var getDriverView: GetDriverView) {
         return getDriverView
     }
 
-    private fun getRootView(): View {
-        return getDriverView.view!!
+    fun getRootView(): View {
+        return getDriverView.getDriverPresenter?.root!!
     }
-
 
 }

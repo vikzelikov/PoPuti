@@ -44,4 +44,14 @@ object Constants {
     const val REASON2 = 2
     const val REASON3 = 3
     const val REASON4 = 4
+
+
+    //driver info
+    const val NAME_DRIVER = "NAME_DRIVER"
+    const val CAR_NAME = "CAR_NAME"
+    const val CAR_NUMBER = "CAR_NUMBER"
+    const val RATING = "RATING"
+    const val IMG_DRIVER = "IMG_DRIVER"
+    const val PRICE_DRIVER = "PRICE_DRIVER"
+    const val IS_DRIVER_ARRIVED = "IS_DRIVER_ARRIVED"
 }

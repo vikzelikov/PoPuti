@@ -58,5 +58,7 @@
     <string name="reasonCancel2">Долго ждать</string>
     <string name="reasonCancel3">Заказал по ошибке</string>
     <string name="reasonCancel4">Другая причина</string>
+    <string name="messageWarningDriverIs">Водитель уже нашелся! Вы уверены, что хотите отменить поездку?</string>
+    <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас</string>
 
 </resources>
