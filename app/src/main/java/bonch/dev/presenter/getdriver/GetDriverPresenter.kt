@@ -220,7 +220,6 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         //stop getting new driver
         handler?.removeCallbacksAndMessages(null)
         DriverObject.driver = null
-        fromAdr = null
         val fm = (getDriverView.activity as MainActivity).supportFragmentManager
 
         when (reasonID) {
