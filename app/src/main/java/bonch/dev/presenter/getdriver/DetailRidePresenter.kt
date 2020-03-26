@@ -203,7 +203,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun getInfoPrice(){
+    fun getInfoPrice() {
         detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -272,7 +272,12 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             bundle.putParcelable(FROM, fromAdr)
             bundle.putParcelable(TO, toAdr)
             bundle.putParcelable(RIDE_DETAIL_INFO, RideDetailInfo(price, comment))
-            bundle.putParcelable(USER_POINT, RidePoint(userPoint!!.latitude, userPoint.longitude))
+            if (userPoint != null){
+                bundle.putParcelable(
+                    USER_POINT,
+                    RidePoint(userPoint.latitude, userPoint.longitude)
+                )
+            }
 
             replaceFragment(GET_DRIVER_VIEW, bundle, fm)
         }

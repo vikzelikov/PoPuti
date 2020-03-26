@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.presenter.getdriver.adapters.DriversListAdapter
 import bonch.dev.utils.Constants.MAX_TIME_GET_DRIVER
+import bonch.dev.view.getdriver.MBottomSheet
 
 
 object DriverMainTimer {
@@ -35,6 +36,9 @@ object DriverMainTimer {
 
         override fun onFinish() {
             adapter.getDriverPresenter.getExpiredTimeConfirm()
+
+            val bottomSheet =  adapter.getDriverPresenter.getDriverView.expiredTimeBottomSheetBehavior
+            (bottomSheet as MBottomSheet<*>).swipeEnabled = false
         }
 
         override fun onTick(millisUntilFinished: Long) {
@@ -42,6 +46,8 @@ object DriverMainTimer {
                 for (i in 0 until list.size) {
                     list[i].timeLine?.let {
                         list[i].timeLine = it.dec()
+
+                        println(list.size)
 
                         //if timeLine too small, remove item
                         if (it < 50) {

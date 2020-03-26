@@ -261,11 +261,13 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
 
     fun notCancel() {
-        getDriverView.view?.on_map_view?.visibility = View.GONE
-        getDriverView.view?.on_view_cancel_reason?.visibility = View.GONE
+        if(getDriverView.expiredTimeBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED){
+            getDriverView.view?.on_map_view?.visibility = View.GONE
+            getDriverView.view?.on_view_cancel_reason?.visibility = View.GONE
 
-        getDriverView.cancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-        getDriverView.confirmCancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.cancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.confirmCancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
 
