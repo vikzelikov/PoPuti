@@ -86,4 +86,6 @@ class SignupModel(private val signupPresenter: SignupPresenter) {
         editor.putString(ACCESS_TOKEN, accessToken)
         editor.apply()
     }
+
 }
+
