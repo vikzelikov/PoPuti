@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.R
+import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.presenter.profile.ProfileDetailPresenter
 import bonch.dev.utils.Keyboard
 import kotlinx.android.synthetic.main.profile_detail_activity.view.*
@@ -25,7 +26,20 @@ class ProfileDetailView : AppCompatActivity() {
 
         val root = findViewById<View>(R.id.rootLinearLayout)
 
+        profileDetailPresenter?.getProfileData(root)
+
         setListeners(root)
+    }
+
+
+    fun setProfileData(root: View, profileData: Profile) {
+        val fullName = root.full_name
+        val phone = root.phone_number
+        val email = root.email
+
+        fullName.setText(profileData.fullName)
+        phone.setText(profileData.phone)
+        email.setText(profileData.email)
     }
 
 
@@ -35,6 +49,8 @@ class ProfileDetailView : AppCompatActivity() {
 
         backBtn.setOnClickListener {
             //save data
+            profileDetailPresenter?.saveProfileData(root)
+
             Keyboard.hideKeyboard(this, root)
             finish()
         }
