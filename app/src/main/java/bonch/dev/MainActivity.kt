@@ -7,6 +7,8 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.model.getdriver.pojo.DriverObject.driver
 import bonch.dev.utils.Constants
@@ -60,38 +62,29 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getToken(): String? {
-        val caseType = object : TypeToken<String>() {}.type
-        val pref = getPreferences(MODE_PRIVATE)
-
-        var accessToken: String? = null
-        if (pref.contains(Constants.ACCESS_TOKEN)) {
-            val json: String? = pref.getString(Constants.ACCESS_TOKEN, "")
-            accessToken = Gson().fromJson(json, caseType)
-        }
-
-        return accessToken
+        val pref = getDefaultSharedPreferences(applicationContext)
+        return pref.getString(Constants.ACCESS_TOKEN, null)
     }
 
 
     private fun getDriverData(): Driver?{
-        val caseType = object : TypeToken<String>() {}.type
-        val pref = getPreferences(MODE_PRIVATE)
+        val pref = getDefaultSharedPreferences(applicationContext)
 
         var driver: Driver? = null
 
         if (pref.contains(Constants.NAME_DRIVER)) {
             driver = Driver()
 
-            val nameDriver: String? = pref.getString(Constants.NAME_DRIVER, "")
-            val carName: String? = pref.getString(Constants.CAR_NAME, "")
-            val carNumber: String? = pref.getString(Constants.CAR_NUMBER, "")
+            val nameDriver: String? = pref.getString(Constants.NAME_DRIVER, null)
+            val carName: String? = pref.getString(Constants.CAR_NAME, null)
+            val carNumber: String? = pref.getString(Constants.CAR_NUMBER, null)
             val price: Int? = pref.getInt(Constants.PRICE_DRIVER, 0)
             val imgDriver: Int? = pref.getInt(Constants.IMG_DRIVER, 0)
             val isDriverArrived: Boolean = pref.getBoolean(Constants.IS_DRIVER_ARRIVED, false)
 
-            driver.nameDriver = Gson().fromJson(nameDriver, caseType)
-            driver.carName = Gson().fromJson(carName, caseType)
-            driver.carNumber = Gson().fromJson(carNumber, caseType)
+            driver.nameDriver = nameDriver
+            driver.carName = carName
+            driver.carNumber = carNumber
             driver.price = price
             driver.imgDriver = imgDriver
             driver.isArrived = isDriverArrived

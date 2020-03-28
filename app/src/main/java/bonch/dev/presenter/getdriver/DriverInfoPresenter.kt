@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.text.Html
 import android.view.View
+import androidx.preference.PreferenceManager
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Coordinate
@@ -193,13 +194,12 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
     private fun saveDataDriver(driver: Driver) {
         val activity = driverInfoView.getDriverView.activity as MainActivity
-        val pref = activity.getPreferences(Context.MODE_PRIVATE)
-        val gson = Gson()
-
+        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
         val editor = pref.edit()
-        editor.putString(Constants.NAME_DRIVER, gson.toJson(driver.nameDriver))
-        editor.putString(Constants.CAR_NAME, gson.toJson(driver.carName))
-        editor.putString(Constants.CAR_NUMBER, gson.toJson(driver.carNumber))
+
+        editor.putString(Constants.NAME_DRIVER, driver.nameDriver)
+        editor.putString(Constants.CAR_NAME, driver.carName)
+        editor.putString(Constants.CAR_NUMBER, driver.carNumber)
         editor.putInt(Constants.PRICE_DRIVER, driver.price!!)
         editor.putInt(Constants.IMG_DRIVER, driver.imgDriver!!)
         editor.putBoolean(Constants.IS_DRIVER_ARRIVED, isDriverArrived)
@@ -209,7 +209,7 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
     private fun removeDataDriver() {
         val activity = driverInfoView.getDriverView.activity as MainActivity
-        val pref = activity.getPreferences(Context.MODE_PRIVATE)
+        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
 
         val editor = pref.edit()
         editor.remove(Constants.NAME_DRIVER)
