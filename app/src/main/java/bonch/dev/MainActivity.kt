@@ -2,12 +2,10 @@ package bonch.dev
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.text.TextUtils.replace
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.model.getdriver.pojo.DriverObject.driver
@@ -20,6 +18,8 @@ import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.PHONE_VIEW
+import bonch.dev.utils.Constants.WRITE_EXTERNAL_STORAGE
+import bonch.dev.utils.Constants.WRITE_EXTERNAL_STORAGE_REQUEST
 import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
@@ -28,8 +28,6 @@ import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.signup.ConfirmPhoneFragment
 import bonch.dev.view.signup.FullNameFragment
 import bonch.dev.view.signup.PhoneFragment
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        accessUserGeo()
+        accessPermission()
 
         val accessToken = getToken()
 
@@ -50,10 +48,10 @@ class MainActivity : AppCompatActivity() {
             //redirect to full app
             driver = getDriverData()
 
-            if(driver != null){
+            if (driver != null) {
                 //ride already created
                 replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
-            }else{
+            } else {
                 //not created
                 addFragment(MAIN_FRAGMENT, supportFragmentManager)
             }
@@ -67,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun getDriverData(): Driver?{
+    private fun getDriverData(): Driver? {
         val pref = getDefaultSharedPreferences(applicationContext)
 
         var driver: Driver? = null
@@ -94,6 +92,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun accessPermission() {
+        accessUserGeo()
+        //accessWriteStorage()
+    }
+
+
     private fun accessUserGeo() {
         if (ContextCompat.checkSelfPermission(this, LOCATION_PERMISSION_NAME)
             != PackageManager.PERMISSION_GRANTED
@@ -104,6 +108,38 @@ class MainActivity : AppCompatActivity() {
                 LOCATION_PERMISSION_REQUEST
             )
         }
+
+        while (true){
+            //wait to consider of user
+            val permission = ContextCompat.checkSelfPermission(this, LOCATION_PERMISSION_NAME)
+
+            if(permission == PackageManager.PERMISSION_GRANTED){
+                break
+            }
+        }
+    }
+
+
+    private fun accessWriteStorage() {
+        if (ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(WRITE_EXTERNAL_STORAGE),
+                WRITE_EXTERNAL_STORAGE_REQUEST
+            )
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        accessUserGeo()
+        accessWriteStorage()
     }
 
 

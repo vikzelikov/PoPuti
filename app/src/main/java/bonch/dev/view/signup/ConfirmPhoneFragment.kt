@@ -12,7 +12,7 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
-import bonch.dev.utils.Constants.PHONE
+import bonch.dev.utils.Constants.PHONE_NUMBER
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
 import kotlinx.android.synthetic.main.confirm_phone_fragment.*
@@ -99,7 +99,7 @@ class ConfirmPhoneFragment(startHeight: Int = 0, screenHeight: Int = 0) : Fragme
         val retryBtn = root.retry_send
         val backBtn = root.back_btn
 
-        val phone = arguments?.getString(PHONE)
+        val phone = arguments?.getString(PHONE_NUMBER)
         root.show_phone.text = getString(R.string.showPhone).plus(" ").plus(phone)
 
         retryBtn.setOnClickListener {

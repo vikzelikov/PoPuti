@@ -1,5 +1,7 @@
 package bonch.dev.view.profile
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -34,8 +36,11 @@ class ProfileDetailView : AppCompatActivity() {
 
     fun setProfileData(root: View, profileData: Profile) {
         val fullName = root.full_name
+        val nameUser = root.name_user
         val phone = root.phone_number
         val email = root.email
+
+        nameUser.text = profileData.fullName
 
         fullName.setText(profileData.fullName)
         phone.setText(profileData.phone)
@@ -44,8 +49,13 @@ class ProfileDetailView : AppCompatActivity() {
 
 
     private fun setListeners(root: View) {
+        val userImg = root.img_user
         val logout = root.logout
         val backBtn = root.back_btn
+
+        userImg.setOnClickListener {
+            profileDetailPresenter?.getCamera()
+        }
 
         backBtn.setOnClickListener {
             //save data
@@ -55,10 +65,15 @@ class ProfileDetailView : AppCompatActivity() {
             finish()
         }
 
-
         logout.setOnClickListener {
             profileDetailPresenter?.logout()
         }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        profileDetailPresenter?.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
 

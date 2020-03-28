@@ -4,9 +4,12 @@ object Constants {
     const val API_KEY = "6e2e73e8-4a73-42f5-9bf1-35259708af3c"
 
     const val ACCESS_TOKEN = "ACCESS_TOKEN"
-    const val LOCATION_PERMISSION_NAME = "android.permission.ACCESS_FINE_LOCATION"
 
+    const val LOCATION_PERMISSION_NAME = "android.permission.ACCESS_FINE_LOCATION"
+    const val WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE"
     const val LOCATION_PERMISSION_REQUEST = 1
+    const val WRITE_EXTERNAL_STORAGE_REQUEST = 2
+
     const val MAIN_FRAGMENT = 1
     const val REGULAR_DRIVING_VIEW = 2
     const val CREATE_RIDE_VIEW = 3
@@ -30,7 +33,6 @@ object Constants {
     const val CARD_IMG = "CARD_IMG"
     const val CVC = "CVC"
 
-    const val PHONE = "PHONE"
     //mil sec
     const val SIGNUP_INTERVAL_SMS = 15000L
     const val SIGNUP_MAX_INTERVAL_SMS = 60000L
@@ -61,5 +63,8 @@ object Constants {
     const val FULL_NAME = "FULL_NAME"
     const val PHONE_NUMBER = "PHONE_NUMBER"
     const val EMAIL = "EMAIL"
+
+    const val CAMERA = 0
+    const val GALLERY = 1
 
 }

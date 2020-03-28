@@ -4,19 +4,24 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.view.View
 import bonch.dev.MainActivity
 import bonch.dev.model.profile.ProfileModel
 import bonch.dev.model.profile.pojo.Profile
+import bonch.dev.utils.Camera
+import bonch.dev.utils.Constants
 import bonch.dev.view.profile.ProfileDetailView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.yandex.runtime.Runtime.getApplicationContext
 import kotlinx.android.synthetic.main.profile_detail_activity.*
-import kotlin.system.exitProcess
 
 
 class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
 
     private var profileModel: ProfileModel? = null
+    private var imageUri: Uri? = null
 
     init {
         if (profileModel == null) {
@@ -46,7 +51,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
         }
 
         if (phone.isNotEmpty()) {
-            //check on russian phone number
+            //substring mask phone number
             phone = phone.substring(2, phone.length)
             profileData.phone = phone
         }
@@ -56,6 +61,27 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
         }
 
         profileModel?.saveProfileData(profileData)
+    }
+
+
+    fun getCamera() {
+        imageUri = Camera.getCamera(profileDetailView)
+    }
+
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+        val userImg = profileDetailView.img_user
+        when (requestCode) {
+            Constants.CAMERA -> {
+                Glide.with(profileDetailView.applicationContext).load(imageUri)
+                    .apply(RequestOptions().centerCrop().circleCrop())
+                    .into(userImg)
+            }
+
+            Constants.GALLERY -> {
+                //TODO
+            }
+        }
     }
 
 
@@ -70,7 +96,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
             intent,
             PendingIntent.FLAG_CANCEL_CURRENT
         )
-        val mgr =  getApplicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val mgr = getApplicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
 
         profileDetailView.finishAffinity()

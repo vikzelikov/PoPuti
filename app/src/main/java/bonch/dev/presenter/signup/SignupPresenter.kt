@@ -16,7 +16,7 @@ import bonch.dev.model.signup.SignupModel
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
-import bonch.dev.utils.Constants.PHONE
+import bonch.dev.utils.Constants.PHONE_NUMBER
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Constants.SIGNUP_INTERVAL_SMS
 import bonch.dev.utils.Constants.SIGNUP_MAX_INTERVAL_SMS
@@ -157,7 +157,7 @@ class SignupPresenter(val fragment: Fragment) {
 
                 val bundle = Bundle()
                 val fm = (fragment.activity as MainActivity).supportFragmentManager
-                bundle.putString(PHONE, phone)
+                bundle.putString(PHONE_NUMBER, phone)
                 nextBtn(PHONE_VIEW, fm, bundle)
             } else {
                 Toast.makeText(
