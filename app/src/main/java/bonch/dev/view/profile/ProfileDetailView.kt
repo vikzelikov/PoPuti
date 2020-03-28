@@ -1,6 +1,7 @@
 package bonch.dev.view.profile
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -9,6 +10,8 @@ import bonch.dev.R
 import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.presenter.profile.ProfileDetailPresenter
 import bonch.dev.utils.Keyboard
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.profile_detail_activity.view.*
 
 
@@ -39,7 +42,15 @@ class ProfileDetailView : AppCompatActivity() {
         val nameUser = root.name_user
         val phone = root.phone_number
         val email = root.email
+        val userImg = root.img_user
 
+        if (profileData.imgUser != null) {
+            val bitmap =
+                BitmapFactory.decodeByteArray(profileData.imgUser, 0, profileData.imgUser!!.size)
+            Glide.with(applicationContext).load(bitmap)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .into(userImg)
+        }
         nameUser.text = profileData.fullName
 
         fullName.setText(profileData.fullName)
@@ -80,5 +91,11 @@ class ProfileDetailView : AppCompatActivity() {
     override fun onBackPressed() {
         profileDetailPresenter?.saveProfileData()
         super.onBackPressed()
+    }
+
+
+    override fun onDestroy() {
+        profileDetailPresenter?.onDestroy()
+        super.onDestroy()
     }
 }

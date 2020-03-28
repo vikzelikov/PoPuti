@@ -4,32 +4,54 @@ import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.presenter.profile.ProfileDetailPresenter
 import bonch.dev.utils.Constants
+import io.realm.Realm
+import io.realm.RealmConfiguration
 
 class ProfileModel(val profileDetailPresenter: ProfileDetailPresenter) {
 
 
-    fun getProfileData(): Profile {
-        val profileData = Profile()
-        val activity = profileDetailPresenter.profileDetailView
-        val pref = getDefaultSharedPreferences(activity.applicationContext)
+    var realm: Realm? = null
 
-        profileData.fullName = pref.getString(Constants.FULL_NAME, "")
-        profileData.phone = pref.getString(Constants.PHONE_NUMBER, "")
-        profileData.email = pref.getString(Constants.EMAIL, "")
+    fun initRealm() {
+        if (realm == null) {
+            val context = profileDetailPresenter.profileDetailView.applicationContext
+            Realm.init(context)
+            val config = RealmConfiguration.Builder()
+                .name("profile.realm")
+                .build()
+            realm = Realm.getInstance(config)
+        }
+    }
+
+
+    fun getProfileData(): Profile? {
+        var profileData: Profile? = null
+        val realmResult = realm!!.where(Profile::class.java).findAll()
+
+        if (realmResult != null && realmResult.isNotEmpty()) {
+            profileData = Profile()
+
+            for(i in realmResult.indices){
+                val realmData = realmResult[i]
+                profileData.fullName = realmData!!.fullName
+                profileData.phone = realmData.phone
+                profileData.email = realmData.email
+                profileData.imgUser = realmData.imgUser
+            }
+        }
 
         return profileData
     }
 
 
     fun saveProfileData(profileData: Profile) {
-        val activity = profileDetailPresenter.profileDetailView
-        val pref = getDefaultSharedPreferences(activity.applicationContext)
-        val editor = pref.edit()
-
-        editor.putString(Constants.FULL_NAME, profileData.fullName)
-        editor.putString(Constants.PHONE_NUMBER, profileData.phone)
-        editor.putString(Constants.EMAIL, profileData.email)
-        editor.apply()
+        realm?.executeTransactionAsync({ bgRealm ->
+            bgRealm.insertOrUpdate(profileData)
+        }, {
+            //ok
+        }, {
+            //fail
+        })
     }
 
 

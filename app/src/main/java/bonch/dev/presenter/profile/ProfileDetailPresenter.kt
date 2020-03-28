@@ -4,9 +4,14 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.view.View
+import androidx.core.content.ContextCompat
 import bonch.dev.MainActivity
+import bonch.dev.R
 import bonch.dev.model.profile.ProfileModel
 import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.utils.Camera
@@ -16,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.yandex.runtime.Runtime.getApplicationContext
 import kotlinx.android.synthetic.main.profile_detail_activity.*
+import java.io.ByteArrayOutputStream
 
 
 class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
@@ -31,6 +37,8 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
 
 
     fun getProfileData(root: View) {
+        profileModel?.initRealm()
+
         val profileData = profileModel?.getProfileData()
 
         profileData?.let {
@@ -45,6 +53,15 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
         val fullName = root.full_name.text.toString().trim()
         var phone = root.phone_number.text.toString().trim()
         val email = root.email.text.toString().trim()
+        val userImg = root.img_user.drawable
+
+        if (userImg != ContextCompat.getDrawable(profileDetailView, R.drawable.ava)) {
+            val bitmap = (userImg as BitmapDrawable).bitmap
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream)
+            val byteArray: ByteArray = stream.toByteArray()
+            profileData.imgUser = byteArray
+        }
 
         if (fullName.isNotEmpty()) {
             profileData.fullName = fullName
@@ -69,7 +86,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
     }
 
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val userImg = profileDetailView.img_user
         when (requestCode) {
             Constants.CAMERA -> {
@@ -100,5 +117,10 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
         mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
 
         profileDetailView.finishAffinity()
+    }
+
+
+    fun onDestroy() {
+        profileModel?.realm?.close()
     }
 }
