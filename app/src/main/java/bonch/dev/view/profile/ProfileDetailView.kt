@@ -3,12 +3,9 @@ package bonch.dev.view.profile
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.R
 import bonch.dev.presenter.profile.ProfileDetailPresenter
-import bonch.dev.utils.Constants
 import bonch.dev.utils.Keyboard
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.profile_detail_activity.view.*
 
 
@@ -44,22 +41,7 @@ class ProfileDetailView : AppCompatActivity() {
 
 
         logout.setOnClickListener {
-            //profileDetailPresenter?.logout()
-            println(getToken())
+            profileDetailPresenter?.logout()
         }
-    }
-
-
-    private fun saveToken(accessToken: String) {
-        val pref = getDefaultSharedPreferences(applicationContext)
-        val editor = pref.edit()
-        editor.putString(Constants.ACCESS_TOKEN, Gson().toJson(accessToken))
-        editor.apply()
-    }
-
-
-    private fun getToken(): String? {
-        val pref = getDefaultSharedPreferences(applicationContext)
-        return pref.getString(Constants.ACCESS_TOKEN, null)
     }
 }
