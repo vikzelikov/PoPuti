@@ -49,7 +49,7 @@ class ProfileDetailView : AppCompatActivity() {
 
         backBtn.setOnClickListener {
             //save data
-            profileDetailPresenter?.saveProfileData(root)
+            profileDetailPresenter?.saveProfileData()
 
             Keyboard.hideKeyboard(this, root)
             finish()
@@ -59,5 +59,11 @@ class ProfileDetailView : AppCompatActivity() {
         logout.setOnClickListener {
             profileDetailPresenter?.logout()
         }
+    }
+
+
+    override fun onBackPressed() {
+        profileDetailPresenter?.saveProfileData()
+        super.onBackPressed()
     }
 }

@@ -87,7 +87,6 @@ object Coordinator {
                         fragment,
                         PHONE_VIEW.toString()
                     )
-                    .addToBackStack(null)
                     .commit()
             }
 

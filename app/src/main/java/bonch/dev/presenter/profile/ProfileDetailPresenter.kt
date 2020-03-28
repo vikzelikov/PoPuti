@@ -1,10 +1,18 @@
 package bonch.dev.presenter.profile
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.view.View
+import bonch.dev.MainActivity
 import bonch.dev.model.profile.ProfileModel
 import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.view.profile.ProfileDetailView
-import kotlinx.android.synthetic.main.profile_detail_activity.view.*
+import com.yandex.runtime.Runtime.getApplicationContext
+import kotlinx.android.synthetic.main.profile_detail_activity.*
+import kotlin.system.exitProcess
+
 
 class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
 
@@ -26,10 +34,11 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
     }
 
 
-    fun saveProfileData(root: View) {
+    fun saveProfileData() {
         val profileData = Profile()
+        val root = profileDetailView
         val fullName = root.full_name.text.toString().trim()
-        val phone = root.phone_number.text.toString().trim()
+        var phone = root.phone_number.text.toString().trim()
         val email = root.email.text.toString().trim()
 
         if (fullName.isNotEmpty()) {
@@ -37,6 +46,8 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
         }
 
         if (phone.isNotEmpty()) {
+            //check on russian phone number
+            phone = phone.substring(2, phone.length)
             profileData.phone = phone
         }
 
@@ -49,9 +60,19 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
 
 
     fun logout() {
+        //clear data and close app
         profileModel?.removeAccessToken()
 
+        val intent = Intent(getApplicationContext(), MainActivity::class.java)
+        val mPendingIntent = PendingIntent.getActivity(
+            getApplicationContext(),
+            1,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
+        val mgr =  getApplicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
 
-        //exitProcess(-1)
+        profileDetailView.finishAffinity()
     }
 }
