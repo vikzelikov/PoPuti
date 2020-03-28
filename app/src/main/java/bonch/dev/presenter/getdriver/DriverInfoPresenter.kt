@@ -1,7 +1,10 @@
 package bonch.dev.presenter.getdriver
 
 import android.content.Context
+import android.os.Build
+import android.text.Html
 import android.view.View
+import androidx.preference.PreferenceManager
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.getdriver.pojo.Coordinate
@@ -19,6 +22,7 @@ import kotlinx.android.synthetic.main.get_driver_layout.view.on_map_view
 import kotlinx.android.synthetic.main.get_driver_layout.view.on_view_cancel_reason
 
 class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
+
 
     var isDriverArrived = false
 
@@ -84,13 +88,43 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
     fun getConfirmCancel() {
         val textMessage = driverInfoView.getRootView().text_message
 
-        if(isDriverArrived){
-            textMessage.text = driverInfoView.getView().resources.getString(R.string.messageWarningTakeMoney)
-        }else{
-            textMessage.text = driverInfoView.getView().resources.getString(R.string.messageWarningDriverIs)
+        if (isDriverArrived) {
+            val resources = driverInfoView.getRootView().resources
+            val tax = getTaxMoney()
+            val message: String =
+                driverInfoView.getView().resources.getString(R.string.messageWarningTakeMoney)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                message.plus(
+                    Html.fromHtml(
+                        resources.getString(R.string.offer_price_average_price)
+                            .plus(" <b>$tax рублей</b>"), Html.FROM_HTML_MODE_COMPACT
+                    )
+                )
+
+            } else {
+                message.plus(
+                    Html.fromHtml(
+                        resources.getString(R.string.offer_price_average_price)
+                            .plus(" <b>$tax рублей</b>")
+                    )
+                )
+            }
+
+            textMessage.text = message
+
+
+        } else {
+            textMessage.text =
+                driverInfoView.getView().resources.getString(R.string.messageWarningDriverIs)
         }
 
         driverInfoView.confirmCancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    private fun getTaxMoney(): Int {
+        return 100
     }
 
 
@@ -112,11 +146,13 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
             Constants.REASON3 -> {
                 //по ошибке
+                Coordinate.toAdr = null
                 ReasonCancel.reasonID = Constants.REASON3
             }
 
             Constants.REASON4 -> {
                 //другая причина
+                Coordinate.toAdr = null
                 ReasonCancel.reasonID = Constants.REASON4
             }
         }
@@ -126,11 +162,12 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
             //вычесть бабки
         }
 
+        //clear data
         DriverObject.driver = null
-        Coordinate.fromAdr = null
         removeDataDriver()
-        replaceFragment(Constants.MAIN_FRAGMENT, null, fm)
 
+        //redirect
+        replaceFragment(Constants.MAIN_FRAGMENT, null, fm)
     }
 
 
@@ -157,13 +194,12 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
     private fun saveDataDriver(driver: Driver) {
         val activity = driverInfoView.getDriverView.activity as MainActivity
-        val pref = activity.getPreferences(Context.MODE_PRIVATE)
-        val gson = Gson()
-
+        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
         val editor = pref.edit()
-        editor.putString(Constants.NAME_DRIVER, gson.toJson(driver.nameDriver))
-        editor.putString(Constants.CAR_NAME, gson.toJson(driver.carName))
-        editor.putString(Constants.CAR_NUMBER, gson.toJson(driver.carNumber))
+
+        editor.putString(Constants.NAME_DRIVER, driver.nameDriver)
+        editor.putString(Constants.CAR_NAME, driver.carName)
+        editor.putString(Constants.CAR_NUMBER, driver.carNumber)
         editor.putInt(Constants.PRICE_DRIVER, driver.price!!)
         editor.putInt(Constants.IMG_DRIVER, driver.imgDriver!!)
         editor.putBoolean(Constants.IS_DRIVER_ARRIVED, isDriverArrived)
@@ -173,7 +209,7 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
     private fun removeDataDriver() {
         val activity = driverInfoView.getDriverView.activity as MainActivity
-        val pref = activity.getPreferences(Context.MODE_PRIVATE)
+        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
 
         val editor = pref.edit()
         editor.remove(Constants.NAME_DRIVER)

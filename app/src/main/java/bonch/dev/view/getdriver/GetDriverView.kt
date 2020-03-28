@@ -272,7 +272,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         Handler().postDelayed({
             moveCamera(zoom, point)
         }, 1500)
-
     }
 
 

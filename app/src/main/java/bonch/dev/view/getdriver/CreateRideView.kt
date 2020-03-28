@@ -89,8 +89,11 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
                 //in case cancel ride from GetDriverView
                 createRidePresenter?.addressesDone()
                 reasonID = null
-                fromAdr = null
             }
+        }
+
+        if (fromAdr != null) {
+            root.from_adr.setText(fromAdr!!.address)
         }
 
         return root

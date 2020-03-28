@@ -2,10 +2,12 @@ package bonch.dev.model.signup
 
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.MainActivity
 import bonch.dev.model.signup.pojo.Token
 import bonch.dev.network.signup.RetrofitService
 import bonch.dev.presenter.signup.SignupPresenter
+import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.ACCESS_TOKEN
 import bonch.dev.utils.NetworkUtil
 import com.google.gson.Gson
@@ -79,11 +81,9 @@ class SignupModel(private val signupPresenter: SignupPresenter) {
 
     private fun saveToken(accessToken: String) {
         val activity = signupPresenter.fragment.activity as MainActivity
-        val pref = activity.getPreferences(MODE_PRIVATE)
-
+        val pref = getDefaultSharedPreferences(activity.applicationContext)
         val editor = pref.edit()
-        editor.putString(ACCESS_TOKEN, Gson().toJson(accessToken))
+        editor.putString(ACCESS_TOKEN, accessToken)
         editor.apply()
     }
-
 }
