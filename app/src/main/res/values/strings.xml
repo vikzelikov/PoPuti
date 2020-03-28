@@ -62,5 +62,18 @@
     <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас</string>
     <string name="timeExpired">Время ожидания истекло</string>
     <string name="ok">Понятно</string>
+    <string name="becomeDriver">Стать водителем</string>
+    <string name="confirmUserDoc">Подтверждение личности</string>
+    <string name="forMoreTrustDrivers">Для большего доверия водителей</string>
+    <string name="addBankCardProfile">Привязать карту</string>
+    <string name="storyOrders">История заказов</string>
+    <string name="notifications">Уведомления</string>
+    <string name="setRatingApp">Оцените приложение</string>
+    <string name="changeLang">Сменить язык</string>
+    <string name="support">Техподдержка</string>
+    <string name="conditionUse">Условия пользования</string>
+    <string name="logout">Выйти из профиля</string>
+    <string name="email">Почта (необязательно)</string>
+    <string name="fullName">Имя и фамилия</string>
 
 </resources>
