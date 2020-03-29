@@ -43,9 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         if (accessToken == null) {
             //to signup
-            //addFragment(PHONE_VIEW, supportFragmentManager)
-            addFragment(MAIN_FRAGMENT, supportFragmentManager)
-
+            addFragment(PHONE_VIEW, supportFragmentManager)
         } else {
             //redirect to full app
             driver = getDriverData()
@@ -56,14 +54,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 //not created
                 addFragment(MAIN_FRAGMENT, supportFragmentManager)
-
-//                supportFragmentManager.beginTransaction()
-//                    .replace(
-//                        R.id.fragment_container,
-//                        RegularDriveView(),
-//                        CREATE_RIDE_VIEW.toString()
-//                    )
-//                    .commit()
             }
         }
     }
