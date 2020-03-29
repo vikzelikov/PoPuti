@@ -10,16 +10,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.model.signup.pojo.Phone
 import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
-import bonch.dev.utils.Constants.PHONE
+import bonch.dev.utils.Constants.PHONE_NUMBER
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
 import kotlinx.android.synthetic.main.confirm_phone_fragment.*
 import kotlinx.android.synthetic.main.confirm_phone_fragment.view.*
 
 
-class ConfirmPhoneFragment(startHeight: Int = 0, screenHeight: Int = 0) : Fragment(),
+class ConfirmPhoneView(startHeight: Int = 0, screenHeight: Int = 0) : Fragment(),
     View.OnKeyListener {
 
     private var signupPresenter: SignupPresenter? = null
@@ -99,8 +100,7 @@ class ConfirmPhoneFragment(startHeight: Int = 0, screenHeight: Int = 0) : Fragme
         val retryBtn = root.retry_send
         val backBtn = root.back_btn
 
-        val phone = arguments?.getString(PHONE)
-        root.show_phone.text = getString(R.string.showPhone).plus(" ").plus(phone)
+        root.show_phone.text = getString(R.string.showPhone).plus(" ").plus(Phone.phone)
 
         retryBtn.setOnClickListener {
             signupPresenter?.startTimerRetrySend(this)
@@ -113,7 +113,7 @@ class ConfirmPhoneFragment(startHeight: Int = 0, screenHeight: Int = 0) : Fragme
             val code4 = root.code4.text.toString().trim()
             val code = code1 + code2 + code3 + code4
 
-            signupPresenter?.checkCode(phone!!, code)
+            signupPresenter?.checkCode(Phone.phone!!, code)
         }
 
         backBtn.setOnClickListener {

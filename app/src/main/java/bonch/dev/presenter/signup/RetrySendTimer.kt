@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import bonch.dev.R
 import bonch.dev.utils.Constants.SIGNUP_INTERVAL_SMS
-import bonch.dev.view.signup.ConfirmPhoneFragment
+import bonch.dev.view.signup.ConfirmPhoneView
 import kotlinx.android.synthetic.main.confirm_phone_fragment.view.*
 
 object RetrySendTimer {
@@ -15,17 +15,17 @@ object RetrySendTimer {
     private var sendTimer: SendTimer? = null
     var seconds: Long? = null
 
-    fun getInstance(fragment: ConfirmPhoneFragment): SendTimer? {
+    fun getInstance(view: ConfirmPhoneView): SendTimer? {
         if (sendTimer == null) {
-            sendTimer = SendTimer(startTime, interval, fragment)
+            sendTimer = SendTimer(startTime, interval, view)
         }
         return sendTimer
     }
 
 
-    fun increaseStartTime(interval: Long, fragment: ConfirmPhoneFragment){
+    fun increaseStartTime(interval: Long, view: ConfirmPhoneView){
         startTime += interval
-        sendTimer = SendTimer(startTime, RetrySendTimer.interval, fragment)
+        sendTimer = SendTimer(startTime, RetrySendTimer.interval, view)
     }
 
 
