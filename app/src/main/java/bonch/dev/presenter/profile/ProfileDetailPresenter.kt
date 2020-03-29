@@ -50,7 +50,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
         val profileData = Profile()
         val root = profileDetailView
         val fullName = root.full_name.text.toString().trim()
-        var phone = root.phone_number.text.toString().trim()
+        val phone = root.phone_number.text.toString().trim()
         val email = root.email.text.toString().trim()
         val userImg = root.img_user.drawable
 
@@ -67,8 +67,6 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
         }
 
         if (phone.isNotEmpty()) {
-            //substring mask phone number
-            phone = phone.substring(2, phone.length)
             profileData.phone = phone
         }
 

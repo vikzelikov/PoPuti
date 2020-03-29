@@ -156,7 +156,7 @@ class SignupPresenter(val fragment: Fragment) {
         }
 
         if(Phone.phone?.trim()!!.isNotEmpty()){
-            profileData.phone = Phone.phone?.trim()!!.substring(2, Phone.phone?.trim()!!.length)
+            profileData.phone = Phone.phone?.trim()
         }
 
         signupModel?.saveFullName(profileData)
