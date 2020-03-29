@@ -20,7 +20,6 @@ object Constants {
     const val PHONE_VIEW = 8
     const val CONFIRM_PHONE_VIEW = 9
     const val FULL_NAME_VIEW = 10
-    const val PROFILE_FULL = 11
 
     const val PROFILE_FULL = 11
     const val FROM = "FROM"

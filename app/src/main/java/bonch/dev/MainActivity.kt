@@ -18,6 +18,8 @@ import bonch.dev.utils.Constants.LOCATION_PERMISSION_NAME
 import bonch.dev.utils.Constants.LOCATION_PERMISSION_REQUEST
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.PHONE_VIEW
+import bonch.dev.utils.Constants.WRITE_EXTERNAL_STORAGE
+import bonch.dev.utils.Constants.WRITE_EXTERNAL_STORAGE_REQUEST
 import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        accessUserGeo()
+        accessPermission()
 
         val accessToken = getToken()
 
@@ -46,10 +48,10 @@ class MainActivity : AppCompatActivity() {
             //redirect to full app
             driver = getDriverData()
 
-            if(driver != null){
+            if (driver != null) {
                 //ride already created
                 replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
-            }else{
+            } else {
                 //not created
                 addFragment(MAIN_FRAGMENT, supportFragmentManager)
             }
@@ -63,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun getDriverData(): Driver?{
+    private fun getDriverData(): Driver? {
         val pref = getDefaultSharedPreferences(applicationContext)
 
         var driver: Driver? = null
@@ -90,6 +92,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun accessPermission() {
+        accessUserGeo()
+        //accessWriteStorage()
+    }
+
+
     private fun accessUserGeo() {
         if (ContextCompat.checkSelfPermission(this, LOCATION_PERMISSION_NAME)
             != PackageManager.PERMISSION_GRANTED
@@ -100,6 +108,38 @@ class MainActivity : AppCompatActivity() {
                 LOCATION_PERMISSION_REQUEST
             )
         }
+
+        while (true){
+            //wait to consider of user
+            val permission = ContextCompat.checkSelfPermission(this, LOCATION_PERMISSION_NAME)
+
+            if(permission == PackageManager.PERMISSION_GRANTED){
+                break
+            }
+        }
+    }
+
+
+    private fun accessWriteStorage() {
+        if (ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(WRITE_EXTERNAL_STORAGE),
+                WRITE_EXTERNAL_STORAGE_REQUEST
+            )
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        accessUserGeo()
+        accessWriteStorage()
     }
 
 

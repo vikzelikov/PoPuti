@@ -1,5 +1,7 @@
 package bonch.dev.view.profile
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import bonch.dev.R
 import bonch.dev.presenter.profile.ProfilePresenter
+import bonch.dev.utils.Constants
 import kotlinx.android.synthetic.main.profile_fragment.view.*
 
 class ProfileView : Fragment() {
@@ -27,9 +30,21 @@ class ProfileView : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.profile_fragment, container, false)
 
+        profilePresenter?.root = root
+
+        profilePresenter?.getProfileDataDB()
+
         setListeners(root)
 
         return root
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data != null && requestCode == Constants.PROFILE_FULL && resultCode == Activity.RESULT_OK) {
+            profilePresenter?.profileDataResult(data)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
 

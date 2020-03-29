@@ -21,7 +21,6 @@ import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.getdriver.OfferPriceView
 import bonch.dev.view.profile.ProfileDetailView
-
 import bonch.dev.view.signup.ConfirmPhoneView
 import bonch.dev.view.signup.FullNameView
 import bonch.dev.view.signup.PhoneView
