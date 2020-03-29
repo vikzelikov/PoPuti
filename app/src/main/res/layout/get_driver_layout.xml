@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.getdriver.GetDriverView">
+    tools:context=".view.passanger.getdriver.GetDriverView">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/driver_list"
@@ -214,7 +214,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.getdriver.MBottomSheet">
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -297,7 +297,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.getdriver.MBottomSheet">
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -377,7 +377,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.getdriver.MBottomSheet">
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
 
 
             <TextView

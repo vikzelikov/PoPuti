@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.getdriver.CreateRideView">
+    tools:context=".view.passanger.getdriver.CreateRideView">
 
 
     <LinearLayout
@@ -277,7 +277,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.getdriver.MBottomSheet">
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -316,7 +316,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.getdriver.MBottomSheet">
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -377,7 +377,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.getdriver.MBottomSheet">
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"

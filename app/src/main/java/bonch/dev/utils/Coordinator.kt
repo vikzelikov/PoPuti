@@ -16,14 +16,14 @@ import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Constants.PROFILE_FULL
 import bonch.dev.view.MainFragment
-import bonch.dev.view.getdriver.AddBankCardView
-import bonch.dev.view.getdriver.CreateRideView
-import bonch.dev.view.getdriver.GetDriverView
-import bonch.dev.view.getdriver.OfferPriceView
-import bonch.dev.view.profile.ProfileDetailView
-import bonch.dev.view.signup.ConfirmPhoneView
-import bonch.dev.view.signup.FullNameView
-import bonch.dev.view.signup.PhoneView
+import bonch.dev.view.passanger.getdriver.AddBankCardView
+import bonch.dev.view.passanger.getdriver.CreateRideView
+import bonch.dev.view.passanger.getdriver.GetDriverView
+import bonch.dev.view.passanger.getdriver.OfferPriceView
+import bonch.dev.view.passanger.profile.ProfileDetailView
+import bonch.dev.view.passanger.signup.ConfirmPhoneView
+import bonch.dev.view.passanger.signup.FullNameView
+import bonch.dev.view.passanger.signup.PhoneView
 
 
 object Coordinator {

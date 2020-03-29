@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
-import bonch.dev.model.getdriver.pojo.Driver
-import bonch.dev.model.getdriver.pojo.DriverObject.driver
+import bonch.dev.model.passanger.getdriver.pojo.Driver
+import bonch.dev.model.passanger.getdriver.pojo.DriverObject.driver
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
@@ -23,11 +23,11 @@ import bonch.dev.utils.Constants.WRITE_EXTERNAL_STORAGE_REQUEST
 import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
-import bonch.dev.view.getdriver.CreateRideView
-import bonch.dev.view.getdriver.GetDriverView
-import bonch.dev.view.signup.ConfirmPhoneView
-import bonch.dev.view.signup.FullNameView
-import bonch.dev.view.signup.PhoneView
+import bonch.dev.view.passanger.getdriver.CreateRideView
+import bonch.dev.view.passanger.getdriver.GetDriverView
+import bonch.dev.view.passanger.signup.ConfirmPhoneView
+import bonch.dev.view.passanger.signup.FullNameView
+import bonch.dev.view.passanger.signup.PhoneView
 
 
 class MainActivity : AppCompatActivity() {
