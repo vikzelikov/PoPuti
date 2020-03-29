@@ -13,12 +13,11 @@ import androidx.fragment.app.FragmentManager
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.profile.pojo.Profile
-import bonch.dev.model.signup.SignupModel
-import bonch.dev.model.signup.pojo.Phone
+import bonch.dev.model.passanger.signup.SignupModel
+import bonch.dev.model.passanger.signup.pojo.Phone
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
-import bonch.dev.utils.Constants.PHONE_NUMBER
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Constants.SIGNUP_INTERVAL_SMS
 import bonch.dev.utils.Constants.SIGNUP_MAX_INTERVAL_SMS

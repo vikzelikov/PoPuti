@@ -1,4 +1,4 @@
-package bonch.dev.model.signup.pojo
+package bonch.dev.model.passanger.signup.pojo
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

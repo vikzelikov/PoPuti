@@ -10,10 +10,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.model.signup.pojo.Phone
+import bonch.dev.model.passanger.signup.pojo.Phone
 import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
-import bonch.dev.utils.Constants.PHONE_NUMBER
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
 import kotlinx.android.synthetic.main.confirm_phone_fragment.*

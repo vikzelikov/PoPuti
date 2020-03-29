@@ -1,10 +1,10 @@
-package bonch.dev.model.signup
+package bonch.dev.model.passanger.signup
 
 import android.util.Log
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.MainActivity
 import bonch.dev.model.profile.pojo.Profile
-import bonch.dev.model.signup.pojo.Token
+import bonch.dev.model.passanger.signup.pojo.Token
 import bonch.dev.network.signup.RetrofitService
 import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.utils.Constants.ACCESS_TOKEN

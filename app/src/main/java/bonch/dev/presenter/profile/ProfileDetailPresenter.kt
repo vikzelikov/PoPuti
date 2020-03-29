@@ -1,6 +1,6 @@
 package bonch.dev.presenter.profile
 
-import android.app.Activity.RESULT_OK
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -95,7 +95,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
         val userImg = profileDetailView.img_user
         when (requestCode) {
             Constants.CAMERA -> {
-                if(resultCode == RESULT_OK){
+                if(resultCode == Activity.RESULT_OK){
                     Glide.with(profileDetailView.applicationContext).load(imageUri)
                         .apply(RequestOptions().centerCrop().circleCrop())
                         .into(userImg)
