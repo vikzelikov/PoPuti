@@ -16,7 +16,7 @@ import bonch.dev.utils.Constants.SIGNUP_INTERVAL_SMS
 import bonch.dev.utils.Keyboard.hideKeyboard
 import kotlinx.android.synthetic.main.full_name_signup_fragment.view.*
 
-class FullNameFragment : Fragment() {
+class FullNameView : Fragment() {
 
     private var signupPresenter: SignupPresenter? = null
 
@@ -78,11 +78,13 @@ class FullNameFragment : Fragment() {
         val lastName = root.last_name
 
         nextBtn.setOnClickListener {
+            signupPresenter?.saveProfileData(firstName.text.toString(), lastName.text.toString())
+
             hideKeyboard(activity!!, root)
 
             if (signupPresenter != null && signupPresenter!!.isNameEntered()) {
                 val fm = (activity as MainActivity).supportFragmentManager
-                signupPresenter!!.nextBtn(FULL_NAME_VIEW, fm)
+                signupPresenter!!.nextBtn(FULL_NAME_VIEW, fm,null)
             }
         }
 

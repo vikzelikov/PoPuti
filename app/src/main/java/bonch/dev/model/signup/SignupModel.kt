@@ -1,16 +1,17 @@
 package bonch.dev.model.signup
 
-import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.MainActivity
+import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.model.signup.pojo.Token
 import bonch.dev.network.signup.RetrofitService
 import bonch.dev.presenter.signup.SignupPresenter
-import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.ACCESS_TOKEN
+import bonch.dev.utils.Constants.PROFILE_REALM_NAME
 import bonch.dev.utils.NetworkUtil
-import com.google.gson.Gson
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -87,5 +88,28 @@ class SignupModel(private val signupPresenter: SignupPresenter) {
         editor.apply()
     }
 
-}
 
+
+    fun saveFullName(profileData: Profile) {
+        val context = signupPresenter.fragment.context
+
+        if (context != null) {
+            Realm.init(context)
+            val config = RealmConfiguration.Builder()
+                .name(PROFILE_REALM_NAME)
+                .build()
+            val realm = Realm.getInstance(config)
+
+
+            realm?.executeTransactionAsync({ bgRealm ->
+                bgRealm.insertOrUpdate(profileData)
+            }, {
+                realm.close()
+                //ok
+            }, {
+                realm.close()
+                //fail
+            })
+        }
+    }
+}

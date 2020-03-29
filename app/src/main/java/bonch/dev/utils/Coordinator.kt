@@ -21,9 +21,10 @@ import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.getdriver.GetDriverView
 import bonch.dev.view.getdriver.OfferPriceView
 import bonch.dev.view.profile.ProfileDetailView
-import bonch.dev.view.signup.ConfirmPhoneFragment
-import bonch.dev.view.signup.FullNameFragment
-import bonch.dev.view.signup.PhoneFragment
+
+import bonch.dev.view.signup.ConfirmPhoneView
+import bonch.dev.view.signup.FullNameView
+import bonch.dev.view.signup.PhoneView
 
 
 object Coordinator {
@@ -39,7 +40,7 @@ object Coordinator {
             }
 
             PHONE_VIEW -> {
-                val fragment = PhoneFragment()
+                val fragment = PhoneView()
 
                 fm.beginTransaction()
                     .add(
@@ -64,7 +65,7 @@ object Coordinator {
             }
 
             FULL_NAME_VIEW -> {
-                val fragment = FullNameFragment()
+                val fragment = FullNameView()
                 fragment.arguments = bundle
 
                 fm.beginTransaction()
@@ -78,7 +79,7 @@ object Coordinator {
             }
 
             PHONE_VIEW -> {
-                val fragment = PhoneFragment()
+                val fragment = PhoneView()
                 fragment.arguments = bundle
 
                 fm.beginTransaction()
@@ -87,7 +88,6 @@ object Coordinator {
                         fragment,
                         PHONE_VIEW.toString()
                     )
-                    .addToBackStack(null)
                     .commit()
             }
 
@@ -125,11 +125,11 @@ object Coordinator {
         fm: FragmentManager,
         startHeight: Int,
         screenHeight: Int,
-        bundle: Bundle
+        bundle: Bundle?
     ) {
         when (id) {
             CONFIRM_PHONE_VIEW -> {
-                val fragment = ConfirmPhoneFragment(startHeight, screenHeight)
+                val fragment = ConfirmPhoneView(startHeight, screenHeight)
                 fragment.arguments = bundle
 
                 fm.beginTransaction()

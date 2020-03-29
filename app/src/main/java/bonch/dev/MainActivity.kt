@@ -2,12 +2,10 @@ package bonch.dev
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.text.TextUtils.replace
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.model.getdriver.pojo.Driver
 import bonch.dev.model.getdriver.pojo.DriverObject.driver
@@ -25,11 +23,9 @@ import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.getdriver.CreateRideView
 import bonch.dev.view.getdriver.GetDriverView
-import bonch.dev.view.signup.ConfirmPhoneFragment
-import bonch.dev.view.signup.FullNameFragment
-import bonch.dev.view.signup.PhoneFragment
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import bonch.dev.view.signup.ConfirmPhoneView
+import bonch.dev.view.signup.FullNameView
+import bonch.dev.view.signup.PhoneView
 
 
 class MainActivity : AppCompatActivity() {
@@ -119,11 +115,11 @@ class MainActivity : AppCompatActivity() {
         val getDriverView =
             supportFragmentManager.findFragmentByTag(GET_DRIVER_VIEW.toString()) as GetDriverView?
         val phoneFragment =
-            supportFragmentManager.findFragmentByTag(PHONE_VIEW.toString()) as PhoneFragment?
+            supportFragmentManager.findFragmentByTag(PHONE_VIEW.toString()) as PhoneView?
         val confirmPhoneFragment =
-            supportFragmentManager.findFragmentByTag(CONFIRM_PHONE_VIEW.toString()) as ConfirmPhoneFragment?
+            supportFragmentManager.findFragmentByTag(CONFIRM_PHONE_VIEW.toString()) as ConfirmPhoneView?
         val fullNameFragment =
-            supportFragmentManager.findFragmentByTag(FULL_NAME_VIEW.toString()) as FullNameFragment?
+            supportFragmentManager.findFragmentByTag(FULL_NAME_VIEW.toString()) as FullNameView?
 
 
         if (createRideView?.view != null && createRideView.backPressed()) {
