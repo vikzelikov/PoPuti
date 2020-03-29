@@ -108,22 +108,18 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_phone_profile" />
 
-            <br.com.sapereaude.maskedEditText.MaskedEditText
+
+            <TextView
                 android:id="@+id/phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@null"
-                android:cursorVisible="true"
-                android:inputType="phone"
-                android:padding="10dp"
-                android:paddingStart="0dp"
+                android:text="+79005091262"
                 android:textColor="@android:color/black"
-                android:textColorHint="#60000000"
-                android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="16sp"
-                mask:allowed_chars="1234567890"
-                mask:mask="+7(###)###-##-##" />
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_marginStart="10dp"/>
+
 
         </LinearLayout>
 
@@ -200,60 +196,60 @@
     </LinearLayout>
 
 
-<!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
+    <!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent">-->
 
 
-<!--        <LinearLayout-->
-<!--            android:id="@+id/time_expired_bottom_sheet"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@drawable/bg_corners_layout"-->
-<!--            android:elevation="10dp"-->
-<!--            android:orientation="vertical"-->
-<!--            android:paddingStart="15dp"-->
-<!--            android:paddingEnd="15dp"-->
-<!--            app:behavior_peekHeight="0dp"-->
-<!--            app:layout_behavior=".view.getdriver.MBottomSheet">-->
+    <!--        <LinearLayout-->
+    <!--            android:id="@+id/time_expired_bottom_sheet"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:background="@drawable/bg_corners_layout"-->
+    <!--            android:elevation="10dp"-->
+    <!--            android:orientation="vertical"-->
+    <!--            android:paddingStart="15dp"-->
+    <!--            android:paddingEnd="15dp"-->
+    <!--            app:behavior_peekHeight="0dp"-->
+    <!--            app:layout_behavior=".view.getdriver.MBottomSheet">-->
 
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginBottom="20dp"-->
-<!--                android:fontFamily="@font/roboto"-->
-<!--                android:text="@string/timeExpired"-->
-<!--                android:textAlignment="center"-->
-<!--                android:textColor="@android:color/black"-->
-<!--                android:textSize="24sp" />-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginTop="20dp"-->
+    <!--                android:layout_marginBottom="20dp"-->
+    <!--                android:fontFamily="@font/roboto"-->
+    <!--                android:text="@string/timeExpired"-->
+    <!--                android:textAlignment="center"-->
+    <!--                android:textColor="@android:color/black"-->
+    <!--                android:textSize="24sp" />-->
 
 
-<!--            <Button-->
-<!--                android:id="@+id/expired_time_ok_btn"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="50dp"-->
-<!--                android:layout_marginTop="14dp"-->
-<!--                android:layout_marginBottom="20dp"-->
-<!--                android:background="@drawable/bg_btn_blue"-->
-<!--                android:fontFamily="@font/roboto"-->
-<!--                android:shadowColor="@color/colorBlue"-->
-<!--                android:text="@string/ok"-->
-<!--                android:textAllCaps="false"-->
-<!--                android:textSize="18sp" />-->
+    <!--            <Button-->
+    <!--                android:id="@+id/expired_time_ok_btn"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="50dp"-->
+    <!--                android:layout_marginTop="14dp"-->
+    <!--                android:layout_marginBottom="20dp"-->
+    <!--                android:background="@drawable/bg_btn_blue"-->
+    <!--                android:fontFamily="@font/roboto"-->
+    <!--                android:shadowColor="@color/colorBlue"-->
+    <!--                android:text="@string/ok"-->
+    <!--                android:textAllCaps="false"-->
+    <!--                android:textSize="18sp" />-->
 
-<!--        </LinearLayout>-->
+    <!--        </LinearLayout>-->
 
 
-<!--        <View-->
-<!--            android:id="@+id/on_view_cancel_reason"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:alpha="0"-->
-<!--            android:background="@android:color/black" />-->
+    <!--        <View-->
+    <!--            android:id="@+id/on_view_cancel_reason"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:alpha="0"-->
+    <!--            android:background="@android:color/black" />-->
 
-<!--    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+    <!--    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
 
 
 </LinearLayout>
