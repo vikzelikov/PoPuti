@@ -63,6 +63,7 @@ object Constants {
     const val FULL_NAME = "FULL_NAME"
     const val PHONE_NUMBER = "PHONE_NUMBER"
     const val EMAIL = "EMAIL"
+    const val PROFILE_DATA = "PROFILE_DATA"
 
     const val CAMERA = 0
     const val GALLERY = 1

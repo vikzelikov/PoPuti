@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.view.View
@@ -24,7 +23,7 @@ import kotlinx.android.synthetic.main.profile_detail_activity.*
 import java.io.ByteArrayOutputStream
 
 
-class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
+class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfilePresenter {
 
     private var profileModel: ProfileModel? = null
     private var imageUri: Uri? = null
@@ -36,7 +35,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
     }
 
 
-    fun getProfileData(root: View) {
+    fun getProfileDataDB(root: View) {
         profileModel?.initRealm()
 
         val profileData = profileModel?.getProfileData()
@@ -47,7 +46,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
     }
 
 
-    fun saveProfileData() {
+    fun getProfileData(): Profile {
         val profileData = Profile()
         val root = profileDetailView
         val fullName = root.full_name.text.toString().trim()
@@ -77,7 +76,14 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
             profileData.email = email
         }
 
-        profileModel?.saveProfileData(profileData)
+        return profileData
+    }
+
+
+    fun saveProfileData(profileData: Profile?) {
+        if (profileData != null) {
+            profileModel?.saveProfileData(profileData)
+        }
     }
 
 
@@ -122,5 +128,10 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) {
 
     fun onDestroy() {
         profileModel?.realm?.close()
+    }
+
+
+    override fun getContext(): Context? {
+        return profileDetailView.applicationContext
     }
 }

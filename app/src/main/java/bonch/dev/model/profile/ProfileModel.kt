@@ -2,24 +2,28 @@ package bonch.dev.model.profile
 
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.model.profile.pojo.Profile
-import bonch.dev.presenter.profile.ProfileDetailPresenter
+import bonch.dev.presenter.profile.IProfilePresenter
 import bonch.dev.utils.Constants
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
-class ProfileModel(val profileDetailPresenter: ProfileDetailPresenter) {
+class ProfileModel(val profilePresenter: IProfilePresenter) {
 
 
     var realm: Realm? = null
 
+
     fun initRealm() {
         if (realm == null) {
-            val context = profileDetailPresenter.profileDetailView.applicationContext
-            Realm.init(context)
-            val config = RealmConfiguration.Builder()
-                .name("profile.realm")
-                .build()
-            realm = Realm.getInstance(config)
+            val context = profilePresenter.getContext()
+
+            if(context != null){
+                Realm.init(context)
+                val config = RealmConfiguration.Builder()
+                    .name("profile.realm")
+                    .build()
+                realm = Realm.getInstance(config)
+            }
         }
     }
 
@@ -56,8 +60,8 @@ class ProfileModel(val profileDetailPresenter: ProfileDetailPresenter) {
 
 
     fun removeAccessToken() {
-        val activity = profileDetailPresenter.profileDetailView
-        val pref = getDefaultSharedPreferences(activity.applicationContext)
+        val activity = profilePresenter.getContext()
+        val pref = getDefaultSharedPreferences(activity?.applicationContext)
         val editor = pref.edit()
 
         editor.remove(Constants.ACCESS_TOKEN)

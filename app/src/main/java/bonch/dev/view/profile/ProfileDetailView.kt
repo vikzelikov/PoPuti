@@ -2,13 +2,13 @@ package bonch.dev.view.profile
 
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.R
 import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.presenter.profile.ProfileDetailPresenter
+import bonch.dev.utils.Constants
 import bonch.dev.utils.Keyboard
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -31,7 +31,7 @@ class ProfileDetailView : AppCompatActivity() {
 
         val root = findViewById<View>(R.id.rootLinearLayout)
 
-        profileDetailPresenter?.getProfileData(root)
+        profileDetailPresenter?.getProfileDataDB(root)
 
         setListeners(root)
     }
@@ -70,7 +70,10 @@ class ProfileDetailView : AppCompatActivity() {
 
         backBtn.setOnClickListener {
             //save data
-            profileDetailPresenter?.saveProfileData()
+            val profileData = profileDetailPresenter?.getProfileData()
+            profileDetailPresenter?.saveProfileData(profileData)
+
+            setDataIntent(profileData)
 
             Keyboard.hideKeyboard(this, root)
             finish()
@@ -82,6 +85,13 @@ class ProfileDetailView : AppCompatActivity() {
     }
 
 
+    private fun setDataIntent(profileData: Profile?){
+        val intent = Intent()
+        intent.putExtra(Constants.PROFILE_DATA, profileData)
+        setResult(RESULT_OK, intent)
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         profileDetailPresenter?.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
@@ -89,7 +99,11 @@ class ProfileDetailView : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        profileDetailPresenter?.saveProfileData()
+        val profileData = profileDetailPresenter?.getProfileData()
+        profileDetailPresenter?.saveProfileData(profileData)
+
+        setDataIntent(profileData)
+
         super.onBackPressed()
     }
 
