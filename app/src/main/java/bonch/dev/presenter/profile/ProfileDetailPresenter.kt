@@ -1,5 +1,6 @@
 package bonch.dev.presenter.profile
 
+import android.app.Activity.RESULT_OK
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -94,9 +95,11 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
         val userImg = profileDetailView.img_user
         when (requestCode) {
             Constants.CAMERA -> {
-                Glide.with(profileDetailView.applicationContext).load(imageUri)
-                    .apply(RequestOptions().centerCrop().circleCrop())
-                    .into(userImg)
+                if(resultCode == RESULT_OK){
+                    Glide.with(profileDetailView.applicationContext).load(imageUri)
+                        .apply(RequestOptions().centerCrop().circleCrop())
+                        .into(userImg)
+                }
             }
 
             Constants.GALLERY -> {
