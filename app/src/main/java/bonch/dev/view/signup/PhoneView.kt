@@ -16,7 +16,7 @@ import bonch.dev.presenter.signup.SignupPresenter
 import bonch.dev.utils.Constants.PHONE_VIEW
 import kotlinx.android.synthetic.main.phone_signup_fragment.view.*
 
-class PhoneFragment : Fragment() {
+class PhoneView : Fragment() {
 
     private var signupPresenter: SignupPresenter? = null
 

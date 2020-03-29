@@ -7,6 +7,8 @@ import io.realm.annotations.RealmClass
 
 @RealmClass
 open class Profile(
+    var firstName: String? = null,
+    var lastName: String? = null,
     var fullName: String? = null,
     var phone: String? = null,
     var email: String? = null,
@@ -16,10 +18,14 @@ open class Profile(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.createByteArray()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(firstName)
+        parcel.writeString(lastName)
         parcel.writeString(fullName)
         parcel.writeString(phone)
         parcel.writeString(email)

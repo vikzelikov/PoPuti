@@ -60,6 +60,7 @@ object Constants {
 
 
     //profile data
+    const val PROFILE_REALM_NAME = "profile.realm"
     const val FULL_NAME = "FULL_NAME"
     const val PHONE_NUMBER = "PHONE_NUMBER"
     const val EMAIL = "EMAIL"

@@ -4,6 +4,7 @@ import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.presenter.profile.IProfilePresenter
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Constants.PROFILE_REALM_NAME
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
@@ -20,7 +21,7 @@ class ProfileModel(val profilePresenter: IProfilePresenter) {
             if(context != null){
                 Realm.init(context)
                 val config = RealmConfiguration.Builder()
-                    .name("profile.realm")
+                    .name(PROFILE_REALM_NAME)
                     .build()
                 realm = Realm.getInstance(config)
             }

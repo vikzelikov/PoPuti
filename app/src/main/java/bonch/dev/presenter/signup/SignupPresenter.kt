@@ -12,7 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.model.profile.pojo.Profile
 import bonch.dev.model.signup.SignupModel
+import bonch.dev.model.signup.pojo.Phone
 import bonch.dev.utils.Constants.CONFIRM_PHONE_VIEW
 import bonch.dev.utils.Constants.FULL_NAME_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
@@ -23,7 +25,7 @@ import bonch.dev.utils.Constants.SIGNUP_MAX_INTERVAL_SMS
 import bonch.dev.utils.Coordinator.previousFragment
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
-import bonch.dev.view.signup.ConfirmPhoneFragment
+import bonch.dev.view.signup.ConfirmPhoneView
 import kotlinx.android.synthetic.main.confirm_phone_fragment.view.*
 import kotlinx.android.synthetic.main.full_name_signup_fragment.view.*
 import kotlinx.android.synthetic.main.phone_signup_fragment.view.*
@@ -50,19 +52,10 @@ class SignupPresenter(val fragment: Fragment) {
     }
 
 
-    fun nextBtn(id: Int, fm: FragmentManager) {
-        when (id) {
-            FULL_NAME_VIEW -> {
-                replaceFragment(MAIN_FRAGMENT, null, fm)
-            }
-        }
-    }
-
-
     fun nextBtn(
         id: Int,
         fm: FragmentManager,
-        bundle: Bundle
+        bundle: Bundle?
     ) {
         when (id) {
             PHONE_VIEW -> {
@@ -72,13 +65,16 @@ class SignupPresenter(val fragment: Fragment) {
             CONFIRM_PHONE_VIEW -> {
                 replaceFragment(FULL_NAME_VIEW, bundle, fm)
             }
+
+            FULL_NAME_VIEW -> {
+                replaceFragment(MAIN_FRAGMENT, bundle, fm)
+            }
         }
     }
 
 
     fun backBtn(fm: FragmentManager) {
         previousFragment(fm)
-        //retrySendTimer?.cancel()
     }
 
 
@@ -115,9 +111,11 @@ class SignupPresenter(val fragment: Fragment) {
             val nextBtn = root!!.next_btn_phone
 
             if (phone.length > 15) {
+                Phone.phone = phone
                 changeBtnEnable(true, nextBtn)
                 result = true
             } else {
+                Phone.phone = null
                 changeBtnEnable(false, nextBtn)
             }
         }
@@ -148,17 +146,33 @@ class SignupPresenter(val fragment: Fragment) {
     }
 
 
+    fun saveProfileData(firstName: String, lastName: String) {
+        val profileData = Profile()
+
+        if(firstName.trim().isNotEmpty() && lastName.trim().isNotEmpty()){
+            profileData.firstName = firstName.trim()
+            profileData.lastName = lastName.trim()
+            profileData.fullName = firstName.trim().plus(" ").plus(lastName.trim())
+        }
+
+        if(Phone.phone?.trim()!!.isNotEmpty()){
+            profileData.phone = Phone.phone?.trim()!!.substring(2, Phone.phone?.trim()!!.length)
+        }
+
+        signupModel?.saveFullName(profileData)
+    }
+
+
     fun getCode(phone: String) {
         if (phone.length > 15) {
 
             if (RetrySendTimer.seconds == null || RetrySendTimer.seconds == 0L) {
                 //signupModel?.sendSms(phone)
+
                 hideKeyboard(fragment.activity!!, root!!)
 
-                val bundle = Bundle()
                 val fm = (fragment.activity as MainActivity).supportFragmentManager
-                bundle.putString(PHONE_NUMBER, phone)
-                nextBtn(PHONE_VIEW, fm, bundle)
+                nextBtn(PHONE_VIEW, fm, null)
             } else {
                 Toast.makeText(
                     root?.context,
@@ -166,7 +180,6 @@ class SignupPresenter(val fragment: Fragment) {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
 
         }
     }
@@ -192,7 +205,7 @@ class SignupPresenter(val fragment: Fragment) {
                 nextBtn(
                     CONFIRM_PHONE_VIEW,
                     fm,
-                    Bundle()
+                    null
                 )
             } else {
                 //change view from another thread (get Main thread)
@@ -287,21 +300,21 @@ class SignupPresenter(val fragment: Fragment) {
     }
 
 
-    fun startTimerRetrySend(fragment: ConfirmPhoneFragment) {
+    fun startTimerRetrySend(view: ConfirmPhoneView) {
         if (RetrySendTimer.seconds == null) {
-            RetrySendTimer.getInstance(fragment)?.start()
+            RetrySendTimer.getInstance(view)?.start()
 
         } else if (RetrySendTimer.startTime < SIGNUP_MAX_INTERVAL_SMS) {
 
             if (RetrySendTimer.seconds == 0L) {
-                RetrySendTimer.getInstance(fragment)?.cancel()
-                RetrySendTimer.increaseStartTime(SIGNUP_INTERVAL_SMS, fragment)
-                RetrySendTimer.getInstance(fragment)?.start()
+                RetrySendTimer.getInstance(view)?.cancel()
+                RetrySendTimer.increaseStartTime(SIGNUP_INTERVAL_SMS, view)
+                RetrySendTimer.getInstance(view)?.start()
             }
 
         } else {
             Toast.makeText(
-                fragment.context,
+                view.context,
                 "Обратитесь в техническую поддержку",
                 Toast.LENGTH_SHORT
             ).show()
