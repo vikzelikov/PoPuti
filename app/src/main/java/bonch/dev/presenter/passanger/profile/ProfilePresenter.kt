@@ -7,6 +7,7 @@ import android.view.View
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Constants.DRIVER_SIGNUP
 import bonch.dev.utils.Constants.PROFILE_DATA
 import bonch.dev.utils.Coordinator.openActivity
 import bonch.dev.view.passanger.profile.ProfileView
@@ -46,7 +47,7 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
 
 
     fun checkoutToDriver() {
-
+        openActivity(DRIVER_SIGNUP, profileView.requireContext(), profileView)
     }
 
 

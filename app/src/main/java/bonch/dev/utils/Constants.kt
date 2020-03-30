@@ -20,8 +20,11 @@ object Constants {
     const val PHONE_VIEW = 8
     const val CONFIRM_PHONE_VIEW = 9
     const val FULL_NAME_VIEW = 10
-
     const val PROFILE_FULL = 11
+    const val DRIVER_SIGNUP = 12
+    const val DRIVER_SIGNUP_DOCS_VIEW = 13
+    const val DRIVER_SIGNUP_STEP_VIEW = 14
+
     const val FROM = "FROM"
     const val TO = "TO"
     const val USER_POINT = "USER_POINT"
@@ -68,5 +71,11 @@ object Constants {
 
     const val CAMERA = 0
     const val GALLERY = 1
+
+
+    //driver signup
+    const val DRIVER_SIGNUP_START = 0
+    const val DRIVER_SIGNUP_PROCESS = 1
+    const val DRIVER_SIGNUP_COMPLETE = 2
 
 }

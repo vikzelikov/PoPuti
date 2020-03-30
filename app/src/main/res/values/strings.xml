@@ -75,5 +75,24 @@
     <string name="logout">Выйти из профиля</string>
     <string name="email">Почта (необязательно)</string>
     <string name="fullName">Имя и фамилия</string>
+    <string name="startDriverSignup">Начать регистрацию</string>
+    <string name="prepareDocs">Подготовьте документы</string>
+    <string name="listDocs">Для регистрации вам понадобится список следующих документов:</string>
+    <string name="makePhoto">Сделать фото</string>
+    <string name="completeSignup">Завершить регистрацию</string>
+    <string name="carName">Марка</string>
+    <string name="carModel">Модель</string>
+    <string name="car_number">Государственный номер</string>
+    <string name="weCheckDocs">Мы проверим документы  \nв течение 3 часов</string>
+    <string name="carInfo">Марка и модель автомобиля</string>
+    <string name="passport">разворот паспорта с фотографией</string>
+    <string name="passportAddress">паспорт с пропиской</string>
+    <string name="selfWithPassport">селфи с паспортом</string>
+    <string name="driverDoc">лицевая стороная ВУ</string>
+    <string name="backDriverDoc">обратная стороная ВУ</string>
+    <string name="frontSTS">лицевая стороная СТС</string>
+    <string name="backSTS">обратная сторона СТС</string>
+    <string name="reshootDoc">Переснять документ?</string>
+    <string name="reshoot">Переснять</string>
 
 </resources>

@@ -97,7 +97,6 @@ class ProfileView : Fragment() {
         }
 
         checkoutDriver.setOnClickListener {
-            Toast.makeText(context, "To driver", Toast.LENGTH_SHORT).show()
             profilePresenter?.checkoutToDriver()
         }
     }
