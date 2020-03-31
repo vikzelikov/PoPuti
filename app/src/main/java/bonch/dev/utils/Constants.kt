@@ -24,6 +24,9 @@ object Constants {
     const val DRIVER_SIGNUP = 12
     const val DRIVER_SIGNUP_DOCS_VIEW = 13
     const val DRIVER_SIGNUP_STEP_VIEW = 14
+    const val DRIVER_SIGNUP_CAR_INFO = 15
+    const val DRIVER_SIGNUP_CHECK_PHOTO = 16
+    const val DRIVER_SIGNUP_TABLE_DOCS = 17
 
     const val FROM = "FROM"
     const val TO = "TO"
@@ -68,14 +71,25 @@ object Constants {
     const val PHONE_NUMBER = "PHONE_NUMBER"
     const val EMAIL = "EMAIL"
     const val PROFILE_DATA = "PROFILE_DATA"
+    const val PHOTO = "PHOTO"
 
     const val CAMERA = 0
     const val GALLERY = 1
 
 
     //driver signup
+    const val DRIVER_DOCS_REALM_NAME = "docs.realm"
     const val DRIVER_SIGNUP_START = 0
     const val DRIVER_SIGNUP_PROCESS = 1
     const val DRIVER_SIGNUP_COMPLETE = 2
+
+    const val USER_PHOTO = 0
+    const val PASSPORT_PHOTO = 1
+    const val SELF_PHOTO_PASSPORT = 2
+    const val PASSPORT_ADDRESS_PHOTO = 3
+    const val DRIVER_DOC_FRONT = 4
+    const val DRIVER_DOC_BACK = 5
+    const val STS_DOC_FRONT = 6
+    const val STS_DOC_BACK = 7
 
 }

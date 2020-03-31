@@ -25,13 +25,13 @@
         android:layout_marginTop="60dp"
         android:layout_weight="1"
         android:scaleType="centerCrop"
-        android:src="@drawable/ava2" />
+        android:background="@android:color/darker_gray"/>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/black"
+        android:background="#2B2B2B"
         android:orientation="horizontal"
         android:paddingStart="15dp"
         android:paddingTop="50dp"
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="ПЕРЕСНЯТЬ"
+            android:text="@string/reshoot_photo"
             android:textColor="#CECECE"
             android:textSize="14sp" />
 
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="end"
-            android:text="ОТПРАВИТЬ"
+            android:text="@string/send_photo"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
     </LinearLayout>

@@ -88,11 +88,15 @@
     <string name="passport">разворот паспорта с фотографией</string>
     <string name="passportAddress">паспорт с пропиской</string>
     <string name="selfWithPassport">селфи с паспортом</string>
-    <string name="driverDoc">лицевая стороная ВУ</string>
-    <string name="backDriverDoc">обратная стороная ВУ</string>
-    <string name="frontSTS">лицевая стороная СТС</string>
+    <string name="driverDoc">лицевая сторона ВУ</string>
+    <string name="backDriverDoc">обратная сторона ВУ</string>
+    <string name="frontSTS">лицевая сторона СТС</string>
     <string name="backSTS">обратная сторона СТС</string>
-    <string name="reshootDoc">Переснять документ?</string>
+    <string name="reshootDoc">Пожалуйста, загрузите новую фотографию документа</string>
     <string name="reshoot">Переснять</string>
+    <string name="continue_signup">Продолжить</string>
+    <string name="reshoot_photo">ПЕРЕСНЯТЬ</string>
+    <string name="send_photo">ОТПРАВИТЬ</string>
+    <string name="backToCabinet">Вернуться в личный кабинет</string>
 
 </resources>
