@@ -98,5 +98,6 @@
     <string name="reshoot_photo">ПЕРЕСНЯТЬ</string>
     <string name="send_photo">ОТПРАВИТЬ</string>
     <string name="backToCabinet">Вернуться в личный кабинет</string>
+    <string name="createRegularRide">Создать регулярную поездку</string>
 
 </resources>

@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import bonch.dev.R
 import bonch.dev.presenter.regulardrive.adapter.ViewPagerAdapter
+import bonch.dev.view.regulardrive.ActiveRegularDriveView
+import bonch.dev.view.regulardrive.ArchiveRegularDriveView
 import com.google.android.material.tabs.TabLayout
 
 
