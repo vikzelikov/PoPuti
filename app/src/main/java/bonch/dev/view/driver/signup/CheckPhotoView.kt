@@ -16,7 +16,7 @@ class CheckPhotoView : Fragment() {
 
     init {
         if (driverSignupPresenter == null) {
-            driverSignupPresenter = DriverSignupPresenter()
+            driverSignupPresenter = DriverSignupPresenter(null)
         }
     }
 

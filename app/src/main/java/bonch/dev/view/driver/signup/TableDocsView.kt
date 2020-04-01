@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import bonch.dev.R
 import bonch.dev.model.driver.signup.pojo.SignupStep
 import bonch.dev.presenter.driver.signup.TableDocsPresenter
+import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.DRIVER_DOC_BACK
 import bonch.dev.utils.Constants.DRIVER_DOC_FRONT
 import bonch.dev.utils.Constants.PASSPORT_ADDRESS_PHOTO
@@ -15,12 +17,9 @@ import bonch.dev.utils.Constants.PASSPORT_PHOTO
 import bonch.dev.utils.Constants.SELF_PHOTO_PASSPORT
 import bonch.dev.utils.Constants.STS_DOC_BACK
 import bonch.dev.utils.Constants.STS_DOC_FRONT
+import bonch.dev.utils.Gallery
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.table_docs_fragment.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class TableDocsView : Fragment() {
 
@@ -45,19 +44,30 @@ class TableDocsView : Fragment() {
 
         tableDocsPresenter?.root = root
 
-        tableDocsPresenter?.checkStatusSignup()
+        //go to process
+        tableDocsPresenter?.removeStartStatus()
+
+        tableDocsPresenter?.setStatusCheckDocs(root, arguments)
+
+        //TODO TODO *******************************
+        val activity = activity as DriverSignupActivity
+        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
+        val editor = pref.edit()
+        editor.putBoolean(Constants.DRIVER_SIGNUP_PROCESS.toString(), true)
+        editor.apply()
+        //TODO TODO *******************************
 
         if (SignupStep.listDocs.isNotEmpty()) {
             tableDocsPresenter?.setDocs(SignupStep.listDocs)
 
-            CoroutineScope(Dispatchers.IO).launch {
-                withContext(Dispatchers.Main) {
-                    tableDocsPresenter?.saveDocs(SignupStep.listDocs)
-                }
-            }
+            Thread(Runnable {
+                tableDocsPresenter?.saveDocs(SignupStep.listDocs)
+            }).start()
 
         } else {
-            tableDocsPresenter?.getDocs()
+            Thread(Runnable {
+                tableDocsPresenter?.getDocs()
+            }).start()
         }
 
 
@@ -87,14 +97,28 @@ class TableDocsView : Fragment() {
     }
 
 
+    fun setStatusCheckDocs(root: View) {
+        //TODO
+        val statusDriverSignup = root.status_driver_signup
+
+        val status_passport = root.status_passport
+        val status_passport_address = root.status_passport_address
+        val status_self_passport = root.status_self_passport
+        val status_driver_doc_front = root.status_driver_doc_front
+        val status_driver_doc_back = root.status_driver_doc_back
+        val status_sts_front = root.status_sts_front
+        val status_sts_back = root.status_sts_back
+    }
+
+
     private fun setListeners(root: View) {
-        val passport = root.doc1
-        val passportAddress = root.doc2
-        val selfPassport = root.doc3
-        val driverDocFront = root.doc4
-        val driverDocBack = root.doc5
-        val stsFront = root.doc6
-        val stsBack = root.doc7
+        val passport = root.passport
+        val passportAddress = root.passport_address
+        val selfPassport = root.self_passport
+        val driverDocFront = root.driver_doc_front
+        val driverDocBack = root.driver_doc_back
+        val stsFront = root.sts_front
+        val stsBack = root.sts_back
         val onViewTable = root.on_view_table
         val reshoot = root.make_photo
         val clipPhoto = root.clip_photo
@@ -140,7 +164,8 @@ class TableDocsView : Fragment() {
         }
 
         clipPhoto.setOnClickListener {
-            //todo
+            val activity = activity as DriverSignupActivity
+            Gallery.getPhoto(activity)
         }
 
         backBtn.setOnClickListener {
@@ -151,7 +176,7 @@ class TableDocsView : Fragment() {
 
 
     override fun onDestroy() {
-        tableDocsPresenter?.driverSignupModel?.realm?.close()
+//        tableDocsPresenter?.driverSignupModel?.realm?.close()
         super.onDestroy()
     }
 

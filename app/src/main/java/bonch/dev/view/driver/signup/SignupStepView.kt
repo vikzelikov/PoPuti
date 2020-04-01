@@ -9,6 +9,7 @@ import bonch.dev.R
 import bonch.dev.model.driver.signup.pojo.DocsStep
 import bonch.dev.model.driver.signup.pojo.SignupStep
 import bonch.dev.presenter.driver.signup.DriverSignupPresenter
+import bonch.dev.utils.Gallery
 import kotlinx.android.synthetic.main.driver_signup_step_fragment.view.*
 
 class SignupStepView : Fragment() {
@@ -17,7 +18,7 @@ class SignupStepView : Fragment() {
 
     init {
         if (driverSignupPresenter == null) {
-            driverSignupPresenter = DriverSignupPresenter()
+            driverSignupPresenter = DriverSignupPresenter(null)
         }
     }
 
@@ -63,7 +64,8 @@ class SignupStepView : Fragment() {
         }
 
         clipPhoto.setOnClickListener {
-            //get gallery
+            val activity = activity as DriverSignupActivity
+            Gallery.getPhoto(activity)
         }
     }
 

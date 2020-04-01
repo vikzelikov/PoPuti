@@ -1,20 +1,29 @@
 package bonch.dev.presenter.driver.signup
 
 import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Rect
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import androidx.fragment.app.FragmentManager
 import bonch.dev.R
+import bonch.dev.model.driver.signup.SignupStatusModel
 import bonch.dev.model.driver.signup.pojo.DocsStep
 import bonch.dev.model.driver.signup.pojo.SignupStep
 import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Constants.CAMERA
 import bonch.dev.utils.Constants.DRIVER_DOC_BACK
 import bonch.dev.utils.Constants.DRIVER_DOC_FRONT
 import bonch.dev.utils.Constants.DRIVER_SIGNUP_CHECK_PHOTO
+import bonch.dev.utils.Constants.DRIVER_SIGNUP_COMPLETE
 import bonch.dev.utils.Constants.DRIVER_SIGNUP_DOCS_VIEW
+import bonch.dev.utils.Constants.DRIVER_SIGNUP_PROCESS
+import bonch.dev.utils.Constants.DRIVER_SIGNUP_START
+import bonch.dev.utils.Constants.GALLERY
 import bonch.dev.utils.Constants.PASSPORT_ADDRESS_PHOTO
 import bonch.dev.utils.Constants.PASSPORT_PHOTO
 import bonch.dev.utils.Constants.SELF_PHOTO_PASSPORT
@@ -27,10 +36,41 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.check_correct_doc_fragment.view.*
 import kotlinx.android.synthetic.main.signup_car_info_fragment.view.*
 
-class DriverSignupPresenter {
+class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
 
-    var activityHost: DriverSignupActivity? = null
+    var signupStatusModel: SignupStatusModel? = null
+
+
+    init {
+        if (driverSignupActivity != null && signupStatusModel == null) {
+            signupStatusModel = SignupStatusModel(this)
+        }
+    }
+
+
+    fun getStatusSignup() {
+        signupStatusModel?.getStatusSignup()
+    }
+
+
+    fun receiveStatus(status: Int) {
+        val fm = driverSignupActivity!!.supportFragmentManager
+
+        when (status) {
+            DRIVER_SIGNUP_START -> {
+                getListDocsView(fm)
+            }
+
+            DRIVER_SIGNUP_PROCESS -> {
+                getTableDocs(fm)
+            }
+
+            DRIVER_SIGNUP_COMPLETE -> {
+                //go to driver interface
+            }
+        }
+    }
 
 
     fun getListDocsView(fm: FragmentManager) {
@@ -49,6 +89,7 @@ class DriverSignupPresenter {
 
 
     fun getTableDocs(fm: FragmentManager) {
+        SignupStep.isTableView = true
         replaceFragment(Constants.DRIVER_SIGNUP_TABLE_DOCS, null, fm)
     }
 
@@ -58,9 +99,14 @@ class DriverSignupPresenter {
     }
 
 
-    fun onActivityResult(resultCode: Int, fm: FragmentManager) {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, fm: FragmentManager) {
         if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == GALLERY) {
+                SignupStep.imgUri = data?.data
+            }
+
             replaceFragment(DRIVER_SIGNUP_CHECK_PHOTO, null, fm)
+
         } else {
             if (SignupStep.isTableView) {
                 getTableDocs(fm)
@@ -86,20 +132,22 @@ class DriverSignupPresenter {
 
         //save photo
         if (SignupStep.imgUri != null) {
-            val bitmap =
+            var bitmap =
                 MediaStore.Images.Media.getBitmap(activity.contentResolver, SignupStep.imgUri!!)
 
             //TODO
+            //fix rotation bag
+            bitmap = rotateBitmap(bitmap)
+
             try {
                 SignupStep.listDocs[SignupStep.idStep] = bitmap
-            }catch (ex: IndexOutOfBoundsException){
+            } catch (ex: IndexOutOfBoundsException) {
                 SignupStep.listDocs.add(bitmap)
             }
         }
 
-        if (SignupStep.isTableView || SignupStep.idStep > 1) {
+        if (SignupStep.isTableView || SignupStep.idStep > STS_DOC_BACK - 1) {
             //end settings docs
-            SignupStep.isTableView = true
             getTableDocs(fm)
         } else {
             SignupStep.idStep = SignupStep.idStep.inc()
@@ -294,6 +342,21 @@ class DriverSignupPresenter {
                 }
 
             }
+    }
+
+
+    private fun rotateBitmap(source: Bitmap): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(90f)
+        return Bitmap.createBitmap(
+            source,
+            0,
+            0,
+            source.width,
+            source.height,
+            matrix,
+            true
+        )
     }
 
 

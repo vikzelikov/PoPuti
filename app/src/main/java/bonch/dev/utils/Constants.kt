@@ -85,8 +85,8 @@ object Constants {
 
     const val USER_PHOTO = 0
     const val PASSPORT_PHOTO = 1
-    const val SELF_PHOTO_PASSPORT = 2
-    const val PASSPORT_ADDRESS_PHOTO = 3
+    const val PASSPORT_ADDRESS_PHOTO = 2
+    const val SELF_PHOTO_PASSPORT = 3
     const val DRIVER_DOC_FRONT = 4
     const val DRIVER_DOC_BACK = 5
     const val STS_DOC_FRONT = 6
