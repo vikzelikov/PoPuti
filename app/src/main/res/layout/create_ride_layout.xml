@@ -33,7 +33,7 @@
     <RelativeLayout
         android:id="@+id/bottom_sheet_addresses"
         app:behavior_peekHeight="190dp"
-        app:layout_behavior=".view.getdriver.MBottomSheet"
+        app:layout_behavior=".view.passanger.getdriver.MBottomSheet"
         android:layout_width="match_parent"
         android:layout_height="650dp"
         android:background="@drawable/ic_bottom_sheet_collapsed">

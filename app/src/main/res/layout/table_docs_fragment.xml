@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/back_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="18dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back_arrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:text="@string/backToCabinet"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/back_btn"
+        android:background="#10000000" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/back_btn">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:id="@+id/status_driver_signup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/weCheckDocs"
+                android:textAlignment="center"
+                android:textColor="@color/colorBlue"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/passport"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:background="#C4C4C4"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/status_passport"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_green_tick" />
+
+
+                        <TextView
+                            android:id="@+id/text_passport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/passport"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/passport"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/passport_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:background="#C4C4C4"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/status_passport_address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_red_cross" />
+
+                        <TextView
+                            android:id="@+id/text_passport_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/passport_address"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/passportAddress"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/self_passport"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:background="#C4C4C4"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/status_self_passport"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_green_tick" />
+
+
+                        <TextView
+                            android:id="@+id/text_self_passport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/self_passport"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/selfWithPassport"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/driver_doc_front"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:background="#C4C4C4"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/status_driver_doc_front"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_red_cross" />
+
+                        <TextView
+                            android:id="@+id/text_driver_doc_front"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/driver_doc_front"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/driverDoc"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/driver_doc_back"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:background="#C4C4C4"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/status_driver_doc_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_green_tick" />
+
+
+                        <TextView
+                            android:id="@+id/text_driver_doc_back"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/driver_doc_back"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/backDriverDoc"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/sts_front"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:background="#C4C4C4"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/status_sts_front"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_red_cross" />
+
+                        <TextView
+                            android:id="@+id/text_sts_front"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/sts_front"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/frontSTS"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/sts_back"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:background="#C4C4C4"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/status_sts_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_green_tick" />
+
+
+                        <TextView
+                            android:id="@+id/text_sts_back"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/sts_back"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/backSTS"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="10dp">
+
+        <LinearLayout
+            android:id="@+id/reshoot_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_bottom_sheet_arrow" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="25dp"
+                android:fontFamily="@font/roboto"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/reshootDoc"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/clip_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/bg_cross_btn"
+                    android:elevation="10dp"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_clip" />
+
+                <Button
+                    android:id="@+id/make_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_btn_blue"
+                    android:fontFamily="@font/roboto"
+                    android:shadowColor="@color/colorBlue"
+                    android:text="@string/reshoot"
+                    android:textAllCaps="false"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/on_view_table"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:background="@android:color/black"
+            android:visibility="gone" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</RelativeLayout>

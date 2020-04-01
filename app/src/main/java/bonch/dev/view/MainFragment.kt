@@ -10,9 +10,9 @@ import bonch.dev.R
 import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
 import bonch.dev.utils.Constants.PROFILE_VIEW
 import bonch.dev.utils.Constants.REGULAR_DRIVING_VIEW
-import bonch.dev.view.getdriver.CreateRideView
-import bonch.dev.view.profile.ProfileView
-import bonch.dev.view.regulardrive.RegularDriveView
+import bonch.dev.view.passanger.getdriver.CreateRideView
+import bonch.dev.view.passanger.profile.ProfileView
+import bonch.dev.view.passanger.regulardrive.RegularDriveView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment() {

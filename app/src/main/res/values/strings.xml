@@ -75,9 +75,28 @@
     <string name="logout">Выйти из профиля</string>
     <string name="email">Почта (необязательно)</string>
     <string name="fullName">Имя и фамилия</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
-    <string name="createRegularRide">Создать регулярную поездку</string>
+    <string name="startDriverSignup">Начать регистрацию</string>
+    <string name="prepareDocs">Подготовьте документы</string>
+    <string name="listDocs">Для регистрации вам понадобится список следующих документов:</string>
+    <string name="makePhoto">Сделать фото</string>
+    <string name="completeSignup">Завершить регистрацию</string>
+    <string name="carName">Марка</string>
+    <string name="carModel">Модель</string>
+    <string name="car_number">Государственный номер</string>
+    <string name="weCheckDocs">Мы проверим документы  \nв течение 3 часов</string>
+    <string name="carInfo">Марка и модель автомобиля</string>
+    <string name="passport">разворот паспорта с фотографией</string>
+    <string name="passportAddress">паспорт с пропиской</string>
+    <string name="selfWithPassport">селфи с паспортом</string>
+    <string name="driverDoc">лицевая сторона ВУ</string>
+    <string name="backDriverDoc">обратная сторона ВУ</string>
+    <string name="frontSTS">лицевая сторона СТС</string>
+    <string name="backSTS">обратная сторона СТС</string>
+    <string name="reshootDoc">Пожалуйста, загрузите новую фотографию документа</string>
+    <string name="reshoot">Переснять</string>
+    <string name="continue_signup">Продолжить</string>
+    <string name="reshoot_photo">ПЕРЕСНЯТЬ</string>
+    <string name="send_photo">ОТПРАВИТЬ</string>
+    <string name="backToCabinet">Вернуться в личный кабинет</string>
 
 </resources>
