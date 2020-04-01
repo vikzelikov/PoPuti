@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -51,19 +52,20 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
 
     fun getDocs() {
         //TODO with server get images from net
-        val list: ArrayList<Bitmap> = arrayListOf()
+        val list: ArrayList<Uri> = arrayListOf()
         val listDocs = driverSignupModel?.getDocsDB()
 
         if (!listDocs.isNullOrEmpty()) {
             for (i in 0 until listDocs.size) {
-                val bitmap =
-                    BitmapFactory.decodeByteArray(
-                        listDocs[i].imgDocs,
-                        0,
-                        listDocs[i].imgDocs!!.size
-                    )
+//                val bitmap =
+//                    BitmapFactory.decodeByteArray(
+//                        listDocs[i].imgDocs,
+//                        0,
+//                        listDocs[i].imgDocs!!.size
+//                    )
+                val uri = Uri.parse(listDocs[i].imgDocs)
 
-                list.add(bitmap)
+                list.add(uri)
 
             }
 
@@ -74,7 +76,7 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun setDocs(list: ArrayList<Bitmap>) {
+    fun setDocs(list: ArrayList<Uri>) {
         val views: Array<ImageView> = arrayOf(
             root.passport,
             root.passport_address,
@@ -105,12 +107,12 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun saveDocs(list: ArrayList<Bitmap>) {
+    fun saveDocs(list: ArrayList<Uri>) {
         val listDocs: ArrayList<DocsRealm> = arrayListOf()
 
         for (i in 0 until list.size) {
-            val byteArray = getByteArray(list[i])
-            listDocs.add(DocsRealm(i, byteArray))
+            val uriString = list[i].toString()
+            listDocs.add(DocsRealm(i, uriString))
         }
 
         driverSignupModel?.saveDocs(listDocs)
@@ -150,14 +152,6 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
         } else {
             onMapView?.visibility = View.VISIBLE
         }
-    }
-
-
-    private fun getByteArray(bitmap: Bitmap): ByteArray {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
-
-        return stream.toByteArray()
     }
 
 

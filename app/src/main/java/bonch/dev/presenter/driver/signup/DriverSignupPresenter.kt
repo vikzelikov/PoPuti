@@ -132,24 +132,19 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
         //save photo
         if (SignupStep.imgUri != null) {
-            var bitmap =
-                MediaStore.Images.Media.getBitmap(activity.contentResolver, SignupStep.imgUri!!)
-
-            //TODO
-            //fix rotation bag
-            bitmap = rotateBitmap(bitmap)
 
             try {
-                SignupStep.listDocs[SignupStep.idStep] = bitmap
+                SignupStep.listDocs[SignupStep.idStep] = SignupStep.imgUri!!
             } catch (ex: IndexOutOfBoundsException) {
-                SignupStep.listDocs.add(bitmap)
+                SignupStep.listDocs.add(SignupStep.imgUri!!)
             }
         }
 
-        if (SignupStep.isTableView || SignupStep.idStep > STS_DOC_BACK - 1) {
+        if (SignupStep.isTableView || SignupStep.idStep > 1 - 1) {
             //end settings docs
             getTableDocs(fm)
         } else {
+            //go to the next step
             SignupStep.idStep = SignupStep.idStep.inc()
             startSettingDocs(fm)
         }
@@ -342,21 +337,6 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
                 }
 
             }
-    }
-
-
-    private fun rotateBitmap(source: Bitmap): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(90f)
-        return Bitmap.createBitmap(
-            source,
-            0,
-            0,
-            source.width,
-            source.height,
-            matrix,
-            true
-        )
     }
 
 
