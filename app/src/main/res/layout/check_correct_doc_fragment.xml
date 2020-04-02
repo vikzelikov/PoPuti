@@ -30,20 +30,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#2B2B2B"
+        android:background="@android:color/black"
         android:orientation="horizontal"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:weightSum="1">
 
         <TextView
-            android:id="@+id/reshoot"
+            android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:paddingTop="50dp"
             android:paddingBottom="30dp"
-            android:text="@string/reshoot_photo"
+            android:text="@string/backCaps"
             android:textColor="#CECECE"
             android:textSize="14sp" />
 

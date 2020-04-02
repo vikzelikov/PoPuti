@@ -37,12 +37,11 @@ class CheckPhotoView : Fragment() {
 
 
     private fun setListeners(root: View) {
-        val reshoot = root.reshoot
+        val back = root.back
         val sendPhoto = root.send_photo
 
-        reshoot.setOnClickListener {
-            val activity = activity as DriverSignupActivity
-            driverSignupPresenter?.getCamera(activity)
+        back.setOnClickListener {
+            (activity as DriverSignupActivity).onBackPressed()
         }
 
         sendPhoto.setOnClickListener {

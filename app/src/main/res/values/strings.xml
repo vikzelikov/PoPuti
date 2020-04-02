@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Po Puti</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
     <string name="input_number_phone">Введите номер телефона</string>
     <string name="confirm_code">Мы отправим на него код подтверждения</string>
     <string name="mobile_phone">Мобильный телефон</string>
@@ -99,5 +96,6 @@
     <string name="send_photo">ОТПРАВИТЬ</string>
     <string name="backToCabinet">Вернуться в личный кабинет</string>
     <string name="createRegularRide">Создать регулярную поездку</string>
+    <string name="backCaps">НАЗАД</string>
 
 </resources>

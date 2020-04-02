@@ -8,5 +8,5 @@ import io.realm.annotations.RealmClass
 open class DocsRealm (
     @PrimaryKey
     var id: Int = 0,
-    var imgDocs: ByteArray? = null
+    var imgDocs: String? = null
 ) : RealmObject()
