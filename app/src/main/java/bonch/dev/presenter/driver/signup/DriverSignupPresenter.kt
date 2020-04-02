@@ -133,14 +133,10 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
         //save photo
         if (SignupStep.imgUri != null) {
-            val bitmap =
-                MediaStore.Images.Media.getBitmap(activity.contentResolver, SignupStep.imgUri!!)
-
-            //TODO
             try {
-                SignupStep.listDocs[SignupStep.idStep] = bitmap
+                SignupStep.listDocs[SignupStep.idStep] = SignupStep.imgUri!!
             } catch (ex: IndexOutOfBoundsException) {
-                SignupStep.listDocs.add(bitmap)
+                SignupStep.listDocs.add(SignupStep.imgUri!!)
             }
         }
 

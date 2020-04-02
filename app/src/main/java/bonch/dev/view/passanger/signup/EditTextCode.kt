@@ -1,4 +1,4 @@
-package bonch.dev.view
+package bonch.dev.view.passanger.signup
 
 import android.content.Context
 import android.util.AttributeSet

@@ -54,7 +54,7 @@
             android:orientation="horizontal"
             android:weightSum="4">
 
-            <bonch.dev.view.EditTextCode
+            <bonch.dev.view.passanger.signup.EditTextCode
                 android:id="@+id/code1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                 android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
-            <bonch.dev.view.EditTextCode
+            <bonch.dev.view.passanger.signup.EditTextCode
                 android:id="@+id/code2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                 android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
-            <bonch.dev.view.EditTextCode
+            <bonch.dev.view.passanger.signup.EditTextCode
                 android:id="@+id/code3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
                 android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
-            <bonch.dev.view.EditTextCode
+            <bonch.dev.view.passanger.signup.EditTextCode
                 android:id="@+id/code4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

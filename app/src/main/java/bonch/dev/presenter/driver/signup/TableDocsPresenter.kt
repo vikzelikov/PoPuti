@@ -1,8 +1,6 @@
 package bonch.dev.presenter.driver.signup
 
-import android.app.Activity
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,14 +11,12 @@ import bonch.dev.Permissions
 import bonch.dev.model.driver.signup.DriverSignupModel
 import bonch.dev.model.driver.signup.pojo.DocsRealm
 import bonch.dev.model.driver.signup.pojo.SignupStep
-import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.view.driver.signup.DriverSignupActivity
 import bonch.dev.view.driver.signup.TableDocsView
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.table_docs_fragment.view.*
-import java.io.ByteArrayOutputStream
 
 
 class TableDocsPresenter(val tableDocsView: TableDocsView) {
@@ -42,8 +38,8 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun setStatusCheckDocs(root: View, bundle: Bundle?){
-        if(bundle != null){
+    fun setStatusCheckDocs(root: View, bundle: Bundle?) {
+        if (bundle != null) {
             //get object with data
 
             tableDocsView.setStatusCheckDocs(root)
@@ -53,19 +49,15 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
 
     fun getDocs() {
         //TODO with server get images from net
-        val list: ArrayList<Bitmap> = arrayListOf()
+        val list: ArrayList<Uri> = arrayListOf()
         val listDocs = driverSignupModel?.getDocsDB()
 
         if (!listDocs.isNullOrEmpty()) {
             for (i in 0 until listDocs.size) {
-                val bitmap =
-                    BitmapFactory.decodeByteArray(
-                        listDocs[i].imgDocs,
-                        0,
-                        listDocs[i].imgDocs!!.size
-                    )
+                val uri = Uri.parse(listDocs[i].imgDocs)
 
-                list.add(bitmap)
+
+                list.add(uri)
 
             }
 
@@ -76,7 +68,7 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun setDocs(list: ArrayList<Bitmap>) {
+    fun setDocs(list: ArrayList<Uri>) {
         val views: Array<ImageView> = arrayOf(
             root.passport,
             root.passport_address,
@@ -107,12 +99,12 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun saveDocs(list: ArrayList<Bitmap>) {
+    fun saveDocs(list: ArrayList<Uri>) {
         val listDocs: ArrayList<DocsRealm> = arrayListOf()
 
         for (i in 0 until list.size) {
-            val byteArray = getByteArray(list[i])
-            listDocs.add(DocsRealm(i, byteArray))
+            val stringURI = list[i].toString()
+            listDocs.add(DocsRealm(i, stringURI))
         }
 
         driverSignupModel?.saveDocs(listDocs)
@@ -152,14 +144,6 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
         } else {
             onMapView?.visibility = View.VISIBLE
         }
-    }
-
-
-    private fun getByteArray(bitmap: Bitmap): ByteArray {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
-
-        return stream.toByteArray()
     }
 
 
