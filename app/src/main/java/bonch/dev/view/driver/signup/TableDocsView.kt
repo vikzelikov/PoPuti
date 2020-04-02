@@ -41,6 +41,7 @@ class TableDocsView : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.table_docs_fragment, container, false)
+
         tableDocsPresenter?.root = root
 
         //go to process
@@ -56,22 +57,18 @@ class TableDocsView : Fragment() {
         editor.apply()
         //TODO TODO *******************************
 
-        Thread(Runnable {
-            tableDocsPresenter?.driverSignupModel?.initRealm()
+        if (SignupStep.listDocs.isNotEmpty()) {
+            tableDocsPresenter?.setDocs(SignupStep.listDocs)
 
-            if (SignupStep.listDocs.isNotEmpty()) {
-
-                tableDocsPresenter?.setDocs(SignupStep.listDocs)
-
+            Thread(Runnable {
                 tableDocsPresenter?.saveDocs(SignupStep.listDocs)
+            }).start()
 
-            } else {
+        } else {
+            Thread(Runnable {
                 tableDocsPresenter?.getDocs()
-            }
-
-            tableDocsPresenter?.driverSignupModel?.realm?.close()
-        }).start()
-
+            }).start()
+        }
 
 
         setBottomSheet(root)
@@ -176,4 +173,11 @@ class TableDocsView : Fragment() {
             tableDocsPresenter?.finish(activity)
         }
     }
+
+
+    override fun onDestroy() {
+//        tableDocsPresenter?.driverSignupModel?.realm?.close()
+        super.onDestroy()
+    }
+
 }

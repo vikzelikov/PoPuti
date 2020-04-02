@@ -15,7 +15,7 @@ class DriverSignupModel(val tableDocsPresenter: TableDocsPresenter) {
     var realm: Realm? = null
 
 
-    fun initRealm() {
+    private fun initRealm() {
         if (realm == null) {
             val context = tableDocsPresenter.tableDocsView.context
 
@@ -31,6 +31,8 @@ class DriverSignupModel(val tableDocsPresenter: TableDocsPresenter) {
 
 
     fun getDocsDB(): ArrayList<DocsRealm> {
+        initRealm()
+
         val list: ArrayList<DocsRealm> = arrayListOf()
         val realmResult = realm!!.where(DocsRealm::class.java)!!.findAll()
 
@@ -45,6 +47,8 @@ class DriverSignupModel(val tableDocsPresenter: TableDocsPresenter) {
 
 
     fun saveDocs(listDocs: ArrayList<DocsRealm>) {
+        initRealm()
+
         realm!!.executeTransaction {
             it.insertOrUpdate(listDocs)
         }

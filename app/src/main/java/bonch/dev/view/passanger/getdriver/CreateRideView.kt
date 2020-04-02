@@ -151,11 +151,13 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         my_pos.setOnClickListener {
             val userPoint = userLocationPoint()
 
-            mapView!!.map.move(
-                CameraPosition(userPoint!!, 35.0f, 0.0f, 0.0f),
-                Animation(Animation.Type.SMOOTH, 1f),
-                null
-            )
+            userPoint?.let {
+                mapView!!.map.move(
+                    CameraPosition(it, 35.0f, 0.0f, 0.0f),
+                    Animation(Animation.Type.SMOOTH, 1f),
+                    null
+                )
+            }
         }
 
         from_cross.setOnClickListener {

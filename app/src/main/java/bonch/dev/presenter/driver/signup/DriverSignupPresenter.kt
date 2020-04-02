@@ -2,8 +2,6 @@ package bonch.dev.presenter.driver.signup
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.graphics.Rect
 import android.provider.MediaStore
 import android.view.View
@@ -132,19 +130,21 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
         //save photo
         if (SignupStep.imgUri != null) {
+            val bitmap =
+                MediaStore.Images.Media.getBitmap(activity.contentResolver, SignupStep.imgUri!!)
 
+            //TODO
             try {
-                SignupStep.listDocs[SignupStep.idStep] = SignupStep.imgUri!!
+                SignupStep.listDocs[SignupStep.idStep] = bitmap
             } catch (ex: IndexOutOfBoundsException) {
-                SignupStep.listDocs.add(SignupStep.imgUri!!)
+                SignupStep.listDocs.add(bitmap)
             }
         }
 
-        if (SignupStep.isTableView || SignupStep.idStep > 1 - 1) {
+        if (SignupStep.isTableView || SignupStep.idStep > STS_DOC_BACK - 1) {
             //end settings docs
             getTableDocs(fm)
         } else {
-            //go to the next step
             SignupStep.idStep = SignupStep.idStep.inc()
             startSettingDocs(fm)
         }

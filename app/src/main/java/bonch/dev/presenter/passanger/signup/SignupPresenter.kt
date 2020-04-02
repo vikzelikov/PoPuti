@@ -158,7 +158,7 @@ class SignupPresenter(val fragment: Fragment) {
             profileData.phone = Phone.phone?.trim()
         }
 
-        signupModel?.saveProfileData(profileData)
+        signupModel?.saveFullName(profileData)
     }
 
 

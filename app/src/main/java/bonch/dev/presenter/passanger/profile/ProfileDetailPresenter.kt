@@ -11,6 +11,7 @@ import android.net.Uri
 import android.view.View
 import androidx.core.content.ContextCompat
 import bonch.dev.MainActivity
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
@@ -87,6 +88,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun getCamera() {
+        Permissions.access(Constants.WRITE_EXTERNAL_STORAGE_REQUEST, profileDetailView)
         imageUri = Camera.getCamera(profileDetailView)
     }
 

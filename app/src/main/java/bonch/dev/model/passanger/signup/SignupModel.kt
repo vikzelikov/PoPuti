@@ -89,7 +89,7 @@ class SignupModel(private val signupPresenter: SignupPresenter) {
     }
 
 
-    fun saveProfileData(profileData: Profile) {
+    fun saveFullName(profileData: Profile) {
         val context = signupPresenter.fragment.context
 
         if (context != null) {
