@@ -71,8 +71,8 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     fun setDocs(list: ArrayList<Uri>) {
         val views: Array<ImageView> = arrayOf(
             root.passport,
-            root.passport_address,
             root.self_passport,
+            root.passport_address,
             root.driver_doc_front,
             root.driver_doc_back,
             root.sts_front,

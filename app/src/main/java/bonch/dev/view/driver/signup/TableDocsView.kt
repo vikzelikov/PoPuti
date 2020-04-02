@@ -59,18 +59,22 @@ class TableDocsView : Fragment() {
         editor.apply()
         //TODO TODO *******************************
 
-        if (SignupStep.listDocs.isNotEmpty()) {
-            tableDocsPresenter?.setDocs(SignupStep.listDocs)
 
-            Thread(Runnable {
+        Thread(Runnable {
+            tableDocsPresenter?.driverSignupModel?.initRealm()
+
+            if (SignupStep.listDocs.isNotEmpty()) {
+                tableDocsPresenter?.setDocs(SignupStep.listDocs)
+
                 tableDocsPresenter?.saveDocs(SignupStep.listDocs)
-            }).start()
 
-        } else {
-            Thread(Runnable {
+            } else {
                 tableDocsPresenter?.getDocs()
-            }).start()
-        }
+            }
+
+            tableDocsPresenter?.driverSignupModel?.realm?.close()
+        }).start()
+
 
 
         setBottomSheet(root)
@@ -182,7 +186,7 @@ class TableDocsView : Fragment() {
         grantResults: IntArray
     ) {
         val activity = activity as DriverSignupActivity
-        if(Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)){
+        if (Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)) {
             SignupStep.imgUri = Camera.getCamera(activity)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
