@@ -5,9 +5,11 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.passanger.profile.pojo.Profile
 import bonch.dev.presenter.passanger.profile.ProfileDetailPresenter
+import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Keyboard
 import com.bumptech.glide.Glide
@@ -34,6 +36,18 @@ class ProfileDetailView : AppCompatActivity() {
         profileDetailPresenter?.getProfileDataDB(root)
 
         setListeners(root)
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if(Permissions.isAccess(Constants.STORAGE_PERMISSION, this)){
+            profileDetailPresenter?.imageUri = Camera.getCamera(this)
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 

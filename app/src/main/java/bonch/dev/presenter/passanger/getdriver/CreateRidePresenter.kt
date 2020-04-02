@@ -20,7 +20,9 @@ import bonch.dev.view.passanger.getdriver.CreateRideView
 import bonch.dev.view.passanger.getdriver.DetailRideView
 import bonch.dev.view.passanger.getdriver.MBottomSheet
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 import kotlinx.android.synthetic.main.create_ride_fragment.*
 import kotlinx.android.synthetic.main.create_ride_fragment.view.*
 import kotlinx.android.synthetic.main.create_ride_layout.*
@@ -243,7 +245,6 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
         hideKeyboard(getActivity(), getView().view!!)
     }
 
-    //TODO ask DANIL
 
     fun touchAddressMapMarkerBtn() {
         if (fromAdr != null && toAdr != null) {
@@ -256,6 +257,19 @@ class CreateRidePresenter(private val createRideView: CreateRideView) {
                 it.address_map_marker_layout.visibility = View.GONE
                 it.bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
             }
+        }
+    }
+
+
+    fun myPosition() {
+        val userPoint = getView().userLocationPoint()
+
+        userPoint?.let {
+            getView().mapView!!.map.move(
+                CameraPosition(it, 35.0f, 0.0f, 0.0f),
+                Animation(Animation.Type.SMOOTH, 1f),
+                null
+            )
         }
     }
 

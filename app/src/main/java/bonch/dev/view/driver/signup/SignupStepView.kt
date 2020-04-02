@@ -5,10 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.driver.signup.pojo.DocsStep
 import bonch.dev.model.driver.signup.pojo.SignupStep
 import bonch.dev.presenter.driver.signup.DriverSignupPresenter
+import bonch.dev.utils.Camera
+import bonch.dev.utils.Constants
 import bonch.dev.utils.Gallery
 import kotlinx.android.synthetic.main.driver_signup_step_fragment.view.*
 
@@ -59,14 +62,26 @@ class SignupStepView : Fragment() {
         val clipPhoto = root.clip_photo
 
         makePhoto.setOnClickListener {
-            val activity = activity as DriverSignupActivity
-            driverSignupPresenter?.getCamera(activity)
+            driverSignupPresenter?.getCamera(this)
         }
 
         clipPhoto.setOnClickListener {
             val activity = activity as DriverSignupActivity
             Gallery.getPhoto(activity)
         }
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        val activity = activity as DriverSignupActivity
+        if(Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)){
+            SignupStep.imgUri = Camera.getCamera(activity)
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 }

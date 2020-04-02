@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.driver.signup.pojo.SignupStep
 import bonch.dev.presenter.driver.signup.TableDocsPresenter
+import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.DRIVER_DOC_BACK
 import bonch.dev.utils.Constants.DRIVER_DOC_FRONT
@@ -57,18 +59,22 @@ class TableDocsView : Fragment() {
         editor.apply()
         //TODO TODO *******************************
 
-        if (SignupStep.listDocs.isNotEmpty()) {
-            tableDocsPresenter?.setDocs(SignupStep.listDocs)
 
-            Thread(Runnable {
+        Thread(Runnable {
+            tableDocsPresenter?.driverSignupModel?.initRealm()
+
+            if (SignupStep.listDocs.isNotEmpty()) {
+                tableDocsPresenter?.setDocs(SignupStep.listDocs)
+
                 tableDocsPresenter?.saveDocs(SignupStep.listDocs)
-            }).start()
 
-        } else {
-            Thread(Runnable {
+            } else {
                 tableDocsPresenter?.getDocs()
-            }).start()
-        }
+            }
+
+            tableDocsPresenter?.driverSignupModel?.realm?.close()
+        }).start()
+
 
 
         setBottomSheet(root)
@@ -159,8 +165,7 @@ class TableDocsView : Fragment() {
         }
 
         reshoot.setOnClickListener {
-            val activity = activity as DriverSignupActivity
-            tableDocsPresenter?.getCamera(activity)
+            tableDocsPresenter?.getCamera(this)
         }
 
         clipPhoto.setOnClickListener {
@@ -175,9 +180,15 @@ class TableDocsView : Fragment() {
     }
 
 
-    override fun onDestroy() {
-//        tableDocsPresenter?.driverSignupModel?.realm?.close()
-        super.onDestroy()
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        val activity = activity as DriverSignupActivity
+        if (Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)) {
+            SignupStep.imgUri = Camera.getCamera(activity)
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
 }

@@ -2,13 +2,13 @@ package bonch.dev.presenter.driver.signup
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.graphics.Rect
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.driver.signup.SignupStatusModel
 import bonch.dev.model.driver.signup.pojo.DocsStep
@@ -94,8 +94,9 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
     }
 
 
-    fun getCamera(activity: Activity) {
-        SignupStep.imgUri = Camera.getCamera(activity)
+    fun getCamera(fragment: Fragment) {
+        //for correct getting camera
+        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
     }
 
 
@@ -132,17 +133,10 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
         //save photo
         if (SignupStep.imgUri != null) {
-            var bitmap =
-                MediaStore.Images.Media.getBitmap(activity.contentResolver, SignupStep.imgUri!!)
-
-            //TODO
-            //fix rotation bag
-            bitmap = rotateBitmap(bitmap)
-
             try {
-                SignupStep.listDocs[SignupStep.idStep] = bitmap
+                SignupStep.listDocs[SignupStep.idStep] = SignupStep.imgUri!!
             } catch (ex: IndexOutOfBoundsException) {
-                SignupStep.listDocs.add(bitmap)
+                SignupStep.listDocs.add(SignupStep.imgUri!!)
             }
         }
 
@@ -342,21 +336,6 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
                 }
 
             }
-    }
-
-
-    private fun rotateBitmap(source: Bitmap): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(90f)
-        return Bitmap.createBitmap(
-            source,
-            0,
-            0,
-            source.width,
-            source.height,
-            matrix,
-            true
-        )
     }
 
 
