@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream
 class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfilePresenter {
 
     private var profileModel: ProfileModel? = null
-    private var imageUri: Uri? = null
+    var imageUri: Uri? = null
 
     init {
         if (profileModel == null) {
@@ -88,8 +88,8 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun getCamera() {
-        Permissions.access(Constants.WRITE_EXTERNAL_STORAGE_REQUEST, profileDetailView)
-        imageUri = Camera.getCamera(profileDetailView)
+        //for correct getting camera
+        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, profileDetailView)
     }
 
 

@@ -6,7 +6,9 @@ import android.graphics.Rect
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.driver.signup.SignupStatusModel
 import bonch.dev.model.driver.signup.pojo.DocsStep
@@ -92,8 +94,9 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
     }
 
 
-    fun getCamera(activity: Activity) {
-        SignupStep.imgUri = Camera.getCamera(activity)
+    fun getCamera(fragment: Fragment) {
+        //for correct getting camera
+        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
     }
 
 

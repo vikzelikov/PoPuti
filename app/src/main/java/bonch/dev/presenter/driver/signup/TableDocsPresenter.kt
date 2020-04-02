@@ -8,10 +8,13 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
+import bonch.dev.Permissions
 import bonch.dev.model.driver.signup.DriverSignupModel
 import bonch.dev.model.driver.signup.pojo.DocsRealm
 import bonch.dev.model.driver.signup.pojo.SignupStep
 import bonch.dev.utils.Camera
+import bonch.dev.utils.Constants
 import bonch.dev.view.driver.signup.DriverSignupActivity
 import bonch.dev.view.driver.signup.TableDocsView
 import com.bumptech.glide.Glide
@@ -127,8 +130,8 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun getCamera(activity: Activity) {
-        SignupStep.imgUri = Camera.getCamera(activity)
+    fun getCamera(fragment: Fragment) {
+        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
     }
 
 

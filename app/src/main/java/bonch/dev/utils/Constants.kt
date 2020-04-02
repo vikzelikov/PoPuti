@@ -5,10 +5,10 @@ object Constants {
 
     const val ACCESS_TOKEN = "ACCESS_TOKEN"
 
-    const val LOCATION_PERMISSION_NAME = "android.permission.ACCESS_FINE_LOCATION"
-    const val WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE"
-    const val LOCATION_PERMISSION_REQUEST = 1
-    const val WRITE_EXTERNAL_STORAGE_REQUEST = 2
+    const val GEO_PERMISSION = "android.permission.ACCESS_FINE_LOCATION"
+    const val STORAGE_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE"
+    const val GEO_PERMISSION_REQUEST = 1
+    const val STORAGE_PERMISSION_REQUEST = 2
 
     const val MAIN_FRAGMENT = 1
     const val REGULAR_DRIVING_VIEW = 2

@@ -34,9 +34,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //access geo permission
-        Permissions.access(Constants.LOCATION_PERMISSION_REQUEST, this)
-
         //check user login
         val accessToken = basePresenter?.getToken(applicationContext)
 

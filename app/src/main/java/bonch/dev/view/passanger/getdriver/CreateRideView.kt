@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,19 +13,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import bonch.dev.MainActivity
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.model.passanger.getdriver.pojo.ReasonCancel.reasonID
 import bonch.dev.presenter.passanger.getdriver.CreateRidePresenter
 import bonch.dev.presenter.passanger.getdriver.adapters.AddressesListAdapter
+import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.API_KEY
 import bonch.dev.utils.Constants.REASON1
 import bonch.dev.utils.Constants.REASON2
 import bonch.dev.utils.Keyboard.hideKeyboard
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
@@ -62,6 +65,9 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //access geo permission
+        Permissions.access(Constants.GEO_PERMISSION_REQUEST, this)
+
         //init map
         MapKitFactory.setApiKey(API_KEY)
         MapKitFactory.initialize(context)
@@ -73,7 +79,7 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
         initialize(root)
 
-        setUserLocation()
+        //etUserLocation()
 
         mapView!!.map.addCameraListener(this)
         mapView!!.map.isRotateGesturesEnabled = false
@@ -92,6 +98,18 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         }
 
         return root
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (Permissions.isAccess(Constants.GEO_PERMISSION, activity as MainActivity)) {
+            setUserLocation()
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 
@@ -149,15 +167,7 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
     private fun setListeners(root: View) {
 
         my_pos.setOnClickListener {
-            val userPoint = userLocationPoint()
-
-            userPoint?.let {
-                mapView!!.map.move(
-                    CameraPosition(it, 35.0f, 0.0f, 0.0f),
-                    Animation(Animation.Type.SMOOTH, 1f),
-                    null
-                )
-            }
+            createRidePresenter?.myPosition()
         }
 
         from_cross.setOnClickListener {
@@ -247,8 +257,8 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     private fun setUserLocation() {
-        val mapKit = MapKitFactory.getInstance()
         mapView!!.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
+        val mapKit = MapKitFactory.getInstance()
 
         //init user location service
         userLocationLayer = mapKit.createUserLocationLayer(mapView!!.mapWindow)
