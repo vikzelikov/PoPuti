@@ -1,4 +1,4 @@
-package bonch.dev.model.regulardrive
+package bonch.dev.model.passanger.regulardrive
 
 class RegularDriveModel() {
 

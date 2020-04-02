@@ -1,4 +1,4 @@
-package bonch.dev.view.regulardrive
+package bonch.dev.view.passanger.regulardrive
 
 import android.os.Bundle
 import android.view.LayoutInflater

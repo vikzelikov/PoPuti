@@ -1,4 +1,4 @@
-package bonch.dev.presenter.regulardrive
+package bonch.dev.presenter.passanger.regulardrive
 
 class RegularDrivePresenter {
 }

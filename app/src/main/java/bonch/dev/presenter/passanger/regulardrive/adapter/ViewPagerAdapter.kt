@@ -1,4 +1,4 @@
-package bonch.dev.presenter.regulardrive.adapter
+package bonch.dev.presenter.passanger.regulardrive.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
