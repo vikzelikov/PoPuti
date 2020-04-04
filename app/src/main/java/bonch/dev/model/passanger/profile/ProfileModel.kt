@@ -38,7 +38,8 @@ class ProfileModel(val profilePresenter: IProfilePresenter) {
 
             for(i in realmResult.indices){
                 val realmData = realmResult[i]
-                profileData.fullName = realmData!!.fullName
+                profileData.firstName = realmData!!.firstName
+                profileData.lastName = realmData.lastName
                 profileData.phone = realmData.phone
                 profileData.email = realmData.email
                 profileData.imgUser = realmData.imgUser

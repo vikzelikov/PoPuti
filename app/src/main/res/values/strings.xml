@@ -64,7 +64,6 @@
     <string name="forMoreTrustDrivers">Для большего доверия водителей</string>
     <string name="addBankCardProfile">Привязать карту</string>
     <string name="storyOrders">История заказов</string>
-    <string name="notifications">Уведомления</string>
     <string name="setRatingApp">Оцените приложение</string>
     <string name="changeLang">Сменить язык</string>
     <string name="support">Техподдержка</string>
@@ -96,5 +95,12 @@
     <string name="send_photo">ОТПРАВИТЬ</string>
     <string name="backToCabinet">Вернуться в личный кабинет</string>
     <string name="backCaps">НАЗАД</string>
+    <string name="profileEmailText">Квитанции о поездках будут отправляться \nвам на почту</string>
+    <string name="lastName">Фамилия</string>
+    <string name="firstName">Имя</string>
+    <string name="loadPhoto">Загрузить фотографию</string>
+    <string name="notifications">Уведомления</string>
+    <string name="calls">Звонки</string>
+    <string name="profileDetail">Профиль</string>
 
 </resources>

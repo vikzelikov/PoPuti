@@ -8,18 +8,17 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.provider.MediaStore
 import android.view.View
-import androidx.core.content.ContextCompat
 import bonch.dev.MainActivity
 import bonch.dev.Permissions
-import bonch.dev.R
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
-import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.view.passanger.profile.ProfileDetailView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.runtime.Runtime.getApplicationContext
 import kotlinx.android.synthetic.main.profile_detail_activity.*
 import java.io.ByteArrayOutputStream
@@ -51,21 +50,34 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
     fun getProfileData(): Profile {
         val profileData = Profile()
         val root = profileDetailView
-        val fullName = root.full_name.text.toString().trim()
+        val firstName = root.first_name.text.toString().trim()
+        val lastName = root.last_name.text.toString().trim()
         val phone = root.phone_number.text.toString().trim()
         val email = root.email.text.toString().trim()
-        val userImg = root.img_user.drawable
+        val imgUser = root.img_user
 
-        if (userImg != ContextCompat.getDrawable(profileDetailView, R.drawable.ava)) {
-            val bitmap = (userImg as BitmapDrawable).bitmap
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream)
-            val byteArray: ByteArray = stream.toByteArray()
-            profileData.imgUser = byteArray
+        if (imageUri != null) {
+            profileData.imgUser = imageUri.toString()
+        } else {
+            println("SAVE")
+            val bitmap = (imgUser.drawable as BitmapDrawable).bitmap
+            val bytes = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+            val path: String = MediaStore.Images.Media.insertImage(
+                profileDetailView.contentResolver,
+                bitmap,
+                "User image",
+                null
+            )
+            profileData.imgUser = (Uri.parse(path)).toString()
         }
 
-        if (fullName.isNotEmpty()) {
-            profileData.fullName = fullName
+        if (firstName.isNotEmpty()) {
+            profileData.fullName = firstName
+        }
+
+        if (lastName.isNotEmpty()) {
+            profileData.lastName = lastName
         }
 
         if (phone.isNotEmpty()) {
@@ -94,19 +106,20 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val userImg = profileDetailView.img_user
-        when (requestCode) {
-            Constants.CAMERA -> {
-                if(resultCode == Activity.RESULT_OK){
-                    Glide.with(profileDetailView.applicationContext).load(imageUri)
-                        .apply(RequestOptions().centerCrop().circleCrop())
-                        .into(userImg)
-                }
+        if (resultCode == Activity.RESULT_OK) {
+            val userImg = profileDetailView.img_user
+
+            if (requestCode == Constants.GALLERY) {
+                imageUri = data?.data
             }
 
-            Constants.GALLERY -> {
-                //TODO
-            }
+            Glide.with(profileDetailView.applicationContext).load(imageUri)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .into(userImg)
+
+            hideBottomSheet()
+        } else {
+            imageUri = null
         }
     }
 
@@ -126,6 +139,36 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
         mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
 
         profileDetailView.finishAffinity()
+    }
+
+
+    fun getBottomSheet() {
+        profileDetailView.loadPhotoBottomSheet!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    fun hideBottomSheet() {
+        profileDetailView.loadPhotoBottomSheet!!.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+
+    fun onSlideBottomSheet(slideOffset: Float) {
+        val onMapView = profileDetailView.on_view_profile
+
+        if (slideOffset > 0) {
+            onMapView?.alpha = slideOffset * 0.8f
+        }
+    }
+
+
+    fun onStateChangedBottomSheet(newState: Int) {
+        val onMapView = profileDetailView.on_view_profile
+
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            onMapView?.visibility = View.GONE
+        } else {
+            onMapView?.visibility = View.VISIBLE
+        }
     }
 
 

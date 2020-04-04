@@ -1,9 +1,11 @@
 package bonch.dev.view.passanger.profile
 
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.Permissions
 import bonch.dev.R
@@ -11,15 +13,20 @@ import bonch.dev.model.passanger.profile.pojo.Profile
 import bonch.dev.presenter.passanger.profile.ProfileDetailPresenter
 import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Gallery
 import bonch.dev.utils.Keyboard
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.offer_price_activity.view.*
 import kotlinx.android.synthetic.main.profile_detail_activity.view.*
+import kotlinx.android.synthetic.main.profile_detail_activity.view.back_btn
 
 
 class ProfileDetailView : AppCompatActivity() {
 
     private var profileDetailPresenter: ProfileDetailPresenter? = null
+    var loadPhotoBottomSheet: BottomSheetBehavior<*>? = null
 
     init {
         if (profileDetailPresenter == null) {
@@ -35,7 +42,11 @@ class ProfileDetailView : AppCompatActivity() {
 
         profileDetailPresenter?.getProfileDataDB(root)
 
+        setBottomSheet(root)
+
         setListeners(root)
+
+        setMovingButtonListener(root)
     }
 
 
@@ -44,7 +55,7 @@ class ProfileDetailView : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if(Permissions.isAccess(Constants.STORAGE_PERMISSION, this)){
+        if (Permissions.isAccess(Constants.STORAGE_PERMISSION, this)) {
             profileDetailPresenter?.imageUri = Camera.getCamera(this)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -52,34 +63,40 @@ class ProfileDetailView : AppCompatActivity() {
 
 
     fun setProfileData(root: View, profileData: Profile) {
-        val fullName = root.full_name
-        val nameUser = root.name_user
+        val firstName = root.first_name
+        val lastName = root.last_name
         val phone = root.phone_number
         val email = root.email
         val userImg = root.img_user
 
         if (profileData.imgUser != null) {
-            val bitmap =
-                BitmapFactory.decodeByteArray(profileData.imgUser, 0, profileData.imgUser!!.size)
-            Glide.with(applicationContext).load(bitmap)
+            val imageUri = Uri.parse(profileData.imgUser)
+            Glide.with(applicationContext).load(imageUri)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .into(userImg)
         }
-        nameUser.text = profileData.fullName
 
-        fullName.setText(profileData.fullName)
-        phone.setText(profileData.phone)
+        phone.text = profileData.phone
+        firstName.setText(profileData.firstName)
+        lastName.setText(profileData.lastName)
         email.setText(profileData.email)
     }
 
 
     private fun setListeners(root: View) {
         val userImg = root.img_user
+        val makePhoto = root.make_photo
+        val clipPhoto = root.clip_photo
         val logout = root.logout
         val backBtn = root.back_btn
+        val onView = root.on_view_profile
 
         userImg.setOnClickListener {
-            profileDetailPresenter?.getCamera()
+            profileDetailPresenter?.getBottomSheet()
+        }
+
+        onView.setOnClickListener {
+            profileDetailPresenter?.hideBottomSheet()
         }
 
         backBtn.setOnClickListener {
@@ -93,16 +110,42 @@ class ProfileDetailView : AppCompatActivity() {
             finish()
         }
 
+        makePhoto.setOnClickListener {
+            profileDetailPresenter?.getCamera()
+        }
+
+        clipPhoto.setOnClickListener {
+            Gallery.getPhoto(this)
+        }
+
         logout.setOnClickListener {
             profileDetailPresenter?.logout()
         }
     }
 
 
-    private fun setDataIntent(profileData: Profile?){
+    private fun setDataIntent(profileData: Profile?) {
         val intent = Intent()
         intent.putExtra(Constants.PROFILE_DATA, profileData)
         setResult(RESULT_OK, intent)
+    }
+
+
+    private fun setBottomSheet(root: View) {
+        loadPhotoBottomSheet = BottomSheetBehavior.from<View>(root.load_photo_bottom_sheet)
+
+
+        loadPhotoBottomSheet!!.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                profileDetailPresenter?.onSlideBottomSheet(slideOffset)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                profileDetailPresenter?.onStateChangedBottomSheet(newState)
+            }
+        })
     }
 
 
@@ -125,5 +168,38 @@ class ProfileDetailView : AppCompatActivity() {
     override fun onDestroy() {
         profileDetailPresenter?.onDestroy()
         super.onDestroy()
+    }
+
+
+    fun setMovingButtonListener(root: View) {
+        val logout = root.logout_text
+        var heightDiff = 0
+        val rect = Rect()
+        var screenHeight = 0
+        var startHeight = 0
+
+        root.viewTreeObserver
+            .addOnGlobalLayoutListener {
+
+                root.getWindowVisibleDisplayFrame(rect)
+                heightDiff = screenHeight - (rect.bottom - rect.top)
+
+                if (screenHeight == 0) {
+                    screenHeight = root.rootView.height
+                }
+
+                if (startHeight == 0) {
+                    startHeight = screenHeight - (rect.bottom - rect.top)
+                }
+
+                if (heightDiff > startHeight) {
+                    //move UP
+                    logout.visibility = View.GONE
+                } else {
+                    //move DOWN
+                    logout.visibility = View.VISIBLE
+                }
+
+            }
     }
 }

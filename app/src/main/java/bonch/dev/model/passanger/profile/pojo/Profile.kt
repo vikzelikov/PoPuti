@@ -12,7 +12,7 @@ open class Profile(
     var fullName: String? = null,
     var phone: String? = null,
     var email: String? = null,
-    var imgUser: ByteArray? = null
+    var imgUser: String? = null
 ) : RealmObject(), Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -20,7 +20,7 @@ open class Profile(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.createByteArray()
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -29,7 +29,7 @@ open class Profile(
         parcel.writeString(fullName)
         parcel.writeString(phone)
         parcel.writeString(email)
-        parcel.writeByteArray(imgUser)
+        parcel.writeString(imgUser)
     }
 
     override fun describeContents(): Int {

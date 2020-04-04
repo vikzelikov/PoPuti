@@ -3,6 +3,7 @@ package bonch.dev.presenter.passanger.profile
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.view.View
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
@@ -63,9 +64,8 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
         nameUser.text = profileData?.fullName
 
         if (profileData?.imgUser != null) {
-            val bitmap =
-                BitmapFactory.decodeByteArray(profileData.imgUser, 0, profileData.imgUser!!.size)
-            Glide.with(profileView.context!!).load(bitmap)
+            val imageUri = Uri.parse(profileData.imgUser)
+            Glide.with(profileView.context!!).load(imageUri)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .into(imgUser)
         }
