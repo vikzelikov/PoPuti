@@ -29,6 +29,7 @@ import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
+import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Keyboard
 import bonch.dev.view.passanger.profile.ProfileDetailView
@@ -127,7 +128,11 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
     fun getCamera() {
         //for correct getting camera
-        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, profileDetailView)
+        if (Permissions.isAccess(Constants.STORAGE_PERMISSION, profileDetailView)) {
+            imageUri = Camera.getCamera(profileDetailView)
+        } else {
+            Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, profileDetailView)
+        }
     }
 
 
@@ -180,7 +185,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
     }
 
 
-    private fun setOnChangedListener(editText: EditText){
+    private fun setOnChangedListener(editText: EditText) {
         editText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 isDataSaved = false
@@ -335,7 +340,27 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun getBottomSheet() {
-        profileDetailView.loadPhotoBottomSheet!!.state = BottomSheetBehavior.STATE_EXPANDED
+        val root = profileDetailView.findViewById<View>(R.id.rootLinearLayout)
+        Keyboard.hideKeyboard(profileDetailView, root)
+
+
+        Thread(Runnable {
+            while (true) {
+                if (!isKeyboardShow) {
+                    //get main thread for get UI
+                    val mainHandler = Handler(Looper.getMainLooper())
+                    val myRunnable = Runnable {
+                        kotlin.run {
+                            profileDetailView.loadPhotoBottomSheet!!.state =
+                                BottomSheetBehavior.STATE_EXPANDED
+                        }
+                    }
+                    mainHandler.post(myRunnable)
+
+                    break
+                }
+            }
+        }).start()
     }
 
 
