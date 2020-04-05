@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:mask="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLinearLayout"
     android:layout_width="match_parent"
@@ -10,181 +9,375 @@
     android:orientation="vertical"
     tools:context=".view.passanger.profile.ProfileDetailView">
 
-    <ImageButton
-        android:id="@+id/back_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_back_btn"
-        android:elevation="12dp"
-        android:padding="13dp"
-        android:src="@drawable/ic_back_arrow" />
-
-
-    <ImageView
-        android:id="@+id/img_user"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ava" />
-
     <TextView
-        android:id="@+id/name_user"
-        android:layout_width="match_parent"
+        android:id="@+id/notification"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="Глеб Глазков"
+        android:alpha="0.0"
+        android:background="@drawable/bg_notification"
+        android:elevation="1px"
+        android:fontFamily="@font/roboto"
+        android:padding="10dp"
+        android:text="@string/dataSaved"
         android:textAlignment="center"
         android:textColor="@android:color/black"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textSize="14sp"
+        android:translationZ="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 
     <LinearLayout
+        android:id="@+id/back_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="21dp"
-        android:background="@drawable/bg_inputs_layout"
-        android:elevation="3dp"
-        android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingTop="15dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="15dp"
-        android:translationZ="10dp">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="15dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="18dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:src="@drawable/ic_back_arrow" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_user_profile" />
-
-            <EditText
-                android:id="@+id/full_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@null"
-                android:fontFamily="@font/roboto"
-                android:hint="@string/fullName"
-                android:imeOptions="actionDone"
-                android:padding="10dp"
-                android:paddingStart="0dp"
-                android:singleLine="true"
-                android:text="Глеб Глазков"
-                android:textColor="@android:color/black"
-                android:textColorHint="#70000000"
-                android:textCursorDrawable="@drawable/bg_color_cursor"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginBottom="7dp"
-            android:background="#30000000" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_phone_profile" />
-
-
-            <TextView
-                android:id="@+id/phone_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="+79005091262"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:layout_marginStart="10dp"/>
-
-
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginBottom="7dp"
-            android:background="#30000000" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_email_profile" />
-
-            <EditText
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@null"
-                android:fontFamily="@font/roboto"
-                android:hint="@string/email"
-                android:imeOptions="actionDone"
-                android:padding="10dp"
-                android:paddingStart="0dp"
-                android:singleLine="true"
-                android:textColor="@android:color/black"
-                android:textColorHint="#70000000"
-                android:textCursorDrawable="@drawable/bg_color_cursor"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginBottom="7dp"
-            android:background="#30000000" />
-
+            android:layout_marginStart="15dp"
+            android:text="@string/profileDetail"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/back_btn"
+        android:background="#F7F7F7"
+        app:layout_constraintBottom_toBottomOf="@+id/back_btn" />
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="bottom">
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/logout"
+        app:layout_constraintTop_toBottomOf="@+id/back_btn">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <LinearLayout
+                    android:id="@+id/mini_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingTop="25dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="25dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/phone_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto"
+                            android:textColor="@android:color/black"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/user_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="1dp"
+                            android:drawableStart="@drawable/ic_star"
+                            android:drawablePadding="5dp"
+                            android:fontFamily="@font/roboto"
+                            android:textColor="#50000000"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+
+                    <ImageView
+                        android:id="@+id/img_user"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_default_ava" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/mini_profile"
+                    android:background="#F7F7F7" />
+
+
+                <LinearLayout
+                    android:id="@+id/full_name_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mini_profile"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:weightSum="1">
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:layout_weight="0.5"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_user_profile" />
+
+                        <EditText
+                            android:id="@+id/first_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:background="@drawable/bg_et_profile"
+                            android:fontFamily="@font/roboto"
+                            android:hint="@string/firstName"
+                            android:imeOptions="actionDone"
+                            android:padding="10dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
+                            android:singleLine="true"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="#70000000"
+                            android:textCursorDrawable="@drawable/bg_color_cursor"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_line_profile" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_weight="0.5"
+                        android:orientation="horizontal">
+
+
+                        <EditText
+                            android:id="@+id/last_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_et_profile"
+                            android:fontFamily="@font/roboto"
+                            android:hint="@string/lastName"
+                            android:imeOptions="actionDone"
+                            android:padding="10dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
+                            android:singleLine="true"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="#70000000"
+                            android:textCursorDrawable="@drawable/bg_color_cursor"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/full_name_layout"
+                    android:background="#F7F7F7" />
+
+
+                <LinearLayout
+                    android:id="@+id/email_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/full_name_layout"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_email_profile" />
+
+                    <EditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:background="@drawable/bg_et_profile"
+                        android:fontFamily="@font/roboto"
+                        android:hint="@string/email"
+                        android:imeOptions="actionDone"
+                        android:padding="10dp"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="#70000000"
+                        android:textCursorDrawable="@drawable/bg_color_cursor"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/email_layout"
+                    android:background="#F7F7F7" />
+
+
+                <TextView
+                    android:id="@+id/profile_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/email_layout"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="15dp"
+                    android:text="@string/profileEmailText"
+                    android:textAlignment="center"
+                    android:textColor="#50000000"
+                    android:textSize="14sp" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/profile_text"
+                    android:layout_marginTop="50dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/notifications"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/notifications_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:thumb="@drawable/bg_thumb"
+                            app:track="@drawable/bg_track" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto"
+                            android:text="@string/calls"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/calls_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:thumb="@drawable/bg_thumb"
+                            app:track="@drawable/bg_track" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F7F7F7"
+            app:layout_constraintBottom_toTopOf="@+id/logout" />
 
         <TextView
-            android:id="@+id/logout"
-            android:layout_width="match_parent"
+            android:id="@+id/logout_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
             android:padding="20dp"
@@ -196,60 +389,135 @@
     </LinearLayout>
 
 
-    <!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent">-->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
-    <!--        <LinearLayout-->
-    <!--            android:id="@+id/time_expired_bottom_sheet"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:background="@drawable/bg_corners_layout"-->
-    <!--            android:elevation="10dp"-->
-    <!--            android:orientation="vertical"-->
-    <!--            android:paddingStart="15dp"-->
-    <!--            android:paddingEnd="15dp"-->
-    <!--            app:behavior_peekHeight="0dp"-->
-    <!--            app:layout_behavior=".view.getdriver.MBottomSheet">-->
+        <LinearLayout
+            android:id="@+id/load_photo_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_bottom_sheet_arrow" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="25dp"
+                android:fontFamily="@font/roboto"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/loadPhoto"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
 
 
-    <!--            <TextView-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:layout_marginTop="20dp"-->
-    <!--                android:layout_marginBottom="20dp"-->
-    <!--                android:fontFamily="@font/roboto"-->
-    <!--                android:text="@string/timeExpired"-->
-    <!--                android:textAlignment="center"-->
-    <!--                android:textColor="@android:color/black"-->
-    <!--                android:textSize="24sp" />-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/clip_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/bg_cross_btn"
+                    android:elevation="10dp"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_clip" />
+
+                <Button
+                    android:id="@+id/make_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_btn_blue"
+                    android:fontFamily="@font/roboto"
+                    android:shadowColor="@color/colorBlue"
+                    android:text="@string/makePhoto"
+                    android:textAllCaps="false"
+                    android:textSize="16sp" />
 
 
-    <!--            <Button-->
-    <!--                android:id="@+id/expired_time_ok_btn"-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="50dp"-->
-    <!--                android:layout_marginTop="14dp"-->
-    <!--                android:layout_marginBottom="20dp"-->
-    <!--                android:background="@drawable/bg_btn_blue"-->
-    <!--                android:fontFamily="@font/roboto"-->
-    <!--                android:shadowColor="@color/colorBlue"-->
-    <!--                android:text="@string/ok"-->
-    <!--                android:textAllCaps="false"-->
-    <!--                android:textSize="18sp" />-->
-
-    <!--        </LinearLayout>-->
+            </LinearLayout>
 
 
-    <!--        <View-->
-    <!--            android:id="@+id/on_view_cancel_reason"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:alpha="0"-->
-    <!--            android:background="@android:color/black" />-->
-
-    <!--    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+        </LinearLayout>
 
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/error_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/fillCorrectData"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+
+            <Button
+                android:id="@+id/error_btn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_btn_blue"
+                android:fontFamily="@font/roboto"
+                android:shadowColor="@color/colorBlue"
+                android:text="@string/ok"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/on_view_profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:background="@android:color/black"
+            android:visibility="gone" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

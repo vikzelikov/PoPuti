@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
     android:paddingBottom="20dp">
+
+
+    <TextView
+        android:id="@+id/notification"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:alpha="0.0"
+        android:background="@drawable/bg_notification"
+        android:elevation="1px"
+        android:fontFamily="@font/roboto"
+        android:padding="10dp"
+        android:text="@string/dataSaved"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:translationZ="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
 
     <LinearLayout
         android:id="@+id/mini_profile"
@@ -34,7 +56,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto"
-                android:text="Глеб Глазков"
                 android:textColor="@android:color/black"
                 android:textSize="24sp" />
 
@@ -47,7 +68,6 @@
                 android:drawableStart="@drawable/ic_star"
                 android:drawablePadding="5dp"
                 android:fontFamily="@font/roboto"
-                android:text="4.6"
                 android:textColor="#50000000"
                 android:textSize="16sp" />
 
@@ -58,7 +78,7 @@
             android:id="@+id/img_user"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ava" />
+            android:src="@drawable/ic_default_ava" />
 
     </LinearLayout>
 
@@ -135,17 +155,17 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
-
             <TextView
-                android:id="@+id/notifications"
+                android:id="@+id/rating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:paddingTop="20dp"
                 android:paddingBottom="20dp"
-                android:text="@string/notifications"
+                android:text="@string/rating"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
+
 
 
             <TextView

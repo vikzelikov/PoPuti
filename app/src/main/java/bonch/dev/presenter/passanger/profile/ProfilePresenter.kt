@@ -1,8 +1,11 @@
 package bonch.dev.presenter.passanger.profile
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Handler
 import android.view.View
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
@@ -19,6 +22,7 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
 
 
     private var profileModel: ProfileModel? = null
+    private var handlerAnimation: Handler? = null
     var root: View? = null
 
 
@@ -52,6 +56,12 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
 
 
     fun profileDataResult(data: Intent) {
+        val isShowPopup = data.getBooleanExtra(Constants.IS_SHOW_POPUP, false)
+
+        if (isShowPopup) {
+            showNotifications()
+        }
+
         val profileData = data.getParcelableExtra<Profile>(PROFILE_DATA)
         setProfileData(profileData)
     }
@@ -60,15 +70,43 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
     private fun setProfileData(profileData: Profile?) {
         val nameUser = root!!.name_user
         val imgUser = root!!.img_user
-        nameUser.text = profileData?.fullName
+        nameUser.text = profileData?.firstName.plus(" ").plus(profileData?.lastName)
 
         if (profileData?.imgUser != null) {
-            val bitmap =
-                BitmapFactory.decodeByteArray(profileData.imgUser, 0, profileData.imgUser!!.size)
-            Glide.with(profileView.context!!).load(bitmap)
+            val imageUri = Uri.parse(profileData.imgUser)
+            Glide.with(profileView.context!!).load(imageUri)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .into(imgUser)
         }
+    }
+
+
+    private fun showNotifications() {
+        val view = profileView.view?.notification
+
+        handlerAnimation?.removeCallbacksAndMessages(null)
+        handlerAnimation = Handler()
+        view?.translationY = 0.0f
+        view?.alpha = 0.0f
+
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(100f)
+            ?.alpha(1.0f)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
+                }
+            })
+
+    }
+
+
+    private fun hideNotifications() {
+        val view = profileView.view?.notification
+
+        view?.animate()?.setDuration(500L)?.translationY(-100f)?.alpha(0.0f)
     }
 
 

@@ -53,7 +53,6 @@ class ProfileView : Fragment() {
         val confirmPerson = root.confirm_person
         val addCard = root.add_card
         val storyOrders = root.story_orders
-        val notifications = root.notifications
         val setRatingApp = root.set_rating_app
         val changeLang = root.change_lang
         val support = root.support
@@ -74,10 +73,6 @@ class ProfileView : Fragment() {
 
         storyOrders.setOnClickListener {
             Toast.makeText(context, "Story orders", Toast.LENGTH_SHORT).show()
-        }
-
-        notifications.setOnClickListener {
-            Toast.makeText(context, "Notifications", Toast.LENGTH_SHORT).show()
         }
 
         setRatingApp.setOnClickListener {

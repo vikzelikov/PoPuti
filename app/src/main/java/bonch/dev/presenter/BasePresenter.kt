@@ -9,6 +9,11 @@ class BasePresenter (val mainActivity: MainActivity) {
 
     private var baseModel: BaseModel? = null
 
+    init {
+        if(baseModel == null){
+            baseModel = BaseModel()
+        }
+    }
 
     fun getToken(context: Context): String? {
         return baseModel?.getToken(context)
