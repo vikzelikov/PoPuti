@@ -43,6 +43,8 @@ class ProfileModel(val profilePresenter: IProfilePresenter) {
                 profileData.phone = realmData.phone
                 profileData.email = realmData.email
                 profileData.imgUser = realmData.imgUser
+                profileData.isNotificationsEnable = realmData.isNotificationsEnable
+                profileData.isCallsEnable = realmData.isCallsEnable
             }
         }
 

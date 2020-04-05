@@ -102,5 +102,8 @@
     <string name="notifications">Уведомления</string>
     <string name="calls">Звонки</string>
     <string name="profileDetail">Профиль</string>
+    <string name="dataSaved">Данные сохранены!</string>
+    <string name="fillCorrectData">Пожалуйста, заполните необходимые поля (имя, фамилия)</string>
+    <string name="rating">Рейтинг</string>
 
 </resources>

@@ -72,6 +72,7 @@ object Constants {
     const val EMAIL = "EMAIL"
     const val PROFILE_DATA = "PROFILE_DATA"
     const val PHOTO = "PHOTO"
+    const val IS_SHOW_POPUP= "IS_SHOW_POPUP"
 
     const val CAMERA = 0
     const val GALLERY = 1

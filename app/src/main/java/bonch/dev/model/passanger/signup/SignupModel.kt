@@ -69,6 +69,10 @@ class SignupModel(private val signupPresenter: SignupPresenter) {
 
                         signupPresenter.onResponseCheckCode(true)
                     } else {
+                            saveToken("123")
+
+
+                        signupPresenter.onResponseCheckCode(true)
                         println(response?.code())
                     }
                 }

@@ -8,6 +8,7 @@ import bonch.dev.presenter.BasePresenter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
+import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
@@ -39,8 +40,8 @@ class MainActivity : AppCompatActivity() {
 
         if (accessToken == null) {
             //to signup
-            //addFragment(PHONE_VIEW, supportFragmentManager)
-            addFragment(MAIN_FRAGMENT, supportFragmentManager)
+            addFragment(PHONE_VIEW, supportFragmentManager)
+            //addFragment(MAIN_FRAGMENT, supportFragmentManager)
         } else {
             //redirect to full app
             driver = basePresenter?.getDriverData(applicationContext)
