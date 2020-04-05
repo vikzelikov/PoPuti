@@ -15,7 +15,9 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Patterns
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -149,10 +151,14 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun listenerEditText(editText: EditText) {
+
+        setOnChangedListener(editText)
+
         editText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
 
                 val isDataComplete = isDataNamesComplete()
+
                 isDataSaved = if (isDataComplete) {
                     val profileData = getProfileData()
                     saveProfileData(profileData)
@@ -170,6 +176,19 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
             }
 
             false
+        })
+    }
+
+
+    private fun setOnChangedListener(editText: EditText){
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                isDataSaved = false
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
     }
 
@@ -268,8 +287,6 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
                 || it.lastName != actualProfile.lastName
                 || it.email != actualProfile.email
             ) {
-
-
                 isChanged = true
             }
         }
