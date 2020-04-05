@@ -32,11 +32,15 @@ class ProfileView : Fragment() {
 
         profilePresenter?.root = root
 
-        profilePresenter?.getProfileDataDB()
-
         setListeners(root)
 
         return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        profilePresenter?.getProfileDataDB()
+        super.onViewCreated(view, savedInstanceState)
     }
 
 
