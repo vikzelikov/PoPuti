@@ -1,7 +1,6 @@
 package bonch.dev.presenter.driver.signup
 
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,7 +14,6 @@ import bonch.dev.R
 import bonch.dev.model.driver.signup.DriverSignupModel
 import bonch.dev.model.driver.signup.pojo.DocsRealm
 import bonch.dev.model.driver.signup.SignupMainData
-import bonch.dev.model.driver.signup.pojo.DocsPhoto
 import bonch.dev.utils.Constants
 import bonch.dev.view.driver.signup.DriverSignupActivity
 import bonch.dev.view.driver.signup.TableDocsView
@@ -47,7 +45,9 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
         val listDocsStatus: ArrayList<DocsRealm> = arrayListOf()
 
         for (i in 0..7) {
-            listDocsStatus[i].isAccess = i % 2 == 0
+            val docsRealm = DocsRealm()
+            docsRealm.isAccess = i % 2 == 0
+            listDocsStatus.add(docsRealm)
         }
         if (bundle != null) {
             //get object with data
@@ -63,14 +63,7 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
         val listDocs = driverSignupModel!!.getDocsDB()
 
         if (!listDocs.isNullOrEmpty()) {
-            val list: ArrayList<DocsPhoto> = arrayListOf()
-
-            for (i in 0 until listDocs.size) {
-                val uri = Uri.parse(listDocs[i].imgDocs)
-                list.add(DocsPhoto(uri))
-            }
-
-            SignupMainData.listDocs = list
+            SignupMainData.listDocs = listDocs
         }
 
         return listDocs
@@ -78,35 +71,9 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
 
 
     fun setDocs(list: ArrayList<DocsRealm>) {
-        val viewsImgDocs: Array<ImageView> = arrayOf(
-            root.passport,
-            root.self_passport,
-            root.passport_address,
-            root.driver_doc_front,
-            root.driver_doc_back,
-            root.sts_front,
-            root.sts_back
-        )
-
-        val viewsTitleDocs: Array<TextView> = arrayOf(
-            root.text_passport,
-            root.text_self_passport,
-            root.text_passport_address,
-            root.text_driver_doc_front,
-            root.text_driver_doc_back,
-            root.text_sts_front,
-            root.text_sts_back
-        )
-
-        val viewsTicsDocs: Array<ImageView> = arrayOf(
-            root.status_passport,
-            root.status_self_passport,
-            root.status_passport_address,
-            root.status_driver_doc_front,
-            root.status_driver_doc_back,
-            root.status_sts_front,
-            root.status_sts_back
-        )
+        val viewsImgDocs = getImgDocs()
+        val viewsTitleDocs = getTitleDocs()
+        val viewsTicsDocs = getTicsDocs()
 
         if (list.isNotEmpty()) {
 
@@ -115,25 +82,31 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
                 kotlin.run {
                     try {
                         for (i in 0 until list.size) {
-                            if (list[i + 1].isAccess) {
-                                //docs is valid
-                                viewsImgDocs[i].isClickable = false
-                                viewsTitleDocs[i].setTextColor(Color.parseColor("#149319"))
-                                viewsTicsDocs[i].setImageDrawable(
-                                    ContextCompat.getDrawable(
-                                        root.context,
-                                        R.drawable.ic_green_tick
+                            if (list[i + 1].isAccess != null) {
+                                if (list[i + 1].isAccess!!) {
+                                    //docs is valid
+                                    viewsImgDocs[i].isClickable = false
+                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#149319"))
+                                    viewsTicsDocs[i].setImageDrawable(
+                                        ContextCompat.getDrawable(
+                                            root.context,
+                                            R.drawable.ic_green_tick
+                                        )
                                     )
-                                )
+                                } else {
+                                    //docs not valid
+                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#D03131"))
+                                    viewsTicsDocs[i].setImageDrawable(
+                                        ContextCompat.getDrawable(
+                                            root.context,
+                                            R.drawable.ic_red_cross
+                                        )
+                                    )
+                                }
                             } else {
-                                //docs not valid
-                                viewsTitleDocs[i].setTextColor(Color.parseColor("#D03131"))
-                                viewsTicsDocs[i].setImageDrawable(
-                                    ContextCompat.getDrawable(
-                                        root.context,
-                                        R.drawable.ic_red_cross
-                                    )
-                                )
+                                //docs still is processing
+                                viewsTitleDocs[i].setTextColor(Color.parseColor("#000000"))
+                                viewsTicsDocs[i].visibility = View.GONE
                             }
 
                             Glide.with(root.context).load(list[i + 1].imgDocs).into(viewsImgDocs[i])
@@ -149,15 +122,8 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun saveDocs(list: ArrayList<DocsPhoto>) {
-        val listDocs: ArrayList<DocsRealm> = arrayListOf()
-
-        for (i in 0 until list.size) {
-            val stringURI = list[i].imgUri.toString()
-            listDocs.add(DocsRealm(i, stringURI))
-        }
-
-        driverSignupModel?.saveDocs(listDocs)
+    fun saveDocs(list: ArrayList<DocsRealm>) {
+        driverSignupModel?.saveDocs(list)
     }
 
 
@@ -194,6 +160,45 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
         } else {
             onMapView?.visibility = View.VISIBLE
         }
+    }
+
+
+    fun getImgDocs(): Array<ImageView> {
+        return arrayOf(
+            root.passport,
+            root.self_passport,
+            root.passport_address,
+            root.driver_doc_front,
+            root.driver_doc_back,
+            root.sts_front,
+            root.sts_back
+        )
+    }
+
+
+    fun getTitleDocs(): Array<TextView> {
+        return arrayOf(
+            root.text_passport,
+            root.text_self_passport,
+            root.text_passport_address,
+            root.text_driver_doc_front,
+            root.text_driver_doc_back,
+            root.text_sts_front,
+            root.text_sts_back
+        )
+    }
+
+
+    fun getTicsDocs(): Array<ImageView> {
+        return arrayOf(
+            root.status_passport,
+            root.status_self_passport,
+            root.status_passport_address,
+            root.status_driver_doc_front,
+            root.status_driver_doc_back,
+            root.status_sts_front,
+            root.status_sts_back
+        )
     }
 
 

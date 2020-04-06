@@ -79,7 +79,7 @@ class SignupStepView : Fragment() {
     ) {
         val activity = activity as DriverSignupActivity
         if(Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)){
-            SignupMainData.imgUri = Camera.getCamera(activity)
+            SignupMainData.imgUri = Camera.getCamera(activity).toString()
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

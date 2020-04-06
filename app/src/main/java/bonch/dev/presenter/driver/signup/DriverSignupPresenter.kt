@@ -11,7 +11,7 @@ import bonch.dev.R
 import bonch.dev.model.driver.signup.SignupStatusModel
 import bonch.dev.model.driver.signup.pojo.DocsStep
 import bonch.dev.model.driver.signup.SignupMainData
-import bonch.dev.model.driver.signup.pojo.DocsPhoto
+import bonch.dev.model.driver.signup.pojo.DocsRealm
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.DRIVER_DOC_BACK
 import bonch.dev.utils.Constants.DRIVER_DOC_FRONT
@@ -100,7 +100,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, fm: FragmentManager) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GALLERY) {
-                SignupMainData.imgUri = data?.data
+                SignupMainData.imgUri = data?.data.toString()
             }
 
             replaceFragment(DRIVER_SIGNUP_CHECK_PHOTO, null, fm)
@@ -133,11 +133,12 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
             try {
                 if (SignupMainData.isTableView) {
                     //remake photo (insert)
-                    SignupMainData.listDocs[SignupMainData.idStep].imgUri = SignupMainData.imgUri!!
-                    SignupMainData.listDocs[SignupMainData.idStep].isRemake = true
+                    SignupMainData.listDocs[SignupMainData.idStep].imgDocs = SignupMainData.imgUri!!
+                    SignupMainData.listDocs[SignupMainData.idStep].isAccess = null
                 } else {
                     //start signup (add)
-                    SignupMainData.listDocs.add(DocsPhoto(SignupMainData.imgUri!!))
+                    val docsRealm = DocsRealm(SignupMainData.idStep, SignupMainData.imgUri!!)
+                    SignupMainData.listDocs.add(docsRealm)
                 }
             } catch (ex: IndexOutOfBoundsException) {
                 println(ex.message)

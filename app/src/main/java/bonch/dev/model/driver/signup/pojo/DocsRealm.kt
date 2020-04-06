@@ -9,5 +9,5 @@ open class DocsRealm (
     @PrimaryKey
     var id: Int = 0,
     var imgDocs: String? = null,
-    var isAccess: Boolean = false
+    var isAccess: Boolean? = null
 ) : RealmObject()

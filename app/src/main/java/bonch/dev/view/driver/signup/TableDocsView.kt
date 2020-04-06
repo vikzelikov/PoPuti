@@ -60,22 +60,22 @@ class TableDocsView : Fragment() {
         //TODO TODO *******************************
 
         Thread(Runnable {
-            var listDocs: ArrayList<DocsRealm> = arrayListOf()
-            val listStatus = tableDocsPresenter?.getStatusDocs(arguments)
+            var listDocs: ArrayList<DocsRealm> = SignupMainData.listDocs
+            val listStatus = tableDocsPresenter!!.getStatusDocs(arguments)
 
             tableDocsPresenter?.driverSignupModel?.initRealm()
 
-            if (SignupMainData.listDocs.isNotEmpty()) {
-                tableDocsPresenter?.saveDocs(SignupMainData.listDocs)
+            if (listDocs.isNotEmpty()) {
+                tableDocsPresenter?.saveDocs(listDocs)
             } else {
                 listDocs = tableDocsPresenter!!.getDocsDB()
+                println(listDocs.size)
 
                 //merge docs and status docs in one mas
-                listStatus?.forEach {
-                    for (i in 0 until listDocs.size) {
-                        listDocs[i].isAccess = it.isAccess
-                    }
+                for (i in 0 until listDocs.size) {
+                    listDocs[i].isAccess = listStatus[i].isAccess
                 }
+
             }
 
             tableDocsPresenter?.setDocs(listDocs)
@@ -113,22 +113,13 @@ class TableDocsView : Fragment() {
 
     private fun setListeners(root: View) {
         val onViewTable = root.on_view_table
-        val reshoot = root.make_photo
+        val makePhoto = root.make_photo
         val clipPhoto = root.clip_photo
         val backBtn = root.back_btn
+        val viewsImgDocs = tableDocsPresenter!!.getImgDocs()
 
-        val viewsImgDocs: Array<ImageView> = arrayOf(
-            root.passport,
-            root.self_passport,
-            root.passport_address,
-            root.driver_doc_front,
-            root.driver_doc_back,
-            root.sts_front,
-            root.sts_back
-        )
-
-        for(i in viewsImgDocs.indices){
-            viewsImgDocs[i].setOnClickListener{
+        for (i in viewsImgDocs.indices) {
+            viewsImgDocs[i].setOnClickListener {
                 tableDocsPresenter?.getReshootBottomSheet(i + 1)
             }
         }
@@ -137,7 +128,7 @@ class TableDocsView : Fragment() {
             tableDocsPresenter?.hideReshootBottomSheet()
         }
 
-        reshoot.setOnClickListener {
+        makePhoto.setOnClickListener {
             tableDocsPresenter?.getCamera(this)
         }
 
@@ -160,7 +151,7 @@ class TableDocsView : Fragment() {
     ) {
         val activity = activity as DriverSignupActivity
         if (Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)) {
-            SignupMainData.imgUri = Camera.getCamera(activity)
+            SignupMainData.imgUri = Camera.getCamera(activity).toString()
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

@@ -13,14 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/next_btn_layout"
+        app:layout_constraintBottom_toTopOf="@+id/next_btn"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingBottom="30dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="30dp">
 
 
             <TextView
@@ -126,33 +126,23 @@
     </ScrollView>
 
 
-    <LinearLayout
-        android:id="@+id/next_btn_layout"
+    <Button
+        android:id="@+id/next_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:elevation="10dp"
-        android:orientation="vertical"
-        android:translationZ="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_btn_gray"
+        android:fontFamily="@font/roboto"
+        android:text="@string/continue_signup"
+        android:textAllCaps="false"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_layout">
+        app:layout_constraintTop_toBottomOf="@+id/main_layout" />
 
-        <Button
-            android:id="@+id/next_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/bg_btn_gray"
-            android:fontFamily="@font/roboto"
-            android:text="@string/continue_signup"
-            android:textAllCaps="false"
-            android:textSize="16sp" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
