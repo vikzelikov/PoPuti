@@ -18,11 +18,20 @@
         tools:targetApi="m">
         <activity
             android:name=".view.driver.signup.DriverSignupActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".view.passanger.profile.ProfileDetailView" />
-        <activity android:name=".view.passanger.profile.CheckPhotoView" />
-        <activity android:name=".view.passanger.getdriver.AddBankCardView" />
-        <activity android:name=".view.passanger.getdriver.OfferPriceView" />
+        <activity
+            android:name=".view.passanger.profile.ProfileDetailView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.passanger.profile.CheckPhotoView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.passanger.getdriver.AddBankCardView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.passanger.getdriver.OfferPriceView"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -31,6 +40,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
