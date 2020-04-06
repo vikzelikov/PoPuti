@@ -12,6 +12,7 @@ import bonch.dev.model.driver.signup.SignupStatusModel
 import bonch.dev.model.driver.signup.pojo.DocsStep
 import bonch.dev.model.driver.signup.SignupMainData
 import bonch.dev.model.driver.signup.pojo.DocsRealm
+import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.DRIVER_DOC_BACK
 import bonch.dev.utils.Constants.DRIVER_DOC_FRONT
@@ -93,7 +94,12 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
     fun getCamera(fragment: Fragment) {
         //for correct getting camera
-        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
+        val activity = (fragment.activity as DriverSignupActivity)
+        if(Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)){
+            SignupMainData.imgUri = Camera.getCamera(activity).toString()
+        }else{
+            Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
+        }
     }
 
 
