@@ -31,8 +31,6 @@ class CarInfoView : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.signup_car_info_fragment, container, false)
 
-        driverSignupPresenter?.setMovingButtonListener(root)
-
         setHintListener(root)
 
         setListeners(root)

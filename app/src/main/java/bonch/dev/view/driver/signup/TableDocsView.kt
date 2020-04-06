@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.model.driver.signup.pojo.SignupStep
+import bonch.dev.model.driver.signup.SignupMainData
+import bonch.dev.model.driver.signup.pojo.DocsRealm
 import bonch.dev.presenter.driver.signup.TableDocsPresenter
 import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
@@ -49,8 +51,6 @@ class TableDocsView : Fragment() {
         //go to process
         tableDocsPresenter?.removeStartStatus()
 
-        tableDocsPresenter?.setStatusCheckDocs(root, arguments)
-
         //TODO TODO *******************************
         val activity = activity as DriverSignupActivity
         val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
@@ -59,18 +59,26 @@ class TableDocsView : Fragment() {
         editor.apply()
         //TODO TODO *******************************
 
-
         Thread(Runnable {
+            var listDocs: ArrayList<DocsRealm> = arrayListOf()
+            val listStatus = tableDocsPresenter?.getStatusDocs(arguments)
+
             tableDocsPresenter?.driverSignupModel?.initRealm()
 
-            if (SignupStep.listDocs.isNotEmpty()) {
-                tableDocsPresenter?.setDocs(SignupStep.listDocs)
-
-                tableDocsPresenter?.saveDocs(SignupStep.listDocs)
-
+            if (SignupMainData.listDocs.isNotEmpty()) {
+                tableDocsPresenter?.saveDocs(SignupMainData.listDocs)
             } else {
-                tableDocsPresenter?.getDocs()
+                listDocs = tableDocsPresenter!!.getDocsDB()
+
+                //merge docs and status docs in one mas
+                listStatus?.forEach {
+                    for (i in 0 until listDocs.size) {
+                        listDocs[i].isAccess = it.isAccess
+                    }
+                }
             }
+
+            tableDocsPresenter?.setDocs(listDocs)
 
             tableDocsPresenter?.driverSignupModel?.realm?.close()
         }).start()
@@ -103,61 +111,26 @@ class TableDocsView : Fragment() {
     }
 
 
-    fun setStatusCheckDocs(root: View) {
-        //TODO
-        val statusDriverSignup = root.status_driver_signup
-
-        val status_passport = root.status_passport
-        val status_passport_address = root.status_passport_address
-        val status_self_passport = root.status_self_passport
-        val status_driver_doc_front = root.status_driver_doc_front
-        val status_driver_doc_back = root.status_driver_doc_back
-        val status_sts_front = root.status_sts_front
-        val status_sts_back = root.status_sts_back
-    }
-
-
     private fun setListeners(root: View) {
-        val passport = root.passport
-        val passportAddress = root.passport_address
-        val selfPassport = root.self_passport
-        val driverDocFront = root.driver_doc_front
-        val driverDocBack = root.driver_doc_back
-        val stsFront = root.sts_front
-        val stsBack = root.sts_back
         val onViewTable = root.on_view_table
         val reshoot = root.make_photo
         val clipPhoto = root.clip_photo
         val backBtn = root.back_btn
 
+        val viewsImgDocs: Array<ImageView> = arrayOf(
+            root.passport,
+            root.self_passport,
+            root.passport_address,
+            root.driver_doc_front,
+            root.driver_doc_back,
+            root.sts_front,
+            root.sts_back
+        )
 
-
-        passport.setOnClickListener {
-            tableDocsPresenter?.getReshootBottomSheet(PASSPORT_PHOTO)
-        }
-
-        passportAddress.setOnClickListener {
-            tableDocsPresenter?.getReshootBottomSheet(PASSPORT_ADDRESS_PHOTO)
-        }
-
-        selfPassport.setOnClickListener {
-            tableDocsPresenter?.getReshootBottomSheet(SELF_PHOTO_PASSPORT)
-        }
-
-        driverDocFront.setOnClickListener {
-            tableDocsPresenter?.getReshootBottomSheet(DRIVER_DOC_FRONT)
-        }
-
-        driverDocBack.setOnClickListener {
-            tableDocsPresenter?.getReshootBottomSheet(DRIVER_DOC_BACK)
-        }
-
-        stsFront.setOnClickListener {
-            tableDocsPresenter?.getReshootBottomSheet(STS_DOC_FRONT)
-        }
-
-        stsBack.setOnClickListener {
-            tableDocsPresenter?.getReshootBottomSheet(STS_DOC_BACK)
+        for(i in viewsImgDocs.indices){
+            viewsImgDocs[i].setOnClickListener{
+                tableDocsPresenter?.getReshootBottomSheet(i + 1)
+            }
         }
 
         onViewTable.setOnClickListener {
@@ -187,7 +160,7 @@ class TableDocsView : Fragment() {
     ) {
         val activity = activity as DriverSignupActivity
         if (Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)) {
-            SignupStep.imgUri = Camera.getCamera(activity)
+            SignupMainData.imgUri = Camera.getCamera(activity)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

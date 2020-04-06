@@ -2,8 +2,6 @@ package bonch.dev.presenter.driver.signup
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Rect
-import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import androidx.fragment.app.Fragment
@@ -12,10 +10,9 @@ import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.driver.signup.SignupStatusModel
 import bonch.dev.model.driver.signup.pojo.DocsStep
-import bonch.dev.model.driver.signup.pojo.SignupStep
-import bonch.dev.utils.Camera
+import bonch.dev.model.driver.signup.SignupMainData
+import bonch.dev.model.driver.signup.pojo.DocsPhoto
 import bonch.dev.utils.Constants
-import bonch.dev.utils.Constants.CAMERA
 import bonch.dev.utils.Constants.DRIVER_DOC_BACK
 import bonch.dev.utils.Constants.DRIVER_DOC_FRONT
 import bonch.dev.utils.Constants.DRIVER_SIGNUP_CHECK_PHOTO
@@ -89,7 +86,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
 
     fun getTableDocs(fm: FragmentManager) {
-        SignupStep.isTableView = true
+        SignupMainData.isTableView = true
         replaceFragment(Constants.DRIVER_SIGNUP_TABLE_DOCS, null, fm)
     }
 
@@ -103,13 +100,13 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, fm: FragmentManager) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GALLERY) {
-                SignupStep.imgUri = data?.data
+                SignupMainData.imgUri = data?.data
             }
 
             replaceFragment(DRIVER_SIGNUP_CHECK_PHOTO, null, fm)
 
         } else {
-            if (SignupStep.isTableView) {
+            if (SignupMainData.isTableView) {
                 getTableDocs(fm)
             } else {
                 startSettingDocs(fm)
@@ -122,29 +119,36 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
         val title = root.title_check_photo
         val photoContainer = root.photo_container
 
-        title.text = getTitleForCheckPhoto(SignupStep.idStep)
-        Glide.with(root.context).load(SignupStep.imgUri).into(photoContainer)
+        title.text = getTitleForCheckPhoto(SignupMainData.idStep)
+        Glide.with(root.context).load(SignupMainData.imgUri).into(photoContainer)
     }
 
 
     fun getNextStep(activity: DriverSignupActivity) {
         val fm = activity.supportFragmentManager
-        //TODO holder
+        //TODO holder block btn
 
         //save photo
-        if (SignupStep.imgUri != null) {
+        if (SignupMainData.imgUri != null) {
             try {
-                SignupStep.listDocs[SignupStep.idStep] = SignupStep.imgUri!!
+                if (SignupMainData.isTableView) {
+                    //remake photo (insert)
+                    SignupMainData.listDocs[SignupMainData.idStep].imgUri = SignupMainData.imgUri!!
+                    SignupMainData.listDocs[SignupMainData.idStep].isRemake = true
+                } else {
+                    //start signup (add)
+                    SignupMainData.listDocs.add(DocsPhoto(SignupMainData.imgUri!!))
+                }
             } catch (ex: IndexOutOfBoundsException) {
-                SignupStep.listDocs.add(SignupStep.imgUri!!)
+                println(ex.message)
             }
         }
 
-        if (SignupStep.isTableView || SignupStep.idStep > STS_DOC_BACK - 1) {
+        if (SignupMainData.isTableView || SignupMainData.idStep > STS_DOC_BACK - 1) {
             //end settings docs
             getTableDocs(fm)
         } else {
-            SignupStep.idStep = SignupStep.idStep.inc()
+            SignupMainData.idStep = SignupMainData.idStep.inc()
             startSettingDocs(fm)
         }
     }
@@ -155,14 +159,14 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
         when (idStep) {
             USER_PHOTO -> {
-                SignupStep.idStep = USER_PHOTO
+                SignupMainData.idStep = USER_PHOTO
                 docsStepData.title = "Ваше фото"
                 docsStepData.subtitle = "Ваше фото будет видно пассажирам"
                 docsStepData.imgDocs = R.drawable.ic_photo
             }
 
             PASSPORT_PHOTO -> {
-                SignupStep.idStep = PASSPORT_PHOTO
+                SignupMainData.idStep = PASSPORT_PHOTO
                 docsStepData.title = "Фото паспорта"
                 docsStepData.subtitle =
                     "Убедитесь, что четко видно фото, номер паспорта, фио и другие данные"
@@ -171,7 +175,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
             }
 
             SELF_PHOTO_PASSPORT -> {
-                SignupStep.idStep = SELF_PHOTO_PASSPORT
+                SignupMainData.idStep = SELF_PHOTO_PASSPORT
                 docsStepData.title = "Селфи с паспортом"
                 docsStepData.subtitle =
                     "Убедитесь, что четко видно фото, номер паспорта, фио и другие данные"
@@ -179,7 +183,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
             }
 
             PASSPORT_ADDRESS_PHOTO -> {
-                SignupStep.idStep = PASSPORT_ADDRESS_PHOTO
+                SignupMainData.idStep = PASSPORT_ADDRESS_PHOTO
                 docsStepData.title = "Паспорт с пропиской"
                 docsStepData.subtitle =
                     "Убедитесь, что четко видно номер и серию паспорта и информацию о прописке"
@@ -187,7 +191,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
             }
 
             DRIVER_DOC_FRONT -> {
-                SignupStep.idStep = DRIVER_DOC_FRONT
+                SignupMainData.idStep = DRIVER_DOC_FRONT
                 docsStepData.title = "Водительское удостоверение"
                 docsStepData.subtitle =
                     "Убедитесь, что четко видно фото, ФИО, дату выдачи и действия документа"
@@ -196,7 +200,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
             }
 
             DRIVER_DOC_BACK -> {
-                SignupStep.idStep = DRIVER_DOC_BACK
+                SignupMainData.idStep = DRIVER_DOC_BACK
                 docsStepData.title = "Обратная сторона ВУ"
                 docsStepData.subtitle =
                     "Убедитесь, что четко видно номер водительского удастоверения и категорию прав"
@@ -205,7 +209,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
             }
 
             STS_DOC_FRONT -> {
-                SignupStep.idStep = STS_DOC_FRONT
+                SignupMainData.idStep = STS_DOC_FRONT
                 docsStepData.title = "Свидетельство о регистраци транспортного средства"
                 docsStepData.subtitle =
                     "Убедитесь, что четко видно VIN, номер документа и другие данные"
@@ -214,7 +218,7 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
             }
 
             STS_DOC_BACK -> {
-                SignupStep.idStep = STS_DOC_BACK
+                SignupMainData.idStep = STS_DOC_BACK
                 docsStepData.title = "Свидетельство о регистраци транспортного средства"
                 docsStepData.subtitle = "Убедитесь, что четко видно номер документа и другие данные"
                 docsStepData.imgDocs = R.drawable.ic_back_sts
@@ -301,48 +305,10 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
     }
 
 
-    fun setMovingButtonListener(root: View) {
-        val nextBtn = root.next_btn
-        var heightDiff: Int
-        var btnDefaultPosition = 0.0f
-        val rect = Rect()
-        var startHeight = 0
-        var screenHeight = 0
-
-        root.viewTreeObserver
-            .addOnGlobalLayoutListener {
-
-                root.getWindowVisibleDisplayFrame(rect)
-                heightDiff = screenHeight - (rect.bottom - rect.top)
-
-                if (screenHeight == 0) {
-                    screenHeight = root.rootView.height
-                }
-
-                if (btnDefaultPosition == 0.0f) {
-                    //init default position of button
-                    btnDefaultPosition = nextBtn.y
-                }
-
-                if (startHeight == 0) {
-                    startHeight = screenHeight - (rect.bottom - rect.top)
-                }
-
-                if (heightDiff > startHeight) {
-                    nextBtn.y = btnDefaultPosition - heightDiff + startHeight
-                } else {
-                    //move DOWN
-                    nextBtn.y = btnDefaultPosition
-                }
-
-            }
-    }
-
-
     fun clearData() {
-        SignupStep.idStep = 0
-        SignupStep.imgUri = null
-        SignupStep.listDocs = arrayListOf()
+        SignupMainData.idStep = 0
+        SignupMainData.imgUri = null
+        SignupMainData.listDocs = arrayListOf()
     }
 
 
