@@ -32,8 +32,11 @@ import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Coordinator.openActivity
 import bonch.dev.utils.Coordinator.replaceFragment
+import bonch.dev.utils.Coordinator.showCheckPhoto
 import bonch.dev.utils.Keyboard
 import bonch.dev.view.passanger.profile.ProfileDetailView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.runtime.Runtime.getApplicationContext
 import kotlinx.android.synthetic.main.profile_detail_activity.*
@@ -92,6 +95,7 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
                 "User image",
                 null
             )
+
             profileData.imgUser = (Uri.parse(path)).toString()
         }
 
@@ -137,13 +141,20 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            val userImg = profileDetailView.img_user
 
-            if (requestCode == Constants.GALLERY) {
-                imageUri = data?.data
+            if (requestCode == Constants.PROFILE_CHECK_PHOTO) {
+                //after check photo
+                Glide.with(profileDetailView.applicationContext).load(imageUri)
+                    .apply(RequestOptions().centerCrop().circleCrop())
+                    .into(profileDetailView.img_user)
+            } else {
+                //before check photo
+                if (requestCode == Constants.GALLERY) {
+                    imageUri = data?.data
+                }
+
+                checkPhoto(imageUri.toString())
             }
-
-            checkPhoto()
 
             hideBottomSheet()
         } else {
@@ -152,9 +163,9 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
     }
 
 
-    private fun checkPhoto() {
-        val fm = profileDetailView.supportFragmentManager
-        //openActivity(Constants.PROFILE_CHECK_PHOTO, null, fm)
+    private fun checkPhoto(img: String) {
+        val context = profileDetailView.applicationContext
+        showCheckPhoto(context, profileDetailView, img)
     }
 
 
@@ -321,7 +332,8 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
     private fun showErrorBottomSheet() {
         Thread(Runnable {
             while (true) {
-                println("e")
+                println("error")
+
                 if (!isKeyboardShow) {
                     //get main thread for get UI
                     val mainHandler = Handler(Looper.getMainLooper())
@@ -336,7 +348,7 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
                     break
                 }
             }
-
+            //kill thread
             Thread.currentThread().interrupt()
         }).start()
     }
@@ -347,6 +359,8 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
 
         Thread(Runnable {
             while (true) {
+                println("image")
+
                 if (!isKeyboardShow) {
                     //get main thread for get UI
                     val mainHandler = Handler(Looper.getMainLooper())
@@ -361,6 +375,8 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
                     break
                 }
             }
+            //kill thread
+            Thread.currentThread().interrupt()
         }).start()
     }
 

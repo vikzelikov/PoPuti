@@ -1,5 +1,6 @@
 package bonch.dev.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -240,19 +241,19 @@ object Coordinator {
                 fragment.startActivityForResult(intent, PROFILE_FULL_VIEW)
             }
 
-            PROFILE_CHECK_PHOTO -> {
-                val intent = Intent(context, CheckPhotoView::class.java)
-                fragment.startActivityForResult(intent, PROFILE_CHECK_PHOTO)
-            }
-
             DRIVER_SIGNUP -> {
                 val intent = Intent(context, DriverSignupActivity::class.java)
                 fragment.startActivityForResult(intent, DRIVER_SIGNUP)
             }
-
         }
     }
 
+
+    fun showCheckPhoto(context: Context, activity: Activity, img: String) {
+        val intent = Intent(context, CheckPhotoView::class.java)
+        intent.putExtra(Constants.PHOTO, img)
+        activity.startActivityForResult(intent, PROFILE_CHECK_PHOTO)
+    }
 
     fun previousFragment(fm: FragmentManager) {
         fm.popBackStack()

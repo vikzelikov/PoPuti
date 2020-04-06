@@ -183,7 +183,7 @@ class ProfileDetailView : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        if(profileDetailPresenter!!.back()){
+        if (profileDetailPresenter!!.back()) {
             super.onBackPressed()
         }
     }
