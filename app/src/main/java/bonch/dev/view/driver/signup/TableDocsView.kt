@@ -69,7 +69,6 @@ class TableDocsView : Fragment() {
                 tableDocsPresenter?.saveDocs(listDocs)
             } else {
                 listDocs = tableDocsPresenter!!.getDocsDB()
-                println(listDocs.size)
 
                 //merge docs and status docs in one mas
                 for (i in 0 until listDocs.size) {
