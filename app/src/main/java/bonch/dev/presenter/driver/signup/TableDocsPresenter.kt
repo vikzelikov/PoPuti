@@ -1,16 +1,19 @@
 package bonch.dev.presenter.driver.signup
 
-import android.net.Uri
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import bonch.dev.Permissions
+import bonch.dev.R
 import bonch.dev.model.driver.signup.DriverSignupModel
 import bonch.dev.model.driver.signup.pojo.DocsRealm
-import bonch.dev.model.driver.signup.pojo.SignupStep
+import bonch.dev.model.driver.signup.SignupMainData
 import bonch.dev.utils.Constants
 import bonch.dev.view.driver.signup.DriverSignupActivity
 import bonch.dev.view.driver.signup.TableDocsView
@@ -38,46 +41,39 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun setStatusCheckDocs(root: View, bundle: Bundle?) {
+    fun getStatusDocs(bundle: Bundle?): ArrayList<DocsRealm> {
+        val listDocsStatus: ArrayList<DocsRealm> = arrayListOf()
+
+        for (i in 0..7) {
+            val docsRealm = DocsRealm()
+            docsRealm.isAccess = i % 2 == 0
+            listDocsStatus.add(docsRealm)
+        }
         if (bundle != null) {
             //get object with data
-
-            tableDocsView.setStatusCheckDocs(root)
+            //TODO
         }
+
+        return listDocsStatus
     }
 
 
-    fun getDocs() {
+    fun getDocsDB(): ArrayList<DocsRealm> {
         //TODO with server get images from net
-        val list: ArrayList<Uri> = arrayListOf()
-        val listDocs = driverSignupModel?.getDocsDB()
+        val listDocs = driverSignupModel!!.getDocsDB()
 
         if (!listDocs.isNullOrEmpty()) {
-            for (i in 0 until listDocs.size) {
-                val uri = Uri.parse(listDocs[i].imgDocs)
-
-
-                list.add(uri)
-
-            }
-
-            SignupStep.listDocs = list
-
-            setDocs(list)
+            SignupMainData.listDocs = listDocs
         }
+
+        return listDocs
     }
 
 
-    fun setDocs(list: ArrayList<Uri>) {
-        val views: Array<ImageView> = arrayOf(
-            root.passport,
-            root.self_passport,
-            root.passport_address,
-            root.driver_doc_front,
-            root.driver_doc_back,
-            root.sts_front,
-            root.sts_back
-        )
+    fun setDocs(list: ArrayList<DocsRealm>) {
+        val viewsImgDocs = getImgDocs()
+        val viewsTitleDocs = getTitleDocs()
+        val viewsTicsDocs = getTicsDocs()
 
         if (list.isNotEmpty()) {
 
@@ -86,7 +82,34 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
                 kotlin.run {
                     try {
                         for (i in 0 until list.size) {
-                            Glide.with(root.context).load(list[i + 1]).into(views[i])
+                            if (list[i + 1].isAccess != null) {
+                                if (list[i + 1].isAccess!!) {
+                                    //docs is valid
+                                    viewsImgDocs[i].isClickable = false
+                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#149319"))
+                                    viewsTicsDocs[i].setImageDrawable(
+                                        ContextCompat.getDrawable(
+                                            root.context,
+                                            R.drawable.ic_green_tick
+                                        )
+                                    )
+                                } else {
+                                    //docs not valid
+                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#D03131"))
+                                    viewsTicsDocs[i].setImageDrawable(
+                                        ContextCompat.getDrawable(
+                                            root.context,
+                                            R.drawable.ic_red_cross
+                                        )
+                                    )
+                                }
+                            } else {
+                                //docs still is processing
+                                viewsTitleDocs[i].setTextColor(Color.parseColor("#000000"))
+                                viewsTicsDocs[i].visibility = View.GONE
+                            }
+
+                            Glide.with(root.context).load(list[i + 1].imgDocs).into(viewsImgDocs[i])
                         }
                     } catch (ex: IndexOutOfBoundsException) {
                         println(ex.message)
@@ -99,20 +122,13 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
     }
 
 
-    fun saveDocs(list: ArrayList<Uri>) {
-        val listDocs: ArrayList<DocsRealm> = arrayListOf()
-
-        for (i in 0 until list.size) {
-            val stringURI = list[i].toString()
-            listDocs.add(DocsRealm(i, stringURI))
-        }
-
-        driverSignupModel?.saveDocs(listDocs)
+    fun saveDocs(list: ArrayList<DocsRealm>) {
+        driverSignupModel?.saveDocs(list)
     }
 
 
     fun getReshootBottomSheet(idDoc: Int) {
-        SignupStep.idStep = idDoc
+        SignupMainData.idStep = idDoc
         tableDocsView.reshootBottomSheet!!.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -144,6 +160,45 @@ class TableDocsPresenter(val tableDocsView: TableDocsView) {
         } else {
             onMapView?.visibility = View.VISIBLE
         }
+    }
+
+
+    fun getImgDocs(): Array<ImageView> {
+        return arrayOf(
+            root.passport,
+            root.self_passport,
+            root.passport_address,
+            root.driver_doc_front,
+            root.driver_doc_back,
+            root.sts_front,
+            root.sts_back
+        )
+    }
+
+
+    fun getTitleDocs(): Array<TextView> {
+        return arrayOf(
+            root.text_passport,
+            root.text_self_passport,
+            root.text_passport_address,
+            root.text_driver_doc_front,
+            root.text_driver_doc_back,
+            root.text_sts_front,
+            root.text_sts_back
+        )
+    }
+
+
+    fun getTicsDocs(): Array<ImageView> {
+        return arrayOf(
+            root.status_passport,
+            root.status_self_passport,
+            root.status_passport_address,
+            root.status_driver_doc_front,
+            root.status_driver_doc_back,
+            root.status_sts_front,
+            root.status_sts_back
+        )
     }
 
 

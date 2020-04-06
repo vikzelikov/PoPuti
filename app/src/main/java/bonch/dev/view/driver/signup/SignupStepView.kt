@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.driver.signup.pojo.DocsStep
-import bonch.dev.model.driver.signup.pojo.SignupStep
+import bonch.dev.model.driver.signup.SignupMainData
 import bonch.dev.presenter.driver.signup.DriverSignupPresenter
 import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
@@ -32,7 +32,7 @@ class SignupStepView : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.driver_signup_step_fragment, container, false)
 
-        val stepData = driverSignupPresenter?.getNextStepDocs(SignupStep.idStep)
+        val stepData = driverSignupPresenter?.getNextStepDocs(SignupMainData.idStep)
         setDataStep(root, stepData!!)
 
         setListeners(root)
@@ -79,7 +79,7 @@ class SignupStepView : Fragment() {
     ) {
         val activity = activity as DriverSignupActivity
         if(Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)){
-            SignupStep.imgUri = Camera.getCamera(activity)
+            SignupMainData.imgUri = Camera.getCamera(activity).toString()
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

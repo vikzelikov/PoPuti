@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.R
-import bonch.dev.model.driver.signup.pojo.SignupStep
+import bonch.dev.model.driver.signup.SignupMainData
 import bonch.dev.presenter.driver.signup.DriverSignupPresenter
 import bonch.dev.utils.Constants
 
@@ -43,7 +43,7 @@ class DriverSignupActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentByTag(Constants.DRIVER_SIGNUP_CHECK_PHOTO.toString()) as CheckPhotoView?
 
         if (checkPhotoView?.view != null) {
-            if (SignupStep.isTableView) {
+            if (SignupMainData.isTableView) {
                 driverSignupPresenter?.getTableDocs(supportFragmentManager)
             } else {
                 driverSignupPresenter?.startSettingDocs(supportFragmentManager)

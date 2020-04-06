@@ -36,7 +36,7 @@ class DriverSignupModel(val tableDocsPresenter: TableDocsPresenter) {
 
         if (realmResult.isNotEmpty()) {
             for (i in realmResult!!.indices) {
-                list.add(DocsRealm(i, realmResult[i]!!.imgDocs))
+                list.add(DocsRealm(i, realmResult[i]!!.imgDocs, realmResult[i]!!.isAccess))
             }
         }
 
