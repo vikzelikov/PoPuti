@@ -31,7 +31,7 @@ import bonch.dev.utils.Constants.USER_PHOTO
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.view.driver.signup.DriverSignupActivity
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.check_correct_doc_fragment.view.*
+import kotlinx.android.synthetic.main.check_doc_fragment.view.*
 import kotlinx.android.synthetic.main.signup_car_info_fragment.view.*
 
 class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {

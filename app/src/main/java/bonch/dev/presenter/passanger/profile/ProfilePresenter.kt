@@ -46,7 +46,7 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
 
     fun getFullProfile() {
         val context = profileView.context
-        openActivity(Constants.PROFILE_FULL, context!!, profileView)
+        openActivity(Constants.PROFILE_FULL_VIEW, context!!, profileView)
     }
 
 

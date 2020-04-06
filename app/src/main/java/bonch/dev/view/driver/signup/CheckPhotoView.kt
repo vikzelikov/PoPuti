@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import bonch.dev.R
 import bonch.dev.presenter.driver.signup.DriverSignupPresenter
-import kotlinx.android.synthetic.main.check_correct_doc_fragment.view.*
+import kotlinx.android.synthetic.main.check_doc_fragment.view.*
 
 class CheckPhotoView : Fragment() {
 
@@ -26,7 +26,7 @@ class CheckPhotoView : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.check_correct_doc_fragment, container, false)
+        val root = inflater.inflate(R.layout.check_doc_fragment, container, false)
 
         driverSignupPresenter?.receiveDataForCheck(root)
 

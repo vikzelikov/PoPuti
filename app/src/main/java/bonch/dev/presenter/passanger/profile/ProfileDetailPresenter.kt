@@ -26,21 +26,20 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.MainActivity
 import bonch.dev.Permissions
-import bonch.dev.R
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
 import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Coordinator.openActivity
+import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard
 import bonch.dev.view.passanger.profile.ProfileDetailView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.runtime.Runtime.getApplicationContext
 import kotlinx.android.synthetic.main.profile_detail_activity.*
 import java.io.ByteArrayOutputStream
 
-class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfilePresenter {
+class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) : IProfilePresenter {
 
     private var profileModel: ProfileModel? = null
     private var handlerAnimation: Handler? = null
@@ -144,14 +143,18 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
                 imageUri = data?.data
             }
 
-            Glide.with(profileDetailView.applicationContext).load(imageUri)
-                .apply(RequestOptions().centerCrop().circleCrop())
-                .into(userImg)
+            checkPhoto()
 
             hideBottomSheet()
         } else {
             imageUri = null
         }
+    }
+
+
+    private fun checkPhoto() {
+        val fm = profileDetailView.supportFragmentManager
+        //openActivity(Constants.PROFILE_CHECK_PHOTO, null, fm)
     }
 
 
@@ -175,8 +178,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
                 showNotifications(isDataComplete)
 
-                val root = profileDetailView.findViewById<View>(R.id.rootLinearLayout)
-                Keyboard.hideKeyboard(profileDetailView, root)
+                Keyboard.hideKeyboard(profileDetailView, profileDetailView.profile_container)
                 return@OnEditorActionListener true
             }
 
@@ -235,9 +237,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun back(): Boolean {
-        //save data
-        val root = profileDetailView.findViewById<View>(R.id.rootLinearLayout)
-        Keyboard.hideKeyboard(profileDetailView, root)
+        Keyboard.hideKeyboard(profileDetailView, profileDetailView.profile_container)
 
         val isDataComplete = isDataNamesComplete()
 
@@ -303,6 +303,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
     fun logout() {
         //clear data and close app
         profileModel?.removeAccessToken()
+//TODO******************************
 
         val intent = Intent(getApplicationContext(), MainActivity::class.java)
         val mPendingIntent = PendingIntent.getActivity(
@@ -314,13 +315,13 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
         val mgr = getApplicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
 
-        profileDetailView.finishAffinity()
     }
 
 
     private fun showErrorBottomSheet() {
         Thread(Runnable {
             while (true) {
+                println("e")
                 if (!isKeyboardShow) {
                     //get main thread for get UI
                     val mainHandler = Handler(Looper.getMainLooper())
@@ -335,14 +336,14 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
                     break
                 }
             }
+
+            Thread.currentThread().interrupt()
         }).start()
     }
 
 
     fun getBottomSheet() {
-        val root = profileDetailView.findViewById<View>(R.id.rootLinearLayout)
-        Keyboard.hideKeyboard(profileDetailView, root)
-
+        Keyboard.hideKeyboard(profileDetailView, profileDetailView.profile_container)
 
         Thread(Runnable {
             while (true) {
@@ -405,7 +406,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun keyboardListener() {
-        val root = profileDetailView.rootLinearLayout
+        val root = profileDetailView.profile_container
 
         root.viewTreeObserver.addOnGlobalLayoutListener {
             val r = Rect()
