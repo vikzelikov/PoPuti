@@ -40,8 +40,8 @@ class MainActivity : AppCompatActivity() {
 
         if (accessToken == null) {
             //to signup
-            //addFragment(PHONE_VIEW, supportFragmentManager)
-            addFragment(MAIN_FRAGMENT, supportFragmentManager)
+            addFragment(PHONE_VIEW, supportFragmentManager)
+            //addFragment(MAIN_FRAGMENT, supportFragmentManager)
         } else {
             //redirect to full app
             driver = basePresenter?.getDriverData(applicationContext)

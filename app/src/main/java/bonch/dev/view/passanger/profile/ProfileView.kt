@@ -48,6 +48,11 @@ class ProfileView : Fragment() {
         if (data != null && requestCode == Constants.PROFILE_FULL_VIEW && resultCode == Activity.RESULT_OK) {
             profilePresenter?.profileDataResult(data)
         }
+
+        if(resultCode == Constants.EXIT){
+            profilePresenter?.logout()
+        }
+
         super.onActivityResult(requestCode, resultCode, data)
     }
 

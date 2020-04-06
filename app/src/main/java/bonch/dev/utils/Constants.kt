@@ -91,4 +91,7 @@ object Constants {
     const val STS_DOC_FRONT = 6
     const val STS_DOC_BACK = 7
 
+
+    const val EXIT = -2
+
 }

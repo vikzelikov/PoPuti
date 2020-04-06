@@ -314,18 +314,9 @@ class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) :
     fun logout() {
         //clear data and close app
         profileModel?.removeAccessToken()
-//TODO******************************
 
-        val intent = Intent(getApplicationContext(), MainActivity::class.java)
-        val mPendingIntent = PendingIntent.getActivity(
-            getApplicationContext(),
-            1,
-            intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
-        val mgr = getApplicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
-
+        profileDetailView.setResult(Constants.EXIT)
+        profileDetailView.finish()
     }
 
 
