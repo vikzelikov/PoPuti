@@ -26,11 +26,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.MainActivity
 import bonch.dev.Permissions
-import bonch.dev.R
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
 import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Coordinator.openActivity
+import bonch.dev.utils.Coordinator.replaceFragment
+import bonch.dev.utils.Coordinator.showCheckPhoto
 import bonch.dev.utils.Keyboard
 import bonch.dev.view.passanger.profile.ProfileDetailView
 import com.bumptech.glide.Glide
@@ -40,7 +42,7 @@ import com.yandex.runtime.Runtime.getApplicationContext
 import kotlinx.android.synthetic.main.profile_detail_activity.*
 import java.io.ByteArrayOutputStream
 
-class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfilePresenter {
+class ProfileDetailPresenter(private val profileDetailView: ProfileDetailView) : IProfilePresenter {
 
     private var profileModel: ProfileModel? = null
     private var handlerAnimation: Handler? = null
@@ -93,6 +95,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
                 "User image",
                 null
             )
+
             profileData.imgUser = (Uri.parse(path)).toString()
         }
 
@@ -138,20 +141,31 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            val userImg = profileDetailView.img_user
 
-            if (requestCode == Constants.GALLERY) {
-                imageUri = data?.data
+            if (requestCode == Constants.PROFILE_CHECK_PHOTO) {
+                //after check photo
+                Glide.with(profileDetailView.applicationContext).load(imageUri)
+                    .apply(RequestOptions().centerCrop().circleCrop())
+                    .into(profileDetailView.img_user)
+            } else {
+                //before check photo
+                if (requestCode == Constants.GALLERY) {
+                    imageUri = data?.data
+                }
+
+                checkPhoto(imageUri.toString())
             }
-
-            Glide.with(profileDetailView.applicationContext).load(imageUri)
-                .apply(RequestOptions().centerCrop().circleCrop())
-                .into(userImg)
 
             hideBottomSheet()
         } else {
             imageUri = null
         }
+    }
+
+
+    private fun checkPhoto(img: String) {
+        val context = profileDetailView.applicationContext
+        showCheckPhoto(context, profileDetailView, img)
     }
 
 
@@ -175,8 +189,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
                 showNotifications(isDataComplete)
 
-                val root = profileDetailView.findViewById<View>(R.id.rootLinearLayout)
-                Keyboard.hideKeyboard(profileDetailView, root)
+                Keyboard.hideKeyboard(profileDetailView, profileDetailView.profile_container)
                 return@OnEditorActionListener true
             }
 
@@ -235,9 +248,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun back(): Boolean {
-        //save data
-        val root = profileDetailView.findViewById<View>(R.id.rootLinearLayout)
-        Keyboard.hideKeyboard(profileDetailView, root)
+        Keyboard.hideKeyboard(profileDetailView, profileDetailView.profile_container)
 
         val isDataComplete = isDataNamesComplete()
 
@@ -304,23 +315,16 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
         //clear data and close app
         profileModel?.removeAccessToken()
 
-        val intent = Intent(getApplicationContext(), MainActivity::class.java)
-        val mPendingIntent = PendingIntent.getActivity(
-            getApplicationContext(),
-            1,
-            intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
-        val mgr = getApplicationContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
-
-        profileDetailView.finishAffinity()
+        profileDetailView.setResult(Constants.EXIT)
+        profileDetailView.finish()
     }
 
 
     private fun showErrorBottomSheet() {
         Thread(Runnable {
             while (true) {
+                println("error")
+
                 if (!isKeyboardShow) {
                     //get main thread for get UI
                     val mainHandler = Handler(Looper.getMainLooper())
@@ -335,17 +339,19 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
                     break
                 }
             }
+            //kill thread
+            Thread.currentThread().interrupt()
         }).start()
     }
 
 
     fun getBottomSheet() {
-        val root = profileDetailView.findViewById<View>(R.id.rootLinearLayout)
-        Keyboard.hideKeyboard(profileDetailView, root)
-
+        Keyboard.hideKeyboard(profileDetailView, profileDetailView.profile_container)
 
         Thread(Runnable {
             while (true) {
+                println("image")
+
                 if (!isKeyboardShow) {
                     //get main thread for get UI
                     val mainHandler = Handler(Looper.getMainLooper())
@@ -360,6 +366,8 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
                     break
                 }
             }
+            //kill thread
+            Thread.currentThread().interrupt()
         }).start()
     }
 
@@ -405,7 +413,7 @@ class ProfileDetailPresenter(val profileDetailView: ProfileDetailView) : IProfil
 
 
     fun keyboardListener() {
-        val root = profileDetailView.rootLinearLayout
+        val root = profileDetailView.profile_container
 
         root.viewTreeObserver.addOnGlobalLayoutListener {
             val r = Rect()

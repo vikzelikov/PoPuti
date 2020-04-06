@@ -16,9 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
         tools:targetApi="m">
-        <activity android:name=".view.driver.signup.DriverSignupActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".view.driver.signup.DriverSignupActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".view.passanger.profile.ProfileDetailView" />
+        <activity android:name=".view.passanger.profile.CheckPhotoView" />
         <activity android:name=".view.passanger.getdriver.AddBankCardView" />
         <activity android:name=".view.passanger.getdriver.OfferPriceView" />
 

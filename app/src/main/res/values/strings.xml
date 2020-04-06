@@ -106,5 +106,6 @@
     <string name="dataSaved">Данные сохранены!</string>
     <string name="fillCorrectData">Пожалуйста, заполните необходимые поля (имя, фамилия)</string>
     <string name="rating">Рейтинг</string>
+    <string name="save">Сохранить</string>
 
 </resources>

@@ -18,7 +18,7 @@ class ProfileView : Fragment() {
     private var profilePresenter: ProfilePresenter? = null
 
     init {
-        if(profilePresenter == null){
+        if (profilePresenter == null) {
             profilePresenter = ProfilePresenter(this)
         }
     }
@@ -45,9 +45,14 @@ class ProfileView : Fragment() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data != null && requestCode == Constants.PROFILE_FULL && resultCode == Activity.RESULT_OK) {
+        if (data != null && requestCode == Constants.PROFILE_FULL_VIEW && resultCode == Activity.RESULT_OK) {
             profilePresenter?.profileDataResult(data)
         }
+
+        if(resultCode == Constants.EXIT){
+            profilePresenter?.logout()
+        }
+
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -63,7 +68,7 @@ class ProfileView : Fragment() {
         val conditionUse = root.condition_use
         val checkoutDriver = root.checkout_driver
 
-        miniProfile.setOnClickListener{
+        miniProfile.setOnClickListener {
             profilePresenter?.getFullProfile()
         }
 

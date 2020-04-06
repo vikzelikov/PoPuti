@@ -35,7 +35,7 @@ class ProfileDetailView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.profile_detail_activity)
 
-        val root = findViewById<View>(R.id.rootLinearLayout)
+        val root = findViewById<View>(R.id.profile_container)
 
         profileDetailPresenter?.getProfileDataDB(root)
         profileDetailPresenter?.startProfile = profileDetailPresenter?.getProfileData()
@@ -183,7 +183,7 @@ class ProfileDetailView : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        if(profileDetailPresenter!!.back()){
+        if (profileDetailPresenter!!.back()) {
             super.onBackPressed()
         }
     }

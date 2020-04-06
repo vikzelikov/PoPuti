@@ -12,6 +12,7 @@ import bonch.dev.model.driver.signup.SignupStatusModel
 import bonch.dev.model.driver.signup.pojo.DocsStep
 import bonch.dev.model.driver.signup.SignupMainData
 import bonch.dev.model.driver.signup.pojo.DocsRealm
+import bonch.dev.utils.Camera
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.DRIVER_DOC_BACK
 import bonch.dev.utils.Constants.DRIVER_DOC_FRONT
@@ -30,7 +31,7 @@ import bonch.dev.utils.Constants.USER_PHOTO
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.view.driver.signup.DriverSignupActivity
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.check_correct_doc_fragment.view.*
+import kotlinx.android.synthetic.main.check_doc_fragment.view.*
 import kotlinx.android.synthetic.main.signup_car_info_fragment.view.*
 
 class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
@@ -93,7 +94,12 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
     fun getCamera(fragment: Fragment) {
         //for correct getting camera
-        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
+        val activity = (fragment.activity as DriverSignupActivity)
+        if(Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)){
+            SignupMainData.imgUri = Camera.getCamera(activity).toString()
+        }else{
+            Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
+        }
     }
 
 

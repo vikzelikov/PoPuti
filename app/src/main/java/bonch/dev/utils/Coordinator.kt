@@ -1,5 +1,6 @@
 package bonch.dev.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,13 +21,15 @@ import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.PHONE_VIEW
-import bonch.dev.utils.Constants.PROFILE_FULL
+import bonch.dev.utils.Constants.PROFILE_CHECK_PHOTO
+import bonch.dev.utils.Constants.PROFILE_FULL_VIEW
 import bonch.dev.view.MainFragment
 import bonch.dev.view.driver.signup.*
 import bonch.dev.view.passanger.getdriver.AddBankCardView
 import bonch.dev.view.passanger.getdriver.CreateRideView
 import bonch.dev.view.passanger.getdriver.GetDriverView
 import bonch.dev.view.passanger.getdriver.OfferPriceView
+import bonch.dev.view.passanger.profile.CheckPhotoView
 import bonch.dev.view.passanger.profile.ProfileDetailView
 import bonch.dev.view.passanger.signup.ConfirmPhoneView
 import bonch.dev.view.passanger.signup.FullNameView
@@ -167,7 +170,7 @@ object Coordinator {
 
 
             DRIVER_SIGNUP_CHECK_PHOTO -> {
-                val fragment = CheckPhotoView()
+                val fragment = bonch.dev.view.driver.signup.CheckPhotoView()
                 fragment.arguments = bundle
 
                 fm.beginTransaction()
@@ -233,19 +236,24 @@ object Coordinator {
                 fragment.startActivityForResult(intent, ADD_BANK_CARD_VIEW)
             }
 
-            PROFILE_FULL -> {
+            PROFILE_FULL_VIEW -> {
                 val intent = Intent(context, ProfileDetailView::class.java)
-                fragment.startActivityForResult(intent, PROFILE_FULL)
+                fragment.startActivityForResult(intent, PROFILE_FULL_VIEW)
             }
 
             DRIVER_SIGNUP -> {
                 val intent = Intent(context, DriverSignupActivity::class.java)
                 fragment.startActivityForResult(intent, DRIVER_SIGNUP)
             }
-
         }
     }
 
+
+    fun showCheckPhoto(context: Context, activity: Activity, img: String) {
+        val intent = Intent(context, CheckPhotoView::class.java)
+        intent.putExtra(Constants.PHOTO, img)
+        activity.startActivityForResult(intent, PROFILE_CHECK_PHOTO)
+    }
 
     fun previousFragment(fm: FragmentManager) {
         fm.popBackStack()

@@ -7,12 +7,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.view.View
+import bonch.dev.MainActivity
 import bonch.dev.model.passanger.profile.ProfileModel
 import bonch.dev.model.passanger.profile.pojo.Profile
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.DRIVER_SIGNUP
 import bonch.dev.utils.Constants.PROFILE_DATA
 import bonch.dev.utils.Coordinator.openActivity
+import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.view.passanger.profile.ProfileView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -46,7 +48,7 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
 
     fun getFullProfile() {
         val context = profileView.context
-        openActivity(Constants.PROFILE_FULL, context!!, profileView)
+        openActivity(Constants.PROFILE_FULL_VIEW, context!!, profileView)
     }
 
 
@@ -107,6 +109,12 @@ class ProfilePresenter(val profileView: ProfileView) : IProfilePresenter {
         val view = profileView.view?.notification
 
         view?.animate()?.setDuration(500L)?.translationY(-100f)?.alpha(0.0f)
+    }
+
+
+    fun logout() {
+        val fm = (profileView.activity as MainActivity).supportFragmentManager
+        replaceFragment(Constants.PHONE_VIEW, null, fm)
     }
 
 

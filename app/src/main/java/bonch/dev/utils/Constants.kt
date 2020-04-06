@@ -20,13 +20,14 @@ object Constants {
     const val PHONE_VIEW = 8
     const val CONFIRM_PHONE_VIEW = 9
     const val FULL_NAME_VIEW = 10
-    const val PROFILE_FULL = 11
-    const val DRIVER_SIGNUP = 12
-    const val DRIVER_SIGNUP_DOCS_VIEW = 13
-    const val DRIVER_SIGNUP_STEP_VIEW = 14
-    const val DRIVER_SIGNUP_CAR_INFO = 15
-    const val DRIVER_SIGNUP_CHECK_PHOTO = 16
-    const val DRIVER_SIGNUP_TABLE_DOCS = 17
+    const val PROFILE_FULL_VIEW = 11
+    const val PROFILE_CHECK_PHOTO = 12
+    const val DRIVER_SIGNUP = 13
+    const val DRIVER_SIGNUP_DOCS_VIEW = 14
+    const val DRIVER_SIGNUP_STEP_VIEW = 15
+    const val DRIVER_SIGNUP_CAR_INFO = 16
+    const val DRIVER_SIGNUP_CHECK_PHOTO = 17
+    const val DRIVER_SIGNUP_TABLE_DOCS = 18
 
     const val FROM = "FROM"
     const val TO = "TO"
@@ -67,9 +68,6 @@ object Constants {
 
     //profile data
     const val PROFILE_REALM_NAME = "profile.realm"
-    const val FULL_NAME = "FULL_NAME"
-    const val PHONE_NUMBER = "PHONE_NUMBER"
-    const val EMAIL = "EMAIL"
     const val PROFILE_DATA = "PROFILE_DATA"
     const val PHOTO = "PHOTO"
     const val IS_SHOW_POPUP= "IS_SHOW_POPUP"
@@ -92,5 +90,8 @@ object Constants {
     const val DRIVER_DOC_BACK = 5
     const val STS_DOC_FRONT = 6
     const val STS_DOC_BACK = 7
+
+
+    const val EXIT = -2
 
 }
