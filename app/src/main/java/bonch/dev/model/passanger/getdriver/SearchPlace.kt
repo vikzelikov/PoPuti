@@ -29,7 +29,7 @@ class SearchPlace(val detailRidePresenter: DetailRidePresenter) : Session.Search
             detailRidePresenter.toPoint = point
         }
 
-        detailRidePresenter.submitRouting()
+        detailRidePresenter.submitRoute()
     }
 }
 

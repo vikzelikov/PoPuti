@@ -14,6 +14,7 @@ import bonch.dev.model.passanger.getdriver.pojo.Ride
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.passanger.getdriver.CreateRideView
 import kotlinx.android.synthetic.main.create_ride_layout.*
+import kotlinx.android.synthetic.main.ride_item.view.*
 
 
 class AddressesListAdapter(
@@ -57,7 +58,7 @@ class AddressesListAdapter(
                 toAdr = list[position]
             }
 
-            getDriverPresenter!!.addressesDone()
+            getDriverPresenter?.addressesDone()
         }
 
 
@@ -72,12 +73,9 @@ class AddressesListAdapter(
 
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val address = itemView.findViewById<TextView>(R.id.address)
-        private val city = itemView.findViewById<TextView>(R.id.city)
-
         fun bind(post: Ride) {
-            address.text = post.address
-            city.text = post.city
+            itemView.address.text = post.address
+            itemView.city.text = post.city
         }
     }
 

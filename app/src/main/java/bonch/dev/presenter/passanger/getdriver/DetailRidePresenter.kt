@@ -75,11 +75,11 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun receiveAddresses(fromAddress: Ride, toAddress: Ride) {
-        val fromUri = fromAddress.uri
-        val toUri = toAddress.uri
+    fun receiveAddresses(fromAddress: Ride?, toAddress: Ride?) {
+        val fromUri = fromAddress?.uri
+        val toUri = toAddress?.uri
 
-        detailRideView.setAddresses(fromAddress.address!!, toAddress.address!!)
+        detailRideView.setAddresses(fromAddress?.address!!, toAddress?.address!!)
 
         if (fromAddress.point != null) {
             fromPoint = Point(fromAddress.point!!.latitude, fromAddress.point!!.longitude)
@@ -89,6 +89,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             toPoint = Point(toAddress.point!!.latitude, toAddress.point!!.longitude)
         }
 
+        //50 - ok length for detect correct URI or no
         if (fromUri != null) {
             if (fromUri.length > 50) {
                 fromPoint = getPoint(fromUri)
@@ -98,7 +99,6 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         }
 
         if (toUri != null) {
-            //TODO
             if (toUri.length > 50) {
                 toPoint = getPoint(toUri)
             } else {
@@ -106,17 +106,25 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             }
         }
 
-        submitRouting()
+        submitRoute()
     }
 
 
-    fun submitRouting() {
+    fun submitRoute() {
         if (fromPoint != null && toPoint != null) {
             routing!!.submitRequest(fromPoint!!, toPoint!!)
         }
     }
 
 
+    fun removeRoute() {
+        if (routing != null) {
+            routing!!.removeRoute()
+        }
+    }
+
+
+    //parse and get URI
     private fun getPoint(uri: String): Point? {
         var coordinate: Point?
         val lat: Double
@@ -135,13 +143,6 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         }
 
         return coordinate
-    }
-
-
-    fun removeRoute() {
-        if (routing != null) {
-            routing!!.removeRoute()
-        }
     }
 
 
@@ -207,8 +208,9 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun commentStart(activity: FragmentActivity) {
+    fun commentStart() {
         val commentText = getView().comment_text
+        val activity = getView().activity as MainActivity
         detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
 
         if (!commentText.isFocused) {
@@ -218,8 +220,10 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun commentDone(activity: FragmentActivity, root: View) {
+    fun commentDone() {
         val commentText = getView().comment_text
+        val activity = getView().activity as MainActivity
+        val root = getView().view!!
 
         commentText?.clearFocus()
         hideKeyboard(activity, root)
@@ -240,12 +244,14 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun onStateChangedBottomSheet(newState: Int, activity: FragmentActivity, root: View) {
+    fun onStateChangedBottomSheet(newState: Int) {
         val commentText = getView().comment_text
         val onMapView = getView().on_map_view_detail
         val mainInfoLayout = getView().main_info_layout
 
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+            val activity = getView().activity as MainActivity
+            val root = getView().view!!
             hideKeyboard(activity, root)
             commentText.clearFocus()
         }
@@ -266,7 +272,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             val fm = (getView().activity as MainActivity).supportFragmentManager
             val comment = getView().comment_min_text.text.toString().trim()
             val price = getView().offer_price.text.toString().trim()
-            val userPoint = getView().userLocationPoint()
+            val userPoint = getView().createRidePresenter?.getUserPoint()
 
             bundle.putParcelable(FROM, fromAdr)
             bundle.putParcelable(TO, toAdr)

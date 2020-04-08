@@ -47,11 +47,11 @@ import kotlinx.android.synthetic.main.create_ride_layout.view.*
 class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
     var mapView: MapView? = null
-    var addressesListAdapter: AddressesListAdapter? = null
     var bottomSheetBehavior: BottomSheetBehavior<*>? = null
     var createRidePresenter: CreateRidePresenter? = null
     var navView: BottomNavigationView? = null
-    private var userLocationLayer: UserLocationLayer? = null
+    var userLocationLayer: UserLocationLayer? = null
+    private var addressesListAdapter: AddressesListAdapter? = null
 
     init {
         if (createRidePresenter == null) {
@@ -59,15 +59,11 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //access geo permission
-        Permissions.access(Constants.GEO_PERMISSION_REQUEST, this)
-
         //init map
         MapKitFactory.setApiKey(API_KEY)
         MapKitFactory.initialize(context)
@@ -79,14 +75,10 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
         initialize(root)
 
-        //etUserLocation()
-
         mapView!!.map.addCameraListener(this)
         mapView!!.map.isRotateGesturesEnabled = false
 
         setBottomSheet()
-
-        createRidePresenter?.root = root
 
         if (reasonID == REASON1 || reasonID == REASON2) {
             if (fromAdr != null && toAdr != null) {
@@ -101,6 +93,17 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         }
 
         return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //access geo permission
+        if (Permissions.isAccess(Constants.GEO_PERMISSION, activity as MainActivity)) {
+            setUserLocation()
+        } else {
+            Permissions.access(Constants.GEO_PERMISSION_REQUEST, this)
+        }
+        super.onViewCreated(view, savedInstanceState)
     }
 
 
@@ -123,12 +126,12 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         p2: CameraUpdateSource,
         p3: Boolean
     ) {
-        if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
-            createRidePresenter?.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
-        }
-
         if (p3) {
             userLocationLayer?.resetAnchor()
+        }
+
+        if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
+            createRidePresenter?.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
         }
     }
 
@@ -168,9 +171,8 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     private fun setListeners(root: View) {
-
         my_pos.setOnClickListener {
-            createRidePresenter?.myPosition()
+            createRidePresenter?.showMyPosition()
         }
 
         from_cross.setOnClickListener {
@@ -248,20 +250,10 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    fun userLocationPoint(): Point? {
-        var point: Point? = null
-
-        if (userLocationLayer?.cameraPosition() != null) {
-            point = userLocationLayer!!.cameraPosition()!!.target
-        }
-
-        return point
-    }
-
-
     private fun setUserLocation() {
-        mapView!!.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
         val mapKit = MapKitFactory.getInstance()
+        //set correct zoom
+        mapView!!.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
 
         //init user location service
         userLocationLayer = mapKit.createUserLocationLayer(mapView!!.mapWindow)
@@ -270,6 +262,8 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             it.isVisible = true
             it.setObjectListener(this)
         }
+
+        createRidePresenter?.startProcessBlockRequest()
     }
 
 

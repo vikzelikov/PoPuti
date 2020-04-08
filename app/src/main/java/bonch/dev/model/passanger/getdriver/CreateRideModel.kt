@@ -23,7 +23,7 @@ class CreateRideModel(
 
 
     fun responseSuggest(suggestResult: ArrayList<Ride>) {
-        createRidePresenter.setRecyclerSuggest(suggestResult)
+        createRidePresenter.responseSuggest(suggestResult)
     }
 
 

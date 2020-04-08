@@ -34,7 +34,7 @@
         android:visibility="gone" />
 
     <include
-        android:id="@+id/create_ride_layout"
+        android:id="@+id/container_info_ride"
         layout="@layout/create_ride_layout" />
 
 

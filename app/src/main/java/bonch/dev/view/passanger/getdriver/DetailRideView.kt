@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.R
+import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
+import bonch.dev.model.passanger.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.model.passanger.getdriver.pojo.PaymentCard
 import bonch.dev.model.passanger.getdriver.pojo.Ride
 import bonch.dev.presenter.passanger.getdriver.DetailRidePresenter
@@ -14,7 +16,9 @@ import bonch.dev.presenter.passanger.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.create_ride_fragment.*
 import kotlinx.android.synthetic.main.create_ride_fragment.view.*
+import kotlinx.android.synthetic.main.detail_ride_layout.*
 import kotlinx.android.synthetic.main.detail_ride_layout.view.*
 
 
@@ -32,20 +36,17 @@ class DetailRideView(val createRideView: CreateRideView) {
     init {
         detailRidePresenter = DetailRidePresenter(this)
 
-        from = getRootView().findViewById(R.id.from_address)
-        to = getRootView().findViewById(R.id.to_address)
+        from = getView().from_address
+        to = getView().to_address
     }
 
 
-    fun onCreateView(fromAddress: Ride, toAddress: Ride) {
-        val activity = createRideView.activity!!
-        val root = getRootView()
+    fun onCreateView() {
+        setListeners()
 
-        setListeners(activity, root)
+        setBottomSheet()
 
-        setBottomSheet(activity, root)
-
-        detailRidePresenter?.receiveAddresses(fromAddress, toAddress)
+        detailRidePresenter?.receiveAddresses(fromAdr, toAdr)
 
         initBankCardRecycler()
     }
@@ -67,73 +68,60 @@ class DetailRideView(val createRideView: CreateRideView) {
     }
 
 
-    private fun setListeners(activity: FragmentActivity, root: View) {
-        val offerPrice = getRootView().offer_price
-        val addCard = getRootView().add_card
-        val getDriverBtn = getRootView().get_driver_btn
-        val commentBtn = getRootView().comment_btn
-        val commentText = getRootView().comment_text
-        val commentMinText = getRootView().comment_min_text
-        val commentBackBtn = getRootView().comment_back_btn
-        val commentDone = getRootView().comment_done
-        val paymentMethod = getRootView().payment_method
-        val selectedPaymentMethod = getRootView().selected_payment_method
-        val onMapView = getRootView().on_map_view_detail
-        val infoPrice = getRootView().info_price
-        val backBtn = getRootView().back_btn
+    private fun setListeners() {
+        val r = getView()
 
-        getDriverBtn.setOnClickListener {
+        r.get_driver_btn.setOnClickListener {
             detailRidePresenter?.getDriver()
         }
 
-        offerPrice.setOnClickListener {
+        r.offer_price.setOnClickListener {
             detailRidePresenter?.offerPrice(createRideView)
 
         }
 
-        addCard.setOnClickListener {
+        r.add_card.setOnClickListener {
             detailRidePresenter?.addBankCard(createRideView)
         }
 
 
-        commentBtn.setOnClickListener {
-            detailRidePresenter?.commentStart(activity)
+        r.comment_btn.setOnClickListener {
+            detailRidePresenter?.commentStart()
         }
 
-        commentBackBtn.setOnClickListener {
-            detailRidePresenter?.commentDone(activity, root)
+        r.comment_back_btn.setOnClickListener {
+            detailRidePresenter?.commentDone()
         }
 
-        commentDone.setOnClickListener {
-            val comment = commentText.text.toString()
+        r.comment_done.setOnClickListener {
+            val comment = r.comment_text.text.toString()
 
             if (comment.trim().isNotEmpty()) {
-                commentMinText.text = comment
+                r.comment_min_text.text = comment
             }
 
-            detailRidePresenter?.commentDone(activity, root)
+            detailRidePresenter?.commentDone()
         }
 
-        paymentMethod.setOnClickListener {
+        r.payment_method.setOnClickListener {
             detailRidePresenter?.getPaymentMethods()
         }
 
-        selectedPaymentMethod.setOnClickListener {
+        r.selected_payment_method.setOnClickListener {
             detailRidePresenter?.getPaymentMethods()
         }
 
-        onMapView.setOnClickListener {
-            detailRidePresenter?.commentDone(activity, root)
+        r.on_map_view_detail.setOnClickListener {
+            detailRidePresenter?.commentDone()
         }
 
-        infoPrice.setOnClickListener {
+        r.info_price.setOnClickListener {
             detailRidePresenter?.getInfoPrice()
         }
 
-        backBtn.setOnClickListener {
+        r.back_btn.setOnClickListener {
             getView().backPressed()
         }
-
     }
 
 
@@ -143,11 +131,10 @@ class DetailRideView(val createRideView: CreateRideView) {
     }
 
 
-    private fun setBottomSheet(activity: FragmentActivity, root: View) {
-        cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(getRootView().cards_bottom_sheet)
-        commentBottomSheetBehavior = BottomSheetBehavior.from<View>(getRootView().comment_bottom_sheet)
-        infoPriceBottomSheetBehavior =
-            BottomSheetBehavior.from<View>(getRootView().info_price_bottom_sheet)
+    private fun setBottomSheet() {
+        cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().cards_bottom_sheet)
+        commentBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().comment_bottom_sheet)
+        infoPriceBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().info_price_bottom_sheet)
 
         commentBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -157,7 +144,7 @@ class DetailRideView(val createRideView: CreateRideView) {
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                detailRidePresenter?.onStateChangedBottomSheet(newState, activity, root)
+                detailRidePresenter?.onStateChangedBottomSheet(newState)
             }
         })
 
@@ -169,7 +156,7 @@ class DetailRideView(val createRideView: CreateRideView) {
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                detailRidePresenter?.onStateChangedBottomSheet(newState, activity, root)
+                detailRidePresenter?.onStateChangedBottomSheet(newState)
             }
         })
 
@@ -181,14 +168,14 @@ class DetailRideView(val createRideView: CreateRideView) {
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                detailRidePresenter?.onStateChangedBottomSheet(newState, activity, root)
+                detailRidePresenter?.onStateChangedBottomSheet(newState)
             }
         })
     }
 
 
     private fun initBankCardRecycler() {
-        val paymentList = getRootView().payments_list
+        val paymentList = getView().payments_list
         val list = arrayListOf<PaymentCard>()
 
         list.add(PaymentCard(null, null, null, R.drawable.ic_google_pay))
@@ -211,10 +198,4 @@ class DetailRideView(val createRideView: CreateRideView) {
     fun getView(): CreateRideView {
         return createRideView
     }
-
-    private fun getRootView(): View {
-        return createRideView.createRidePresenter?.root!!
-    }
-
-
 }
