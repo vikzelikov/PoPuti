@@ -17,6 +17,7 @@ import bonch.dev.model.passanger.getdriver.pojo.Ride
 import bonch.dev.model.passanger.getdriver.pojo.RidePoint
 import bonch.dev.presenter.passanger.getdriver.adapters.AddressesListAdapter
 import bonch.dev.utils.ChangeOpacity.getOpacity
+import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.BLOCK_REQUEST_GEOCODER
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
@@ -27,9 +28,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.create_ride_fragment.*
 import kotlinx.android.synthetic.main.create_ride_fragment.view.*
 import kotlinx.android.synthetic.main.create_ride_layout.*
+import kotlinx.android.synthetic.main.create_ride_layout.view.*
+import java.lang.Exception
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -39,6 +43,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     private var createRideModel: CreateRideModel? = null
     private var blockRequestHandler: Handler? = null
     var addressesListAdapter: AddressesListAdapter? = null
+    private var cashSuggest: RealmResults<Ride>? = null
     var detailRideView: DetailRideView? = null
     var isBlockRequest = true
     var isFromMapSearch = true
@@ -58,6 +63,10 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         var isSuccess = false
 
         if (fromAdr != null && toAdr != null) {
+            //cash data (both of adr)
+            saveCashSuggest(fromAdr!!)
+            saveCashSuggest(toAdr!!)
+
             //go to the next screen
             showDetailRideView()
 
@@ -77,6 +86,10 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             }
         } else {
             clearSuggest()
+        }
+
+        if (query.isEmpty()) {
+            getCashSuggest()
         }
     }
 
@@ -102,6 +115,64 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     }
 
 
+    private fun saveCashSuggest(adr: Ride) {
+        val tempList = arrayListOf<Ride>()
+
+        if (!cashSuggest.isNullOrEmpty()) {
+            tempList.addAll(cashSuggest!!)
+            //sort by Realm-id
+            tempList.sortBy {
+                it.id
+            }
+        }
+
+        if (!tempList.contains(adr)) {
+            if (tempList.isEmpty()) {
+                adr.id = tempList.size + 1
+                tempList.add(adr)
+            } else {
+                //get id the last item > inc > init
+                adr.id = tempList.last().id + 1
+                tempList.add(adr)
+            }
+
+            //clear cash if it has too much memory
+            while (tempList.size > Constants.CASH_VALUE_COUNT) {
+                var rideDel = Ride()
+                for (i in 0 until cashSuggest!!.size) {
+                    if (cashSuggest!![i]!! == tempList[0]) {
+                        rideDel = cashSuggest!![i]!!
+                        break
+                    }
+                }
+
+                createRideModel?.deleteCashSuggest(rideDel)
+                tempList.removeAt(0)
+            }
+
+            //update or save cash
+            createRideModel?.saveCashSuggest(tempList)
+            //clear and get again
+            cashSuggest = null
+            getCashSuggest()
+        }
+    }
+
+
+    fun getCashSuggest() {
+        if (cashSuggest == null) {
+            createRideModel?.initRealm()
+            cashSuggest = createRideModel?.getCashSuggest()
+        }
+
+        if (cashSuggest != null) {
+            addressesListAdapter?.list?.clear()
+            addressesListAdapter?.list?.addAll(cashSuggest!!)
+            addressesListAdapter?.notifyDataSetChanged()
+        }
+    }
+
+
     fun responseGeocoder(address: String?, point: Point?) {
         val fromAddress = getView().from_adr
         val toAddress = getView().to_adr
@@ -110,10 +181,22 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         if (address != null && point != null) {
             if (isFromMapSearch) {
                 fromAddress.setText(address)
-                fromAdr = Ride(address, null, null, RidePoint(point.latitude, point.longitude))
+                fromAdr = Ride(
+                    0,
+                    address,
+                    Constants.NOT_DESCRIPTION,
+                    null,
+                    RidePoint(point.latitude, point.longitude)
+                )
             } else {
                 toAddress.setText(address)
-                toAdr = Ride(address, null, null, RidePoint(point.latitude, point.longitude))
+                toAdr = Ride(
+                    0,
+                    address,
+                    Constants.NOT_DESCRIPTION,
+                    null,
+                    RidePoint(point.latitude, point.longitude)
+                )
             }
 
             addressMapText.text = address
@@ -122,20 +205,8 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
 
     private fun showDetailRideView() {
-        val onMapView = getView().on_map_view
         //dynamic add layout
         dynamicReplaceView(true)
-
-        while (true) {
-            val visibility = getView().navView!!.visibility
-            if (visibility == View.VISIBLE) {
-                getView().navView!!.visibility = View.GONE
-                break
-            }
-        }
-
-        getView().back_btn.visibility = View.VISIBLE
-        onMapView.visibility = View.GONE
 
         //create next screen
         detailRideView = DetailRideView(getView())
@@ -333,14 +404,16 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
                 //dynamic remove layout
                 dynamicReplaceView(false)
 
-                r.navView?.visibility = View.VISIBLE
-                r.on_map_view.visibility = View.GONE
-                r.back_btn.visibility = View.GONE
                 //clear routing from map
                 clearMapObjects()
 
+                //block too often request
                 startProcessBlockRequest()
 
+                //set cash suggest again
+                getCashSuggest()
+
+                r.from_adr.setText(fromAdr?.address)
                 r.to_adr.setText("")
                 toAdr = null
                 detailRideView = null
@@ -364,22 +437,23 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
 
     private fun dynamicReplaceView(showDetailRide: Boolean) {
-        val parent: ViewGroup?
         val r = getView()
 
         if (showDetailRide) {
-            var view = r.container_info_ride
-            parent = view!!.parent as ViewGroup
-            val index = parent.indexOfChild(view)
-            view.visibility = View.GONE
-            view = r.layoutInflater.inflate(R.layout.detail_ride_layout, parent, false)
-            parent.addView(view, index)
+            r.container_create_ride.visibility = View.GONE
+            r.container_detail_ride.visibility = View.VISIBLE
+
+            r.navView?.visibility = View.GONE
+            r.back_btn.visibility = View.VISIBLE
         } else {
-            val view = r.view!!.findViewById<RelativeLayout>(R.id.detail_ride_layout)
-            parent = view!!.parent as ViewGroup
-            parent.removeView(view)
-            r.container_info_ride?.visibility = View.VISIBLE
+            r.container_create_ride.visibility = View.VISIBLE
+            r.container_detail_ride.visibility = View.GONE
+
+            r.navView?.visibility = View.VISIBLE
+            r.back_btn.visibility = View.GONE
         }
+
+        r.on_map_view.visibility = View.GONE
     }
 
 
@@ -393,7 +467,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
                 isBlockRequest = false
                 if (fromAdr == null)
                     requestGeocoder(createRideView.mapView?.map?.cameraPosition?.target)
-                blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER)
+                blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER - 1000)
             }
         }, BLOCK_REQUEST_GEOCODER)
     }
@@ -402,6 +476,11 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     private fun stopProcessBlockRequest() {
         blockRequestHandler?.removeCallbacksAndMessages(null)
         isBlockRequest = true
+    }
+
+
+    fun onDestroy() {
+        createRideModel?.realm?.close()
     }
 
 

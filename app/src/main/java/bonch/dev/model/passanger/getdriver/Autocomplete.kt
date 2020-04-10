@@ -45,6 +45,7 @@ class Autocomplete(private var createRideModel: CreateRideModel, userLocationPoi
                 if (suggest[i].uri != null) {
                     suggestResult.add(
                         Ride(
+                            i,
                             suggest[i].title.text,
                             suggest[i].subtitle?.text,
                             suggest[i].uri

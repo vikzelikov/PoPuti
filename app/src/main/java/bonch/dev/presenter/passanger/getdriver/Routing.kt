@@ -15,6 +15,7 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.Error
+import java.lang.Exception
 import java.util.*
 
 class Routing(var context: Context, var detailRideView: DetailRideView) :
@@ -40,7 +41,11 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
 
     override fun onDrivingRoutes(routes: MutableList<DrivingRoute>) {
         for (route in routes) {
-            mapObjects?.addPolyline(route.geometry)
+            try {
+                //unsupported Yandex Map exception
+                mapObjects?.addPolyline(route.geometry)
+            } catch (ex: Exception) {
+            }
         }
 
         detailRideView.createRideView.mapView!!.map.move(

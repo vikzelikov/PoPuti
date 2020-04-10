@@ -75,7 +75,7 @@ class AddressesListAdapter(
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(post: Ride) {
             itemView.address.text = post.address
-            itemView.city.text = post.city
+            itemView.city.text = post.description
         }
     }
 

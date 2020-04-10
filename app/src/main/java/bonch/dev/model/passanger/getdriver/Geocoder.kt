@@ -4,7 +4,7 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 
-class Geocoder(val createRideModel: CreateRideModel) : Session.SearchListener {
+class Geocoder(private val createRideModel: CreateRideModel) : Session.SearchListener {
 
     private var searchSession: Session? = null
     private var searchManager: SearchManager =
@@ -26,8 +26,6 @@ class Geocoder(val createRideModel: CreateRideModel) : Session.SearchListener {
 
 
     override fun onSearchResponse(response: Response) {
-        //println(response.collection.children.firstOrNull()?.obj?.metadataContainer?.getItem(ToponymObjectMetadata::class.java)?.address?.components?.get(i)?.name)
-
         val point = response.collection.children[0].obj?.geometry?.first()?.point
         val address = response.collection.children[0].obj!!.name
 

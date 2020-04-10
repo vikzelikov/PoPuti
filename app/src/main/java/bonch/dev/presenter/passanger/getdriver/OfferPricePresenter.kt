@@ -12,8 +12,6 @@ import kotlinx.android.synthetic.main.offer_price_activity.view.*
 class OfferPricePresenter(val offerPriceView: OfferPriceView) {
 
     var offerPriceModel: OfferPriceModel? = null
-    private var startHeight: Int = 0
-    private var screenHeight: Int = 0
 
     init {
         if (offerPriceModel == null) {
@@ -21,50 +19,10 @@ class OfferPricePresenter(val offerPriceView: OfferPriceView) {
         }
     }
 
-    fun setMovingButtonListener(root: View) {
-        val offerBtn = root.offer
-        var heightDiff = 0
-        var btnDefaultPosition = 0.0f
-        val rect = Rect()
-
-//TODO keyboard move up
-        root.viewTreeObserver
-            .addOnGlobalLayoutListener {
-
-                root.getWindowVisibleDisplayFrame(rect)
-                heightDiff = screenHeight - (rect.bottom - rect.top)
-
-                if (screenHeight == 0) {
-                    screenHeight = root.rootView.height
-                }
-
-                if (btnDefaultPosition == 0.0f) {
-                    //init default position of button
-                    btnDefaultPosition = offerBtn.y
-                }
-
-                if (startHeight == 0) {
-                    startHeight = screenHeight - (rect.bottom - rect.top)
-                }
-
-                if (heightDiff > startHeight) {
-                    //move UP
-//                    Handler().postDelayed({
-//                        //doSomethingHere()
-//                    }, 1000)
-                    offerBtn.y = btnDefaultPosition - heightDiff + startHeight
-                } else {
-                    //move DOWN
-                    offerBtn.y = btnDefaultPosition
-                }
-
-            }
-    }
-
 
     fun maskListener(root: View, s: Editable?) {
         val priceEditText = root.price
-        val offerBtn = root.offer
+        val offerBtn = root.btn_done
 
         if (s!!.isNotEmpty() && s[s.length - 1] != '₽') {
             val filters = s.filters

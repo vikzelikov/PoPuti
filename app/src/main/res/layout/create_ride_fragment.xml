@@ -34,8 +34,13 @@
         android:visibility="gone" />
 
     <include
-        android:id="@+id/container_info_ride"
+        android:id="@+id/container_create_ride"
         layout="@layout/create_ride_layout" />
+
+    <include
+        android:id="@+id/container_detail_ride"
+        layout="@layout/detail_ride_layout"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

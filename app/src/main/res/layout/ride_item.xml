@@ -34,14 +34,12 @@
                 android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Вокзальная, 1"
                 android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Тосно, Тосненское городское поселение, Ленинградская область, Россия"
                 android:textColor="#50000000"/>
 
         </LinearLayout>

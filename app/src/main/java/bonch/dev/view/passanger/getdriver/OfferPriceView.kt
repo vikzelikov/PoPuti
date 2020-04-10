@@ -13,6 +13,7 @@ import bonch.dev.R
 import bonch.dev.presenter.passanger.getdriver.OfferPricePresenter
 import bonch.dev.utils.Constants.AVERAGE_PRICE
 import bonch.dev.utils.Constants.OFFER_PRICE
+import bonch.dev.utils.Keyboard
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
 import kotlinx.android.synthetic.main.offer_price_activity.view.*
@@ -34,7 +35,7 @@ class OfferPriceView : AppCompatActivity() {
         setListeners(root)
 
         //set listener to move button in relation to keyboard on/off
-        offerPricePresenter?.setMovingButtonListener(root)
+        Keyboard.setMovingButtonListener(root)
 
         val averagePrice = offerPricePresenter?.getAveragePrice()
         setAveragePrice(root, averagePrice)
@@ -48,7 +49,7 @@ class OfferPriceView : AppCompatActivity() {
 
     private fun setListeners(root: View) {
         val priceEditText = root.price
-        val offerBtn = root.offer
+        val offerBtn = root.btn_done
         val backBtn = root.back_btn
 
 

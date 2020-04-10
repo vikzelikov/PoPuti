@@ -28,7 +28,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.passanger.getdriver.AddBankCardView"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".view.passanger.getdriver.OfferPriceView"
             android:screenOrientation="portrait" />

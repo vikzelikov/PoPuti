@@ -10,48 +10,9 @@ import kotlinx.android.synthetic.main.add_bank_card_activity.view.*
 class AddBankCardPresenter(val addBankCardView: AddBankCardView) {
 
     private var lock = false
-    private var startHeight: Int = 0
-    private var screenHeight: Int = 0
     private val VISA = 4
     private val MC = 5
     private val RUS_WORLD = 2
-
-
-    fun setMovingButtonListener(root: View) {
-        val addCardBtn = root.add_card
-        var heightDiff: Int
-        var btnDefaultPosition = 0.0f
-
-        root.viewTreeObserver
-            .addOnGlobalLayoutListener {
-                val rect = Rect()
-
-                root.getWindowVisibleDisplayFrame(rect)
-                heightDiff = screenHeight - (rect.bottom - rect.top)
-
-                if (screenHeight == 0) {
-                    screenHeight = root.rootView.height
-                }
-
-                if (btnDefaultPosition == 0.0f) {
-                    //init default position of button
-                    btnDefaultPosition = addCardBtn.y
-                }
-
-                if (startHeight == 0) {
-                    startHeight = screenHeight - (rect.bottom - rect.top)
-                }
-
-
-                if (heightDiff > startHeight) {
-                    //move UP
-                    addCardBtn.y = btnDefaultPosition - heightDiff + startHeight
-                } else {
-                    //move DOWN
-                    addCardBtn.y = btnDefaultPosition
-                }
-            }
-    }
 
 
     fun maskCardNumber(s: Editable?) {
@@ -149,7 +110,7 @@ class AddBankCardPresenter(val addBankCardView: AddBankCardView) {
 
 
     fun isValidCard(root: View): Boolean {
-        val addCardBtn = root.add_card
+        val addCardBtn = root.btn_done
         val cardBankNumber = root.card_number
         val validUntil = root.valid_until
         val cvc = root.cvc

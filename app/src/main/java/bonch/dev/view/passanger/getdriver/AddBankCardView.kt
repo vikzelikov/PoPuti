@@ -13,6 +13,7 @@ import bonch.dev.utils.Constants.CARD_IMG
 import bonch.dev.utils.Constants.CARD_NUMBER
 import bonch.dev.utils.Constants.CVC
 import bonch.dev.utils.Constants.VALID_UNTIL
+import bonch.dev.utils.Keyboard
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.utils.Keyboard.showKeyboard
 import kotlinx.android.synthetic.main.add_bank_card_activity.view.*
@@ -36,7 +37,7 @@ class AddBankCardView : AppCompatActivity() {
 
         addBankCardPresenter?.setHintListener(root)
 
-        addBankCardPresenter?.setMovingButtonListener(root)
+        Keyboard.setMovingButtonListener(root)
 
         root.card_number.requestFocus()
         showKeyboard(this)
@@ -44,7 +45,7 @@ class AddBankCardView : AppCompatActivity() {
 
 
     private fun setListener(root: View) {
-        val addCardBtn = root.add_card
+        val addCardBtn = root.btn_done
         val backBtn = root.back_btn
         val cardBankNumber = root.card_number
         val validUntil = root.valid_until

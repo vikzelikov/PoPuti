@@ -287,6 +287,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/addresses_list"
+            android:alpha="0.0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/main_addresses_layout" />

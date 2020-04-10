@@ -2,15 +2,21 @@ package bonch.dev.model.passanger.getdriver.pojo
 
 import android.os.Parcel
 import android.os.Parcelable
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmClass
 
-
-data class Ride(
+@RealmClass
+open class Ride(
+    @PrimaryKey
+    var id: Int = 0,
     var address: String? = null,
-    var city: String? = null,
+    var description: String? = null,
     var uri: String? = null,
     var point: RidePoint? = null
-) : Parcelable {
+) : RealmObject(), Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -18,8 +24,9 @@ data class Ride(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
         parcel.writeString(address)
-        parcel.writeString(city)
+        parcel.writeString(description)
         parcel.writeString(uri)
         parcel.writeParcelable(point, flags)
     }
@@ -36,5 +43,22 @@ data class Ride(
         override fun newArray(size: Int): Array<Ride?> {
             return arrayOfNulls(size)
         }
+    }
+
+
+    override fun equals(other: Any?): Boolean {
+        return (address == (other as Ride).address
+                && uri == (other).uri
+                && point == (other).point)
+    }
+
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + (address?.hashCode() ?: 0)
+        result = 31 * result + (description?.hashCode() ?: 0)
+        result = 31 * result + (uri?.hashCode() ?: 0)
+        result = 31 * result + (point?.hashCode() ?: 0)
+        return result
     }
 }

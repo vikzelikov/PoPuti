@@ -31,6 +31,7 @@ object Constants {
 
     const val FROM = "FROM"
     const val TO = "TO"
+    const val NOT_DESCRIPTION = "Место"
     const val USER_POINT = "USER_POINT"
     const val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
     const val OFFER_PRICE = "OFFER_PRICE"
@@ -40,11 +41,14 @@ object Constants {
     const val CARD_IMG = "CARD_IMG"
     const val CVC = "CVC"
 
+    //cash data
+    const val CASH_VALUE_COUNT = 12
+
     //mil sec
     const val SIGNUP_INTERVAL_SMS = 15000L
     const val SIGNUP_MAX_INTERVAL_SMS = 60000L
     const val TIMER_USER_GET_DRIVER = 30
-    const val BLOCK_REQUEST_GEOCODER = 2000L
+    const val BLOCK_REQUEST_GEOCODER = 3000L
 
     //min
     const val MAX_TIME_GET_DRIVER = 3L
@@ -68,7 +72,6 @@ object Constants {
 
 
     //profile data
-    const val PROFILE_REALM_NAME = "profile.realm"
     const val PROFILE_DATA = "PROFILE_DATA"
     const val PHOTO = "PHOTO"
     const val IS_SHOW_POPUP= "IS_SHOW_POPUP"
@@ -78,7 +81,6 @@ object Constants {
 
 
     //driver signup
-    const val DRIVER_DOCS_REALM_NAME = "docs.realm"
     const val DRIVER_SIGNUP_START = 0
     const val DRIVER_SIGNUP_PROCESS = 1
     const val DRIVER_SIGNUP_COMPLETE = 2
@@ -91,6 +93,12 @@ object Constants {
     const val DRIVER_DOC_BACK = 5
     const val STS_DOC_FRONT = 6
     const val STS_DOC_BACK = 7
+
+
+    //REALM const
+    const val CASH_RIDE_REALM_NAME = "cashride.realm"
+    const val DRIVER_DOCS_REALM_NAME = "docs.realm"
+    const val PROFILE_REALM_NAME = "profile.realm"
 
 
     const val EXIT = -2

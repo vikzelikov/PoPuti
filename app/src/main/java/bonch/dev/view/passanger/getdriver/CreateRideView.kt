@@ -88,9 +88,10 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             }
         }
 
-        if (fromAdr != null) {
-            root.from_adr.setText(fromAdr!!.address)
-        }
+        root.from_adr.setText(fromAdr?.address)
+
+
+        createRidePresenter?.getCashSuggest()
 
         return root
     }
@@ -337,5 +338,10 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         return createRidePresenter?.backPressed()!!
     }
 
+
+    override fun onDestroy() {
+        createRidePresenter?.onDestroy()
+        super.onDestroy()
+    }
 
 }
