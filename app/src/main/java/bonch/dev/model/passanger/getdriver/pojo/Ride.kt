@@ -13,15 +13,19 @@ open class Ride(
     var address: String? = null,
     var description: String? = null,
     var uri: String? = null,
-    var point: RidePoint? = null
+    var point: RidePoint? = null,
+    var isCashed: Boolean = false
 ) : RealmObject(), Parcelable {
+
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readParcelable(RidePoint::class.java.classLoader)
+        parcel.readParcelable(RidePoint::class.java.classLoader),
+        parcel.readByte() != 0.toByte()
     )
+
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
@@ -29,11 +33,14 @@ open class Ride(
         parcel.writeString(description)
         parcel.writeString(uri)
         parcel.writeParcelable(point, flags)
+        parcel.writeByte(if (isCashed) 1 else 0)
     }
+
 
     override fun describeContents(): Int {
         return 0
     }
+
 
     companion object CREATOR : Parcelable.Creator<Ride> {
         override fun createFromParcel(parcel: Parcel): Ride {
@@ -59,6 +66,7 @@ open class Ride(
         result = 31 * result + (description?.hashCode() ?: 0)
         result = 31 * result + (uri?.hashCode() ?: 0)
         result = 31 * result + (point?.hashCode() ?: 0)
+        result = 31 * result + isCashed.hashCode()
         return result
     }
 }

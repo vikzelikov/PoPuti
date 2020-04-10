@@ -4,10 +4,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.view.View
-import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.FragmentActivity
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.CreateRideModel
@@ -30,10 +26,7 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.create_ride_fragment.*
-import kotlinx.android.synthetic.main.create_ride_fragment.view.*
 import kotlinx.android.synthetic.main.create_ride_layout.*
-import kotlinx.android.synthetic.main.create_ride_layout.view.*
-import java.lang.Exception
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -45,7 +38,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     var addressesListAdapter: AddressesListAdapter? = null
     private var cashSuggest: RealmResults<Ride>? = null
     var detailRideView: DetailRideView? = null
-    var isBlockRequest = true
+    var isBlockRequest= true
     var isFromMapSearch = true
 
     private val shape = GradientDrawable()
@@ -64,8 +57,12 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
         if (fromAdr != null && toAdr != null) {
             //cash data (both of adr)
-            saveCashSuggest(fromAdr!!)
-            saveCashSuggest(toAdr!!)
+            if (!fromAdr!!.isCashed) {
+                saveCashSuggest(fromAdr!!)
+            }
+            if (!toAdr!!.isCashed) {
+                saveCashSuggest(toAdr!!)
+            }
 
             //go to the next screen
             showDetailRideView()
@@ -80,10 +77,26 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
     fun requestSuggest(query: String) {
         if (query.length > 2) {
-            if (!isBlockRequest) {
-                createRideModel!!.requestSuggest(query, getUserPoint())
+            createRideModel?.initRealmCash()
+            //first check cash, then go to net
+            //try to get data from cash
+            if(!isBlockRequest){
+                val cashRequest = createRideModel?.getCashRequest(query)
+
+                if (!cashRequest.isNullOrEmpty()) {
+                    //set in view
+                    addressesListAdapter?.list?.clear()
+                    addressesListAdapter?.list?.addAll(cashRequest)
+                    addressesListAdapter?.notifyDataSetChanged()
+                    isBlockRequest = true
+
+                } else {
+                    createRideModel!!.requestSuggest(query, getUserPoint())
+                }
+
                 isBlockRequest = true
             }
+
         } else {
             clearSuggest()
         }
@@ -95,6 +108,10 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
 
     fun responseSuggest(suggestResult: ArrayList<Ride>) {
+        //cash request
+        createRideModel?.saveCashRequest(suggestResult)
+
+        //set in view
         addressesListAdapter?.list = suggestResult
         addressesListAdapter?.notifyDataSetChanged()
     }
@@ -137,7 +154,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             }
 
             //clear cash if it has too much memory
-            while (tempList.size > Constants.CASH_VALUE_COUNT) {
+            if (tempList.size > Constants.CASH_VALUE_COUNT) {
                 var rideDel = Ride()
                 for (i in 0 until cashSuggest!!.size) {
                     if (cashSuggest!![i]!! == tempList[0]) {
@@ -467,7 +484,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
                 isBlockRequest = false
                 if (fromAdr == null)
                     requestGeocoder(createRideView.mapView?.map?.cameraPosition?.target)
-                blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER - 1000)
+                blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER / 2)
             }
         }, BLOCK_REQUEST_GEOCODER)
     }

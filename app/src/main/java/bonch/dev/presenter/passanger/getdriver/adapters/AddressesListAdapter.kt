@@ -15,6 +15,7 @@ import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.passanger.getdriver.CreateRideView
 import kotlinx.android.synthetic.main.create_ride_layout.*
 import kotlinx.android.synthetic.main.ride_item.view.*
+import java.lang.IndexOutOfBoundsException
 
 
 class AddressesListAdapter(
@@ -49,13 +50,21 @@ class AddressesListAdapter(
             if (fromAdrView.isFocused) {
                 fromAdrView.setText(list[position].address)
                 fromAdrView.setSelection(fromAdrView.text.length)
-                fromAdr = list[position]
+                fromAdr = try {
+                    list[position]
+                }catch (ex: IndexOutOfBoundsException){
+                    list.last()
+                }
             }
 
             if (toAdrView.isFocused) {
                 toAdrView.setText(list[position].address)
                 toAdrView.setSelection(toAdrView.text.length)
-                toAdr = list[position]
+                toAdr = try {
+                    list[position]
+                }catch (ex: IndexOutOfBoundsException){
+                    list.last()
+                }
             }
 
             getDriverPresenter?.addressesDone()
@@ -73,6 +82,7 @@ class AddressesListAdapter(
 
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         fun bind(post: Ride) {
             itemView.address.text = post.address
             itemView.city.text = post.description

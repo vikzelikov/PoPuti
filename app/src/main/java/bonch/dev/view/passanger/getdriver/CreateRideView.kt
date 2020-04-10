@@ -272,7 +272,7 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         addressesListAdapter =
             AddressesListAdapter(
                 this,
-                ArrayList(),
+                arrayListOf(),
                 context!!
             )
 

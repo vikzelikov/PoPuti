@@ -41,8 +41,9 @@ object Constants {
     const val CARD_IMG = "CARD_IMG"
     const val CVC = "CVC"
 
-    //cash data
+    //request MapKit
     const val CASH_VALUE_COUNT = 12
+    const val MAX_COUNT_SUGGEST = 7
 
     //mil sec
     const val SIGNUP_INTERVAL_SMS = 15000L
@@ -97,6 +98,7 @@ object Constants {
 
     //REALM const
     const val CASH_RIDE_REALM_NAME = "cashride.realm"
+    const val CASH_REQUEST_REALM_NAME = "cashrequest.realm"
     const val DRIVER_DOCS_REALM_NAME = "docs.realm"
     const val PROFILE_REALM_NAME = "profile.realm"
 
