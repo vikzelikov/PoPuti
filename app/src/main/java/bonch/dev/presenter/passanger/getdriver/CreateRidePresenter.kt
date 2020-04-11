@@ -38,7 +38,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     var addressesListAdapter: AddressesListAdapter? = null
     private var cashSuggest: RealmResults<Ride>? = null
     var detailRideView: DetailRideView? = null
-    var isBlockRequest= true
+    var isBlockRequest = true
     var isFromMapSearch = true
 
     private val shape = GradientDrawable()
@@ -57,12 +57,10 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
         if (fromAdr != null && toAdr != null) {
             //cash data (both of adr)
-            if (!fromAdr!!.isCashed) {
                 saveCashSuggest(fromAdr!!)
-            }
-            if (!toAdr!!.isCashed) {
+
                 saveCashSuggest(toAdr!!)
-            }
+
 
             //go to the next screen
             showDetailRideView()
@@ -80,7 +78,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             createRideModel?.initRealmCash()
             //first check cash, then go to net
             //try to get data from cash
-            if(!isBlockRequest){
+            if (!isBlockRequest) {
                 val cashRequest = createRideModel?.getCashRequest(query)
 
                 if (!cashRequest.isNullOrEmpty()) {
@@ -132,8 +130,17 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     }
 
 
-    private fun saveCashSuggest(adr: Ride) {
+    private fun saveCashSuggest(address: Ride) {
         val tempList = arrayListOf<Ride>()
+
+        //copy object
+        val adr = Ride()
+        adr.id = address.id
+        adr.address = address.address
+        adr.description = address.description
+        adr.uri = address.uri
+        adr.point = address.point
+        adr.isCashed = address.isCashed
 
         if (!cashSuggest.isNullOrEmpty()) {
             tempList.addAll(cashSuggest!!)

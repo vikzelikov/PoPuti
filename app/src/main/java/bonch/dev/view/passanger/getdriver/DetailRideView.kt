@@ -49,6 +49,9 @@ class DetailRideView(val createRideView: CreateRideView) {
         detailRidePresenter?.receiveAddresses(fromAdr, toAdr)
 
         initBankCardRecycler()
+
+        getView().on_map_view_detail.visibility = View.VISIBLE
+        getView().on_map_view_detail.visibility = View.GONE
     }
 
 
