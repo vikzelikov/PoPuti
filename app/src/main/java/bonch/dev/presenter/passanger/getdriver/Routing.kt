@@ -1,6 +1,13 @@
 package bonch.dev.presenter.passanger.getdriver
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.os.Build
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import bonch.dev.R
+import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
 import bonch.dev.view.passanger.getdriver.DetailRideView
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.RequestPoint
@@ -15,10 +22,11 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.Error
+import com.yandex.runtime.image.ImageProvider
 import java.lang.Exception
 import java.util.*
 
-class Routing(var context: Context, var detailRideView: DetailRideView) :
+class Routing(var context: Context, private var detailRideView: DetailRideView) :
     DrivingSession.DrivingRouteListener {
 
     private var mapView: MapView? = null
@@ -40,15 +48,29 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
 
 
     override fun onDrivingRoutes(routes: MutableList<DrivingRoute>) {
-        for (route in routes) {
-            try {
-                //unsupported Yandex Map exception
+        //unsupported Yandex Map exception
+        try {
+            for (route in routes) {
                 mapObjects?.addPolyline(route.geometry)
-            } catch (ex: Exception) {
             }
+
+            //adding start and end placemarks
+            val fromMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_from)
+            val toMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_to)
+            mapObjects?.addPlacemark(
+                routes.first().geometry.points.first(),
+                ImageProvider.fromBitmap(fromMark)
+            )
+            mapObjects?.addPlacemark(
+                routes.last().geometry.points.last(),
+                ImageProvider.fromBitmap(toMark)
+            )
+        } catch (ex: Exception) {
         }
 
-        detailRideView.createRideView.mapView!!.map.move(
+        println(routes.size)
+
+        detailRideView.getView().mapView!!.map.move(
             CameraPosition(screenCenter!!, 13f, 0f, 0f),
             Animation(Animation.Type.SMOOTH, 1f),
             null
@@ -90,5 +112,21 @@ class Routing(var context: Context, var detailRideView: DetailRideView) :
         if (mapView != null) {
             mapView!!.map.mapObjects.remove(mapObjects!!)
         }
+    }
+
+
+    private fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
+        val drawable = ContextCompat.getDrawable(this, drawableId) ?: return null
+
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        ) ?: return null
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 }

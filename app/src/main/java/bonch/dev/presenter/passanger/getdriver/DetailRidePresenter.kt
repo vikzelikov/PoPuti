@@ -237,7 +237,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         val onMapView = getView().on_map_view_detail
         val backBtn = getView().back_btn
 
-        if (slideOffset > 0) {
+        if (slideOffset > 0 && slideOffset < 1) {
             onMapView.alpha = slideOffset * 0.8f
             backBtn.alpha = 1 - slideOffset * 0.9f
         }

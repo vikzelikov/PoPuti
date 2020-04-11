@@ -49,6 +49,9 @@ class DetailRideView(val createRideView: CreateRideView) {
         detailRidePresenter?.receiveAddresses(fromAdr, toAdr)
 
         initBankCardRecycler()
+
+        //remove bottom nav menu
+        getView().navView?.visibility = View.GONE
     }
 
 
@@ -134,7 +137,8 @@ class DetailRideView(val createRideView: CreateRideView) {
     private fun setBottomSheet() {
         cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().cards_bottom_sheet)
         commentBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().comment_bottom_sheet)
-        infoPriceBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().info_price_bottom_sheet)
+        infoPriceBottomSheetBehavior =
+            BottomSheetBehavior.from<View>(getView().info_price_bottom_sheet)
 
         commentBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {

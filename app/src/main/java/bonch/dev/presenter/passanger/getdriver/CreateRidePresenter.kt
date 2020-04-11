@@ -467,7 +467,6 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             r.container_create_ride.visibility = View.GONE
             r.container_detail_ride.visibility = View.VISIBLE
 
-            r.navView?.visibility = View.GONE
             r.back_btn.visibility = View.VISIBLE
         } else {
             r.container_create_ride.visibility = View.VISIBLE
