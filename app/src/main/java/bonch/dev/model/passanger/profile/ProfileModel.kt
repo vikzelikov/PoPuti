@@ -22,6 +22,7 @@ class ProfileModel(val profilePresenter: IProfilePresenter) {
                 Realm.init(context)
                 val config = RealmConfiguration.Builder()
                     .name(PROFILE_REALM_NAME)
+                    .deleteRealmIfMigrationNeeded()
                     .build()
                 realm = Realm.getInstance(config)
             }

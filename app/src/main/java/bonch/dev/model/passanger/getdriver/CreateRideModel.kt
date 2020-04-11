@@ -29,6 +29,7 @@ class CreateRideModel(private val createRidePresenter: CreateRidePresenter) {
                 Realm.init(context)
                 val config = RealmConfiguration.Builder()
                     .name(Constants.CASH_RIDE_REALM_NAME)
+                    .deleteRealmIfMigrationNeeded()
                     .build()
                 realm = Realm.getInstance(config)
             }
@@ -44,6 +45,7 @@ class CreateRideModel(private val createRidePresenter: CreateRidePresenter) {
                 Realm.init(context)
                 val config = RealmConfiguration.Builder()
                     .name(Constants.CASH_REQUEST_REALM_NAME)
+                    .deleteRealmIfMigrationNeeded()
                     .build()
                 realmCash = Realm.getInstance(config)
             }

@@ -96,6 +96,7 @@ class SignupModel(private val signupPresenter: SignupPresenter) {
             Realm.init(context)
             val config = RealmConfiguration.Builder()
                 .name(PROFILE_REALM_NAME)
+                .deleteRealmIfMigrationNeeded()
                 .build()
             val realm = Realm.getInstance(config)
 
