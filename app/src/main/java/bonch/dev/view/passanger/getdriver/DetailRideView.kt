@@ -4,22 +4,18 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.model.passanger.getdriver.pojo.PaymentCard
-import bonch.dev.model.passanger.getdriver.pojo.Ride
 import bonch.dev.presenter.passanger.getdriver.DetailRidePresenter
 import bonch.dev.presenter.passanger.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.create_ride_fragment.*
-import kotlinx.android.synthetic.main.create_ride_fragment.view.*
-import kotlinx.android.synthetic.main.detail_ride_layout.*
-import kotlinx.android.synthetic.main.detail_ride_layout.view.*
 
 
 class DetailRideView(val createRideView: CreateRideView) {

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintSet
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.CreateRideModel
@@ -57,9 +58,9 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
         if (fromAdr != null && toAdr != null) {
             //cash data (both of adr)
-                saveCashSuggest(fromAdr!!)
+            saveCashSuggest(fromAdr!!)
 
-                saveCashSuggest(toAdr!!)
+            saveCashSuggest(toAdr!!)
 
 
             //go to the next screen
@@ -118,15 +119,6 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     private fun clearSuggest() {
         addressesListAdapter?.list?.clear()
         addressesListAdapter?.notifyDataSetChanged()
-    }
-
-
-    fun requestGeocoder(point: Point?) {
-        if (!isBlockRequest && point != null) {
-            //send request and set block for several seconds
-            createRideModel?.requestGeocoder(point)
-            isBlockRequest = true
-        }
     }
 
 
@@ -193,6 +185,15 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             addressesListAdapter?.list?.clear()
             addressesListAdapter?.list?.addAll(cashSuggest!!)
             addressesListAdapter?.notifyDataSetChanged()
+        }
+    }
+
+
+    fun requestGeocoder(point: Point?) {
+        if (!isBlockRequest && point != null) {
+            //send request and set block for several seconds
+            createRideModel?.requestGeocoder(point)
+            isBlockRequest = true
         }
     }
 
@@ -295,6 +296,8 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             }
         }
 
+        //update current focus
+        addressesListAdapter?.isFromFocus = isFrom
         getView().bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -468,6 +471,19 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             r.container_detail_ride.visibility = View.VISIBLE
 
             r.back_btn.visibility = View.VISIBLE
+
+            //change constrants of Map
+            val constraintSet = ConstraintSet()
+            val constraint = getView().container_get_driver
+            constraintSet.clone(constraint)
+            constraintSet.connect(
+                R.id.map,
+                ConstraintSet.BOTTOM,
+                R.id.container_detail_ride,
+                ConstraintSet.TOP,
+                0
+            )
+            constraintSet.applyTo(constraint)
         } else {
             r.container_create_ride.visibility = View.VISIBLE
             r.container_detail_ride.visibility = View.GONE

@@ -56,7 +56,7 @@ open class Ride(
     override fun equals(other: Any?): Boolean {
         return (address == (other as Ride).address
                 && uri == (other).uri
-                && point == (other).point)
+                && description == (other).description)
     }
 
 

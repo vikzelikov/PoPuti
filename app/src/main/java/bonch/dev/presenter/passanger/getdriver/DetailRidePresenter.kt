@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.SearchPlace
@@ -37,10 +36,6 @@ import bonch.dev.view.passanger.getdriver.DetailRideView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.create_ride_fragment.*
-import kotlinx.android.synthetic.main.detail_ride_layout.*
-import kotlinx.android.synthetic.main.detail_ride_layout.comment_min_text
-import kotlinx.android.synthetic.main.detail_ride_layout.main_info_layout
-import kotlinx.android.synthetic.main.detail_ride_layout.offer_price
 
 class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
@@ -247,7 +242,6 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     fun onStateChangedBottomSheet(newState: Int) {
         val commentText = getView().comment_text
         val onMapView = getView().on_map_view_detail
-        val mainInfoLayout = getView().main_info_layout
 
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
             val activity = getView().activity as MainActivity
@@ -258,10 +252,8 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             onMapView.visibility = View.GONE
-            mainInfoLayout.elevation = 30f
         } else {
             onMapView.visibility = View.VISIBLE
-            mainInfoLayout.elevation = 0f
         }
     }
 

@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
@@ -15,7 +14,6 @@ import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.passanger.getdriver.CreateRideView
 import kotlinx.android.synthetic.main.create_ride_layout.*
 import kotlinx.android.synthetic.main.ride_item.view.*
-import java.lang.IndexOutOfBoundsException
 
 
 class AddressesListAdapter(
@@ -23,6 +21,8 @@ class AddressesListAdapter(
     var list: ArrayList<Ride>,
     val context: Context
 ) : RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
+
+    var isFromFocus = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
@@ -47,22 +47,20 @@ class AddressesListAdapter(
             val fromAdrView = createRideView.from_adr
             val toAdrView = createRideView.to_adr
 
-            if (fromAdrView.isFocused) {
+            if (isFromFocus) {
                 fromAdrView.setText(list[position].address)
                 fromAdrView.setSelection(fromAdrView.text.length)
                 fromAdr = try {
                     list[position]
-                }catch (ex: IndexOutOfBoundsException){
+                } catch (ex: IndexOutOfBoundsException) {
                     list.last()
                 }
-            }
-
-            if (toAdrView.isFocused) {
+            } else {
                 toAdrView.setText(list[position].address)
                 toAdrView.setSelection(toAdrView.text.length)
                 toAdr = try {
                     list[position]
-                }catch (ex: IndexOutOfBoundsException){
+                } catch (ex: IndexOutOfBoundsException) {
                     list.last()
                 }
             }
