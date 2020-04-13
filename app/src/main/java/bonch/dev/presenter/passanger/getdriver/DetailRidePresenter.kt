@@ -228,6 +228,11 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
+    fun showRoute(){
+        routing?.showRoute()
+    }
+
+
     fun onSlideBottomSheet(slideOffset: Float) {
         val onMapView = getView().on_map_view_detail
         val backBtn = getView().back_btn

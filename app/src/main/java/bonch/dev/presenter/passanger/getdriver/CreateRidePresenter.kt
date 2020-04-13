@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.constraintlayout.widget.ConstraintSet
 import bonch.dev.MainActivity
 import bonch.dev.R
@@ -17,7 +18,6 @@ import bonch.dev.utils.ChangeOpacity.getOpacity
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.BLOCK_REQUEST_GEOCODER
 import bonch.dev.utils.Keyboard.hideKeyboard
-import bonch.dev.utils.Keyboard.showKeyboard
 import bonch.dev.view.passanger.getdriver.CreateRideView
 import bonch.dev.view.passanger.getdriver.DetailRideView
 import bonch.dev.view.passanger.getdriver.MBottomSheet
@@ -41,6 +41,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     var detailRideView: DetailRideView? = null
     var isBlockRequest = true
     var isFromMapSearch = true
+    var isBlockSelection = false
 
     private val shape = GradientDrawable()
     private val corners = floatArrayOf(14f, 14f, 14f, 14f, 0f, 0f, 0f, 0f)
@@ -59,9 +60,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         if (fromAdr != null && toAdr != null) {
             //cash data (both of adr)
             saveCashSuggest(fromAdr!!)
-
             saveCashSuggest(toAdr!!)
-
 
             //go to the next screen
             showDetailRideView()
@@ -258,47 +257,63 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
     fun touchAddress(isFrom: Boolean) {
         val r = getView()
+        val from = r.from_adr
+        val to = r.to_adr
         val activity = getView().activity as MainActivity
 
+        //update current focus
+        addressesListAdapter?.isFromFocus = isFrom
+        getView().bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+        from.isSingleLine = true
+        to.isSingleLine = true
+
         if (isFrom) {
-            if (r.to_adr.isFocused) {
+            if (to.isFocused) {
                 addressesListAdapter?.list?.clear()
                 addressesListAdapter?.notifyDataSetChanged()
-                r.from_adr.requestFocus()
-                showKeyboard(activity)
+            }
+
+            if (!isBlockSelection) {
+                from.requestFocus()
+                from.setSelection(r.from_adr.text.length)
+                isBlockSelection = true
             }
 
             r.btn_map_from.visibility = View.VISIBLE
             r.btn_map_to.visibility = View.GONE
             r.to_cross.visibility = View.GONE
 
-            if (r.from_adr.text.isNotEmpty()) {
+            if (from.text.isNotEmpty()) {
                 r.from_cross.visibility = View.VISIBLE
             } else {
                 r.from_cross.visibility = View.GONE
             }
         } else {
-            if (r.from_adr.isFocused) {
+            if (from.isFocused) {
                 addressesListAdapter?.list?.clear()
                 addressesListAdapter?.notifyDataSetChanged()
-                r.to_adr.requestFocus()
-                showKeyboard(activity)
+            }
+
+            if (!isBlockSelection) {
+                to.requestFocus()
+                to.setSelection(r.to_adr.text.length)
+                isBlockSelection = true
             }
 
             r.btn_map_from.visibility = View.GONE
             r.btn_map_to.visibility = View.VISIBLE
             r.from_cross.visibility = View.GONE
 
-            if (r.to_adr.text.isNotEmpty()) {
+            if (to.text.isNotEmpty()) {
                 r.to_cross.visibility = View.VISIBLE
             } else {
                 r.to_cross.visibility = View.GONE
             }
         }
 
-        //update current focus
-        addressesListAdapter?.isFromFocus = isFrom
-        getView().bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+        //set favourite addresses
+        getCashSuggest()
+
     }
 
 
@@ -384,8 +399,6 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
             val activity = r.activity as MainActivity
             hideKeyboard(activity, r.view!!)
-            r.from_adr.clearFocus()
-            r.to_adr.clearFocus()
         }
         if (newState == BottomSheetBehavior.STATE_EXPANDED) {
             if (r.bottomSheetBehavior is MBottomSheet<*>) {
@@ -398,6 +411,14 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
                 r.from_cross.visibility = View.GONE
                 r.to_cross.visibility = View.GONE
                 r.on_map_view.visibility = View.GONE
+                r.from_adr.clearFocus()
+                r.to_adr.clearFocus()
+
+                r.from_adr.isSingleLine = false
+                r.to_adr.isSingleLine = false
+                isBlockSelection = false
+                r.from_adr.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
+                r.to_adr.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
                 (r.bottomSheetBehavior as MBottomSheet<*>).swipeEnabled = false
             }
         } else {
@@ -469,6 +490,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         if (showDetailRide) {
             r.container_create_ride.visibility = View.GONE
             r.container_detail_ride.visibility = View.VISIBLE
+            r.show_route.visibility = View.VISIBLE
 
             r.back_btn.visibility = View.VISIBLE
 
@@ -487,6 +509,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         } else {
             r.container_create_ride.visibility = View.VISIBLE
             r.container_detail_ride.visibility = View.GONE
+            r.show_route.visibility = View.GONE
 
             r.navView?.visibility = View.VISIBLE
             r.back_btn.visibility = View.GONE

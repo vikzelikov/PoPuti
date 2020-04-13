@@ -118,6 +118,10 @@ class DetailRideView(val createRideView: CreateRideView) {
             detailRidePresenter?.getInfoPrice()
         }
 
+        r.show_route.setOnClickListener {
+            detailRidePresenter?.showRoute()
+        }
+
         r.back_btn.setOnClickListener {
             getView().backPressed()
         }

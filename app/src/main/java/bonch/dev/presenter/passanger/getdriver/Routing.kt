@@ -109,7 +109,7 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
     }
 
 
-    private fun showRoute(){
+    fun showRoute(){
         var cameraPosition = mapView!!.map.cameraPosition(boundingBox!!)
 
         cameraPosition = CameraPosition(

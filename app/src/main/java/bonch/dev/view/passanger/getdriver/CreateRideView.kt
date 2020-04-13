@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -31,6 +32,9 @@ import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
+import com.yandex.mapkit.logo.Alignment
+import com.yandex.mapkit.logo.HorizontalAlignment
+import com.yandex.mapkit.logo.VerticalAlignment
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
@@ -74,8 +78,13 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
         initialize(root)
 
-        mapView!!.map.addCameraListener(this)
-        mapView!!.map.isRotateGesturesEnabled = false
+        mapView?.map?.addCameraListener(this)
+        mapView?.map?.isRotateGesturesEnabled = false
+
+        mapView?.map?.apply {
+            val alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
+            logo.setAlignment(alignment)
+        }
 
         setBottomSheet()
 
@@ -88,7 +97,6 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         }
 
         root.from_adr.setText(fromAdr?.address)
-
 
         createRidePresenter?.getCashSuggest()
 
@@ -219,15 +227,13 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             }
         })
 
-        from_adr.setOnTouchListener { _, _ ->
+        from_adr.setOnTouchListener{ _: View, _: MotionEvent ->
             createRidePresenter?.touchAddress(true)
-
             false
         }
 
-        to_adr.setOnTouchListener { _, _ ->
+        to_adr.setOnTouchListener{ _: View, _: MotionEvent ->
             createRidePresenter?.touchAddress(false)
-
             false
         }
 
@@ -276,6 +282,7 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             )
 
         bottomSheetBehavior = BottomSheetBehavior.from<View>(root.bottom_sheet_addresses)
+        (bottomSheetBehavior as MBottomSheet<*>).swipeEnabled = false
 
         root.addresses_list.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
