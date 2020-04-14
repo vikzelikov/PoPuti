@@ -35,7 +35,6 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
 
     init {
         mapView = detailRideView.createRideView.mapView
-        DirectionsFactory.initialize(context)
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
         mapObjects = mapView!!.map.mapObjects.addCollection()
     }
@@ -72,9 +71,10 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
 
 
     fun submitRequest(startLocation: Point, endLocation: Point) {
-        val drivingOptions = DrivingOptions()
+        val drivingOptions = DrivingOptions().apply {
+            alternativeCount = 1
+        }
         val requestPoints = ArrayList<RequestPoint>()
-        drivingOptions.alternativeCount = 1
 
         //get boundingBox around two point
         boundingBox = BoundingBox(

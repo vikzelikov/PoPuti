@@ -65,59 +65,46 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/from_address"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:orientation="horizontal">
+                    android:layout_height="62dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="0dp"
+                    android:textAlignment="gravity"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
 
-                    <TextView
-                        android:id="@+id/from_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:fontFamily="@font/roboto"
-                        android:padding="10dp"
-                        android:paddingStart="0dp"
-                        android:singleLine="true"
-                        android:text="Address 1"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp" />
-
-
-                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="2dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="1dp"
                     android:background="#30000000" />
 
-                <LinearLayout
+
+                <TextView
+                    android:id="@+id/to_address"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:layout_height="62dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="0dp"
+                    android:textAlignment="gravity"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
 
-                    <TextView
-                        android:id="@+id/to_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:fontFamily="@font/roboto"
-                        android:padding="10dp"
-                        android:paddingStart="0dp"
-                        android:singleLine="true"
-                        android:text="Address 2"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp" />
-
-
-                </LinearLayout>
 
             </LinearLayout>
-
 
         </LinearLayout>
 

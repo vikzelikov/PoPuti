@@ -3,9 +3,9 @@ package bonch.dev.presenter.passanger.getdriver
 import android.os.Build
 import android.text.Html
 import android.view.View
-import androidx.preference.PreferenceManager
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.model.passanger.getdriver.DriverInfoModel
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate
 import bonch.dev.model.passanger.getdriver.pojo.Driver
 import bonch.dev.model.passanger.getdriver.pojo.DriverObject
@@ -13,16 +13,22 @@ import bonch.dev.model.passanger.getdriver.pojo.ReasonCancel
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.view.passanger.getdriver.DriverInfoView
+import bonch.dev.view.passanger.getdriver.GetDriverView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.driver_info_layout.view.*
-import kotlinx.android.synthetic.main.get_driver_layout.view.main_info_layout
-import kotlinx.android.synthetic.main.get_driver_layout.view.on_map_view
-import kotlinx.android.synthetic.main.get_driver_layout.view.on_view_cancel_reason
+import kotlinx.android.synthetic.main.driver_info_layout.*
+import kotlinx.android.synthetic.main.get_driver_layout.view.*
 
 class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
-
+    private var driverInfoModel: DriverInfoModel? = null
     var isDriverArrived = false
+
+
+    init {
+        if (driverInfoModel == null) {
+            driverInfoModel = DriverInfoModel()
+        }
+    }
 
 
     fun startTrackingDriver() {
@@ -32,8 +38,8 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
     }
 
 
-    fun onSlideCancelReason(slideOffset: Float, root: View) {
-        val onMapView = root.on_map_view
+    fun onSlideCancelReason(slideOffset: Float) {
+        val onMapView = getView().on_map_view
 
         if (slideOffset > 0) {
             onMapView.alpha = slideOffset * 0.8f
@@ -41,8 +47,8 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
     }
 
 
-    fun onSlideConfirmCancel(slideOffset: Float, root: View) {
-        val onView = root.on_view_cancel_reason
+    fun onSlideConfirmCancel(slideOffset: Float) {
+        val onView = getView().on_view_cancel_reason
 
         if (slideOffset > 0) {
             onView.visibility = View.VISIBLE
@@ -51,9 +57,9 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
     }
 
 
-    fun onChangedStateCancelReason(newState: Int, root: View) {
-        val onMapView = root.on_map_view
-        val mainInfoLayout = root.main_info_layout
+    fun onChangedStateCancelReason(newState: Int) {
+        val onMapView = getView().on_map_view
+        val mainInfoLayout = getView().main_info_layout
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             onMapView.visibility = View.GONE
@@ -67,8 +73,8 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
     }
 
 
-    fun onChangedStateConfirmCancel(newState: Int, root: View) {
-        val onMapView = root.on_view_cancel_reason
+    fun onChangedStateConfirmCancel(newState: Int) {
+        val onMapView = getView().on_view_cancel_reason
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             onMapView.visibility = View.GONE
@@ -84,29 +90,19 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
 
     fun getConfirmCancel() {
-        val textMessage = driverInfoView.getRootView().text_message
+        val textMessage = getView().text_message
 
         if (isDriverArrived) {
-            val resources = driverInfoView.getRootView().resources
+            val resources = getView().resources
             val tax = getTaxMoney()
             val message: String =
                 driverInfoView.getView().resources.getString(R.string.messageWarningTakeMoney)
 
+            val rub = resources.getString(R.string.offer_price_average_price)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                message.plus(
-                    Html.fromHtml(
-                        resources.getString(R.string.offer_price_average_price)
-                            .plus(" <b>$tax рублей</b>"), Html.FROM_HTML_MODE_COMPACT
-                    )
-                )
-
+                message.plus(Html.fromHtml(" <b>$tax $rub</b>", Html.FROM_HTML_MODE_COMPACT))
             } else {
-                message.plus(
-                    Html.fromHtml(
-                        resources.getString(R.string.offer_price_average_price)
-                            .plus(" <b>$tax рублей</b>")
-                    )
-                )
+                message.plus(Html.fromHtml(" <b>$tax $rub</b>"))
             }
 
             textMessage.text = message
@@ -122,6 +118,7 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
 
     private fun getTaxMoney(): Int {
+        //TODO рассчитать штраф
         return 100
     }
 
@@ -129,7 +126,8 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
     fun cancelDone(reasonID: Int) {
         //TODO send reason to server
         //stop getting new driver
-        val fm = (driverInfoView.getView().activity as MainActivity).supportFragmentManager
+        val activity = getView().activity as MainActivity
+        val fm = activity.supportFragmentManager
 
         when (reasonID) {
             Constants.REASON1 -> {
@@ -162,7 +160,7 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
         //clear data
         DriverObject.driver = null
-        removeDataDriver()
+        driverInfoModel?.removeDataDriver(activity)
 
         //redirect
         replaceFragment(Constants.MAIN_FRAGMENT, null, fm)
@@ -170,7 +168,7 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
 
     fun notCancel() {
-        val root = driverInfoView.getView().view
+        val root = getView().view
         root?.on_map_view?.visibility = View.GONE
         root?.on_view_cancel_reason?.visibility = View.GONE
 
@@ -185,37 +183,13 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
         //save driver in case close app
 
         if (driver.carName != null) {
-            saveDataDriver(driver)
+            val activity = getView().activity as MainActivity
+            driverInfoModel?.saveDataDriver(activity, driver)
         }
     }
 
 
-    private fun saveDataDriver(driver: Driver) {
-        val activity = driverInfoView.getDriverView.activity as MainActivity
-        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
-        val editor = pref.edit()
-
-        editor.putString(Constants.NAME_DRIVER, driver.nameDriver)
-        editor.putString(Constants.CAR_NAME, driver.carName)
-        editor.putString(Constants.CAR_NUMBER, driver.carNumber)
-        editor.putInt(Constants.PRICE_DRIVER, driver.price!!)
-        editor.putInt(Constants.IMG_DRIVER, driver.imgDriver!!)
-        editor.putBoolean(Constants.IS_DRIVER_ARRIVED, isDriverArrived)
-        editor.apply()
-    }
-
-
-    private fun removeDataDriver() {
-        val activity = driverInfoView.getDriverView.activity as MainActivity
-        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
-
-        val editor = pref.edit()
-        editor.remove(Constants.NAME_DRIVER)
-        editor.remove(Constants.CAR_NAME)
-        editor.remove(Constants.CAR_NUMBER)
-        editor.remove(Constants.PRICE_DRIVER)
-        editor.remove(Constants.IMG_DRIVER)
-        editor.remove(Constants.IS_DRIVER_ARRIVED)
-        editor.apply()
+    private fun getView(): GetDriverView {
+        return driverInfoView.getView()
     }
 }

@@ -9,6 +9,7 @@ import bonch.dev.utils.Constants
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.driver_info_layout.*
 import kotlinx.android.synthetic.main.driver_info_layout.view.*
 
 class DriverInfoView(var getDriverView: GetDriverView) {
@@ -26,9 +27,9 @@ class DriverInfoView(var getDriverView: GetDriverView) {
 
 
     fun onCreateView(driver: Driver) {
-        setBottomSheet(getRootView())
+        setListeners()
 
-        setListeners(getRootView())
+        setBottomSheet()
 
         driverInfoPresenter?.setInfoDriver(driver)
 
@@ -36,19 +37,20 @@ class DriverInfoView(var getDriverView: GetDriverView) {
     }
 
 
-    private fun setBottomSheet(root: View) {
-        cancelBottomSheetBehavior = BottomSheetBehavior.from<View>(root.reasons_bottom_sheet)
-        confirmCancelBottomSheetBehavior = BottomSheetBehavior.from<View>(root.confirm_cancel_bottom_sheet)
+    private fun setBottomSheet() {
+        cancelBottomSheetBehavior = BottomSheetBehavior.from<View>(getView().reasons_bottom_sheet)
+        confirmCancelBottomSheetBehavior =
+            BottomSheetBehavior.from<View>(getView().confirm_cancel_bottom_sheet)
 
         cancelBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                driverInfoPresenter?.onSlideCancelReason(slideOffset, root)
+                driverInfoPresenter?.onSlideCancelReason(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                driverInfoPresenter?.onChangedStateCancelReason(newState, root)
+                driverInfoPresenter?.onChangedStateCancelReason(newState)
             }
         })
 
@@ -57,103 +59,91 @@ class DriverInfoView(var getDriverView: GetDriverView) {
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                driverInfoPresenter?.onSlideConfirmCancel(slideOffset, root)
+                driverInfoPresenter?.onSlideConfirmCancel(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                driverInfoPresenter?.onChangedStateConfirmCancel(newState, root)
+                driverInfoPresenter?.onChangedStateConfirmCancel(newState)
             }
         })
     }
 
 
-    private fun setListeners(root: View) {
+    private fun setListeners() {
+        val r = getView()
+        //set default reason
         var reasonID: Int = Constants.REASON4
-        val cancelRideBtn = root.cancel_ride
-        val cancelBtn = root.cancel
-        val notCancelBtn = root.not_cancel
-        val onMapView = root.on_map_view
-        val callDriver = root.phone_call_driver
-        val chatDriver = root.message_driver
-        val case1 = root.case1
-        val case2 = root.case2
-        val case3 = root.case3
-        val case4 = root.case4
 
-        cancelRideBtn.setOnClickListener {
+        r.cancel_ride.setOnClickListener {
             driverInfoPresenter?.getCancelReason()
         }
 
-        case1.setOnClickListener {
+        r.case1.setOnClickListener {
             reasonID = Constants.REASON1
             driverInfoPresenter?.getConfirmCancel()
         }
 
-        case2.setOnClickListener {
+        r.case2.setOnClickListener {
             reasonID = Constants.REASON2
             driverInfoPresenter?.getConfirmCancel()
         }
 
-        case3.setOnClickListener {
+        r.case3.setOnClickListener {
             reasonID = Constants.REASON3
             driverInfoPresenter?.getConfirmCancel()
         }
 
-        case4.setOnClickListener {
+        r.case4.setOnClickListener {
             reasonID = Constants.REASON4
             driverInfoPresenter?.getConfirmCancel()
         }
 
-        cancelBtn.setOnClickListener {
+        r.cancel.setOnClickListener {
             driverInfoPresenter?.cancelDone(reasonID)
         }
 
-        notCancelBtn.setOnClickListener {
+        r.not_cancel.setOnClickListener {
             driverInfoPresenter?.notCancel()
         }
 
-        onMapView.setOnClickListener {
+        r.on_map_view.setOnClickListener {
             driverInfoPresenter?.notCancel()
         }
 
         //TODO
-        chatDriver.setOnClickListener {
+        r.message_driver.setOnClickListener {
             Toast.makeText(getView().context!!, "Chat", Toast.LENGTH_SHORT).show()
         }
 
-        callDriver.setOnClickListener {
+        r.phone_call_driver.setOnClickListener {
             Toast.makeText(getView().context!!, "Call driver", Toast.LENGTH_SHORT).show()
         }
     }
 
 
     fun setInfoDriver(driver: Driver) {
-        val root = getRootView()
+        val r = getView()
 
-        root.driver_name.text = driver.nameDriver
-        root.car_number.text = driver.carNumber
-        root.car_name.text = driver.carName
+        r.driver_name.text = driver.nameDriver
+        r.car_number.text = driver.carNumber
+        r.car_name.text = driver.carName
 
-        if(driver.isArrived){
-            getRootView().status_driver.text = getView().resources.getString(R.string.driverArrived)
+        if (driver.isArrived) {
+            r.status_driver.text = getView().resources.getString(R.string.driverArrived)
             driverInfoPresenter?.isDriverArrived = true
-        }else{
-            getRootView().status_driver.text = getView().resources.getString(R.string.driverInWay)
+        } else {
+            r.status_driver.text = getView().resources.getString(R.string.driverInWay)
             driverInfoPresenter?.isDriverArrived = false
         }
 
-        Glide.with(root).load(driver.imgDriver)
+        Glide.with(r).load(driver.imgDriver)
             .apply(RequestOptions().centerCrop().circleCrop())
-            .into(root.img_driver)
+            .into(r.img_driver)
     }
 
 
     fun getView(): GetDriverView {
         return getDriverView
-    }
-
-    fun getRootView(): View {
-        return getDriverView.getDriverPresenter?.root!!
     }
 
 }

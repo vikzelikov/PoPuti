@@ -107,5 +107,8 @@
     <string name="fillCorrectData">Пожалуйста, заполните необходимые поля (имя, фамилия)</string>
     <string name="rating">Рейтинг</string>
     <string name="save">Сохранить</string>
+    <string name="rub">руб.</string>
+    <string name="call">Позвонить</string>
+    <string name="message">Написать</string>
 
 </resources>

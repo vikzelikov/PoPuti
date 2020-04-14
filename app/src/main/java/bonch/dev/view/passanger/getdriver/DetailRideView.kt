@@ -45,9 +45,6 @@ class DetailRideView(val createRideView: CreateRideView) {
         detailRidePresenter?.receiveAddresses(fromAdr, toAdr)
 
         initBankCardRecycler()
-
-        //remove bottom nav menu
-        getView().navView?.visibility = View.GONE
     }
 
 

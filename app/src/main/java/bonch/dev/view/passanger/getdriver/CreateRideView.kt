@@ -17,14 +17,10 @@ import bonch.dev.MainActivity
 import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
-import bonch.dev.model.passanger.getdriver.pojo.Coordinate.toAdr
-import bonch.dev.model.passanger.getdriver.pojo.ReasonCancel.reasonID
 import bonch.dev.presenter.passanger.getdriver.CreateRidePresenter
 import bonch.dev.presenter.passanger.getdriver.adapters.AddressesListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.API_KEY
-import bonch.dev.utils.Constants.REASON1
-import bonch.dev.utils.Constants.REASON2
 import bonch.dev.utils.Keyboard.hideKeyboard
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -42,6 +38,7 @@ import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.image.ImageProvider.fromResource
 import kotlinx.android.synthetic.main.create_ride_fragment.*
 import kotlinx.android.synthetic.main.create_ride_layout.*
@@ -88,16 +85,6 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
         setBottomSheet()
 
-        if (reasonID == REASON1 || reasonID == REASON2) {
-            if (fromAdr != null && toAdr != null) {
-                //in case cancel ride from GetDriverView
-                createRidePresenter?.addressesDone()
-                reasonID = null
-            }
-        }
-
-        root.from_adr.setText(fromAdr?.address)
-
         createRidePresenter?.getCashSuggest()
 
         return root
@@ -111,6 +98,9 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
         } else {
             Permissions.access(Constants.GEO_PERMISSION_REQUEST, this)
         }
+
+        createRidePresenter?.isUserCoordinate()
+
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -149,8 +139,10 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
     //add user location icon
     override fun onObjectAdded(userLocationView: UserLocationView) {
         val pinIcon = userLocationView.pin.useCompositeIcon()
-        //TODO change to svg
-        userLocationView.arrow.setIcon(fromResource(context, R.drawable.ic_user_mark, true))
+
+        //for moving
+        val userMark = createRidePresenter?.getBitmap(R.drawable.ic_user_mark)
+        userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
 
         userLocationLayer!!.setAnchor(
             PointF(
@@ -163,9 +155,10 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             )
         )
 
+        //for staying
         pinIcon.setIcon(
             "pin",
-            fromResource(context, R.drawable.ic_user_mark),
+            ImageProvider.fromBitmap(userMark),
             IconStyle().setAnchor(PointF(0.5f, 0.5f))
                 .setRotationType(RotationType.ROTATE)
                 .setZIndex(1f)

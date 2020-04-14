@@ -1,16 +1,21 @@
 package bonch.dev.presenter.passanger.getdriver
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.CreateRideModel
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.toAdr
+import bonch.dev.model.passanger.getdriver.pojo.ReasonCancel
 import bonch.dev.model.passanger.getdriver.pojo.Ride
 import bonch.dev.model.passanger.getdriver.pojo.RidePoint
 import bonch.dev.presenter.passanger.getdriver.adapters.AddressesListAdapter
@@ -36,8 +41,8 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
     private var createRideModel: CreateRideModel? = null
     private var blockRequestHandler: Handler? = null
-    var addressesListAdapter: AddressesListAdapter? = null
     private var cashSuggest: RealmResults<Ride>? = null
+    var addressesListAdapter: AddressesListAdapter? = null
     var detailRideView: DetailRideView? = null
     var isBlockRequest = true
     var isFromMapSearch = true
@@ -121,17 +126,20 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     }
 
 
-    private fun saveCashSuggest(address: Ride) {
+    private fun saveCashSuggest(addressRide: Ride) {
         val tempList = arrayListOf<Ride>()
 
         //copy object
         val adr = Ride()
-        adr.id = address.id
-        adr.address = address.address
-        adr.description = address.description
-        adr.uri = address.uri
-        adr.point = address.point
-        adr.isCashed = address.isCashed
+        adr.apply {
+            id = addressRide.id
+            address = addressRide.address
+            description = addressRide.description
+            uri = addressRide.uri
+            point = addressRide.point
+            isCashed = addressRide.isCashed
+        }
+
 
         if (!cashSuggest.isNullOrEmpty()) {
             tempList.addAll(cashSuggest!!)
@@ -322,6 +330,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         val activity = getView().activity as MainActivity
 
         r.main_addresses_layout.visibility = View.GONE
+        r.addresses_list.visibility = View.GONE
         r.address_map_marker_layout.visibility = View.VISIBLE
 
         if (isFrom) {
@@ -365,7 +374,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     }
 
 
-    fun getUserPoint(): Point? {
+    private fun getUserPoint(): Point? {
         var point: Point? = null
         val userLocation = createRideView.userLocationLayer
         if (userLocation?.cameraPosition() != null) {
@@ -478,6 +487,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         val r = getView()
         r.center_position.setImageResource(R.drawable.ic_map_marker)
         r.main_addresses_layout.visibility = View.VISIBLE
+        r.addresses_list.visibility = View.VISIBLE
         r.address_map_marker_layout.visibility = View.GONE
         getView().bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
         isFromMapSearch = true
@@ -491,7 +501,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             r.container_create_ride.visibility = View.GONE
             r.container_detail_ride.visibility = View.VISIBLE
             r.show_route.visibility = View.VISIBLE
-
+            getView().navView?.visibility = View.GONE
             r.back_btn.visibility = View.VISIBLE
 
             //change constrants of Map
@@ -510,12 +520,23 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             r.container_create_ride.visibility = View.VISIBLE
             r.container_detail_ride.visibility = View.GONE
             r.show_route.visibility = View.GONE
-
             r.navView?.visibility = View.VISIBLE
             r.back_btn.visibility = View.GONE
         }
 
         r.on_map_view.visibility = View.GONE
+    }
+
+
+    fun isUserCoordinate() {
+        if (ReasonCancel.reasonID == Constants.REASON1 || ReasonCancel.reasonID == Constants.REASON2) {
+            //in case cancel ride
+            //redirect user to next screens
+            addressesDone()
+            ReasonCancel.reasonID = null
+        }
+
+        getView().from_adr.setText(fromAdr?.address)
     }
 
 
@@ -538,6 +559,27 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     private fun stopProcessBlockRequest() {
         blockRequestHandler?.removeCallbacksAndMessages(null)
         isBlockRequest = true
+    }
+
+
+    fun getBitmap(drawableId: Int): Bitmap?{
+        return getView().context?.getBitmapFromVectorDrawable(drawableId)
+    }
+
+
+    private fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
+        val drawable = ContextCompat.getDrawable(this, drawableId) ?: return null
+
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        ) ?: return null
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 
 

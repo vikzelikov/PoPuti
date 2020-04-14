@@ -1,10 +1,16 @@
 package bonch.dev.presenter.passanger.getdriver
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.MainActivity
 import bonch.dev.R
@@ -12,7 +18,6 @@ import bonch.dev.model.passanger.getdriver.GetDriverModel
 import bonch.dev.model.passanger.getdriver.pojo.*
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.presenter.passanger.getdriver.adapters.DriversListAdapter
-import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.FROM
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.REASON1
@@ -28,8 +33,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.get_driver_fragment.*
 import kotlinx.android.synthetic.main.get_driver_fragment.view.*
-import kotlinx.android.synthetic.main.get_driver_fragment.view.on_map_view_main
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class GetDriverPresenter(val getDriverView: GetDriverView) {
@@ -54,8 +62,8 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
             val to: Ride = it.getParcelable(TO)!!
             val rideDetailInfo: RideDetailInfo? = it.getParcelable(RIDE_DETAIL_INFO)
 
-            root.from_address.text = from.address!!
-            root.to_address.text = to.address!!
+            root.from_address.text = from.address
+            root.to_address.text = to.address
 
             if (rideDetailInfo?.priceRide != null) {
                 root.offer_price.text = rideDetailInfo.priceRide
@@ -120,12 +128,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         root?.get_driver_center_text?.visibility = View.GONE
 
         //dynamic replace layout
-        var view = root!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
-        val parent = view.parent as ViewGroup
-        val index = parent.indexOfChild(view)
-        view.visibility = View.GONE
-        view = getDriverView.layoutInflater.inflate(R.layout.driver_info_layout, parent, false)
-        parent.addView(view, index)
+        replaceDynamic()
 
         //stop getting new driver
         handler?.removeCallbacksAndMessages(null)
@@ -137,18 +140,10 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
 
     fun startSearchDrivers(root: View) {
-        //start animation searching
-        val arguments = getDriverView.arguments
-        val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
-        if (userPoint != null) {
-            getDriverView.startAnimSearch(Point(userPoint.latitude, userPoint.longitude))
-        }
-        isAnimaionSearching = true
-
         //init recycler drivers item
         initializeListDrivers(root)
 
-        //TODO
+        //TODO replace to searching with server
         handler = Handler()
         handler!!.postDelayed(object : Runnable {
             override fun run() {
@@ -156,7 +151,6 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
                 handler?.postDelayed(this, 3000)
             }
         }, 10000)
-
     }
 
 
@@ -165,12 +159,12 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
         if (isAnimaionSearching) {
             //animation off
-            val arguments = getDriverView.arguments
-            val userPoint: RidePoint? = arguments?.getParcelable(Constants.USER_POINT)
-            val point = Point(userPoint!!.latitude, userPoint.longitude)
-            val zoom = getDriverView.mapView!!.map.cameraPosition.zoom
+            val zoom = getDriverView.mapView?.map?.cameraPosition?.zoom
+            val userPoint = getUserPoint()
 
-            getDriverView.moveCamera(zoom, point)
+            if (zoom != null && userPoint != null) {
+                getDriverView.moveCamera(zoom, userPoint)
+            }
 
             isAnimaionSearching = false
         }
@@ -178,7 +172,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
 
     private fun initializeListDrivers(root: View) {
-        val context = getDriverView.context!!
+        val context = root.context
 
         driversListAdapter = DriversListAdapter(ArrayList(), context, this)
 
@@ -264,6 +258,39 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
+    private fun getUserPoint(): Point? {
+        val userLocation = getDriverView.userLocationLayer
+        return userLocation?.cameraPosition()?.target
+    }
+
+
+    fun onUserLocationAttach() {
+        //start animation searching
+        val userPoint = getUserPoint()
+
+        if (userPoint != null && !isAnimaionSearching) {
+            getDriverView.startAnimSearch(
+                Point(
+                    userPoint.latitude,
+                    userPoint.longitude
+                )
+            )
+
+            isAnimaionSearching = true
+        }
+    }
+
+
+    private fun replaceDynamic() {
+        var view = root!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
+        val parent = view.parent as ViewGroup
+        val index = parent.indexOfChild(view)
+        view.visibility = View.GONE
+        view = getDriverView.layoutInflater.inflate(R.layout.driver_info_layout, parent, false)
+        parent.addView(view, index)
+    }
+
+
     fun checkBackground(isShow: Boolean) {
         val onMapView = getDriverView.on_map_view_main
 
@@ -274,6 +301,27 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
             onMapView.visibility = View.GONE
             onMapView.alpha = 0f
         }
+    }
+
+
+    fun getBitmap(drawableId: Int): Bitmap?{
+        return getDriverView.context?.getBitmapFromVectorDrawable(drawableId)
+    }
+
+
+    private fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
+        val drawable = ContextCompat.getDrawable(this, drawableId) ?: return null
+
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        ) ?: return null
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 
 }

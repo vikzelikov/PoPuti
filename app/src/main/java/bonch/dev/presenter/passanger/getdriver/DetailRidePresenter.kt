@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.fragment.app.Fragment
 import bonch.dev.MainActivity
@@ -210,7 +211,10 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
         if (!commentText.isFocused) {
             commentText.requestFocus()
-            showKeyboard(activity)
+            //set a little timer to open keyboard
+            Handler().postDelayed({
+                showKeyboard(activity)
+            }, 200)
         }
     }
 
@@ -236,10 +240,12 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     fun onSlideBottomSheet(slideOffset: Float) {
         val onMapView = getView().on_map_view_detail
         val backBtn = getView().back_btn
+        val showRoute = getView().show_route
 
         if (slideOffset > 0 && slideOffset < 1) {
             onMapView.alpha = slideOffset * 0.8f
-            backBtn.alpha = 1 - slideOffset * 0.9f
+            backBtn.alpha = 1 - slideOffset * 0.99f
+            showRoute.alpha = 1 - slideOffset * 0.99f
         }
     }
 
@@ -269,17 +275,10 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             val fm = (getView().activity as MainActivity).supportFragmentManager
             val comment = getView().comment_min_text.text.toString().trim()
             val price = getView().offer_price.text.toString().trim()
-            val userPoint = getView().createRidePresenter?.getUserPoint()
 
             bundle.putParcelable(FROM, fromAdr)
             bundle.putParcelable(TO, toAdr)
             bundle.putParcelable(RIDE_DETAIL_INFO, RideDetailInfo(price, comment))
-            if (userPoint != null){
-                bundle.putParcelable(
-                    USER_POINT,
-                    RidePoint(userPoint.latitude, userPoint.longitude)
-                )
-            }
 
             replaceFragment(GET_DRIVER_VIEW, bundle, fm)
         }

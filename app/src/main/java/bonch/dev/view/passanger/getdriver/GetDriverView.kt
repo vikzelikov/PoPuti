@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import bonch.dev.MainActivity
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.pojo.DriverObject.driver
 import bonch.dev.presenter.passanger.getdriver.GetDriverPresenter
@@ -22,6 +24,9 @@ import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
+import com.yandex.mapkit.logo.Alignment
+import com.yandex.mapkit.logo.HorizontalAlignment
+import com.yandex.mapkit.logo.VerticalAlignment
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
@@ -41,7 +46,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     var confirmCancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var expiredTimeBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var getDriverPresenter: GetDriverPresenter? = null
-    private var userLocationLayer: UserLocationLayer? = null
+    var userLocationLayer: UserLocationLayer? = null
 
 
     init {
@@ -65,10 +70,12 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         val root = inflater.inflate(R.layout.get_driver_fragment, container, false)
         mapView = root.findViewById(R.id.map) as MapView
 
-        setUserLocation()
+        mapView?.map?.addCameraListener(this)
 
-        mapView!!.map.addCameraListener(this)
-        mapView!!.map.isRotateGesturesEnabled = false
+        mapView?.map?.apply {
+            val alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
+            logo.setAlignment(alignment)
+        }
 
         getDriverPresenter?.receiveUserData(arguments, root)
 
@@ -80,13 +87,36 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         getDriverPresenter?.root = root
 
-        if(driver != null){
+        if (driver != null) {
             //ride already created
-            //TODO update driver status
+            //TODO update driver status net
             getDriverPresenter?.selectDriver(driver!!)
         }
 
         return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //access geo permission
+        if (Permissions.isAccess(Constants.GEO_PERMISSION, activity as MainActivity)) {
+            setUserLocation()
+        } else {
+            Permissions.access(Constants.GEO_PERMISSION_REQUEST, this)
+        }
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (Permissions.isAccess(Constants.GEO_PERMISSION, activity as MainActivity)) {
+            setUserLocation()
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 
@@ -95,14 +125,10 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     //add user location icon
     override fun onObjectAdded(userLocationView: UserLocationView) {
         val pinIcon = userLocationView.pin.useCompositeIcon()
-        //TODO change to svg
-        userLocationView.arrow.setIcon(
-            ImageProvider.fromResource(
-                context,
-                R.drawable.ic_user_mark,
-                true
-            )
-        )
+
+        //for moving
+        val userMark = getDriverPresenter?.getBitmap(R.drawable.ic_user_mark)
+        userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
 
         userLocationLayer!!.setAnchor(
             PointF(
@@ -115,9 +141,10 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             )
         )
 
+        //for staying
         pinIcon.setIcon(
             "pin",
-            ImageProvider.fromResource(context, R.drawable.ic_user_mark),
+            ImageProvider.fromBitmap(userMark),
             IconStyle().setAnchor(PointF(0.5f, 0.5f))
                 .setRotationType(RotationType.ROTATE)
                 .setZIndex(1f)
@@ -127,7 +154,9 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
+    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
+        getDriverPresenter?.onUserLocationAttach()
+    }
 
 
     private fun setUserLocation() {
@@ -156,55 +185,47 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    private fun setListeners(root: View) {
+    private fun setListeners(r: View) {
+        //set deafult reason
         var reasonID: Int = REASON4
-        val cancelRideBtn = root.cancel_ride
-        val cancelBtn = root.cancel
-        val notCancelBtn = root.not_cancel
-        val timeExpiredBtn = root.expired_time_ok_btn
-        val onMapView = root.on_map_view
-        val case1 = root.case1
-        val case2 = root.case2
-        val case3 = root.case3
-        val case4 = root.case4
 
-        cancelRideBtn.setOnClickListener {
+        r.cancel_ride.setOnClickListener {
             getDriverPresenter?.getCancelReason()
         }
 
-        case1.setOnClickListener {
+        r.case1.setOnClickListener {
             reasonID = REASON1
             getDriverPresenter?.getConfirmCancel()
         }
 
-        case2.setOnClickListener {
+        r.case2.setOnClickListener {
             reasonID = REASON2
             getDriverPresenter?.getConfirmCancel()
         }
 
-        case3.setOnClickListener {
+        r.case3.setOnClickListener {
             reasonID = REASON3
             getDriverPresenter?.getConfirmCancel()
         }
 
-        case4.setOnClickListener {
+        r.case4.setOnClickListener {
             reasonID = REASON4
             getDriverPresenter?.getConfirmCancel()
         }
 
-        cancelBtn.setOnClickListener {
+        r.cancel.setOnClickListener {
             getDriverPresenter?.cancelDone(reasonID)
         }
 
-        notCancelBtn.setOnClickListener {
+        r.not_cancel.setOnClickListener {
             getDriverPresenter?.notCancel()
         }
 
-        onMapView.setOnClickListener {
+        r.on_map_view.setOnClickListener {
             getDriverPresenter?.notCancel()
         }
 
-        timeExpiredBtn.setOnClickListener {
+        r.expired_time_ok_btn.setOnClickListener {
             getDriverPresenter?.timeExpiredOk()
         }
     }
@@ -214,7 +235,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         cancelBottomSheetBehavior = BottomSheetBehavior.from<View>(root.reasons_bottom_sheet)
         confirmCancelBottomSheetBehavior =
             BottomSheetBehavior.from<View>(root.confirm_cancel_bottom_sheet)
-        expiredTimeBottomSheetBehavior = BottomSheetBehavior.from<View>(root.time_expired_bottom_sheet)
+        expiredTimeBottomSheetBehavior =
+            BottomSheetBehavior.from<View>(root.time_expired_bottom_sheet)
 
 
         cancelBottomSheetBehavior!!.addBottomSheetCallback(object :
@@ -247,7 +269,7 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideCancelReason(slideOffset,  root)
+                getDriverPresenter?.onSlideCancelReason(slideOffset, root)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -258,16 +280,16 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     fun startAnimSearch(point: Point) {
-        //TODO
-        val zoom = mapView!!.map.cameraPosition.zoom - 2
+        //TODO delete stop timer
         Handler().postDelayed({
+            val zoom = mapView!!.map.cameraPosition.zoom - 1
             moveCamera(zoom, point)
-        }, 1500)
+        }, 2000)
     }
 
 
     fun moveCamera(zoom: Float, point: Point) {
-        mapView!!.map.move(
+        mapView?.map?.move(
             CameraPosition(point, zoom, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 30f),
             null
