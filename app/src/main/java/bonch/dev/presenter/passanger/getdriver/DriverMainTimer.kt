@@ -26,6 +26,11 @@ object DriverMainTimer {
     }
 
 
+    fun deleteInstance(){
+        testTimer = null
+    }
+
+
     class DriverTimer(
         startTime: Long,
         interval: Long,
@@ -36,9 +41,6 @@ object DriverMainTimer {
 
         override fun onFinish() {
             adapter.getDriverPresenter.getExpiredTimeConfirm()
-
-            val bottomSheet =  adapter.getDriverPresenter.getDriverView.expiredTimeBottomSheetBehavior
-            (bottomSheet as MBottomSheet<*>).swipeEnabled = false
         }
 
         override fun onTick(millisUntilFinished: Long) {

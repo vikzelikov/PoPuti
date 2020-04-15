@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.view.View
@@ -451,13 +452,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         }
 
         if (detailRideView != null) {
-            val cardsBottomSheetBehavior = detailRideView!!.cardsBottomSheetBehavior
-            val commentBottomSheetBehavior = detailRideView!!.commentBottomSheetBehavior
-
-            if (cardsBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED || commentBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
-                cardsBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            } else {
+            if (detailRideView?.backPressed()!!) {
                 //dynamic remove layout
                 dynamicReplaceView(false)
 
@@ -562,7 +557,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     }
 
 
-    fun getBitmap(drawableId: Int): Bitmap?{
+    fun getBitmap(drawableId: Int): Bitmap? {
         return getView().context?.getBitmapFromVectorDrawable(drawableId)
     }
 

@@ -45,7 +45,7 @@ class OfferPricePresenter(val offerPriceView: OfferPriceView) {
             priceEditText.setSelection(priceEditText.text.length - 2)
         }
 
-        if (s.isNotEmpty()) {
+        if (s.isNotEmpty() && str[0].trim().toInt() > 1) {
             offerBtn.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
             offerBtn.setBackgroundResource(R.drawable.bg_btn_gray)

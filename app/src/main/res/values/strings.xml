@@ -110,5 +110,8 @@
     <string name="rub">руб.</string>
     <string name="call">Позвонить</string>
     <string name="message">Написать</string>
+    <string name="letsGo">Поехали!</string>
+    <string name="rideCancel">Поездка отменена</string>
+    <string name="driverCancelledRide">Водитель отменил поездку</string>
 
 </resources>

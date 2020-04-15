@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.pojo.Driver
+import bonch.dev.model.passanger.getdriver.pojo.DriverObject
 import bonch.dev.presenter.passanger.getdriver.DriverItemTimer
 import bonch.dev.presenter.passanger.getdriver.DriverMainTimer
 import bonch.dev.presenter.passanger.getdriver.GetDriverPresenter
@@ -50,13 +51,11 @@ class DriversListAdapter(
 
         holder.driverItemTimer?.cancel()
         holder.driverItemTimer = DriverItemTimer(startTime, 10, timeLine)
-        holder.driverItemTimer!!.start()
+        holder.driverItemTimer?.start()
 
         holder.itemView.accept_driver.setOnClickListener {
-            //stop main timer
-            DriverMainTimer.getInstance()?.cancel()
-
-            getDriverPresenter.selectDriver(driver)
+            DriverObject.driver = driver
+            getDriverPresenter.getConfirmAccept()
         }
     }
 
@@ -93,7 +92,7 @@ class DriversListAdapter(
                     list.removeAt(position!!)
                     notifyItemRemoved(position)
                 }
-            } catch (ex: IndexOutOfBoundsException) {
+            } catch (ex: java.lang.IndexOutOfBoundsException) {
                 println(ex.message)
             }
 
@@ -106,6 +105,8 @@ class DriversListAdapter(
                 println(ex.message)
             }
         }
+
+        getDriverPresenter.notCancel()
 
         if (list.size <= 1) {
             getDriverPresenter.checkBackground(false)

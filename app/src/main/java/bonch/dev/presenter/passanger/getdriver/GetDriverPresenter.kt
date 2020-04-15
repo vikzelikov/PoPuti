@@ -5,8 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -29,15 +27,15 @@ import bonch.dev.utils.Constants.TO
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.view.passanger.getdriver.DriverInfoView
 import bonch.dev.view.passanger.getdriver.GetDriverView
+import bonch.dev.view.passanger.getdriver.MBottomSheet
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.get_driver_fragment.*
 import kotlinx.android.synthetic.main.get_driver_fragment.view.*
+import kotlinx.android.synthetic.main.get_driver_layout.*
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class GetDriverPresenter(val getDriverView: GetDriverView) {
@@ -47,7 +45,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     private var getDriverModel: GetDriverModel? = null
     private var handler: Handler? = null
     private var isAnimaionSearching = false
-    var root: View? = null
+    lateinit var root: View
 
     init {
         if (getDriverModel == null) {
@@ -74,6 +72,18 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
             } else {
                 root.comment_btn.visibility = View.GONE
             }
+        }
+    }
+
+
+    fun confirmAccept() {
+        //stop main timer
+        val driver = DriverObject.driver
+
+        if (driver != null) {
+            DriverMainTimer.getInstance()?.cancel()
+            selectDriver(driver)
+
         }
     }
 
@@ -124,8 +134,8 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
 
     fun selectDriver(driver: Driver) {
-        root?.on_map_view_main?.visibility = View.GONE
-        root?.get_driver_center_text?.visibility = View.GONE
+        root.on_map_view_main?.visibility = View.GONE
+        root.get_driver_center_text?.visibility = View.GONE
 
         //dynamic replace layout
         replaceDynamic()
@@ -137,7 +147,6 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         driverInfoView = DriverInfoView(getDriverView)
         driverInfoView!!.onCreateView(driver)
     }
-
 
     fun startSearchDrivers(root: View) {
         //init recycler drivers item
@@ -171,6 +180,23 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
+    private fun setConfirmAcceptData(driver: Driver?) {
+        //set data in BottomSheet for confirm or cancel
+        val r = getDriverView
+
+        driver?.let {
+            r.bs_driver_name.text = it.nameDriver
+            r.bs_car_name.text = it.carName
+            r.bs_driver_rating.text = it.rating.toString()
+            r.bs_price.text = it.price.toString().plus(" ₽")
+
+            Glide.with(r.bs_img_driver.context).load(it.imgDriver)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .into(r.bs_img_driver)
+        }
+    }
+
+
     private fun initializeListDrivers(root: View) {
         val context = root.context
 
@@ -194,8 +220,24 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
+    fun getDriverCancelled() {
+        //TODO
+        getDriverView.driverCancelledBottomSheet!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    fun getConfirmAccept() {
+        setConfirmAcceptData(DriverObject.driver)
+
+        getDriverView.confirmGetBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
     fun getExpiredTimeConfirm() {
-        getDriverView.expiredTimeBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+        val bottomSheet = getDriverView.expiredTimeBottomSheetBehavior
+        (bottomSheet as MBottomSheet<*>).swipeEnabled = false
+
+        bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
@@ -205,6 +247,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         handler?.removeCallbacksAndMessages(null)
         DriverObject.driver = null
         DriverMainTimer.getInstance()?.cancel()
+        DriverMainTimer.deleteInstance()
         val fm = (getDriverView.activity as MainActivity).supportFragmentManager
 
         when (reasonID) {
@@ -231,6 +274,12 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
             }
         }
 
+        (getDriverView.activity as MainActivity).showNotification(
+            getDriverView.resources.getString(
+                R.string.rideCancel
+            )
+        )
+
         replaceFragment(MAIN_FRAGMENT, null, fm)
     }
 
@@ -252,8 +301,9 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
             getDriverView.view?.on_view_cancel_reason?.visibility = View.GONE
 
             getDriverView.cancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            getDriverView.confirmCancelBottomSheetBehavior!!.state =
-                BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.confirmGetBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.confirmCancelBottomSheetBehavior!!.state =  BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.driverCancelledBottomSheet!!.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
@@ -282,7 +332,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
 
 
     private fun replaceDynamic() {
-        var view = root!!.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
+        var view = root.findViewById<CoordinatorLayout>(R.id.get_driver_layout) as View
         val parent = view.parent as ViewGroup
         val index = parent.indexOfChild(view)
         view.visibility = View.GONE
@@ -304,7 +354,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun getBitmap(drawableId: Int): Bitmap?{
+    fun getBitmap(drawableId: Int): Bitmap? {
         return getDriverView.context?.getBitmapFromVectorDrawable(drawableId)
     }
 

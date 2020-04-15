@@ -15,6 +15,7 @@
         android:visibility="gone" />
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/main_info_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="15dp"
+            android:paddingTop="5dp"
             android:translationZ="5dp">
 
 
@@ -73,8 +74,8 @@
                     android:fontFamily="@font/roboto"
                     android:gravity="center_vertical"
                     android:maxLines="2"
-                    android:paddingEnd="10dp"
                     android:paddingStart="0dp"
+                    android:paddingEnd="10dp"
                     android:textAlignment="gravity"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
@@ -97,8 +98,8 @@
                     android:fontFamily="@font/roboto"
                     android:gravity="center_vertical"
                     android:maxLines="2"
-                    android:paddingEnd="10dp"
                     android:paddingStart="0dp"
+                    android:paddingEnd="10dp"
                     android:textAlignment="gravity"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
@@ -117,17 +118,15 @@
             android:paddingEnd="15dp"
             android:weightSum="1">
 
-
             <TextView
                 android:id="@+id/offer_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:drawableStart="@drawable/ic_ruble"
-                android:drawablePadding="17dp"
-                android:paddingTop="15dp"
-                android:paddingBottom="25dp"
-                android:text="320"
+                android:drawablePadding="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="20dp"
                 android:textColor="#000000"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -136,7 +135,7 @@
             <LinearLayout
                 android:id="@+id/comment_btn"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.5"
                 android:orientation="vertical">
 
@@ -144,9 +143,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
+                    android:layout_marginTop="9dp"
                     android:fontFamily="@font/roboto"
                     android:gravity="end"
-                    android:paddingTop="23dp"
                     android:text="@string/comment"
                     android:textColor="@android:color/black" />
 
@@ -162,7 +161,8 @@
                     android:paddingStart="18dp"
                     android:singleLine="true"
                     android:textColor="#60000000"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:translationY="-5dp" />
 
             </LinearLayout>
 
@@ -353,7 +353,6 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:id="@+id/time_expired_bottom_sheet"
             android:layout_width="match_parent"
@@ -394,6 +393,145 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/driver_cancelled_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            app:behavior_peekHeight="990dp"
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/driverCancelledRide"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
+
+
+            <Button
+                android:id="@+id/ok_btn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_btn_blue"
+                android:fontFamily="@font/roboto"
+                android:shadowColor="@color/colorBlue"
+                android:text="@string/ok"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/confirm_get_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_bottom_sheet_arrow" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/bs_img_driver"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ava" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/bs_driver_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/bs_car_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:fontFamily="@font/roboto"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:id="@+id/bs_driver_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:drawableStart="@drawable/ic_star"
+                        android:drawablePadding="5dp"
+                        android:fontFamily="@font/roboto"
+                        android:textColor="#50000000"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/bs_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/roboto"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/confirm_accept_driver"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_btn_blue"
+                android:fontFamily="@font/roboto"
+                android:shadowColor="@color/colorBlue"
+                android:text="@string/letsGo"
+                android:textAllCaps="false"
+                android:textSize="16sp" />
+
+        </LinearLayout>
 
         <View
             android:id="@+id/on_view_cancel_reason"

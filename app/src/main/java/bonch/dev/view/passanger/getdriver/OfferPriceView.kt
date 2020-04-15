@@ -60,11 +60,11 @@ class OfferPriceView : AppCompatActivity() {
 
         offerBtn.setOnClickListener {
             val intent = Intent()
-            val price = priceEditText.text.toString()
+            val price = priceEditText.text.toString().split('₽')[0].trim()
             val averagePrice = offerPricePresenter?.getAveragePrice()
-            if (price.length < 7 && price.isNotEmpty()) {
+            if (price.length < 7 && price.isNotEmpty() && price.toInt() > 1) {
                 hideKeyboard(this, root)
-                intent.putExtra(OFFER_PRICE, price.substring(0, price.length - 2))
+                intent.putExtra(OFFER_PRICE, price)
                 intent.putExtra(AVERAGE_PRICE, averagePrice)
                 setResult(RESULT_OK, intent)
                 finish()

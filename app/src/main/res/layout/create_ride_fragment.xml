@@ -80,8 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="15dp"
-            android:translationZ="5dp">
+            android:paddingTop="5dp">
 
 
             <LinearLayout
@@ -125,8 +124,8 @@
                     android:fontFamily="@font/roboto"
                     android:gravity="center_vertical"
                     android:maxLines="2"
-                    android:paddingEnd="10dp"
                     android:paddingStart="0dp"
+                    android:paddingEnd="10dp"
                     android:textAlignment="gravity"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
@@ -149,8 +148,8 @@
                     android:fontFamily="@font/roboto"
                     android:gravity="center_vertical"
                     android:maxLines="2"
-                    android:paddingEnd="10dp"
                     android:paddingStart="0dp"
+                    android:paddingEnd="10dp"
                     android:textAlignment="gravity"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
@@ -176,9 +175,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/ic_ruble"
-                android:drawablePadding="17dp"
-                android:paddingTop="15dp"
-                android:paddingBottom="25dp"
+                android:drawablePadding="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="20dp"
                 android:text="@string/offer_price"
                 android:textColor="#50000000"
                 android:textSize="14sp" />
@@ -187,7 +186,7 @@
                 android:id="@+id/info_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="6dp"
                 android:background="@android:color/white"
                 android:src="@drawable/ic_info_price"
                 android:visibility="gone" />
@@ -216,8 +215,8 @@
                 android:gravity="center|start"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
-                android:paddingTop="23dp"
-                android:paddingBottom="24dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:visibility="gone">
 
                 <ImageView
@@ -244,13 +243,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:drawableStart="@drawable/ic_payment_method"
-                android:drawablePadding="10dp"
+                android:drawablePadding="11dp"
                 android:fontFamily="@font/roboto"
                 android:gravity="center|start"
                 android:paddingStart="15dp"
                 android:paddingTop="20dp"
                 android:paddingEnd="10dp"
-                android:paddingBottom="24dp"
+                android:paddingBottom="20dp"
                 android:text="@string/payment_method"
                 android:textColor="@android:color/black" />
 
@@ -258,7 +257,7 @@
             <LinearLayout
                 android:id="@+id/comment_btn"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.5"
                 android:orientation="vertical"
                 android:paddingEnd="15dp">
@@ -267,9 +266,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
+                    android:layout_marginTop="21dp"
                     android:fontFamily="@font/roboto"
                     android:gravity="end"
-                    android:paddingTop="23dp"
                     android:text="@string/comment"
                     android:textColor="@android:color/black" />
 
@@ -282,6 +281,7 @@
                     android:fontFamily="@font/roboto"
                     android:gravity="end"
                     android:maxLines="1"
+                    android:translationY="-5dp"
                     android:paddingStart="18dp"
                     android:singleLine="true"
                     android:textColor="#60000000"
@@ -312,9 +312,13 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/container_bottom_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:context="ui.dashboard.HomeFragment">
 
         <LinearLayout

@@ -4,7 +4,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.R
 import bonch.dev.model.passanger.getdriver.pojo.Coordinate.fromAdr
@@ -45,6 +44,11 @@ class DetailRideView(val createRideView: CreateRideView) {
         detailRidePresenter?.receiveAddresses(fromAdr, toAdr)
 
         initBankCardRecycler()
+
+        //it is fix bug with hidden bottom nav menu
+        //TODO
+        getView().on_map_view.visibility = View.VISIBLE
+        getView().on_map_view.visibility = View.GONE
     }
 
 
@@ -193,6 +197,11 @@ class DetailRideView(val createRideView: CreateRideView) {
         paymentList.adapter = paymentsListAdapter
 
         detailRidePresenter!!.paymentsListAdapter = paymentsListAdapter
+    }
+
+
+    fun backPressed(): Boolean {
+        return detailRidePresenter?.backPressed()!!
     }
 
 

@@ -37,6 +37,7 @@ import bonch.dev.view.passanger.getdriver.DetailRideView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.create_ride_fragment.*
+import kotlinx.android.synthetic.main.create_ride_layout.*
 
 class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
@@ -149,6 +150,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         val averagePrice = data.getIntExtra(AVERAGE_PRICE, 0)
 
         offerPrice.textSize = 22f
+        offerPrice.setPadding(0, 5, 0, 25)
         offerPrice.setTextColor(Color.parseColor("#000000"))
         offerPrice.typeface = Typeface.DEFAULT_BOLD
 
@@ -232,7 +234,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun showRoute(){
+    fun showRoute() {
         routing?.showRoute()
     }
 
@@ -309,6 +311,32 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         } else {
             nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
         }
+    }
+
+
+    fun backPressed(): Boolean {
+        val isBackPressed: Boolean
+        val cardsBottomSheetBehavior = detailRideView.cardsBottomSheetBehavior
+        val commentBottomSheetBehavior = detailRideView.commentBottomSheetBehavior
+
+        if (cardsBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED || commentBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
+            cardsBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            isBackPressed = false
+        } else {
+            val offerPrice = getView().offer_price
+            getView().info_price.visibility = View.GONE
+            offerPrice.text = getView().resources.getString(R.string.offer_price)
+            offerPrice.textSize = 14f
+            offerPrice.setPadding(0, 15, 0, 35)
+            offerPrice.setTextColor(Color.parseColor("#50000000"))
+            offerPrice.typeface = Typeface.DEFAULT
+
+            isBackPressed = true
+        }
+
+        return isBackPressed
     }
 
 

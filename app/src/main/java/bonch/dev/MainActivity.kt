@@ -8,7 +8,6 @@ import bonch.dev.presenter.BasePresenter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
-import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Coordinator.addFragment
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
@@ -22,7 +21,6 @@ import bonch.dev.view.passanger.signup.PhoneView
 class MainActivity : AppCompatActivity() {
 
     private var basePresenter: BasePresenter? = null
-
 
     init {
         if (basePresenter == null) {
@@ -60,6 +58,11 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         hideKeyboard(this, findViewById<LinearLayout>(R.id.fragment_container))
+    }
+
+
+    fun showNotification(text: String) {
+        basePresenter?.showNotification(text)
     }
 
 

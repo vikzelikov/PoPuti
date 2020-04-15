@@ -58,18 +58,20 @@
                     android:id="@+id/img_driver"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_gravity="center"
                     android:src="@drawable/ava" />
 
                 <TextView
                     android:id="@+id/driver_name"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:maxWidth="150dp"
-                    android:text="Николай"
-                    android:textAlignment="center"
+                    android:singleLine="true"
+                    android:maxWidth="120dp"
+                    android:text="Александр"
+                    android:layout_gravity="center"
                     android:textColor="@android:color/black"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
 
             </LinearLayout>
