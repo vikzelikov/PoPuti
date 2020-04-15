@@ -177,8 +177,6 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
             if (zoom != null && userPoint != null) {
                 getDriverView.moveCamera(zoom, userPoint)
             }
-
-            isAnimaionSearching = false
         }
     }
 

@@ -42,10 +42,11 @@ import kotlin.math.floor
 class CreateRidePresenter(val createRideView: CreateRideView) {
 
     private var createRideModel: CreateRideModel? = null
-    private var blockRequestHandler: Handler? = null
     private var cashSuggest: RealmResults<Ride>? = null
+    var blockRequestHandler: Handler? = null
     var addressesListAdapter: AddressesListAdapter? = null
     var detailRideView: DetailRideView? = null
+
     private var isFromMapSearch = true
     private var isBlockSelection = false
     var isBlockRequest = true
@@ -537,7 +538,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
                     requestGeocoder(createRideView.mapView?.map?.cameraPosition?.target)
                 blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER / 2)
             }
-        }, BLOCK_REQUEST_GEOCODER)
+        }, 0)
     }
 
 

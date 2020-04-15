@@ -168,7 +168,11 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
+    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
+        if(createRidePresenter?.blockRequestHandler == null){
+            createRidePresenter?.startProcessBlockRequest()
+        }
+    }
 
 
     private fun setListeners(root: View) {
@@ -261,8 +265,6 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             it.isVisible = true
             it.setObjectListener(this)
         }
-
-        createRidePresenter?.startProcessBlockRequest()
     }
 
 
