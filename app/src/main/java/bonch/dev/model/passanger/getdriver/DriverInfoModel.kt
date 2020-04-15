@@ -1,15 +1,21 @@
 package bonch.dev.model.passanger.getdriver
 
-import android.app.Activity
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import bonch.dev.model.passanger.getdriver.pojo.Driver
 import bonch.dev.utils.Constants
 
-class DriverInfoModel {
+class DriverInfoModel() {
+
+    private lateinit var pref: SharedPreferences
+
+    fun initSP(context: Context) {
+        pref = PreferenceManager.getDefaultSharedPreferences(context)
+    }
 
 
-    fun saveDataDriver(activity: Activity, driver: Driver) {
-        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
+    fun saveDataDriver(driver: Driver) {
         val editor = pref.edit()
 
         editor.putString(Constants.NAME_DRIVER, driver.nameDriver)
@@ -22,9 +28,32 @@ class DriverInfoModel {
     }
 
 
-    fun removeDataDriver(activity: Activity) {
-        val pref = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
+    fun getDriverData(): Driver? {
+        if (pref.contains(Constants.NAME_DRIVER)) {
+            val driver = Driver()
 
+            val nameDriver: String? = pref.getString(Constants.NAME_DRIVER, null)
+            val carName: String? = pref.getString(Constants.CAR_NAME, null)
+            val carNumber: String? = pref.getString(Constants.CAR_NUMBER, null)
+            val price: Int? = pref.getInt(Constants.PRICE_DRIVER, 0)
+            val imgDriver: Int? = pref.getInt(Constants.IMG_DRIVER, 0)
+            val isDriverArrived: Boolean = pref.getBoolean(Constants.IS_DRIVER_ARRIVED, false)
+
+            driver.nameDriver = nameDriver
+            driver.carName = carName
+            driver.carNumber = carNumber
+            driver.price = price
+            driver.imgDriver = imgDriver
+            driver.isArrived = isDriverArrived
+
+            return driver
+        } else {
+            return null
+        }
+    }
+
+
+    fun removeDataDriver() {
         val editor = pref.edit()
         editor.remove(Constants.NAME_DRIVER)
         editor.remove(Constants.CAR_NAME)

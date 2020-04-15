@@ -333,8 +333,8 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
 
 
     //listener onBackPressed key
-    fun backPressed(): Boolean {
-        return createRidePresenter?.backPressed()!!
+    fun onBackPressed(): Boolean {
+        return createRidePresenter?.onBackPressed()!!
     }
 
 

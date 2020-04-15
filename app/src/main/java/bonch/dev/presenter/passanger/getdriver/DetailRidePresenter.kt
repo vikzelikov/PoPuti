@@ -6,6 +6,8 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import bonch.dev.MainActivity
 import bonch.dev.R
@@ -15,7 +17,6 @@ import bonch.dev.model.passanger.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.model.passanger.getdriver.pojo.PaymentCard
 import bonch.dev.model.passanger.getdriver.pojo.Ride
 import bonch.dev.model.passanger.getdriver.pojo.RideDetailInfo
-import bonch.dev.model.passanger.getdriver.pojo.RidePoint
 import bonch.dev.presenter.passanger.getdriver.adapters.PaymentsListAdapter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.ADD_BANK_CARD_VIEW
@@ -27,7 +28,6 @@ import bonch.dev.utils.Constants.OFFER_PRICE
 import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.RIDE_DETAIL_INFO
 import bonch.dev.utils.Constants.TO
-import bonch.dev.utils.Constants.USER_POINT
 import bonch.dev.utils.Coordinator.openActivity
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
@@ -37,7 +37,6 @@ import bonch.dev.view.passanger.getdriver.DetailRideView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.create_ride_fragment.*
-import kotlinx.android.synthetic.main.create_ride_layout.*
 
 class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
@@ -223,11 +222,18 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
     fun commentDone() {
         val commentText = getView().comment_text
+        commentText?.clearFocus()
+
+        hideAllBottomSheet()
+    }
+
+
+    fun hideAllBottomSheet(){
         val activity = getView().activity as MainActivity
         val root = getView().view!!
 
-        commentText?.clearFocus()
         hideKeyboard(activity, root)
+
         detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -255,6 +261,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     fun onStateChangedBottomSheet(newState: Int) {
         val commentText = getView().comment_text
         val onMapView = getView().on_map_view_detail
+        val mainInfoLayout = getView().container_detail_ride
 
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
             val activity = getView().activity as MainActivity
@@ -265,8 +272,10 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             onMapView.visibility = View.GONE
+            mainInfoLayout.elevation = 30f
         } else {
             onMapView.visibility = View.VISIBLE
+            mainInfoLayout.elevation = 0f
         }
     }
 
@@ -314,14 +323,15 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun backPressed(): Boolean {
+    fun onBackPressed(): Boolean {
         val isBackPressed: Boolean
         val cardsBottomSheetBehavior = detailRideView.cardsBottomSheetBehavior
         val commentBottomSheetBehavior = detailRideView.commentBottomSheetBehavior
 
-        if (cardsBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED || commentBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
-            cardsBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        if (cardsBottomSheetBehavior!!.state != BottomSheetBehavior.STATE_COLLAPSED
+            || commentBottomSheetBehavior!!.state != BottomSheetBehavior.STATE_COLLAPSED) {
+            //hide all bottom sheet
+            hideAllBottomSheet()
 
             isBackPressed = false
         } else {
@@ -337,6 +347,25 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
         }
 
         return isBackPressed
+    }
+
+
+    fun correctMapView() {
+        Thread(Runnable {
+            while (true) {
+                val height = getView().container_detail_ride.height
+                if (height > 0) {
+                    val layoutParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
+                    //"-10" for correct view radius corners
+                    layoutParams.setMargins(0, 0, 0, height - 10)
+                    getView().map.layoutParams = layoutParams
+                    break
+                }
+            }
+        }).start()
     }
 
 

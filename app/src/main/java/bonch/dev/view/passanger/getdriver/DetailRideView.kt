@@ -2,6 +2,7 @@ package bonch.dev.view.passanger.getdriver
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.os.Handler
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,10 +46,15 @@ class DetailRideView(val createRideView: CreateRideView) {
 
         initBankCardRecycler()
 
-        //it is fix bug with hidden bottom nav menu
-        //TODO
-        getView().on_map_view.visibility = View.VISIBLE
-        getView().on_map_view.visibility = View.GONE
+        detailRidePresenter?.correctMapView()
+
+//        //it is fix bug with hidden bottom nav menu
+//        //TODO
+//        Handler().postDelayed({
+//            getView().comment_text.visibility = View.GONE
+//            getView().comment_text.visibility = View.VISIBLE
+//        }, 50)
+
     }
 
 
@@ -112,7 +118,7 @@ class DetailRideView(val createRideView: CreateRideView) {
         }
 
         r.on_map_view_detail.setOnClickListener {
-            detailRidePresenter?.commentDone()
+            detailRidePresenter?.hideAllBottomSheet()
         }
 
         r.info_price.setOnClickListener {
@@ -124,7 +130,7 @@ class DetailRideView(val createRideView: CreateRideView) {
         }
 
         r.back_btn.setOnClickListener {
-            getView().backPressed()
+            getView().onBackPressed()
         }
     }
 
@@ -200,8 +206,8 @@ class DetailRideView(val createRideView: CreateRideView) {
     }
 
 
-    fun backPressed(): Boolean {
-        return detailRidePresenter?.backPressed()!!
+    fun onBackPressed(): Boolean {
+        return detailRidePresenter?.onBackPressed()!!
     }
 
 

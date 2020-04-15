@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +38,7 @@ import kotlinx.android.synthetic.main.get_driver_fragment.*
 import kotlinx.android.synthetic.main.get_driver_fragment.view.*
 import kotlinx.android.synthetic.main.get_driver_layout.*
 import kotlinx.android.synthetic.main.get_driver_layout.view.*
+import java.lang.Exception
 
 
 class GetDriverPresenter(val getDriverView: GetDriverView) {
@@ -54,7 +57,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun receiveUserData(bundle: Bundle?, root: View) {
+    fun receiveUserData(bundle: Bundle?) {
         bundle?.let {
             val from: Ride = it.getParcelable(FROM)!!
             val to: Ride = it.getParcelable(TO)!!
@@ -88,7 +91,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun onSlideCancelReason(slideOffset: Float, root: View) {
+    fun onSlideCancelReason(slideOffset: Float) {
         val onMapView = root.on_map_view
 
         if (slideOffset > 0) {
@@ -97,7 +100,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun onSlideConfirmCancel(slideOffset: Float, root: View) {
+    fun onSlideConfirmCancel(slideOffset: Float) {
         val onView = root.on_view_cancel_reason
 
         if (slideOffset > 0) {
@@ -106,7 +109,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun onChangedStateCancelReason(newState: Int, root: View) {
+    fun onChangedStateCancelReason(newState: Int) {
         val onMapView = root.on_map_view
         val mainInfoLayout = root.main_info_layout
 
@@ -122,7 +125,7 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun onChangedStateConfirmCancel(newState: Int, root: View) {
+    fun onChangedStateConfirmCancel(newState: Int) {
         val onMapView = root.on_view_cancel_reason
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
@@ -220,12 +223,6 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun getDriverCancelled() {
-        //TODO
-        getDriverView.driverCancelledBottomSheet!!.state = BottomSheetBehavior.STATE_EXPANDED
-    }
-
-
     fun getConfirmAccept() {
         setConfirmAcceptData(DriverObject.driver)
 
@@ -295,16 +292,22 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun notCancel() {
+    fun hideAllBottomSheet() {
         if (getDriverView.expiredTimeBottomSheetBehavior!!.state == BottomSheetBehavior.STATE_COLLAPSED) {
             getDriverView.view?.on_map_view?.visibility = View.GONE
             getDriverView.view?.on_view_cancel_reason?.visibility = View.GONE
 
             getDriverView.cancelBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            getDriverView.confirmGetBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            getDriverView.confirmCancelBottomSheetBehavior!!.state =  BottomSheetBehavior.STATE_COLLAPSED
-            getDriverView.driverCancelledBottomSheet!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.confirmGetBottomSheetBehavior!!.state =
+                BottomSheetBehavior.STATE_COLLAPSED
+            getDriverView.confirmCancelBottomSheetBehavior!!.state =
+                BottomSheetBehavior.STATE_COLLAPSED
         }
+    }
+
+
+    fun hideConfirmAccept() {
+        getDriverView.confirmGetBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
 
@@ -341,16 +344,41 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
     }
 
 
-    fun checkBackground(isShow: Boolean) {
-        val onMapView = getDriverView.on_map_view_main
+    fun correctMapView() {
+        Thread(Runnable {
+            while (true) {
+                val height = root.main_info_layout.height
+                if (height > 0) {
+                    val layoutParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
+                    //"-10" for correct view radius corners
+                    layoutParams.setMargins(0, 0, 0, height - 10)
+                    root.map.layoutParams = layoutParams
+                    break
+                }
+            }
+        }).start()
+    }
 
-        if (isShow) {
-            onMapView.visibility = View.VISIBLE
-            onMapView.alpha = 0.8f
-        } else {
-            onMapView.visibility = View.GONE
-            onMapView.alpha = 0f
-        }
+
+    fun checkBackground(isShow: Boolean) {
+        //unsupported exception
+        try {
+            val onMapView = getDriverView.on_map_view_main
+
+            if (onMapView != null) {
+                if (isShow) {
+                    onMapView.visibility = View.VISIBLE
+                    onMapView.alpha = 0.8f
+                } else {
+                    onMapView.visibility = View.GONE
+                    onMapView.alpha = 0f
+                }
+            }
+        }catch (ex: Exception){}
+
     }
 
 
@@ -372,6 +400,33 @@ class GetDriverPresenter(val getDriverView: GetDriverView) {
         drawable.draw(canvas)
 
         return bitmap
+    }
+
+
+    fun onBackPressed(): Boolean {
+        var isBackPressed = true
+
+        val cancelBottomShee = getDriverView.cancelBottomSheetBehavior
+        val confirmCancelBottomSheet = getDriverView.confirmCancelBottomSheetBehavior
+        val expiredTimeBottomSheet = getDriverView.expiredTimeBottomSheetBehavior
+        val confirmGetBottomSheet = getDriverView.confirmGetBottomSheetBehavior
+
+        if (cancelBottomShee!!.state != BottomSheetBehavior.STATE_COLLAPSED
+            || confirmCancelBottomSheet!!.state != BottomSheetBehavior.STATE_COLLAPSED
+            || expiredTimeBottomSheet!!.state != BottomSheetBehavior.STATE_COLLAPSED
+            || confirmGetBottomSheet!!.state != BottomSheetBehavior.STATE_COLLAPSED) {
+
+            //hide all bottom sheets
+            hideAllBottomSheet()
+
+            isBackPressed = false
+        }
+
+        if(driverInfoView != null){
+            isBackPressed = driverInfoView?.onBackPressed()!!
+        }
+
+        return isBackPressed
     }
 
 }

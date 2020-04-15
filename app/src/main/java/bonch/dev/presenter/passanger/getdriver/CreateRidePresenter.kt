@@ -4,11 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import bonch.dev.MainActivity
@@ -45,9 +46,9 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     private var cashSuggest: RealmResults<Ride>? = null
     var addressesListAdapter: AddressesListAdapter? = null
     var detailRideView: DetailRideView? = null
+    private var isFromMapSearch = true
+    private var isBlockSelection = false
     var isBlockRequest = true
-    var isFromMapSearch = true
-    var isBlockSelection = false
 
     private val shape = GradientDrawable()
     private val corners = floatArrayOf(14f, 14f, 14f, 14f, 0f, 0f, 0f, 0f)
@@ -268,7 +269,6 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         val r = getView()
         val from = r.from_adr
         val to = r.to_adr
-        val activity = getView().activity as MainActivity
 
         //update current focus
         addressesListAdapter?.isFromFocus = isFrom
@@ -437,11 +437,11 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
     }
 
 
-    fun backPressed(): Boolean {
+    fun onBackPressed(): Boolean {
         var isBackPressed = true
         val r = getView()
 
-        if (r.bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
+        if (r.bottomSheetBehavior!!.state != BottomSheetBehavior.STATE_COLLAPSED) {
             r.bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             isBackPressed = false
         }
@@ -452,7 +452,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         }
 
         if (detailRideView != null) {
-            if (detailRideView?.backPressed()!!) {
+            if (detailRideView?.onBackPressed()!!) {
                 //dynamic remove layout
                 dynamicReplaceView(false)
 
@@ -464,6 +464,9 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
                 //set cash suggest again
                 getCashSuggest()
+
+                //set correct map view
+                correctMapView()
 
                 r.from_adr.setText(fromAdr?.address)
                 r.to_adr.setText("")
@@ -498,19 +501,6 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             r.show_route.visibility = View.VISIBLE
             getView().navView?.visibility = View.GONE
             r.back_btn.visibility = View.VISIBLE
-
-            //change constrants of Map
-            val constraintSet = ConstraintSet()
-            val constraint = getView().container_get_driver
-            constraintSet.clone(constraint)
-            constraintSet.connect(
-                R.id.map,
-                ConstraintSet.BOTTOM,
-                R.id.container_detail_ride,
-                ConstraintSet.TOP,
-                0
-            )
-            constraintSet.applyTo(constraint)
         } else {
             r.container_create_ride.visibility = View.VISIBLE
             r.container_detail_ride.visibility = View.GONE
@@ -575,6 +565,15 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
         drawable.draw(canvas)
 
         return bitmap
+    }
+
+
+    private fun correctMapView() {
+        val layoutParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT
+        )
+        getView().map.layoutParams = layoutParams
     }
 
 

@@ -106,7 +106,7 @@ class DriversListAdapter(
             }
         }
 
-        getDriverPresenter.notCancel()
+        getDriverPresenter.hideConfirmAccept()
 
         if (list.size <= 1) {
             getDriverPresenter.checkBackground(false)

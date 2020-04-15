@@ -38,39 +38,18 @@ import bonch.dev.view.passanger.signup.PhoneView
 
 object Coordinator {
 
-    fun addFragment(id: Int, fm: FragmentManager) {
-        when (id) {
-            MAIN_FRAGMENT -> {
-                val fragment = MainFragment()
-
-                fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment, MAIN_FRAGMENT.toString())
-                    .commit()
-            }
-
-            PHONE_VIEW -> {
-                val fragment = PhoneView()
-
-                fm.beginTransaction()
-                    .add(
-                        R.id.fragment_container,
-                        fragment,
-                        PHONE_VIEW.toString()
-                    )
-                    .commit()
-            }
-        }
-    }
-
     fun replaceFragment(id: Int, bundle: Bundle?, fm: FragmentManager) {
         when (id) {
             MAIN_FRAGMENT -> {
+                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
                 val fragment = MainFragment()
                 fragment.arguments = bundle
 
                 fm.beginTransaction()
                     .replace(R.id.fragment_container, fragment, MAIN_FRAGMENT.toString())
                     .commit()
+
             }
 
             FULL_NAME_VIEW -> {

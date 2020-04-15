@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/driver_info_layout"
     tools:context=".view.passanger.getdriver.GetDriverView">
+
 
     <LinearLayout
         android:id="@+id/main_info_layout"
@@ -24,8 +26,8 @@
                 android:id="@+id/status_driver"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:text="@string/driverInWay"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlue"
@@ -50,7 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
-                android:layout_marginBottom="15dp"
                 android:gravity="bottom"
                 android:orientation="vertical">
 
@@ -65,11 +66,12 @@
                     android:id="@+id/driver_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:singleLine="true"
-                    android:maxWidth="120dp"
-                    android:text="Александр"
                     android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="15dp"
+                    android:maxWidth="120dp"
+                    android:singleLine="true"
+                    android:text="Александр"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -88,16 +90,16 @@
                     android:id="@+id/car_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/bg_car_number"
                     android:paddingStart="13dp"
                     android:paddingTop="2dp"
                     android:paddingEnd="13dp"
                     android:paddingBottom="2dp"
-                    android:text="HR34HERG"
+                    android:text="HS456K"
                     android:textColor="@android:color/black"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
 
@@ -105,11 +107,11 @@
                     android:id="@+id/car_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="15dp"
-                    android:text="Kia Rio"
+                    android:text="Hyundai Solaris"
                     android:textColor="#70000000"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -117,62 +119,77 @@
                     android:orientation="horizontal">
 
                     <RelativeLayout
-                        android:layout_width="110dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingStart="15dp"
-                        android:paddingTop="15dp"
-                        android:paddingEnd="15dp"
-                        android:paddingBottom="15dp">
+                        android:layout_marginBottom="16dp"
+                        android:orientation="vertical">
 
                         <ImageButton
                             android:id="@+id/phone_call_driver"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginEnd="15dp"
                             android:background="@drawable/bg_back_btn"
                             android:elevation="7dp"
-                            android:padding="18dp"
+                            android:paddingStart="19dp"
+                            android:paddingTop="19dp"
+                            android:paddingEnd="19dp"
+                            android:paddingBottom="18dp"
                             android:src="@drawable/ic_call_phone_driver" />
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/phone_call_driver"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="5dp"
                             android:text="@string/call"
-                            android:textAlignment="center"
                             android:textColor="#2B2B2B"
                             android:textSize="12sp" />
                     </RelativeLayout>
 
 
                     <RelativeLayout
-                        android:layout_width="120dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingStart="15dp"
-                        android:paddingTop="15dp"
-                        android:paddingEnd="15dp"
-                        android:paddingBottom="15dp">
+                        android:layout_marginBottom="16dp"
+                        android:orientation="vertical">
+
 
                         <ImageButton
                             android:id="@+id/message_driver"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginEnd="15dp"
                             android:background="@drawable/bg_back_btn"
                             android:elevation="7dp"
                             android:padding="17dp"
-                            android:src="@drawable/is_message_driver" />
+                            android:src="@drawable/ic_message_driver" />
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/message_driver"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="5dp"
                             android:text="@string/message"
-                            android:textAlignment="center"
                             android:textColor="#2B2B2B"
                             android:textSize="12sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="55dp"
+                            android:layout_marginTop="15dp"
+                            android:elevation="7dp"
+                            android:src="@drawable/ic_notification" />
+
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -201,6 +218,7 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/info_driver_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="10dp"
@@ -366,6 +384,47 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/driver_cancelled_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/driverCancelledRide"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
+
+
+            <Button
+                android:id="@+id/ok_btn"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_btn_blue"
+                android:fontFamily="@font/roboto"
+                android:shadowColor="@color/colorBlue"
+                android:text="@string/ok"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
 
         <View
             android:id="@+id/on_view_cancel_reason"

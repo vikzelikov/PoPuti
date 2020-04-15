@@ -3,12 +3,12 @@ package bonch.dev
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import bonch.dev.model.passanger.getdriver.pojo.DriverObject.driver
+import bonch.dev.model.passanger.getdriver.pojo.DriverObject
 import bonch.dev.presenter.BasePresenter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
-import bonch.dev.utils.Coordinator.addFragment
+import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
 import bonch.dev.view.passanger.getdriver.CreateRideView
@@ -38,18 +38,18 @@ class MainActivity : AppCompatActivity() {
 
         if (accessToken == null) {
             //to signup
-            //addFragment(PHONE_VIEW, supportFragmentManager)
-            addFragment(MAIN_FRAGMENT, supportFragmentManager)
+            replaceFragment(PHONE_VIEW, null, supportFragmentManager)
+            //addFragment(MAIN_FRAGMENT, supportFragmentManager)
         } else {
             //redirect to full app
-            driver = basePresenter?.getDriverData(applicationContext)
+            DriverObject.driver = basePresenter?.getDriverData(applicationContext)
 
-            if (driver != null) {
+            if (DriverObject.driver != null) {
                 //ride already created
                 replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
             } else {
                 //not created
-                addFragment(MAIN_FRAGMENT, supportFragmentManager)
+                replaceFragment(MAIN_FRAGMENT, null, supportFragmentManager)
             }
         }
     }
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             fm.findFragmentByTag(Constants.FULL_NAME_VIEW.toString()) as FullNameView?
 
 
-        if (createRideView?.view != null && createRideView.backPressed()) {
+        if (createRideView?.view != null && createRideView.onBackPressed()) {
             super.onBackPressed()
         }
 
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
 
-        if (getDriverView?.view != null && getDriverView.backPressed()) {
+        if (getDriverView?.view != null && getDriverView.onBackPressed()) {
             super.onBackPressed()
         }
     }

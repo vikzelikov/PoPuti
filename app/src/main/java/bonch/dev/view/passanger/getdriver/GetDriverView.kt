@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import bonch.dev.MainActivity
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.model.passanger.getdriver.pojo.DriverObject.driver
+import bonch.dev.model.passanger.getdriver.pojo.DriverObject
 import bonch.dev.presenter.passanger.getdriver.GetDriverPresenter
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.REASON1
@@ -46,7 +46,6 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     var confirmCancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var expiredTimeBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var confirmGetBottomSheetBehavior: BottomSheetBehavior<*>? = null
-    var driverCancelledBottomSheet: BottomSheetBehavior<*>? = null
     var getDriverPresenter: GetDriverPresenter? = null
     var userLocationLayer: UserLocationLayer? = null
 
@@ -71,29 +70,26 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
         val root = inflater.inflate(R.layout.get_driver_fragment, container, false)
         mapView = root.findViewById(R.id.map) as MapView
+        getDriverPresenter?.root = root
+
+        //set map correct relative other views
+        getDriverPresenter?.correctMapView()
 
         mapView?.map?.addCameraListener(this)
+        mapView?.map?.isRotateGesturesEnabled = false
 
         mapView?.map?.apply {
             val alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
             logo.setAlignment(alignment)
         }
 
-        getDriverPresenter?.receiveUserData(arguments, root)
+        getDriverPresenter?.receiveUserData(arguments)
 
         setBottomSheet(root)
 
         setListeners(root)
 
         getDriverPresenter?.startSearchDrivers(root)
-
-        getDriverPresenter?.root = root
-
-        if (driver != null) {
-            //ride already created
-            //TODO update driver status net
-            getDriverPresenter?.selectDriver(driver!!)
-        }
 
         return root
     }
@@ -106,6 +102,13 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         } else {
             Permissions.access(Constants.GEO_PERMISSION_REQUEST, this)
         }
+
+        if (DriverObject.driver != null) {
+            //ride already created
+            //TODO update driver status net
+            getDriverPresenter?.selectDriver(DriverObject.driver!!)
+        }
+
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -220,11 +223,11 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         }
 
         r.not_cancel.setOnClickListener {
-            getDriverPresenter?.notCancel()
+            getDriverPresenter?.hideAllBottomSheet()
         }
 
         r.on_map_view.setOnClickListener {
-            getDriverPresenter?.notCancel()
+            getDriverPresenter?.hideAllBottomSheet()
         }
 
         r.expired_time_ok_btn.setOnClickListener {
@@ -246,19 +249,17 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             BottomSheetBehavior.from<View>(root.time_expired_bottom_sheet)
         confirmGetBottomSheetBehavior =
             BottomSheetBehavior.from<View>(root.confirm_get_bottom_sheet)
-        driverCancelledBottomSheet =
-            BottomSheetBehavior.from<View>(root.driver_cancelled_bottom_sheet)
 
 
         cancelBottomSheetBehavior!!.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideCancelReason(slideOffset, root)
+                getDriverPresenter?.onSlideCancelReason(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onChangedStateCancelReason(newState, root)
+                getDriverPresenter?.onChangedStateCancelReason(newState)
             }
         })
 
@@ -267,11 +268,11 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideConfirmCancel(slideOffset, root)
+                getDriverPresenter?.onSlideConfirmCancel(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onChangedStateConfirmCancel(newState, root)
+                getDriverPresenter?.onChangedStateConfirmCancel(newState)
             }
         })
 
@@ -280,24 +281,11 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideCancelReason(slideOffset, root)
+                getDriverPresenter?.onSlideCancelReason(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onChangedStateCancelReason(newState, root)
-            }
-        })
-
-
-        driverCancelledBottomSheet!!.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideCancelReason(slideOffset, root)
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onChangedStateCancelReason(newState, root)
+                getDriverPresenter?.onChangedStateCancelReason(newState)
             }
         })
     }
@@ -335,8 +323,8 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
     }
 
 
-    fun backPressed(): Boolean {
-        return true
+    fun onBackPressed(): Boolean {
+        return getDriverPresenter?.onBackPressed()!!
     }
 
 }

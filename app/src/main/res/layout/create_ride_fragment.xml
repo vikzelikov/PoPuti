@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container_get_driver"
@@ -19,18 +19,14 @@
         android:elevation="12dp"
         android:padding="13dp"
         android:src="@drawable/ic_back_arrow"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:visibility="gone" />
 
 
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clickable="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:clickable="false" />
 
     <View
         android:id="@+id/on_map_view"
@@ -49,8 +45,10 @@
         android:id="@+id/show_route"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="15dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="330dp"
         android:background="@drawable/bg_back_btn"
         android:elevation="10dp"
         android:paddingStart="17dp"
@@ -58,9 +56,7 @@
         android:paddingEnd="17dp"
         android:paddingBottom="14dp"
         android:src="@drawable/ic_show_route"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/container_detail_ride"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:visibility="gone" />
 
 
     <LinearLayout
@@ -69,11 +65,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_corners_layout"
+        android:elevation="30dp"
         android:orientation="vertical"
-        android:translationY="-8dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map">
+        android:visibility="gone">
 
 
         <LinearLayout
@@ -281,11 +275,11 @@
                     android:fontFamily="@font/roboto"
                     android:gravity="end"
                     android:maxLines="1"
-                    android:translationY="-5dp"
                     android:paddingStart="18dp"
                     android:singleLine="true"
                     android:textColor="#60000000"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:translationY="-5dp" />
 
             </LinearLayout>
 
@@ -298,7 +292,7 @@
             android:layout_height="50dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/bg_btn_gray"
             android:fontFamily="@font/roboto"
             android:shadowColor="@color/colorBlue"
@@ -312,13 +306,9 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/container_bottom_sheet"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:context="ui.dashboard.HomeFragment">
 
         <LinearLayout
@@ -477,4 +467,4 @@
         android:background="@android:color/black"
         android:visibility="gone" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

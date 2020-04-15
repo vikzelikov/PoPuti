@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/get_driver_layout"
     tools:context=".view.passanger.getdriver.GetDriverView">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,6 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/main_info_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -187,6 +187,7 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/get_driver_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="10dp"
@@ -380,46 +381,6 @@
 
             <Button
                 android:id="@+id/expired_time_ok_btn"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/bg_btn_blue"
-                android:fontFamily="@font/roboto"
-                android:shadowColor="@color/colorBlue"
-                android:text="@string/ok"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/driver_cancelled_bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_corners_layout"
-            android:elevation="10dp"
-            android:orientation="vertical"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            app:behavior_peekHeight="990dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:fontFamily="@font/roboto"
-                android:text="@string/driverCancelledRide"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="24sp" />
-
-
-            <Button
-                android:id="@+id/ok_btn"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="14dp"

@@ -1,4 +1,11 @@
 <resources>
+    <!-- Base application theme is the default theme. -->
 
+    <style name="Theme.MyAppTheme" parent="@style/Theme.Design.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/white</item>
+
+    </style>
 
 </resources>

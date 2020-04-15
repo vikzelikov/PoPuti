@@ -78,20 +78,23 @@ class FullNameView : Fragment() {
         val lastName = root.last_name
 
         nextBtn.setOnClickListener {
+            val activity = activity as MainActivity
             signupPresenter?.saveProfileData(firstName.text.toString(), lastName.text.toString())
 
-            hideKeyboard(activity!!, root)
+            hideKeyboard(activity, root)
 
             if (signupPresenter != null && signupPresenter!!.isNameEntered()) {
-                val fm = (activity as MainActivity).supportFragmentManager
-                signupPresenter!!.nextBtn(FULL_NAME_VIEW, fm,null)
+                val fm = activity.supportFragmentManager
+                signupPresenter?.nextBtn(FULL_NAME_VIEW, fm,null)
             }
         }
 
         backBtn.setOnClickListener {
-            hideKeyboard(activity!!, root)
+            val activity = activity as MainActivity
 
-            val fm = (activity as MainActivity).supportFragmentManager
+            hideKeyboard(activity, root)
+
+            val fm = activity.supportFragmentManager
             signupPresenter?.backBtn(fm)
         }
 

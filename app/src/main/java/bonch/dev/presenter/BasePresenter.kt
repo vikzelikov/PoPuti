@@ -6,19 +6,20 @@ import android.content.Context
 import android.os.Handler
 import bonch.dev.MainActivity
 import bonch.dev.model.passanger.BaseModel
+import bonch.dev.model.passanger.getdriver.DriverInfoModel
 import bonch.dev.model.passanger.getdriver.pojo.Driver
 import kotlinx.android.synthetic.main.activity_main.*
 
-class BasePresenter (private val mainActivity: MainActivity) {
+class BasePresenter(private val mainActivity: MainActivity) {
 
     private var baseModel: BaseModel? = null
+    private var driverInfoModel: DriverInfoModel? = null
     private var handlerAnimation: Handler? = null
 
 
     init {
-        if(baseModel == null){
-            baseModel = BaseModel()
-        }
+        baseModel = BaseModel()
+        driverInfoModel = DriverInfoModel()
     }
 
     fun getToken(context: Context): String? {
@@ -27,7 +28,8 @@ class BasePresenter (private val mainActivity: MainActivity) {
 
 
     fun getDriverData(context: Context): Driver? {
-        return baseModel?.getDriverData(context)
+        driverInfoModel?.initSP(context)
+        return driverInfoModel?.getDriverData()
     }
 
 
@@ -47,7 +49,7 @@ class BasePresenter (private val mainActivity: MainActivity) {
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
-                    handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
+                    handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
                 }
             })
     }

@@ -131,8 +131,8 @@ class SignupPresenter(val fragment: Fragment) {
             val firstName = root!!.first_name
             val lastName = root!!.last_name
 
-            if (firstName.text.toString().trim().isNotEmpty() && lastName.text.toString().trim()
-                    .isNotEmpty()
+            if (firstName.text.toString().trim().isNotEmpty()
+                && lastName.text.toString().trim().isNotEmpty()
             ) {
                 changeBtnEnable(true, nextBtn)
                 result = true
