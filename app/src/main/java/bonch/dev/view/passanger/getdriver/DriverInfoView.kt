@@ -131,11 +131,11 @@ class DriverInfoView(private var getDriverView: GetDriverView) {
             driverInfoPresenter?.hideAllBottomSheet()
         }
 
-        //TODO
         r.message_driver.setOnClickListener {
-            Toast.makeText(getView().context!!, "Chat", Toast.LENGTH_SHORT).show()
+            driverInfoPresenter?.chat()
         }
 
+        //TODO
         r.phone_call_driver.setOnClickListener {
             Toast.makeText(getView().context!!, "Call driver", Toast.LENGTH_SHORT).show()
         }

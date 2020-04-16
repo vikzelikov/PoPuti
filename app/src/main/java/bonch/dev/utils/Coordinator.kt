@@ -25,10 +25,7 @@ import bonch.dev.utils.Constants.PROFILE_CHECK_PHOTO
 import bonch.dev.utils.Constants.PROFILE_FULL_VIEW
 import bonch.dev.view.MainFragment
 import bonch.dev.view.driver.signup.*
-import bonch.dev.view.passanger.getdriver.AddBankCardView
-import bonch.dev.view.passanger.getdriver.CreateRideView
-import bonch.dev.view.passanger.getdriver.GetDriverView
-import bonch.dev.view.passanger.getdriver.OfferPriceView
+import bonch.dev.view.passanger.getdriver.*
 import bonch.dev.view.passanger.profile.CheckPhotoView
 import bonch.dev.view.passanger.profile.ProfileDetailView
 import bonch.dev.view.passanger.signup.ConfirmPhoneView
@@ -225,6 +222,13 @@ object Coordinator {
                 fragment.startActivityForResult(intent, DRIVER_SIGNUP)
             }
         }
+    }
+
+
+    fun showChat(activity: Activity){
+        val context = activity.applicationContext
+        val intent = Intent(context, ChatView::class.java)
+        activity.startActivityForResult(intent, 1)
     }
 
 

@@ -13,6 +13,7 @@ import bonch.dev.model.passanger.getdriver.pojo.Driver
 import bonch.dev.model.passanger.getdriver.pojo.DriverObject
 import bonch.dev.model.passanger.getdriver.pojo.ReasonCancel
 import bonch.dev.utils.Constants
+import bonch.dev.utils.Coordinator
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.view.passanger.getdriver.DriverInfoView
 import bonch.dev.view.passanger.getdriver.GetDriverView
@@ -134,6 +135,12 @@ class DriverInfoPresenter(private val driverInfoView: DriverInfoView) {
 
         //redirect
         replaceFragment(Constants.MAIN_FRAGMENT, null, fm)
+    }
+
+
+    fun chat(){
+        val activity = getView().activity as MainActivity
+        Coordinator.showChat(activity)
     }
 
 

@@ -32,6 +32,9 @@
         <activity
             android:name=".view.passanger.getdriver.OfferPriceView"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.passanger.getdriver.ChatView"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="preloaded_fonts"
