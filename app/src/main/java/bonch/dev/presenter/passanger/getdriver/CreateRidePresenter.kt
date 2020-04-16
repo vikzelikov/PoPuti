@@ -10,7 +10,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import bonch.dev.MainActivity
 import bonch.dev.R
@@ -25,6 +24,7 @@ import bonch.dev.utils.ChangeOpacity.getOpacity
 import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.BLOCK_REQUEST_GEOCODER
 import bonch.dev.utils.Keyboard.hideKeyboard
+import bonch.dev.utils.Keyboard.showKeyboard
 import bonch.dev.view.passanger.getdriver.CreateRideView
 import bonch.dev.view.passanger.getdriver.DetailRideView
 import bonch.dev.view.passanger.getdriver.MBottomSheet
@@ -268,6 +268,7 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
 
     fun touchAddress(isFrom: Boolean) {
         val r = getView()
+        val activity = getView().activity as MainActivity
         val from = r.from_adr
         val to = r.to_adr
 
@@ -286,6 +287,15 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             if (!isBlockSelection) {
                 from.requestFocus()
                 from.setSelection(r.from_adr.text.length)
+
+                if (r.from_adr_box.visibility == View.VISIBLE) {
+                    Handler().postDelayed({
+                        showKeyboard(activity)
+                    }, 200)
+                    r.from_adr_box.visibility = View.GONE
+                    r.to_adr_box.visibility = View.GONE
+                }
+
                 isBlockSelection = true
             }
 
@@ -307,6 +317,15 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
             if (!isBlockSelection) {
                 to.requestFocus()
                 to.setSelection(r.to_adr.text.length)
+
+                if (r.to_adr_box.visibility == View.VISIBLE) {
+                    Handler().postDelayed({
+                        showKeyboard(activity)
+                    }, 200)
+                    r.from_adr_box.visibility = View.GONE
+                    r.to_adr_box.visibility = View.GONE
+                }
+
                 isBlockSelection = true
             }
 
@@ -422,6 +441,8 @@ class CreateRidePresenter(val createRideView: CreateRideView) {
                 r.from_cross.visibility = View.GONE
                 r.to_cross.visibility = View.GONE
                 r.on_map_view.visibility = View.GONE
+                r.from_adr_box.visibility = View.VISIBLE
+                r.to_adr_box.visibility = View.VISIBLE
                 r.from_adr.clearFocus()
                 r.to_adr.clearFocus()
 

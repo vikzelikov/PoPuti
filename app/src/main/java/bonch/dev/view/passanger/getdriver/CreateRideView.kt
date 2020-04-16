@@ -229,9 +229,17 @@ class CreateRideView : Fragment(), UserLocationObjectListener, CameraListener {
             false
         }
 
+        from_adr_box.setOnClickListener {
+            createRidePresenter?.touchAddress(true)
+        }
+
         to_adr.setOnTouchListener{ _: View, _: MotionEvent ->
             createRidePresenter?.touchAddress(false)
             false
+        }
+
+        to_adr_box.setOnClickListener {
+            createRidePresenter?.touchAddress(false)
         }
 
         on_map_view.setOnClickListener {
