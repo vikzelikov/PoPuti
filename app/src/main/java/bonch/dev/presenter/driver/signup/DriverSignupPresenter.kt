@@ -37,7 +37,7 @@ import kotlinx.android.synthetic.main.signup_car_info_fragment.view.*
 class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
 
-    var signupStatusModel: SignupStatusModel? = null
+    private var signupStatusModel: SignupStatusModel? = null
 
 
     init {
@@ -104,18 +104,21 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
 
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, fm: FragmentManager) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == GALLERY) {
-                SignupMainData.imgUri = data?.data.toString()
-            }
+        //MODE_PRIVATE - it is flag of suggest car info
+        if(resultCode != Activity.MODE_PRIVATE){
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == GALLERY) {
+                    SignupMainData.imgUri = data?.data.toString()
+                }
 
-            replaceFragment(DRIVER_SIGNUP_CHECK_PHOTO, null, fm)
+                replaceFragment(DRIVER_SIGNUP_CHECK_PHOTO, null, fm)
 
-        } else {
-            if (SignupMainData.isTableView) {
-                getTableDocs(fm)
             } else {
-                startSettingDocs(fm)
+                if (SignupMainData.isTableView) {
+                    getTableDocs(fm)
+                } else {
+                    startSettingDocs(fm)
+                }
             }
         }
     }
@@ -277,38 +280,6 @@ class DriverSignupPresenter(val driverSignupActivity: DriverSignupActivity?) {
         }
 
         return title
-    }
-
-
-    fun isCarInfoEntered(root: View): Boolean {
-        var result = false
-
-        val carName = root.car_name
-        val carModel = root.car_model
-        val carNumber = root.car_number
-        val nextBtn = root.next_btn
-
-        if (carName.text.toString().trim().isNotEmpty() &&
-            carModel.text.toString().trim().isNotEmpty() &&
-            carNumber.text.toString().trim().isNotEmpty()
-        ) {
-            changeBtnEnable(true, nextBtn)
-            result = true
-        } else {
-            changeBtnEnable(false, nextBtn)
-        }
-
-
-        return result
-    }
-
-
-    private fun changeBtnEnable(enable: Boolean, nextBtn: Button) {
-        if (enable) {
-            nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
-        } else {
-            nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
-        }
     }
 
 

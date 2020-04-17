@@ -28,13 +28,17 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.passanger.getdriver.AddBankCardView"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.passanger.getdriver.OfferPriceView"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.passanger.getdriver.ChatView"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.driver.signup.CarInfoSuggestView"
+            android:screenOrientation="portrait" />
+
 
         <meta-data
             android:name="preloaded_fonts"

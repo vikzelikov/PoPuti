@@ -37,70 +37,47 @@
                 android:textStyle="bold" />
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/car_name_layout"
+            <TextView
+                android:id="@+id/car_name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="15dp"
-                android:hint="@string/carName"
-                app:hintTextColor="#000000">
+                android:background="@drawable/bg_textview"
+                android:fontFamily="@font/roboto"
+                android:gravity="center_vertical"
+                android:text="@string/carName"
+                android:textColor="#60000000"
+                android:textSize="16sp" />
 
-                <EditText
-                    android:id="@+id/car_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_et_selector"
-                    android:cursorVisible="true"
-                    android:hint="@string/carName"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/black"
-                    android:textColorHint="#60000000"
-                    android:textCursorDrawable="@drawable/bg_color_cursor"
-                    android:textSize="16sp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/car_model_layout"
+            <TextView
+                android:id="@+id/car_model"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="15dp"
-                android:hint="@string/carModel"
-                app:hintTextColor="#000000">
-
-                <EditText
-                    android:id="@+id/car_model"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_et_selector"
-                    android:cursorVisible="true"
-                    android:hint="@string/carModel"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/black"
-                    android:textColorHint="#60000000"
-                    android:textCursorDrawable="@drawable/bg_color_cursor"
-                    android:textSize="16sp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+                android:background="@drawable/bg_textview"
+                android:fontFamily="@font/roboto"
+                android:gravity="center_vertical"
+                android:text="@string/carModel"
+                android:textColor="#60000000"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/car_number_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="15dp"
+                android:gravity="bottom"
                 android:hint="@string/car_number"
+                android:visibility="gone"
+                app:hintEnabled="false"
                 app:hintTextColor="#000000">
 
                 <EditText
@@ -131,9 +108,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
         android:background="@drawable/bg_btn_gray"
         android:fontFamily="@font/roboto"
         android:text="@string/continue_signup"

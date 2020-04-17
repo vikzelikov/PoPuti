@@ -103,6 +103,9 @@ object Constants {
     const val PROFILE_REALM_NAME = "profile.realm"
 
 
+    const val BOOL_DATA = "BOOL_DATA"
+    const val STRING_DATA = "STRING_DATA"
+
     const val EXIT = -2
 
 }

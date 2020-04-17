@@ -225,7 +225,7 @@ object Coordinator {
     }
 
 
-    fun showChat(activity: Activity){
+    fun showChat(activity: Activity) {
         val context = activity.applicationContext
         val intent = Intent(context, ChatView::class.java)
         activity.startActivityForResult(intent, 1)
@@ -237,6 +237,22 @@ object Coordinator {
         intent.putExtra(Constants.PHOTO, img)
         activity.startActivityForResult(intent, PROFILE_CHECK_PHOTO)
     }
+
+
+    fun showCarInfoSuggest(
+        context: Context,
+        fragment: Fragment,
+        isCarName: Boolean,
+        carName: String?
+    ) {
+        val intent = Intent(context, CarInfoSuggestView::class.java)
+        intent.putExtra(Constants.BOOL_DATA, isCarName)
+        carName?.let {
+            intent.putExtra(Constants.STRING_DATA, it)
+        }
+        fragment.startActivityForResult(intent, 1)
+    }
+
 
     fun previousFragment(fm: FragmentManager) {
         fm.popBackStack()
