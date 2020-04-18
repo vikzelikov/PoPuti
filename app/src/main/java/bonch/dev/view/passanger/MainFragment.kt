@@ -1,4 +1,4 @@
-package bonch.dev.view
+package bonch.dev.view.passanger
 
 import android.os.Bundle
 import android.view.*
@@ -29,7 +29,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.main_fragment, container, false)
+        val root = inflater.inflate(R.layout.main_passanger_fragment, container, false)
 
         val navView: BottomNavigationView = root.findViewById(R.id.nav_view)
 

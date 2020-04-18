@@ -113,5 +113,18 @@
     <string name="letsGo">Поехали!</string>
     <string name="rideCancel">Поездка отменена</string>
     <string name="driverCancelledRide">Водитель отменил поездку</string>
+    <string name="listOrders">Список заказов</string>
+    <string name="agreeWithPrice">Согласиться с ценой</string>
+    <string name="offerOtherPrice">Предложить свою цену</string>
+    <string name="isPlace">На месте</string>
+    <string name="waitPassanger">Ожидаем пассажира</string>
+    <string name="waitingTime">Время простоя</string>
+    <string name="navigator">Навигатор</string>
+    <string name="rideEnd">Поездка завершена</string>
+    <string name="ratePassanger">Оцените пассажира</string>
+    <string name="perfect">Отлично</string>
+    <string name="whatHappens">Что случилось?</string>
+    <string name="send">Отправить</string>
+    <string name="yourComment">Ваш комментарий (необязательно)</string>
 
 </resources>

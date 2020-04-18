@@ -5,17 +5,11 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.model.passanger.getdriver.pojo.DriverObject
 import bonch.dev.presenter.BasePresenter
-import bonch.dev.utils.Constants
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Constants.MAIN_FRAGMENT
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Coordinator.replaceFragment
 import bonch.dev.utils.Keyboard.hideKeyboard
-import bonch.dev.view.passanger.getdriver.CreateRideView
-import bonch.dev.view.passanger.getdriver.GetDriverView
-import bonch.dev.view.passanger.signup.ConfirmPhoneView
-import bonch.dev.view.passanger.signup.FullNameView
-import bonch.dev.view.passanger.signup.PhoneView
 
 
 class MainActivity : AppCompatActivity() {
@@ -66,38 +60,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    fun pressBack(){
+        super.onBackPressed()
+    }
+
+
     override fun onBackPressed() {
-        val fm = supportFragmentManager
-        val createRideView =
-            fm.findFragmentByTag(Constants.CREATE_RIDE_VIEW.toString()) as CreateRideView?
-        val getDriverView =
-            fm.findFragmentByTag(Constants.GET_DRIVER_VIEW.toString()) as GetDriverView?
-        val phoneFragment =
-            fm.findFragmentByTag(Constants.PHONE_VIEW.toString()) as PhoneView?
-        val confirmPhoneFragment =
-            fm.findFragmentByTag(Constants.CONFIRM_PHONE_VIEW.toString()) as ConfirmPhoneView?
-        val fullNameFragment =
-            fm.findFragmentByTag(Constants.FULL_NAME_VIEW.toString()) as FullNameView?
-
-
-        if (createRideView?.view != null && createRideView.onBackPressed()) {
-            super.onBackPressed()
-        }
-
-        if (phoneFragment?.view != null) {
-            super.onBackPressed()
-        }
-
-        if (confirmPhoneFragment?.view != null) {
-            super.onBackPressed()
-        }
-
-        if (fullNameFragment?.view != null) {
-            super.onBackPressed()
-        }
-
-        if (getDriverView?.view != null && getDriverView.onBackPressed()) {
-            super.onBackPressed()
-        }
+        basePresenter?.onBackPressed()
     }
 }

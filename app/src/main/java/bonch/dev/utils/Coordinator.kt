@@ -23,7 +23,7 @@ import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Constants.PROFILE_CHECK_PHOTO
 import bonch.dev.utils.Constants.PROFILE_FULL_VIEW
-import bonch.dev.view.MainFragment
+import bonch.dev.view.passanger.MainFragment
 import bonch.dev.view.driver.signup.*
 import bonch.dev.view.passanger.getdriver.*
 import bonch.dev.view.passanger.profile.CheckPhotoView

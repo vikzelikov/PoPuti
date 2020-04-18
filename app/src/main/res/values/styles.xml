@@ -5,7 +5,12 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/white</item>
-
     </style>
 
+
+    <style name="RatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:minHeight">32dip</item>
+        <item name="android:minWidth">36dip</item>
+        <item name="android:progressDrawable">@drawable/bg_rating_bar</item>
+    </style>
 </resources>
