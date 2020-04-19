@@ -225,6 +225,19 @@ object Coordinator {
     }
 
 
+    fun showPassangerView(){
+        //TODO
+    }
+
+
+    fun showDriverView(fm: FragmentManager){
+            val fragment = bonch.dev.view.driver.MainFragment()
+            fm.beginTransaction()
+                .replace(R.id.fragment_container, fragment, MAIN_FRAGMENT.toString())
+                .commit()
+    }
+
+
     fun showChat(activity: Activity) {
         val context = activity.applicationContext
         val intent = Intent(context, ChatView::class.java)

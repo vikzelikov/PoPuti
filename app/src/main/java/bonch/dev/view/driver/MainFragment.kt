@@ -11,6 +11,8 @@ import bonch.dev.R
 import bonch.dev.utils.Constants.CREATE_RIDE_VIEW
 import bonch.dev.utils.Constants.PROFILE_VIEW
 import bonch.dev.utils.Constants.REGULAR_DRIVING_VIEW
+import bonch.dev.view.driver.getpassanger.OrdersView
+import bonch.dev.view.driver.rating.RatingView
 import bonch.dev.view.passanger.getdriver.CreateRideView
 import bonch.dev.view.passanger.profile.ProfileView
 import bonch.dev.view.passanger.regulardrive.RegularDriveView
@@ -18,8 +20,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment() {
 
-    private var regularDriving: RegularDriveView? = null
-    private var createRide: CreateRideView? = null
+    private var ordersView: OrdersView? = null
+    private var ratingView: RatingView? = null
     private var profile: ProfileView? = null
 
     private var active: Fragment? = null
@@ -36,17 +38,16 @@ class MainFragment : Fragment() {
 
         initialize()
 
-        createRide!!.navView = navView
-        active = createRide
+        active = ordersView
         navView.selectedItemId = R.id.get_driver
 
         fm!!.beginTransaction().add(R.id.nav_host_fragment, profile!!, PROFILE_VIEW.toString())
             .hide(profile!!).commit()
         fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, regularDriving!!, REGULAR_DRIVING_VIEW.toString())
-            .hide(regularDriving!!).commit()
+            .add(R.id.nav_host_fragment, ratingView!!, REGULAR_DRIVING_VIEW.toString())
+            .hide(ratingView!!).commit()
         fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, createRide!!, CREATE_RIDE_VIEW.toString()).commit()
+            .add(R.id.nav_host_fragment, ordersView!!, CREATE_RIDE_VIEW.toString()).commit()
 
 
         navView.setOnNavigationItemSelectedListener(null)
@@ -59,16 +60,16 @@ class MainFragment : Fragment() {
     private val mOnNavigationItemSelectedListener: BottomNavigationView.OnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.regular_driving -> {
-                    fm!!.beginTransaction().hide(active!!).show(regularDriving!!).commit()
+                R.id.orders -> {
+                    fm!!.beginTransaction().hide(active!!).show(ordersView!!).commit()
                     item.isChecked = true
-                    active = regularDriving
+                    active = ordersView
                 }
 
-                R.id.get_driver -> {
-                    fm!!.beginTransaction().hide(active!!).show(createRide!!).commit()
+                R.id.rating -> {
+                    fm!!.beginTransaction().hide(active!!).show(ratingView!!).commit()
                     item.isChecked = true
-                    active = createRide
+                    active = ratingView
                 }
 
                 R.id.profile -> {
@@ -85,12 +86,12 @@ class MainFragment : Fragment() {
     private fun initialize() {
         fm = (activity as MainActivity).supportFragmentManager
 
-        if (regularDriving == null) {
-            regularDriving = RegularDriveView()
+        if (ordersView == null) {
+            ordersView = OrdersView()
         }
 
-        if (createRide == null) {
-            createRide = CreateRideView()
+        if (ratingView == null) {
+            ratingView = RatingView()
         }
 
         if (profile == null) {
