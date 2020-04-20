@@ -23,14 +23,14 @@ import bonch.dev.utils.Constants.OFFER_PRICE_VIEW
 import bonch.dev.utils.Constants.PHONE_VIEW
 import bonch.dev.utils.Constants.PROFILE_CHECK_PHOTO
 import bonch.dev.utils.Constants.PROFILE_FULL_VIEW
-import bonch.dev.view.passanger.MainFragment
-import bonch.dev.view.driver.signup.*
-import bonch.dev.view.passanger.getdriver.*
-import bonch.dev.view.passanger.profile.CheckPhotoView
-import bonch.dev.view.passanger.profile.ProfileDetailView
-import bonch.dev.view.passanger.signup.ConfirmPhoneView
-import bonch.dev.view.passanger.signup.FullNameView
-import bonch.dev.view.passanger.signup.PhoneView
+import bonch.dev.presentation.ui.passanger.MainFragment
+import bonch.dev.presentation.driver.signup.*
+import bonch.dev.presentation.ui.passanger.getdriver.*
+import bonch.dev.presentation.ui.passanger.profile.CheckPhotoView
+import bonch.dev.presentation.ui.passanger.profile.ProfileDetailView
+import bonch.dev.presentation.ui.passanger.signup.ConfirmPhoneView
+import bonch.dev.presentation.ui.passanger.signup.FullNameView
+import bonch.dev.presentation.ui.passanger.signup.PhoneView
 
 
 object Coordinator {
@@ -146,7 +146,7 @@ object Coordinator {
 
 
             DRIVER_SIGNUP_CHECK_PHOTO -> {
-                val fragment = bonch.dev.view.driver.signup.CheckPhotoView()
+                val fragment = bonch.dev.presentation.driver.signup.CheckPhotoView()
                 fragment.arguments = bundle
 
                 fm.beginTransaction()
@@ -231,7 +231,7 @@ object Coordinator {
 
 
     fun showDriverView(fm: FragmentManager){
-            val fragment = bonch.dev.view.driver.MainFragment()
+            val fragment = bonch.dev.presentation.driver.MainFragment()
             fm.beginTransaction()
                 .replace(R.id.fragment_container, fragment, MAIN_FRAGMENT.toString())
                 .commit()

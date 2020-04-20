@@ -1,6 +1,6 @@
 package bonch.dev
 
-import bonch.dev.view.IBaseView
+import bonch.dev.presentation.ui.IBaseView
 
 interface ContractInterface {
 
@@ -8,7 +8,7 @@ interface ContractInterface {
         fun showBottomSheet()
     }
 
-    interface IView: IBaseView{
+    interface IView: IBaseView {
 
     }
 }

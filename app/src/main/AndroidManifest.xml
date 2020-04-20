@@ -19,26 +19,26 @@
         tools:ignore="LockedOrientationActivity"
         tools:targetApi="m">
         <activity
-            android:name=".view.driver.signup.DriverSignupActivity"
+            android:name=".presentation.driver.signup.DriverSignupActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.passanger.profile.ProfileDetailView"
+            android:name="bonch.dev.presentation.ui.passanger.profile.ProfileDetailView"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.passanger.profile.CheckPhotoView"
+            android:name="bonch.dev.presentation.ui.passanger.profile.CheckPhotoView"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.passanger.getdriver.AddBankCardView"
+            android:name="bonch.dev.presentation.ui.passanger.getdriver.AddBankCardView"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.passanger.getdriver.OfferPriceView"
+            android:name="bonch.dev.presentation.ui.passanger.getdriver.OfferPriceView"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.passanger.getdriver.ChatView"
+            android:name="bonch.dev.presentation.ui.passanger.getdriver.ChatView"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.driver.signup.CarInfoSuggestView"
+            android:name=".presentation.driver.signup.CarInfoSuggestView"
             android:screenOrientation="portrait" />
 
 

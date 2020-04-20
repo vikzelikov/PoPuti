@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/driver_info_layout"
-    tools:context=".view.passanger.getdriver.GetDriverView">
+    tools:context=".presentation.ui.passanger.getdriver.GetDriverView">
 
 
     <LinearLayout
@@ -233,7 +233,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -316,7 +316,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -395,7 +395,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
 
             <TextView

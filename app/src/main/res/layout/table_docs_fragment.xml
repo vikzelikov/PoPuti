@@ -412,7 +412,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"

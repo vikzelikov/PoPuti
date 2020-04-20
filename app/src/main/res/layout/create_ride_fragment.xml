@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".view.passanger.getdriver.CreateRideView">
+    tools:context=".presentation.ui.passanger.getdriver.CreateRideView">
 
 
     <ImageButton
@@ -319,7 +319,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -358,7 +358,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -419,7 +419,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"

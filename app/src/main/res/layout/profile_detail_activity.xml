@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context=".view.passanger.profile.ProfileDetailView">
+    tools:context=".presentation.ui.passanger.profile.ProfileDetailView">
 
     <TextView
         android:id="@+id/notification"
@@ -403,7 +403,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -476,7 +476,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".view.passanger.getdriver.MBottomSheet">
+            app:layout_behavior=".presentation.ui.passanger.getdriver.MBottomSheet">
 
 
             <TextView

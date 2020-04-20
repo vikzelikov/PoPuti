@@ -2,20 +2,20 @@ package bonch.dev.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
-import bonch.dev.network.signup.RetrofitService
+import bonch.dev.data.network.passanger.signup.NetworkService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkUtil {
     private const val BASE_URL = "https://poputi-backend-staging.server.bonch.dev"
 
-    fun makeRetrofitService(): RetrofitService {
+    fun makeRetrofitService(): NetworkService {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        return retrofit.create(RetrofitService::class.java)
+        return retrofit.create(NetworkService::class.java)
     }
 
 

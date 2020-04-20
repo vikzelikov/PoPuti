@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import bonch.dev.model.passanger.getdriver.pojo.DriverObject
-import bonch.dev.presenter.MainPresenter
+import bonch.dev.data.repository.passanger.getdriver.pojo.DriverObject
+import bonch.dev.presentation.presenter.MainPresenter
 import bonch.dev.utils.Constants.GET_DRIVER_VIEW
 import bonch.dev.utils.Coordinator
 import bonch.dev.utils.Coordinator.replaceFragment
@@ -53,8 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        (application as App).component?.inject(this)
-
+        (application as App).appComponent?.inject(this)
 
     }
 

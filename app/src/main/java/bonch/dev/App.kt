@@ -6,13 +6,14 @@ import bonch.dev.di.component.DaggerAppComponent
 import bonch.dev.di.component.driver.DaggerGetPassangerComponent
 import bonch.dev.di.component.driver.GetPassangerComponent
 import bonch.dev.di.module.AppModule
+import bonch.dev.di.module.driver.getpassanger.GetPassangerModule
 
 
 class App : Application() {
-    var component: AppComponent? = null
+    var appComponent: AppComponent? = null
 
     companion object {
-        var mGetPassangerComponent: GetPassangerComponent? = null
+        var getPassangerComponent: GetPassangerComponent? = null
     }
 
 
@@ -22,14 +23,14 @@ class App : Application() {
 
 
     private fun initDagger() {
-
         //needs to run once to generate it
-        component = DaggerAppComponent.builder()
+        appComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .build()
 
-        mGetPassangerComponent = DaggerGetPassangerComponent.builder()
-
+        getPassangerComponent = DaggerGetPassangerComponent.builder()
+            .appComponent(appComponent)
+            .getPassangerModule(GetPassangerModule())
             .build()
 
     }
