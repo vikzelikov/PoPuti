@@ -1,7 +1,8 @@
 package bonch.dev.data.network.passanger.signup
 
 
-import bonch.dev.data.repository.passanger.signup.pojo.Token
+import bonch.dev.domain.entities.passanger.signup.Token
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 

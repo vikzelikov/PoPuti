@@ -1,8 +1,8 @@
 package bonch.dev.data.repository.passanger.getdriver
 
 import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
-import bonch.dev.presentation.presenter.passanger.getdriver.CreateRidePresenter
-import bonch.dev.utils.Constants
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.CreateRidePresenter
+import bonch.dev.domain.utils.Constants
 import com.yandex.mapkit.geometry.Point
 import io.realm.Case
 import io.realm.Realm

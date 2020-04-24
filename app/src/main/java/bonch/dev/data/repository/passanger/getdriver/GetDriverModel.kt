@@ -2,7 +2,7 @@ package bonch.dev.data.repository.passanger.getdriver
 
 import bonch.dev.R
 import bonch.dev.data.repository.passanger.getdriver.pojo.Driver
-import bonch.dev.presentation.presenter.passanger.getdriver.GetDriverPresenter
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.GetDriverPresenter
 
 class GetDriverModel(private val getDriverPresenter: GetDriverPresenter) {
 

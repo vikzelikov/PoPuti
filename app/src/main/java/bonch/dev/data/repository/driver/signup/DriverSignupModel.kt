@@ -2,8 +2,8 @@ package bonch.dev.data.driver.signup
 
 import androidx.preference.PreferenceManager
 import bonch.dev.data.driver.signup.pojo.DocsRealm
-import bonch.dev.presentation.presenter.driver.signup.TableDocsPresenter
-import bonch.dev.utils.Constants
+import bonch.dev.presentation.modules.driver.signup.tabledocs.presenter.TableDocsPresenter
+import bonch.dev.domain.utils.Constants
 import bonch.dev.presentation.driver.signup.DriverSignupActivity
 import io.realm.Realm
 import io.realm.RealmConfiguration

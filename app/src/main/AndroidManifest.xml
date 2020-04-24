@@ -23,22 +23,22 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="bonch.dev.presentation.ui.passanger.profile.ProfileDetailView"
+            android:name="bonch.dev.presentation.modules.passanger.profile.view.ProfileDetailView"
             android:screenOrientation="portrait" />
         <activity
-            android:name="bonch.dev.presentation.ui.passanger.profile.CheckPhotoView"
+            android:name="bonch.dev.presentation.modules.passanger.profile.view.CheckPhotoView"
             android:screenOrientation="portrait" />
         <activity
-            android:name="bonch.dev.presentation.ui.passanger.getdriver.AddBankCardView"
+            android:name="bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView"
             android:screenOrientation="portrait" />
         <activity
-            android:name="bonch.dev.presentation.ui.passanger.getdriver.OfferPriceView"
+            android:name="bonch.dev.presentation.modules.passanger.getdriver.orfferprice.view.OfferPriceView"
             android:screenOrientation="portrait" />
         <activity
-            android:name="bonch.dev.presentation.ui.passanger.getdriver.ChatView"
+            android:name="bonch.dev.presentation.modules.passanger.getdriver.chat.view.ChatView"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.driver.signup.CarInfoSuggestView"
+            android:name=".presentation.driver.signup.SuggestView"
             android:screenOrientation="portrait" />
 
 

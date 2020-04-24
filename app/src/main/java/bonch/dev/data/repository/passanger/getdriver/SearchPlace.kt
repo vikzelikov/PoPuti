@@ -1,6 +1,6 @@
 package bonch.dev.data.repository.passanger.getdriver
 
-import bonch.dev.presentation.presenter.passanger.getdriver.DetailRidePresenter
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.DetailRidePresenter
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 

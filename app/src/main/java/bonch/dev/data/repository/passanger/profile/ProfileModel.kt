@@ -2,9 +2,9 @@ package bonch.dev.data.repository.passanger.profile
 
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import bonch.dev.data.repository.passanger.profile.pojo.Profile
-import bonch.dev.presentation.presenter.passanger.profile.IProfilePresenter
-import bonch.dev.utils.Constants
-import bonch.dev.utils.Constants.PROFILE_REALM_NAME
+import bonch.dev.presentation.modules.passanger.profile.presenter.IProfilePresenter
+import bonch.dev.domain.utils.Constants
+import bonch.dev.domain.utils.Constants.PROFILE_REALM_NAME
 import io.realm.Realm
 import io.realm.RealmConfiguration
 

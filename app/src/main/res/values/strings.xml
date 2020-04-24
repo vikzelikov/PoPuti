@@ -108,6 +108,11 @@
     <string name="rating">Рейтинг</string>
     <string name="save">Сохранить</string>
     <string name="rub">руб.</string>
+    <string name="sec">сек.</string>
+    <string name="seconds">секунд</string>
+    <string name="seconds1">секунды</string>
+    <string name="second">секунду</string>
+    <string name="waitFor">Ожидайте еще</string>
     <string name="call">Позвонить</string>
     <string name="message">Написать</string>
     <string name="letsGo">Поехали!</string>
@@ -127,5 +132,7 @@
     <string name="send">Отправить</string>
     <string name="yourComment">Ваш комментарий (необязательно)</string>
     <string name="passangerCancelledRide">Пассажир отменил поездку</string>
+    <string name="callSupport">Обратитесь в техническую поддержку</string>
+    <string name="errorSystem">Внутренняя ошибка системы</string>
 
 </resources>

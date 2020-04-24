@@ -1,8 +1,8 @@
 package bonch.dev.data.driver.signup
 
 import androidx.preference.PreferenceManager
-import bonch.dev.presentation.presenter.driver.signup.DriverSignupPresenter
-import bonch.dev.utils.Constants
+import bonch.dev.presentation.modules.driver.signup.steps.presenter.DriverSignupPresenter
+import bonch.dev.domain.utils.Constants
 
 class SignupStatusModel(val driverSignupPresenter: DriverSignupPresenter) {
 

@@ -5,20 +5,18 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import bonch.dev.data.repository.passanger.getdriver.pojo.DriverObject
-import bonch.dev.presentation.presenter.MainPresenter
-import bonch.dev.utils.Constants.GET_DRIVER_VIEW
-import bonch.dev.utils.Coordinator
-import bonch.dev.utils.Coordinator.replaceFragment
-import bonch.dev.utils.Keyboard.hideKeyboard
+import bonch.dev.presentation.base.MainPresenter
+import bonch.dev.domain.utils.Constants.GET_DRIVER_VIEW
+import bonch.dev.domain.utils.Constants.PHONE_VIEW
+import bonch.dev.route.Coordinator
+import bonch.dev.route.Coordinator.replaceFragment
+import bonch.dev.domain.utils.Keyboard.hideKeyboard
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
 
     private var mainPresenter: MainPresenter? = null
-
-    @Inject
-    lateinit var context: Context
 
     init {
         mainPresenter = MainPresenter(this)
@@ -34,9 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         if (accessToken == null) {
             //to signup
-            //replaceFragment(PHONE_VIEW, null, supportFragmentManager)
+            replaceFragment(PHONE_VIEW, null, supportFragmentManager)
             //addFragment(MAIN_FRAGMENT, supportFragmentManager)
-            Coordinator.showDriverView(supportFragmentManager)
+            //Coordinator.showDriverView(supportFragmentManager)
 
         } else {
             //redirect to full app
@@ -44,16 +42,17 @@ class MainActivity : AppCompatActivity() {
 
             if (DriverObject.driver != null) {
                 //ride already created
-                replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
+                //replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
+                replaceFragment(PHONE_VIEW, null, supportFragmentManager)
+
             } else {
                 //not created
                 //replaceFragment(MAIN_FRAGMENT, null, supportFragmentManager)
-                Coordinator.showDriverView(supportFragmentManager)
+                //Coordinator.showDriverView(supportFragmentManager)
+                replaceFragment(PHONE_VIEW, null, supportFragmentManager)
             }
         }
 
-
-        (application as App).appComponent?.inject(this)
 
     }
 

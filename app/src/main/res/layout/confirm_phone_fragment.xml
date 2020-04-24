@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:layout_weight="0.05"
+        android:layout_marginTop="15dp"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -54,7 +54,7 @@
             android:orientation="horizontal"
             android:weightSum="4">
 
-            <bonch.dev.presentation.ui.passanger.signup.EditTextCode
+            <bonch.dev.presentation.modules.passanger.signup.view.EditTextCode
                 android:id="@+id/code1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                 android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
-            <bonch.dev.presentation.ui.passanger.signup.EditTextCode
+            <bonch.dev.presentation.modules.passanger.signup.view.EditTextCode
                 android:id="@+id/code2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                 android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
-            <bonch.dev.presentation.ui.passanger.signup.EditTextCode
+            <bonch.dev.presentation.modules.passanger.signup.view.EditTextCode
                 android:id="@+id/code3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
                 android:textCursorDrawable="@drawable/bg_color_cursor"
                 android:textSize="36sp" />
 
-            <bonch.dev.presentation.ui.passanger.signup.EditTextCode
+            <bonch.dev.presentation.modules.passanger.signup.view.EditTextCode
                 android:id="@+id/code4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -138,8 +138,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.95"
+        android:layout_height="match_parent"
         android:gravity="bottom"
         android:orientation="vertical">
 
@@ -152,7 +151,7 @@
             android:textColor="#50000000" />
 
         <Button
-            android:id="@+id/next_btn_code"
+            android:id="@+id/btn_done"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="15dp"

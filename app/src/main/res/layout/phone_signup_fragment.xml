@@ -1,89 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/tools"
-    xmlns:mask="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:mask="http://schemas.android.com/tools"
     android:background="@android:color/white"
-    android:orientation="vertical"
-    android:weightSum="1"
-    app:ignore="NamespaceTypo">
+    android:orientation="vertical">
 
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_back_btn"
-        android:elevation="12dp"
-        android:padding="13dp"
-        android:src="@drawable/ic_back_arrow"
-        android:visibility="invisible" />
+    <ScrollView
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_layout"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_back_btn"
+                android:elevation="12dp"
+                android:padding="13dp"
+                android:src="@drawable/ic_back_arrow"
+                android:visibility="invisible" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:text="@string/input_number_phone"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/confirm_code"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <br.com.sapereaude.maskedEditText.MaskedEditText
+                android:id="@+id/phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/bg_et_selector"
+                android:cursorVisible="true"
+                android:inputType="phone"
+                android:maxWidth="200dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:textColor="@android:color/black"
+                android:textColorHint="#60000000"
+                android:textCursorDrawable="@drawable/bg_color_cursor"
+                android:textSize="16sp"
+                mask:allowed_chars="1234567890"
+                mask:mask="+7(###)###-##-##" />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
 
     <LinearLayout
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
+        android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.05"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:text="@string/input_number_phone"
-            android:textColor="@android:color/black"
-            android:textFontWeight="600"
-            android:textSize="24sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/roboto"
-            android:text="@string/confirm_code"
-            android:textColor="@android:color/black"
-            android:textSize="14sp" />
-
-        <br.com.sapereaude.maskedEditText.MaskedEditText
-            android:id="@+id/phone_number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/bg_et_selector"
-            android:cursorVisible="true"
-            android:inputType="phone"
-            android:maxWidth="200dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="0dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="#60000000"
-            android:textCursorDrawable="@drawable/bg_color_cursor"
-            android:textSize="16sp"
-            mask:allowed_chars="1234567890"
-            mask:mask="+7(###)###-##-##" />
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.95"
         android:gravity="bottom"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_layout">
 
         <TextView
             android:id="@+id/terms"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/roboto"
             android:linksClickable="true"
             android:text="@string/terms_cooperation"
             android:textColor="#8B8B8B"
@@ -91,13 +106,13 @@
             android:textSize="12sp" />
 
         <Button
-            android:id="@+id/next_btn_phone"
+            android:id="@+id/btn_done"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="15dp"
+            android:layout_marginTop="14dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="20dp"
-            android:layout_marginTop="14dp"
             android:background="@drawable/bg_btn_gray"
             android:fontFamily="@font/roboto"
             android:text="@string/next"
@@ -107,4 +122,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

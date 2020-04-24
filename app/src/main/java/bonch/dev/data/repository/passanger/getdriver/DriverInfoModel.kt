@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import bonch.dev.data.repository.passanger.getdriver.pojo.Driver
-import bonch.dev.utils.Constants
+import bonch.dev.domain.utils.Constants
 
 class DriverInfoModel() {
 

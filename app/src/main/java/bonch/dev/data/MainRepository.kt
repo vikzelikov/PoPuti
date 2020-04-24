@@ -2,7 +2,7 @@ package bonch.dev.data
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import bonch.dev.utils.Constants
+import bonch.dev.domain.utils.Constants
 
 class MainRepository {
 

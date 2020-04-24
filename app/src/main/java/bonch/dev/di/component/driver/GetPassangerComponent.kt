@@ -1,10 +1,10 @@
 package bonch.dev.di.component.driver
 
 import bonch.dev.di.component.AppComponent
-import bonch.dev.di.module.driver.getpassanger.GetPassangerModule
-import bonch.dev.di.scope.driver.OrdersScope
-import bonch.dev.presentation.presenter.driver.getpassanger.OrdersPresenter
-import bonch.dev.presentation.ui.driver.getpassanger.OrdersView
+import bonch.dev.di.module.driver.GetPassangerModule
+import bonch.dev.di.scope.OrdersScope
+import bonch.dev.presentation.modules.driver.getpassanger.orders.presenter.OrdersPresenter
+import bonch.dev.presentation.modules.driver.getpassanger.orders.view.OrdersView
 import dagger.Component
 
 @OrdersScope

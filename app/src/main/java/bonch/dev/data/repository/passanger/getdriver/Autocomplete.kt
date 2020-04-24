@@ -1,7 +1,7 @@
 package bonch.dev.data.repository.passanger.getdriver
 
 import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
-import bonch.dev.utils.Constants
+import bonch.dev.domain.utils.Constants
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
