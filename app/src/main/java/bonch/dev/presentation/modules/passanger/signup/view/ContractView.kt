@@ -1,6 +1,6 @@
 package bonch.dev.presentation.modules.passanger.signup.view
 
-import androidx.fragment.app.FragmentManager
+import bonch.dev.data.repository.passanger.profile.pojo.Profile
 import bonch.dev.presentation.interfaces.IBaseView
 
 interface ContractView {
@@ -8,14 +8,13 @@ interface ContractView {
     interface IPhoneView : IBaseView {
         fun changeBtnEnable(enable: Boolean)
         fun showError(text: String)
-        fun test(): FragmentManager?
+        fun setPhoneMask()
     }
 
 
     interface IConfirmView : IBaseView {
         fun changeBtnEnable(enable: Boolean)
         fun getCode(): String
-        fun requestFocus()
         fun showError()
         fun hideError()
         fun setViewTimer()
@@ -26,6 +25,7 @@ interface ContractView {
     interface IFullNameView : IBaseView {
         fun changeBtnEnable(enable: Boolean)
         fun setHintListener()
+        fun getProfileData(): Profile
         fun getFirstName(): String
         fun getLastName(): String
     }

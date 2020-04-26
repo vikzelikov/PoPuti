@@ -6,7 +6,7 @@ import bonch.dev.MainActivity
 
 interface ContractPresenter {
 
-    interface IPhonePresenter : ContractPresenter {
+    interface IPhonePresenter {
         fun instance(): PhonePresenter
         fun getCode(phone: String, root: View?)
         fun isPhoneEntered(phone: String): Boolean
@@ -14,7 +14,7 @@ interface ContractPresenter {
     }
 
 
-    interface IConfirmPhonePresenter : ContractPresenter {
+    interface IConfirmPhonePresenter {
         fun instance(): ConfirmPhonePresenter
         fun startTimerRetrySend(activity: MainActivity)
         fun isCodeEnter(): Boolean
@@ -26,10 +26,12 @@ interface ContractPresenter {
     }
 
 
-    interface IFullNamePresenter : ContractPresenter {
+    interface IFullNamePresenter {
         fun instance(): FullNamePresenter
         fun isNameEntered(): Boolean
-        fun saveProfileData(firstName: String, lastName: String)
+        fun saveProfileData()
+        fun saveToken()
+        fun doneSignup()
         fun back(activity: FragmentActivity)
     }
 }

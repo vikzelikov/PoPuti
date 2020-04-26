@@ -1,6 +1,8 @@
 package bonch.dev.di.module
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import bonch.dev.App
 import bonch.dev.di.scope.ApplicationContext
 import dagger.Module
@@ -16,6 +18,14 @@ class AppModule(private val application: App) {
     fun provideApp(): App {
         return application
     }
+
+
+    @Provides
+    @Singleton
+    fun provideSharedPref(): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(application.applicationContext)
+    }
+
 
     @Provides
     @Singleton

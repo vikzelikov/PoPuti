@@ -3,8 +3,10 @@ package bonch.dev.presentation.modules.passanger.signup.view
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
+import android.text.InputType
 import android.text.SpannableString
 import android.text.TextWatcher
+import android.text.method.DigitsKeyListener
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.view.LayoutInflater
@@ -14,6 +16,9 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
@@ -21,9 +26,12 @@ import bonch.dev.di.component.passanger.DaggerSignupComponent
 import bonch.dev.di.module.passanger.SignupModule
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.presenter.ContractPresenter
+import com.redmadrobot.inputmask.MaskedTextChangedListener.Companion.installOn
+import com.redmadrobot.inputmask.MaskedTextChangedListener.ValueListener
 import kotlinx.android.synthetic.main.phone_signup_fragment.*
 import kotlinx.android.synthetic.main.phone_signup_fragment.view.*
 import javax.inject.Inject
+
 
 class PhoneView : Fragment(), ContractView.IPhoneView {
 
@@ -68,6 +76,8 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
         (activity as MainActivity).window
             .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
+        setPhoneMask()
+
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -99,7 +109,7 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
             Handler().postDelayed({
                 //wait for keyboard hide
                 phonePresenter.getCode(phone, view)
-            },300)
+            }, 300)
         }
 
         phone_number.addTextChangedListener(object : TextWatcher {
@@ -124,13 +134,37 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
     }
 
 
-    override fun test(): FragmentManager? {
-        return activity?.supportFragmentManager
+    override fun setPhoneMask() {
+        phone_number.inputType = InputType.TYPE_CLASS_NUMBER
+        phone_number.keyListener = DigitsKeyListener.getInstance("1234567890+-() ")
+
+        val listener =
+            installOn(
+                phone_number,
+                "+7 ([000]) [000]-[00]-[00]",
+                object : ValueListener {
+                    override fun onTextChanged(
+                        maskFilled: Boolean,
+                        extractedValue: String,
+                        formattedValue: String
+                    ) {
+
+                    }
+                }
+            )
+
+
+        phone_number.hint = listener.placeholder()
     }
 
 
     override fun showError(text: String) {
         (activity as MainActivity).showNotification(text)
+    }
+
+
+    override fun getNavHost(): NavController {
+        return (activity as MainActivity).navController
     }
 
 

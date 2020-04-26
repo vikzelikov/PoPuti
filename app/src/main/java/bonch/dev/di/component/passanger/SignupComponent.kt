@@ -1,5 +1,6 @@
 package bonch.dev.di.component.passanger
 
+import androidx.navigation.NavController
 import bonch.dev.di.component.AppComponent
 import bonch.dev.di.module.passanger.SignupModule
 import bonch.dev.di.scope.OrdersScope

@@ -1,6 +1,7 @@
 package bonch.dev.di.component
 
 import android.content.Context
+import android.content.SharedPreferences
 import bonch.dev.App
 import bonch.dev.di.module.AppModule
 import bonch.dev.di.module.NetworkModule
@@ -18,6 +19,10 @@ interface AppComponent {
 
     fun getNetworkModule(): Retrofit
 
+    fun getSharedPref(): SharedPreferences
+
     @ApplicationContext
     fun getContext(): Context
+
+
 }

@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:mask="http://schemas.android.com/tools"
     android:background="@android:color/white"
     android:orientation="vertical">
 
@@ -42,8 +41,8 @@
                 android:fontFamily="@font/roboto"
                 android:text="@string/input_number_phone"
                 android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -54,7 +53,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
-            <br.com.sapereaude.maskedEditText.MaskedEditText
+            <EditText
                 android:id="@+id/phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,16 +61,15 @@
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/bg_et_selector"
                 android:cursorVisible="true"
-                android:inputType="phone"
+                android:digits="1234567890+-() "
+                android:inputType="number"
                 android:maxWidth="200dp"
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
                 android:textColor="@android:color/black"
                 android:textColorHint="#60000000"
                 android:textCursorDrawable="@drawable/bg_color_cursor"
-                android:textSize="16sp"
-                mask:allowed_chars="1234567890"
-                mask:mask="+7(###)###-##-##" />
+                android:textSize="16sp" />
 
 
         </LinearLayout>
@@ -96,8 +94,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
             android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
             android:fontFamily="@font/roboto"
             android:linksClickable="true"
             android:text="@string/terms_cooperation"

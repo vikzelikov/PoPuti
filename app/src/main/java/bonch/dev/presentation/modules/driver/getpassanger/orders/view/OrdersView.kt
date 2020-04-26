@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.presentation.interfaces.IBaseView
@@ -44,6 +45,10 @@ class OrdersView : Fragment(), IBaseView {
 
     override fun setListeners() {
 
+    }
+
+    override fun getNavHost(): NavController {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 

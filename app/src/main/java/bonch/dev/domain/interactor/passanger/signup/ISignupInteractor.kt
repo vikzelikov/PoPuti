@@ -1,6 +1,8 @@
 package bonch.dev.domain.interactor.passanger.signup
 
-typealias SignupHandler<T> = (error: T) -> Unit
+import bonch.dev.data.repository.passanger.profile.pojo.Profile
+
+typealias SignupHandler<T> = (success: T) -> Unit
 
 interface ISignupInteractor {
 
@@ -15,8 +17,13 @@ interface ISignupInteractor {
         callback: SignupHandler<Boolean>
     )
 
-    fun saveToken()
 
-    fun saveProfileData()
+    fun sendProfileData(token: String, profileData: Profile)
+
+
+    fun saveToken(token: String)
+
+
+    fun saveProfileData(profileData: Profile)
 
 }

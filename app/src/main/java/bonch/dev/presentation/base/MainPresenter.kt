@@ -4,7 +4,9 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.os.Handler
+import androidx.navigation.get
 import bonch.dev.MainActivity
+import bonch.dev.R
 import bonch.dev.data.MainRepository
 import bonch.dev.data.repository.passanger.getdriver.DriverInfoModel
 import bonch.dev.data.repository.passanger.getdriver.pojo.Driver
@@ -28,8 +30,8 @@ class MainPresenter(private val mainActivity: MainActivity) {
         driverInfoModel = DriverInfoModel()
     }
 
-    fun getToken(context: Context): String? {
-        return mainRepository?.getToken(context)
+    fun getToken(): String? {
+        return mainRepository?.getToken()
     }
 
 
@@ -71,8 +73,9 @@ class MainPresenter(private val mainActivity: MainActivity) {
     }
 
 
-    fun onBackPressed(){
+    fun onBackPressed() {
         val fm = mainActivity.supportFragmentManager
+        val nav = mainActivity.navController
         val createRideView =
             fm.findFragmentByTag(Constants.CREATE_RIDE_VIEW.toString()) as CreateRideView?
         val getDriverView =
@@ -83,6 +86,7 @@ class MainPresenter(private val mainActivity: MainActivity) {
             fm.findFragmentByTag(Constants.CONFIRM_PHONE_VIEW.toString()) as ConfirmPhoneView?
         val fullNameFragment =
             fm.findFragmentByTag(Constants.FULL_NAME_VIEW.toString()) as FullNameView?
+
 
 
         if (createRideView?.view != null && createRideView.onBackPressed()) {
@@ -104,5 +108,18 @@ class MainPresenter(private val mainActivity: MainActivity) {
         if (getDriverView?.view != null && getDriverView.onBackPressed()) {
             mainActivity.pressBack()
         }
+
+        if (nav.currentDestination == nav.graph[R.id.phone_view]){
+            mainActivity.finish()
+        }
+
+        if (nav.currentDestination == nav.graph[R.id.confirm_phone_view]){
+            nav.popBackStack()
+        }
+
+        if (nav.currentDestination == nav.graph[R.id.full_name_view]){
+            nav.popBackStack()
+        }
+
     }
 }

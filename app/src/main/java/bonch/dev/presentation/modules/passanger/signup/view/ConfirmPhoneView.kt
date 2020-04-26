@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.passanger.signup.Phone
+import bonch.dev.domain.entities.passanger.signup.DataSignup
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.presenter.ContractPresenter
@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.confirm_phone_fragment.*
 import javax.inject.Inject
 
 
-class ConfirmPhoneView : Fragment(), View.OnKeyListener, ContractView.IConfirmView {
+class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
 
     @Inject
     lateinit var confirmPhonePresenter: ContractPresenter.IConfirmPhonePresenter
@@ -49,49 +49,16 @@ class ConfirmPhoneView : Fragment(), View.OnKeyListener, ContractView.IConfirmVi
         setListeners()
 
         Keyboard.showKeyboard(activity as MainActivity)
-        code1.requestFocus()
-
-        //set listeners to input code
-        code1.setOnKeyListener(this)
-        code2.setOnKeyListener(this)
-        code3.setOnKeyListener(this)
-        code4.setOnKeyListener(this)
+        Handler().postDelayed({
+            code_edit_text.requestFocus()
+        }, 300)
 
         super.onViewCreated(view, savedInstanceState)
     }
 
 
-    override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode != KeyEvent.KEYCODE_BACK && keyCode != KeyEvent.KEYCODE_DEL && v.id == R.id.code1 && event.action == KeyEvent.ACTION_DOWN) {
-            code2.requestFocus()
-        }
-
-        if (v.id == R.id.code2 && event.action == KeyEvent.ACTION_DOWN) {
-            if (keyCode == KeyEvent.KEYCODE_DEL) {
-                code1.requestFocus()
-            } else {
-                code3.requestFocus()
-            }
-        }
-
-        if (v.id == R.id.code3 && event.action == KeyEvent.ACTION_DOWN) {
-            if (keyCode == KeyEvent.KEYCODE_DEL) {
-                code2.requestFocus()
-            } else {
-                code4.requestFocus()
-            }
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_DEL && v.id == R.id.code4 && event.action == KeyEvent.ACTION_DOWN) {
-            code3.requestFocus()
-        }
-
-        return false
-    }
-
-
     override fun setListeners() {
-        show_phone.text = getString(R.string.showPhone).plus(" ").plus(Phone.phone)
+        show_phone.text = getString(R.string.showPhone).plus(" ").plus(DataSignup.phone)
 
         retry_send.setOnClickListener {
             confirmPhonePresenter.startTimerRetrySend(activity as MainActivity)
@@ -99,7 +66,7 @@ class ConfirmPhoneView : Fragment(), View.OnKeyListener, ContractView.IConfirmVi
 
         btn_done.setOnClickListener {
             Keyboard.hideKeyboard(activity as MainActivity, view)
-            confirmPhonePresenter.checkCode(Phone.phone, getCode())
+            confirmPhonePresenter.checkCode(DataSignup.phone, getCode())
         }
 
         back_btn.setOnClickListener {
@@ -107,32 +74,33 @@ class ConfirmPhoneView : Fragment(), View.OnKeyListener, ContractView.IConfirmVi
             confirmPhonePresenter.back(activity)
         }
 
-        code4.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        code_edit_text.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
 
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(
+                s: CharSequence,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+            }
+
+            override fun afterTextChanged(s: Editable) {
                 confirmPhonePresenter.isCodeEnter()
-
             }
         })
     }
 
 
     override fun getCode(): String {
-        val code1 = code1.text.toString().trim()
-        val code2 = code2.text.toString().trim()
-        val code3 = code3.text.toString().trim()
-        val code4 = code4.text.toString().trim()
-        return code1 + code2 + code3 + code4
-    }
-
-
-    override fun requestFocus() {
-        if (code4.text.toString().trim().isNotEmpty()) {
-            code4.requestFocus()
-        }
+        return code_edit_text.text.toString().trim()
     }
 
 
@@ -183,6 +151,11 @@ class ConfirmPhoneView : Fragment(), View.OnKeyListener, ContractView.IConfirmVi
                         .plus(" ${getString(R.string.seconds)}")
             }
         }
+    }
+
+
+    override fun getNavHost(): NavController {
+        return (activity as MainActivity).navController
     }
 
 

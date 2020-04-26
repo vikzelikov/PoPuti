@@ -3,15 +3,14 @@ package bonch.dev.presentation.modules.passanger.signup.presenter
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.FragmentActivity
-import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.domain.interactor.passanger.signup.ISignupInteractor
-import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.view.ContractView
+import bonch.dev.route.passanger.signup.ISignupRouter
 import javax.inject.Inject
 
 class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
@@ -19,6 +18,13 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
 
     @Inject
     lateinit var signupInteractor: ISignupInteractor
+
+    @Inject
+    lateinit var router: ISignupRouter
+
+
+    private val maxInterval = 60000L
+    private val interval = 15000L
 
 
     init {
@@ -37,7 +43,8 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
 
     override fun onResponseCheckCode(isCorrect: Boolean) {
         if (isCorrect) {
-            //next TODO
+            val nav = getView()?.getNavHost()
+            router.showFullNameView(nav)
         } else {
             //change view from another thread (get Main thread)
             val mainHandler = Handler(Looper.getMainLooper())
@@ -54,8 +61,6 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
 
     override fun isCodeEnter(): Boolean {
         var result = false
-
-        getView()?.requestFocus()
 
         val code = getView()?.getCode()
 
@@ -74,11 +79,11 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
         if (RetrySendTimer.seconds == null) {
             RetrySendTimer.getInstance(this)?.start()
 
-        } else if (RetrySendTimer.startTime < Constants.SIGNUP_MAX_INTERVAL_SMS) {
+        } else if (RetrySendTimer.startTime < maxInterval) {
 
             if (RetrySendTimer.seconds == 0L) {
                 RetrySendTimer.getInstance(this)?.cancel()
-                RetrySendTimer.increaseStartTime(Constants.SIGNUP_INTERVAL_SMS, this)
+                RetrySendTimer.increaseStartTime(interval, this)
                 RetrySendTimer.getInstance(this)?.start()
             }
 
@@ -109,8 +114,7 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
 
     override fun back(activity: FragmentActivity) {
         Keyboard.hideKeyboard(activity, activity.currentFocus)
-        val fm = activity.supportFragmentManager
-        fm.popBackStack()
+        getView()?.getNavHost()?.popBackStack()
     }
 
 }

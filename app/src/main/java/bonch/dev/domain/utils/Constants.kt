@@ -49,8 +49,6 @@ object Constants {
     const val MAX_COUNT_SUGGEST = 7
 
     //mil sec
-    const val SIGNUP_INTERVAL_SMS = 15000L
-    const val SIGNUP_MAX_INTERVAL_SMS = 60000L
     const val TIMER_USER_GET_DRIVER = 30
     const val BLOCK_REQUEST_GEOCODER = 3000L
 

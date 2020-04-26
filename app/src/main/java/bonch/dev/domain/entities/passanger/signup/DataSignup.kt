@@ -1,5 +1,6 @@
 package bonch.dev.domain.entities.passanger.signup
 
-object Phone {
+object DataSignup {
     var phone: String? = null
+    var token: String? = null
 }

@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.utils.Constants.SIGNUP_INTERVAL_SMS
+import bonch.dev.data.repository.passanger.profile.pojo.Profile
+import bonch.dev.domain.entities.passanger.signup.DataSignup
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.presenter.ContractPresenter
@@ -22,6 +25,7 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
 
     @Inject
     lateinit var fullNamePresenter: ContractPresenter.IFullNamePresenter
+    private val startTime = 15000L
 
 
     init {
@@ -39,7 +43,7 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
         val root = inflater.inflate(R.layout.full_name_signup_fragment, container, false)
 
         //reset so user get this view
-        RetrySendTimer.startTime = SIGNUP_INTERVAL_SMS
+        RetrySendTimer.startTime = startTime
 
         return root
     }
@@ -78,16 +82,17 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
     override fun setListeners() {
         btn_done.setOnClickListener {
             val activity = activity as MainActivity
-            fullNamePresenter.saveProfileData(first_name.text.toString(), last_name.text.toString())
-
             Keyboard.hideKeyboard(activity, view)
 
             if (fullNamePresenter.isNameEntered()) {
-                //null DI component
-                SignupComponent.signupComponent = null
-                activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                //save token
+                fullNamePresenter.saveToken()
+                //save profile data (first name and last name)
+                fullNamePresenter.saveProfileData()
 
-                //next TODO
+                //end signup as passanger
+                activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                fullNamePresenter.doneSignup()
             }
         }
 
@@ -117,12 +122,28 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
     }
 
 
+    override fun getProfileData(): Profile {
+        val profileData = Profile()
+        profileData.apply {
+            firstName = first_name.text.toString().trim()
+            lastName = last_name.text.toString().trim()
+        }
+
+        return profileData
+    }
+
+
     override fun changeBtnEnable(enable: Boolean) {
         if (enable) {
             btn_done.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
             btn_done.setBackgroundResource(R.drawable.bg_btn_gray)
         }
+    }
+
+
+    override fun getNavHost(): NavController {
+        return (activity as MainActivity).navController
     }
 
 
