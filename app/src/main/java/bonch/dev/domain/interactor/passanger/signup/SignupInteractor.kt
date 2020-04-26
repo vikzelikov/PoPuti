@@ -57,8 +57,6 @@ class SignupInteractor : ISignupInteractor {
 
                 profileData.id = id
 
-                println("EEEEE !!!!!!! $id ${profileData.id} ${profileData.firstName}")
-
                 //update profile
                 saveProfileData(profileData)
             }

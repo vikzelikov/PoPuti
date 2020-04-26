@@ -41,7 +41,7 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
 
         //next transition
         val nav = getView()?.getNavHost()
-        //router.showMainFragment(nav)
+        router.showMainFragment(nav)
     }
 
 
