@@ -14,10 +14,11 @@ import bonch.dev.presentation.modules.passanger.getdriver.ride.adapters.Payments
 import bonch.dev.domain.utils.Constants.ADD_BANK_CARD_VIEW
 import bonch.dev.domain.utils.Constants.OFFER_PRICE_VIEW
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.create_ride_fragment.*
+import kotlinx.android.synthetic.main.detail_ride_layout.*
+import kotlinx.android.synthetic.main.map_fragment.*
 
 
-class DetailRideView(val createRideView: CreateRideView) {
+class DetailRideView(val mapView: MapView) {
 
     var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
@@ -84,12 +85,12 @@ class DetailRideView(val createRideView: CreateRideView) {
         }
 
         r.offer_price.setOnClickListener {
-            detailRidePresenter?.offerPrice(createRideView)
+            detailRidePresenter?.offerPrice(mapView)
 
         }
 
         r.add_card.setOnClickListener {
-            detailRidePresenter?.addBankCard(createRideView)
+            detailRidePresenter?.addBankCard(mapView)
         }
 
 
@@ -119,9 +120,9 @@ class DetailRideView(val createRideView: CreateRideView) {
             detailRidePresenter?.getPaymentMethods()
         }
 
-        r.on_map_view_detail.setOnClickListener {
-            detailRidePresenter?.hideAllBottomSheet()
-        }
+//        r.on_map_view_detail.setOnClickListener {
+//            detailRidePresenter?.hideAllBottomSheet()
+//        }
 
         r.info_price.setOnClickListener {
             detailRidePresenter?.getInfoPrice()
@@ -192,16 +193,16 @@ class DetailRideView(val createRideView: CreateRideView) {
         val list = arrayListOf<PaymentCard>()
 
         list.add(PaymentCard(null, null, null, R.drawable.ic_google_pay))
-        paymentsListAdapter =
-            PaymentsListAdapter(
-                paymentList,
-                list,
-                createRideView.context!!,
-                this
-            )
+//        paymentsListAdapter =
+//            PaymentsListAdapter(
+//                paymentList,
+//                list,
+//                mapView.context!!,
+//                this
+//            )
 
         paymentList.layoutManager =
-            LinearLayoutManager(createRideView.context, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(mapView.context, LinearLayoutManager.VERTICAL, false)
         paymentList.adapter = paymentsListAdapter
 
         detailRidePresenter!!.paymentsListAdapter = paymentsListAdapter
@@ -213,7 +214,7 @@ class DetailRideView(val createRideView: CreateRideView) {
     }
 
 
-    fun getView(): CreateRideView {
-        return createRideView
+    fun getView(): MapView {
+        return mapView
     }
 }

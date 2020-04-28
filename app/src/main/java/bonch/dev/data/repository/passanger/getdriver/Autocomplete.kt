@@ -10,8 +10,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
 
-class Autocomplete(private var createRideModel: CreateRideModel, userLocationPoint: Point?) :
-    SuggestSession.SuggestListener {
+class Autocomplete(userLocationPoint: Point?) : SuggestSession.SuggestListener {
 
     private val searchManager: SearchManager = SearchFactory.getInstance().createSearchManager(
         SearchManagerType.COMBINED
@@ -57,11 +56,10 @@ class Autocomplete(private var createRideModel: CreateRideModel, userLocationPoi
                         )
                     )
                 }
-
             }
         }
 
-        createRideModel.responseSuggest(suggestResult)
+        getDriverRepository.responseSuggest(suggestResult)
 
     }
 

@@ -10,7 +10,7 @@ object Constants {
     const val GEO_PERMISSION_REQUEST = 1
     const val STORAGE_PERMISSION_REQUEST = 2
 
-    const val BASE_URL = "https://poputi-backend-staging.server.bonch.dev"
+    const val BASE_URL = "https://17037868-review-poputi-16-npl1p6.server.bonch.dev"
 
 
     const val MAIN_FRAGMENT = 1

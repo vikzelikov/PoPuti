@@ -1,8 +1,6 @@
 package bonch.dev.presentation.modules.passanger.signup.presenter
 
 import androidx.fragment.app.FragmentActivity
-import bonch.dev.data.driver.signup.SignupMainData
-import bonch.dev.data.repository.passanger.profile.pojo.Profile
 import bonch.dev.domain.entities.passanger.signup.DataSignup
 import bonch.dev.domain.interactor.passanger.signup.ISignupInteractor
 import bonch.dev.domain.utils.Keyboard
@@ -28,11 +26,13 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
 
 
     override fun doneSignup() {
-        val profileData = getView()?.getProfileData()
-
-        if( DataSignup.token != null && profileData != null){
-            signupInteractor.sendProfileData(DataSignup.token!!, profileData)
-        }
+        //save Data:
+        //save token
+        saveToken()
+        //save profile data (first name and last name)
+        saveProfileData()
+        //send profile data to server
+        sendProfileData()
 
         //clear data
         SignupComponent.signupComponent = null
@@ -68,7 +68,7 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
         val profileData = getView()?.getProfileData()
 
         profileData?.let {
-            if(it.firstName != null && it.lastName != null){
+            if (it.firstName != null && it.lastName != null) {
                 if (it.firstName!!.isNotEmpty() && it.lastName!!.isNotEmpty()) {
                     profileData.fullName = it.firstName.plus(" ").plus(it.lastName)
                 }
@@ -83,8 +83,17 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
     }
 
 
-    override fun saveToken(){
-        if(DataSignup.token != null){
+    override fun sendProfileData() {
+        val profileData = getView()?.getProfileData()
+
+        if (DataSignup.token != null && profileData != null) {
+            signupInteractor.sendProfileData(DataSignup.token!!, profileData)
+        }
+    }
+
+
+    override fun saveToken() {
+        if (DataSignup.token != null) {
             signupInteractor.saveToken(DataSignup.token!!)
         }
     }

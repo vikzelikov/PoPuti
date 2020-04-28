@@ -1,32 +1,25 @@
 package bonch.dev.presentation.modules.passanger.getdriver.ride.adapters
 
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.data.repository.passanger.getdriver.pojo.Coordinate.fromAdr
-import bonch.dev.data.repository.passanger.getdriver.pojo.Coordinate.toAdr
 import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
-import bonch.dev.domain.utils.Keyboard.hideKeyboard
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.CreateRideView
-import kotlinx.android.synthetic.main.create_ride_layout.*
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
 import kotlinx.android.synthetic.main.ride_item.view.*
+import javax.inject.Inject
 
 
-class AddressesListAdapter(
-    val createRideView: CreateRideView,
-    var list: ArrayList<Ride>,
-    val context: Context
-) : RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
+class AddressesListAdapter @Inject constructor(private val createRidePresenter: ContractPresenter.ICreateRidePresenter) :
+    RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
 
-    var isFromFocus = true
+    var list: ArrayList<Ride> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
-            LayoutInflater.from(context)
+            LayoutInflater.from(parent.context)
                 .inflate(R.layout.ride_item, parent, false)
         )
     }
@@ -38,40 +31,17 @@ class AddressesListAdapter(
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-        val getDriverPresenter = createRideView.createRidePresenter
 
         holder.bind(list[position])
 
         holder.itemView.setOnClickListener {
-
-            val fromAdrView = createRideView.from_adr
-            val toAdrView = createRideView.to_adr
-
-            if (isFromFocus) {
-                fromAdrView.setText(list[position].address)
-                fromAdrView.setSelection(fromAdrView.text.length)
-                fromAdr = try {
-                    list[position]
-                } catch (ex: IndexOutOfBoundsException) {
-                    list.last()
-                }
-            } else {
-                toAdrView.setText(list[position].address)
-                toAdrView.setSelection(toAdrView.text.length)
-                toAdr = try {
-                    list[position]
-                } catch (ex: IndexOutOfBoundsException) {
-                    list.last()
-                }
-            }
-
-            getDriverPresenter?.addressesDone()
+            createRidePresenter.onClickItem(list[position])
         }
 
 
         holder.itemView.setOnTouchListener { _, _ ->
-            val activity = createRideView.activity!!
-            hideKeyboard(activity, createRideView.view!!)
+            //            val activity = createRideView.activity!!
+//            hideKeyboard(activity, createRideView.view!!)
 
             false
         }
@@ -80,7 +50,6 @@ class AddressesListAdapter(
 
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         fun bind(post: Ride) {
             itemView.address.text = post.address
             itemView.city.text = post.description

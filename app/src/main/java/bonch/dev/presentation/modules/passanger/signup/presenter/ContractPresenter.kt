@@ -30,6 +30,7 @@ interface ContractPresenter {
         fun instance(): FullNamePresenter
         fun isNameEntered(): Boolean
         fun saveProfileData()
+        fun sendProfileData()
         fun saveToken()
         fun doneSignup()
         fun back(activity: FragmentActivity)

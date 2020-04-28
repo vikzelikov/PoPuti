@@ -1,6 +1,6 @@
 package bonch.dev.di.module.driver
 
-import bonch.dev.di.scope.OrdersScope
+import bonch.dev.di.scope.CompScope
 import bonch.dev.data.repository.driver.getpassanger.OrdersRepository
 import bonch.dev.presentation.modules.driver.getpassanger.orders.presenter.OrdersPresenter
 import bonch.dev.presentation.modules.driver.getpassanger.orders.adapters.OrdersAdapter
@@ -11,11 +11,11 @@ import dagger.Provides
 class GetPassangerModule {
 
     @Provides
-    @OrdersScope
+    @CompScope
     fun profideOrdersPresenter(): OrdersPresenter = OrdersPresenter()
 
     @Provides
-    @OrdersScope
+    @CompScope
     fun profideOrdersModel(): OrdersRepository = OrdersRepository()
 
 

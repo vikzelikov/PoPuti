@@ -1,6 +1,5 @@
 package bonch.dev.di.module.passanger
 
-import androidx.navigation.NavController
 import bonch.dev.data.repository.passanger.signup.ISignupRepository
 import bonch.dev.data.repository.passanger.signup.SignupRepository
 import bonch.dev.data.storage.passanger.signup.ISignupStorage

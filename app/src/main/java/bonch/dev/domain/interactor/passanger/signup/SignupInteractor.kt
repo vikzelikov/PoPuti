@@ -4,7 +4,6 @@ import bonch.dev.data.repository.passanger.profile.pojo.Profile
 import bonch.dev.data.repository.passanger.signup.ISignupRepository
 import bonch.dev.data.storage.passanger.signup.ISignupStorage
 import bonch.dev.domain.entities.passanger.signup.DataSignup
-import bonch.dev.domain.entities.passanger.signup.Token
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import javax.inject.Inject
 
@@ -27,7 +26,7 @@ class SignupInteractor : ISignupInteractor {
         signupRepository.sendSms(phone) { error ->
             if (error != null) {
                 //retry request
-                signupRepository.sendSms(phone, callback)
+                signupRepository.sendSms(phone) {}
                 callback(error)
             }
         }
@@ -40,7 +39,7 @@ class SignupInteractor : ISignupInteractor {
         callback: SignupHandler<Boolean>
     ) {
         signupRepository.checkCode(phone, code) { status: Boolean, token: String? ->
-            if (status && token != null) {
+            if (token != null) {
                 //save token
                 DataSignup.token = token
             }
@@ -52,15 +51,37 @@ class SignupInteractor : ISignupInteractor {
 
     override fun sendProfileData(token: String, profileData: Profile) {
         signupRepository.getUserId(token) { id: Int?, _: String? ->
-            if (id != null) {
-                signupRepository.sendProfileData(id, token, profileData)
-
-                profileData.id = id
-
-                //update profile
-                saveProfileData(profileData)
+            if (id == null) {
+                //Retry request
+                retryGetUserId(token, profileData)
+            } else {
+                retrySendProfileData(id, token, profileData)
             }
         }
+    }
+
+
+    override fun retryGetUserId(token: String, profileData: Profile) {
+        signupRepository.getUserId(token) { id: Int?, _: String? ->
+            if (id != null) {
+                retrySendProfileData(id, token, profileData)
+            }
+        }
+    }
+
+
+    override fun retrySendProfileData(id: Int, token: String, profileData: Profile) {
+        signupRepository.sendProfileData(id, token, profileData) { error ->
+            if (error != null) {
+                //Retry request
+                signupRepository.sendProfileData(id, token, profileData) {}
+            }
+        }
+
+        profileData.id = id
+
+        //update profile locale
+        saveProfileData(profileData)
     }
 
 

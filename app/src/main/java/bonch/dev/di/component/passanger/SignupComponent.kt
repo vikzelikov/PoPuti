@@ -1,9 +1,8 @@
 package bonch.dev.di.component.passanger
 
-import androidx.navigation.NavController
 import bonch.dev.di.component.AppComponent
 import bonch.dev.di.module.passanger.SignupModule
-import bonch.dev.di.scope.OrdersScope
+import bonch.dev.di.scope.CompScope
 import bonch.dev.domain.interactor.passanger.signup.SignupInteractor
 import bonch.dev.presentation.modules.passanger.signup.presenter.ConfirmPhonePresenter
 import bonch.dev.presentation.modules.passanger.signup.presenter.FullNamePresenter
@@ -13,7 +12,7 @@ import bonch.dev.presentation.modules.passanger.signup.view.FullNameView
 import bonch.dev.presentation.modules.passanger.signup.view.PhoneView
 import dagger.Component
 
-@OrdersScope
+@CompScope
 @Component(modules = [SignupModule::class], dependencies = [AppComponent::class])
 interface SignupComponent {
 

@@ -3,17 +3,22 @@ package bonch.dev.data.repository.passanger.getdriver
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
+import java.lang.IndexOutOfBoundsException
 
-class Geocoder(private val createRideModel: CreateRideModel) : Session.SearchListener {
 
-    private var point: Point? = null
+class Geocoder : Session.SearchListener {
+
+
+    lateinit var callback: GeocoderHandler
+    lateinit var point: Point
     private var searchSession: Session? = null
     private var searchManager: SearchManager =
         SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     private val searchOptions = SearchOptions()
 
-    fun request(point: Point) {
+    fun request(point: Point, callback: GeocoderHandler) {
         this.point = point
+        this.callback = callback
 
         searchSession = searchManager.submit(
             point,
@@ -28,9 +33,12 @@ class Geocoder(private val createRideModel: CreateRideModel) : Session.SearchLis
 
 
     override fun onSearchResponse(response: Response) {
-        val address = response.collection.children[0].obj!!.name
-
-        createRideModel.responseGeocoder(address, this.point)
+        try {
+            val address = response.collection.children[0].obj?.name
+            if (address != null)
+                callback(address, this.point)
+        } catch (ex: IndexOutOfBoundsException) {
+        }
     }
 }
 

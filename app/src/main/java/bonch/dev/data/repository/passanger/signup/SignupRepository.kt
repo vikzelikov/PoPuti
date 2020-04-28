@@ -2,10 +2,9 @@ package bonch.dev.data.repository.passanger.signup
 
 import android.util.Log
 import bonch.dev.App
-import bonch.dev.data.network.passanger.signup.NetworkService
+import bonch.dev.data.network.passanger.signup.SignupService
 import bonch.dev.data.repository.passanger.profile.pojo.Profile
 import bonch.dev.data.repository.passanger.profile.pojo.ProfileData
-import bonch.dev.domain.entities.passanger.signup.DataSignup
 import bonch.dev.domain.entities.passanger.signup.Token
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,9 +14,9 @@ import retrofit2.Response
 
 class SignupRepository : ISignupRepository {
 
-    private var service: NetworkService = App.appComponent
+    private var service: SignupService = App.appComponent
         .getNetworkModule()
-        .create(NetworkService::class.java)
+        .create(SignupService::class.java)
 
 
     override fun sendSms(phone: String, callback: SignupHandler) {
@@ -107,8 +106,13 @@ class SignupRepository : ISignupRepository {
     }
 
 
-    override fun sendProfileData(id: Int, token: String, profileData: Profile) {
-        var response: Response<*>?
+    override fun sendProfileData(
+        id: Int,
+        token: String,
+        profileData: Profile,
+        callback: SignupHandler
+    ) {
+        var response: Response<*>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -117,7 +121,6 @@ class SignupRepository : ISignupRepository {
 
                     //set headers
                     val stringStringMap = hashMapOf<String, String>()
-                    println(token)
                     stringStringMap["Authorization"] = "Bearer $token"
 
                     response = service.sendProfileData(
@@ -127,11 +130,12 @@ class SignupRepository : ISignupRepository {
                         profileData.lastName!!
                     )
                     withContext(Dispatchers.Main) {
-                        println(response?.code())
-                        if (response != null && response!!.isSuccessful) {
-                            //200 OK
+                        if (response.isSuccessful) {
+                            //Success
+                            callback(null)
                         } else {
                             //Error
+                            callback(response.code().toString())
                         }
                     }
                 }
@@ -139,6 +143,7 @@ class SignupRepository : ISignupRepository {
 
             } catch (err: Exception) {
                 //Error
+                callback(err.message)
                 Log.e("Retrofit", "${err.printStackTrace()}")
             }
         }

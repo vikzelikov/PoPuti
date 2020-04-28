@@ -29,7 +29,7 @@ import bonch.dev.presentation.driver.signup.*
 import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView
 import bonch.dev.presentation.modules.passanger.getdriver.chat.view.ChatView
 import bonch.dev.presentation.modules.passanger.getdriver.orfferprice.view.OfferPriceView
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.CreateRideView
+import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.GetDriverView
 import bonch.dev.presentation.modules.passanger.profile.view.CheckPhotoView
 import bonch.dev.presentation.modules.passanger.profile.view.ProfileDetailView
@@ -100,7 +100,7 @@ object Coordinator {
 
             CREATE_RIDE_VIEW -> {
                 val fragment =
-                    CreateRideView()
+                    MapView()
                 fragment.arguments = bundle
 
                 fm.beginTransaction()

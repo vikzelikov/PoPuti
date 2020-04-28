@@ -13,6 +13,6 @@ interface ISignupRepository {
 
     fun getUserId(token: String, callback: SignupCheckHandler<Int?>)
 
-    fun sendProfileData(id: Int, token: String, profileData: Profile)
+    fun sendProfileData(id: Int, token: String, profileData: Profile, callback: SignupHandler)
 
 }

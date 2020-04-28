@@ -1,16 +1,14 @@
 package bonch.dev.presentation.modules.passanger
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.utils.Constants.CREATE_RIDE_VIEW
-import bonch.dev.domain.utils.Constants.PROFILE_VIEW
-import bonch.dev.domain.utils.Constants.REGULAR_DRIVING_VIEW
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.CreateRideView
+import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapView
 import bonch.dev.presentation.modules.passanger.profile.view.ProfileView
 import bonch.dev.presentation.modules.passanger.regulardrive.view.RegularDriveView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -18,7 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainFragment : Fragment() {
 
     private var regularDriving: RegularDriveView? = null
-    private var createRide: CreateRideView? = null
+    private var map: MapView? = null
     private var profile: ProfileView? = null
 
     private var active: Fragment? = null
@@ -33,19 +31,21 @@ class MainFragment : Fragment() {
 
         val navView: BottomNavigationView = root.findViewById(R.id.nav_view)
 
+        //init all variables
         initialize()
 
-        createRide!!.navView = navView
-        active = createRide
+        //map!!.navView = navView
+        active = map
         navView.selectedItemId = R.id.get_driver
 
-        fm!!.beginTransaction().add(R.id.nav_host_fragment, profile!!, PROFILE_VIEW.toString())
+        fm!!.beginTransaction()
+            .add(R.id.nav_host_fragment, profile!!, ProfileView::class.java.simpleName)
             .hide(profile!!).commit()
         fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, regularDriving!!, REGULAR_DRIVING_VIEW.toString())
+            .add(R.id.nav_host_fragment, regularDriving!!, RegularDriveView::class.java.simpleName)
             .hide(regularDriving!!).commit()
         fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, createRide!!, CREATE_RIDE_VIEW.toString()).commit()
+            .add(R.id.nav_host_fragment, map!!, MapView::class.java.simpleName).commit()
 
 
         navView.setOnNavigationItemSelectedListener(null)
@@ -65,9 +65,9 @@ class MainFragment : Fragment() {
                 }
 
                 R.id.get_driver -> {
-                    fm!!.beginTransaction().hide(active!!).show(createRide!!).commit()
+                    fm!!.beginTransaction().hide(active!!).show(map!!).commit()
                     item.isChecked = true
-                    active = createRide
+                    active = map
                 }
 
                 R.id.profile -> {
@@ -89,9 +89,9 @@ class MainFragment : Fragment() {
                 RegularDriveView()
         }
 
-        if (createRide == null) {
-            createRide =
-                CreateRideView()
+        if (map == null) {
+            map =
+                MapView()
         }
 
         if (profile == null) {

@@ -34,7 +34,7 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
 
 
     init {
-        mapView = detailRideView.createRideView.mapView
+        mapView = detailRideView.mapView.mapView
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
         mapObjects = mapView!!.map.mapObjects.addCollection()
     }

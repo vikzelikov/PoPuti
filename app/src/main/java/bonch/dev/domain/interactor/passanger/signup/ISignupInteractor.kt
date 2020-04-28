@@ -21,6 +21,12 @@ interface ISignupInteractor {
     fun sendProfileData(token: String, profileData: Profile)
 
 
+    fun retryGetUserId(token: String, profileData: Profile)
+
+
+    fun retrySendProfileData(id: Int, token: String, profileData: Profile)
+
+
     fun saveToken(token: String)
 
 

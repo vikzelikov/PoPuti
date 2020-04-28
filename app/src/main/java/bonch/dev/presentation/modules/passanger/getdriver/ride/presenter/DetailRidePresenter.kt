@@ -32,11 +32,12 @@ import bonch.dev.route.Coordinator.openActivity
 import bonch.dev.route.Coordinator.replaceFragment
 import bonch.dev.domain.utils.Keyboard.hideKeyboard
 import bonch.dev.domain.utils.Keyboard.showKeyboard
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.CreateRideView
+import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.DetailRideView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
-import kotlinx.android.synthetic.main.create_ride_fragment.*
+import kotlinx.android.synthetic.main.detail_ride_layout.*
+import kotlinx.android.synthetic.main.map_fragment.*
 
 class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
@@ -52,26 +53,26 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             searchPlace = SearchPlace(this)
         }
 
-        if (routing == null) {
-            val context = detailRideView.getView().context!!
-            routing =
-                Routing(
-                    context,
-                    detailRideView
-                )
-        }
+//        if (routing == null) {
+//            val context = detailRideView.getView().context!!
+//            routing =
+//                Routing(
+//                    context,
+//                    detailRideView
+//                )
+//        }
     }
 
 
     fun offerPrice(fragment: Fragment) {
-        val activity = detailRideView.getView().activity!!
-        openActivity(OFFER_PRICE_VIEW, activity, fragment)
+//        val activity = detailRideView.getView().activity!!
+//        openActivity(OFFER_PRICE_VIEW, activity, fragment)
     }
 
 
     fun addBankCard(fragment: Fragment) {
-        val activity = detailRideView.getView().activity!!
-        openActivity(ADD_BANK_CARD_VIEW, activity, fragment)
+//        val activity = detailRideView.getView().activity!!
+//        openActivity(ADD_BANK_CARD_VIEW, activity, fragment)
     }
 
 
@@ -233,14 +234,14 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
 
     fun hideAllBottomSheet(){
-        val activity = getView().activity as MainActivity
-        val root = getView().view!!
-
-        hideKeyboard(activity, root)
-
-        detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-        detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-        detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+//        val activity = getView().activity as MainActivity
+//        val root = getView().view!!
+//
+//        hideKeyboard(activity, root)
+//
+//        detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+//        detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+//        detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
 
@@ -250,37 +251,37 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
 
 
     fun onSlideBottomSheet(slideOffset: Float) {
-        val onMapView = getView().on_map_view_detail
-        val backBtn = getView().back_btn
-        val showRoute = getView().show_route
-
-        if (slideOffset > 0 && slideOffset < 1) {
-            onMapView.alpha = slideOffset * 0.8f
-            backBtn.alpha = 1 - slideOffset * 0.99f
-            showRoute.alpha = 1 - slideOffset * 0.99f
-        }
+//        val onMapView = getView().on_map_view_detail
+//        val backBtn = getView().back_btn
+//        val showRoute = getView().show_route
+//
+//        if (slideOffset > 0 && slideOffset < 1) {
+//            onMapView.alpha = slideOffset * 0.8f
+//            backBtn.alpha = 1 - slideOffset * 0.99f
+//            showRoute.alpha = 1 - slideOffset * 0.99f
+//        }
     }
 
 
     fun onStateChangedBottomSheet(newState: Int) {
-        val commentText = getView().comment_text
-        val onMapView = getView().on_map_view_detail
-        val mainInfoLayout = getView().container_detail_ride
-
-        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-            val activity = getView().activity as MainActivity
-            val root = getView().view!!
-            hideKeyboard(activity, root)
-            commentText.clearFocus()
-        }
-
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            onMapView.visibility = View.GONE
-            mainInfoLayout.elevation = 30f
-        } else {
-            onMapView.visibility = View.VISIBLE
-            mainInfoLayout.elevation = 0f
-        }
+//        val commentText = getView().comment_text
+//        val onMapView = getView().on_map_view_detail
+//        val mainInfoLayout = getView().container_detail_ride
+//
+//        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+//            val activity = getView().activity as MainActivity
+//            val root = getView().view!!
+//            hideKeyboard(activity, root)
+//            commentText.clearFocus()
+//        }
+//
+//        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+//            onMapView.visibility = View.GONE
+//            mainInfoLayout.elevation = 30f
+//        } else {
+//            onMapView.visibility = View.VISIBLE
+//            mainInfoLayout.elevation = 0f
+//        }
     }
 
 
@@ -373,7 +374,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    private fun getView(): CreateRideView {
+    private fun getView(): MapView {
         return detailRideView.getView()
     }
 }

@@ -85,11 +85,6 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
             Keyboard.hideKeyboard(activity, view)
 
             if (fullNamePresenter.isNameEntered()) {
-                //save token
-                fullNamePresenter.saveToken()
-                //save profile data (first name and last name)
-                fullNamePresenter.saveProfileData()
-
                 //end signup as passanger
                 activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                 fullNamePresenter.doneSignup()

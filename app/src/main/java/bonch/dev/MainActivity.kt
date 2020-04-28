@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         val accessToken = mainPresenter?.getToken()
         println(accessToken)
 
-        if (accessToken != null) {
+        if (accessToken == null) {
             //redirect to full app
             DriverObject.driver = mainPresenter?.getDriverData(applicationContext)
             navController.navigate(R.id.main_passanger_fragment)

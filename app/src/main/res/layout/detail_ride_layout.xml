@@ -1,63 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container_get_driver"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".presentation.modules.passanger.getdriver.ride.view.CreateRideView">
-
-
-    <ImageButton
-        android:id="@+id/back_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_back_btn"
-        android:elevation="12dp"
-        android:padding="13dp"
-        android:src="@drawable/ic_back_arrow"
-        android:visibility="gone" />
-
-
-    <com.yandex.mapkit.mapview.MapView
-        android:id="@+id/map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="false" />
-
-    <View
-        android:id="@+id/on_map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        android:background="@android:color/black"
-        android:visibility="gone" />
-
-    <include
-        android:id="@+id/container_create_ride"
-        layout="@layout/create_ride_layout" />
-
-
-    <ImageButton
-        android:id="@+id/show_route"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="330dp"
-        android:background="@drawable/bg_back_btn"
-        android:elevation="10dp"
-        android:paddingStart="17dp"
-        android:paddingTop="14dp"
-        android:paddingEnd="17dp"
-        android:paddingBottom="14dp"
-        android:src="@drawable/ic_show_route"
-        android:visibility="gone" />
-
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:id="@+id/container_detail_ride"
@@ -66,8 +11,7 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/bg_corners_layout"
         android:elevation="30dp"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:orientation="vertical">
 
 
         <LinearLayout
@@ -308,8 +252,7 @@
         android:id="@+id/container_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="10dp"
-        tools:context="ui.dashboard.HomeFragment">
+        android:elevation="10dp">
 
         <LinearLayout
             android:id="@+id/cards_bottom_sheet"
@@ -458,13 +401,5 @@
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <View
-        android:id="@+id/on_map_view_detail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        android:background="@android:color/black"
-        android:visibility="gone" />
 
 </RelativeLayout>

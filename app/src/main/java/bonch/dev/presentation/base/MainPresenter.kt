@@ -11,7 +11,7 @@ import bonch.dev.data.MainRepository
 import bonch.dev.data.repository.passanger.getdriver.DriverInfoModel
 import bonch.dev.data.repository.passanger.getdriver.pojo.Driver
 import bonch.dev.domain.utils.Constants
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.CreateRideView
+import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.GetDriverView
 import bonch.dev.presentation.modules.passanger.signup.view.ConfirmPhoneView
 import bonch.dev.presentation.modules.passanger.signup.view.FullNameView
@@ -77,7 +77,7 @@ class MainPresenter(private val mainActivity: MainActivity) {
         val fm = mainActivity.supportFragmentManager
         val nav = mainActivity.navController
         val createRideView =
-            fm.findFragmentByTag(Constants.CREATE_RIDE_VIEW.toString()) as CreateRideView?
+            fm.findFragmentByTag(Constants.CREATE_RIDE_VIEW.toString()) as MapView?
         val getDriverView =
             fm.findFragmentByTag(Constants.GET_DRIVER_VIEW.toString()) as GetDriverView?
         val phoneFragment =

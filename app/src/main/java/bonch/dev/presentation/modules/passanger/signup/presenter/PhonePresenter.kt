@@ -46,7 +46,7 @@ class PhonePresenter : BasePresenter<ContractView.IPhoneView>(), ContractPresent
                 val nav = getView()?.getNavHost()
                 router.showConfirmPhoneView(nav)
             } else {
-                val error ="${res?.getString(R.string.waitFor)}" +
+                val error = "${res?.getString(R.string.waitFor)}" +
                         " ${RetrySendTimer.seconds}" +
                         " ${res?.getString(R.string.sec)}"
                 getView()?.showError(error)
