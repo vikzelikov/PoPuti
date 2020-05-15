@@ -1,7 +1,6 @@
 package bonch.dev.presentation.modules.passanger.getdriver.ride.adapters
 
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,19 +9,19 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.data.repository.passanger.getdriver.pojo.PaymentCard
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.DetailRideView
+import bonch.dev.domain.entities.passanger.getdriver.BankCard
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
+import javax.inject.Inject
 
 
-class PaymentsListAdapter(
-    val recyclerView: RecyclerView,
-    var list: ArrayList<PaymentCard>,
-    val context: Context,
-    val detailRideView: DetailRideView
-) : RecyclerView.Adapter<PaymentsListAdapter.ItemPostHolder>() {
+class PaymentsListAdapter @Inject constructor(private val detailRidePresenter: ContractPresenter.IDetailRidePresenter) :
+    RecyclerView.Adapter<PaymentsListAdapter.ItemPostHolder>() {
+
+    var list: ArrayList<BankCard> = arrayListOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
-            LayoutInflater.from(context)
+            LayoutInflater.from(parent.context)
                 .inflate(R.layout.payment_item, parent, false)
         )
     }
@@ -38,12 +37,11 @@ class PaymentsListAdapter(
         holder.bind(post)
 
         holder.itemView.setOnClickListener {
-            val detailRidePresenter = detailRideView.detailRidePresenter
             removeTickSelected()
 
             setTickSelected(holder.itemView)
             post.isSelect = true
-            detailRidePresenter!!.setSelectedBankCard(post)
+            detailRidePresenter.setSelectedBankCard(post)
         }
 
         if (position == 0) {
@@ -63,13 +61,9 @@ class PaymentsListAdapter(
 
 
     private fun removeTickSelected() {
-        val childCount = recyclerView.childCount
-
-        for (i in 0 until childCount) {
-            val holder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
-            val tick = holder.itemView.findViewById<ImageView>(R.id.tick)
-            tick.setImageResource(R.drawable.ic_tick)
-            list[i].isSelect = false
+        detailRidePresenter.removeTickSelected()
+        list.forEach {
+            it.isSelect = false
         }
     }
 
@@ -78,7 +72,7 @@ class PaymentsListAdapter(
         private val numberCard = itemView.findViewById<TextView>(R.id.number_card)
         private val paymentImg = itemView.findViewById<ImageView>(R.id.payment_method_img)
 
-        fun bind(post: PaymentCard) {
+        fun bind(post: BankCard) {
             numberCard.text = post.numberCard
 
             if (post.img != null) {

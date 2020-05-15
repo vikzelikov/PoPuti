@@ -1,61 +1,64 @@
 package bonch.dev.presentation.modules.passanger.getdriver.ride.presenter
 
 import android.os.CountDownTimer
-import bonch.dev.data.repository.passanger.getdriver.pojo.Driver
 import bonch.dev.presentation.modules.passanger.getdriver.ride.adapters.DriversListAdapter
-import bonch.dev.domain.utils.Constants.MAX_TIME_GET_DRIVER
 
 
 object DriverMainTimer {
 
-    private var testTimer: DriverTimer? = null
+    private const val MAX_TIME_GET_DRIVER = 3L //min
+    const val TIME_EXPIRED_ITEM = 30.0 //sec
+    var DEFAULT_WIDTH: Int = 0
+    //ratio for smoothing animation (more ratio -> more smooth anim)
+    var ratio = 100
 
-    fun getInstance(list: ArrayList<Driver>, adapter: DriversListAdapter): DriverTimer? {
-        if (testTimer == null) {
+    private var driverTimer: DriverTimer? = null
+
+    fun getInstance(adapter: DriversListAdapter): DriverTimer? {
+        if (driverTimer == null) {
             //interval 18 ~ 30 sec
-            testTimer =
+            driverTimer =
                 DriverTimer(
                     60000 * MAX_TIME_GET_DRIVER,
-                    18,
-                    list,
+                    100,
                     adapter
                 )
         }
 
-        return testTimer
+        return driverTimer
     }
 
 
     fun getInstance(): DriverTimer? {
-        return testTimer
+        return driverTimer
     }
 
 
-    fun deleteInstance(){
-        testTimer = null
+    fun deleteInstance() {
+        driverTimer = null
     }
 
 
     class DriverTimer(
         startTime: Long,
         interval: Long,
-        val list: ArrayList<Driver>,
         val adapter: DriversListAdapter
-    ) :
-        CountDownTimer(startTime, interval) {
+    ) : CountDownTimer(startTime, interval) {
 
         override fun onFinish() {
-            adapter.getDriverPresenter.getExpiredTimeConfirm()
+            adapter.getDriverPresenter.instance().getView()?.getExpiredTimeConfirm()
         }
 
         override fun onTick(millisUntilFinished: Long) {
             try {
+                val list = adapter.list
+
                 for (i in 0 until list.size) {
-                    list[i].timeLine?.let {
-                        list[i].timeLine = it.dec()
+                    list[i].timeLine.let {
+                        list[i].timeLine -= 0.1
 
                         //if timeLine too small, remove item
-                        if (it < 50) {
+                        if (it < 2) {
                             adapter.rejectDriver(null, false)
                         }
                     }

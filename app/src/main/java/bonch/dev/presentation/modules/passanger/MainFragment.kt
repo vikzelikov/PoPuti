@@ -8,15 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapView
-import bonch.dev.presentation.modules.passanger.profile.view.ProfileView
+import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapCreateRideView
+import bonch.dev.presentation.modules.common.profile.view.ProfileView
 import bonch.dev.presentation.modules.passanger.regulardrive.view.RegularDriveView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment() {
 
     private var regularDriving: RegularDriveView? = null
-    private var map: MapView? = null
+    private var mapCreateRide: MapCreateRideView? = null
     private var profile: ProfileView? = null
 
     private var active: Fragment? = null
@@ -34,19 +34,17 @@ class MainFragment : Fragment() {
         //init all variables
         initialize()
 
-        //map!!.navView = navView
-        active = map
+        active = mapCreateRide
         navView.selectedItemId = R.id.get_driver
 
-        fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, profile!!, ProfileView::class.java.simpleName)
-            .hide(profile!!).commit()
-        fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, regularDriving!!, RegularDriveView::class.java.simpleName)
-            .hide(regularDriving!!).commit()
-        fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, map!!, MapView::class.java.simpleName).commit()
+        //pass args
+        mapCreateRide?.arguments = arguments
+        mapCreateRide?.bottomNavView = navView
 
+        //pass args
+        profile?.isForPassanger = true
+
+        addToBackStack()
 
         navView.setOnNavigationItemSelectedListener(null)
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -55,25 +53,76 @@ class MainFragment : Fragment() {
     }
 
 
+    private fun addToBackStack() {
+        val regular = regularDriving
+        val create = mapCreateRide
+        val profile = profile
+
+        if (profile != null) {
+            fm?.beginTransaction()
+                ?.add(R.id.nav_host_fragment, profile, ProfileView::class.java.simpleName)
+                ?.hide(profile)
+                ?.commit()
+        }
+
+        if (regular != null) {
+            fm?.beginTransaction()
+                ?.add(R.id.nav_host_fragment, regular, RegularDriveView::class.java.simpleName)
+                ?.hide(regular)
+                ?.commit()
+        }
+
+        if (create != null) {
+            fm?.beginTransaction()
+                ?.add(R.id.nav_host_fragment, create, MapCreateRideView::class.java.simpleName)
+                ?.commit()
+
+        }
+    }
+
+
     private val mOnNavigationItemSelectedListener: BottomNavigationView.OnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.regular_driving -> {
-                    fm!!.beginTransaction().hide(active!!).show(regularDriving!!).commit()
-                    item.isChecked = true
-                    active = regularDriving
-                }
 
-                R.id.get_driver -> {
-                    fm!!.beginTransaction().hide(active!!).show(map!!).commit()
-                    item.isChecked = true
-                    active = map
-                }
+            val active = active
+            val regular = regularDriving
+            val create = mapCreateRide
+            val profile = profile
 
-                R.id.profile -> {
-                    fm!!.beginTransaction().hide(active!!).show(profile!!).commit()
-                    item.isChecked = true
-                    active = profile
+            if (active != null) {
+                when (item.itemId) {
+                    R.id.regular_driving -> {
+                        if (regular != null) {
+                            fm?.beginTransaction()
+                                ?.hide(active)
+                                ?.show(regular)
+                                ?.commit()
+                            item.isChecked = true
+                            this.active = regularDriving
+                        }
+                    }
+
+                    R.id.get_driver -> {
+                        if (create != null) {
+                            fm?.beginTransaction()
+                                ?.hide(active)
+                                ?.show(create)
+                                ?.commit()
+                            item.isChecked = true
+                            this.active = mapCreateRide
+                        }
+                    }
+
+                    R.id.profile -> {
+                        if (profile != null) {
+                            fm?.beginTransaction()
+                                ?.hide(active)
+                                ?.show(profile)
+                                ?.commit()
+                            item.isChecked = true
+                            this.active = profile
+                        }
+                    }
                 }
             }
 
@@ -85,13 +134,11 @@ class MainFragment : Fragment() {
         fm = (activity as MainActivity).supportFragmentManager
 
         if (regularDriving == null) {
-            regularDriving =
-                RegularDriveView()
+            regularDriving = RegularDriveView()
         }
 
-        if (map == null) {
-            map =
-                MapView()
+        if (mapCreateRide == null) {
+            mapCreateRide = MapCreateRideView()
         }
 
         if (profile == null) {

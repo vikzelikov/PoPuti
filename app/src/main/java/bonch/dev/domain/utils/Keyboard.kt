@@ -25,7 +25,7 @@ object Keyboard {
 
     fun setMovingButtonListener(root: View, isStartHide: Boolean) {
         val button = root.btn_done
-        var heightDiff = 0
+        var heightDiff: Int
         var btnDefaultPosition = 0.0f
         val rect = Rect()
         var startHeight = 0

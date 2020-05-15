@@ -6,6 +6,8 @@ interface IBaseView {
 
     fun setListeners()
 
-    fun getNavHost(): NavController
+    fun getNavHost(): NavController?
+
+    fun hideKeyboard()
 
 }

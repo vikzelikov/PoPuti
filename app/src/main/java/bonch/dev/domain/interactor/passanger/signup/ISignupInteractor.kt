@@ -1,6 +1,6 @@
 package bonch.dev.domain.interactor.passanger.signup
 
-import bonch.dev.data.repository.passanger.profile.pojo.Profile
+import bonch.dev.domain.entities.common.profile.Profile
 
 typealias SignupHandler<T> = (success: T) -> Unit
 
@@ -18,6 +18,9 @@ interface ISignupInteractor {
     )
 
 
+    fun initRealm()
+
+
     fun sendProfileData(token: String, profileData: Profile)
 
 
@@ -31,5 +34,8 @@ interface ISignupInteractor {
 
 
     fun saveProfileData(profileData: Profile)
+
+
+    fun closeRealm()
 
 }

@@ -1,18 +1,30 @@
 package bonch.dev.data.storage.passanger.getdriver
 
-import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
+import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.passanger.getdriver.Ride
+import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import io.realm.RealmResults
 
 interface IGetDriverStorage {
 
-    fun saveCashRequest(cashRequest: ArrayList<Ride>)
+    fun initRealm()
 
-    fun getCashRequest(request: String): RealmResults<Ride>?
+    fun getCashRequest(request: String): RealmResults<Address>?
 
-    fun saveCashSuggest(cashRides: ArrayList<Ride>)
+    fun getCashSuggest(): RealmResults<Address>?
 
-    fun deleteCashSuggest(ride: Ride)
+    fun saveCashRequest(cashRequest: ArrayList<Address>)
 
-    fun getCashSuggest(): RealmResults<Ride>?
+    fun saveCashSuggest(cashAddresses: ArrayList<Address>)
+
+    fun deleteCashSuggest(address: Address)
+
+    fun saveRideId(id: Int)
+
+    fun getRideId(): Int
+
+    fun removeRideId()
+
+    fun closeRealm()
 
 }

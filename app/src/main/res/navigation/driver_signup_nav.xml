@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/driver_signup_nav"
+    app:startDestination="@id/list_docs_view">
+
+    <fragment
+        android:id="@+id/list_docs_view"
+        android:name="bonch.dev.presentation.modules.driver.signup.steps.view.ListDocsView"
+        android:label="list_docs_view"
+        tools:layout="@layout/signup_docs_fragment">
+
+        <action
+            android:id="@+id/show_car_info_view"
+            app:destination="@id/car_info_view"
+            app:enterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/fade_in" />
+
+        <action
+            android:id="@+id/show_start_table_docs_view"
+            app:destination="@id/table_docs_view"
+            app:enterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/fade_in" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/car_info_view"
+        android:name="bonch.dev.presentation.modules.driver.signup.carinfo.view.CarInfoView"
+        android:label="car_info_view"
+        tools:layout="@layout/signup_car_info_fragment">
+
+        <action
+            android:id="@+id/show_signup_step_view"
+            app:destination="@id/signup_step_view"
+            app:enterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/fade_in" />
+
+
+        <action
+            android:id="@+id/show_suggest_view"
+            app:destination="@id/suggest_view" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/signup_step_view"
+        android:name="bonch.dev.presentation.modules.driver.signup.steps.view.SignupStepView"
+        android:label="signup_step_view"
+        tools:layout="@layout/driver_signup_step_fragment">
+
+        <action
+            android:id="@+id/show_table_docs_view"
+            app:destination="@id/table_docs_view"
+            app:enterAnim="@anim/fade_in"
+            app:popEnterAnim="@anim/fade_in" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/table_docs_view"
+        android:name="bonch.dev.presentation.modules.driver.signup.tabledocs.view.TableDocsView"
+        android:label="table_docs_view"
+        tools:layout="@layout/table_docs_fragment">
+
+    </fragment>
+
+
+    <activity
+        android:id="@+id/suggest_view"
+        android:name="bonch.dev.presentation.modules.driver.signup.suggest.view.SuggestView"
+        android:label="suggest_view"
+        tools:layout="@layout/signup_car_info_suggest"/>
+
+
+
+</navigation>

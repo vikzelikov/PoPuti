@@ -1,6 +1,6 @@
 package bonch.dev.presentation.modules.passanger.signup.view
 
-import bonch.dev.data.repository.passanger.profile.pojo.Profile
+import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.presentation.interfaces.IBaseView
 
 interface ContractView {

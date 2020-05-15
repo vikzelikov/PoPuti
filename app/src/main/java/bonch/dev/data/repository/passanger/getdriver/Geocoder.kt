@@ -1,9 +1,11 @@
 package bonch.dev.data.repository.passanger.getdriver
 
+import bonch.dev.domain.interactor.passanger.getdriver.GeocoderHandler
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
-import java.lang.IndexOutOfBoundsException
+import java.util.*
+import kotlin.NoSuchElementException
 
 
 class Geocoder : Session.SearchListener {
@@ -34,11 +36,19 @@ class Geocoder : Session.SearchListener {
 
     override fun onSearchResponse(response: Response) {
         try {
-            val address = response.collection.children[0].obj?.name
-            if (address != null)
-                callback(address, this.point)
-        } catch (ex: IndexOutOfBoundsException) {
+            var address = response.collection.children.first().obj?.name
+
+            try {
+                address = address?.substring(0, 1)?.toUpperCase(Locale("RU")) +
+                        address?.substring(1)?.toLowerCase(Locale("RU"))
+            } catch (ex: StringIndexOutOfBoundsException) {
+            }
+
+            callback(address, this.point)
+        } catch (ex: NoSuchElementException) {
         }
+
+
     }
 }
 

@@ -1,8 +1,10 @@
 package bonch.dev.data.storage.passanger.getdriver
 
-import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
+import bonch.dev.App
+import bonch.dev.domain.entities.passanger.getdriver.Address
 import io.realm.Case
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import io.realm.RealmResults
 
 
@@ -13,43 +15,61 @@ import io.realm.RealmResults
 
 class GetDriverStorage : IGetDriverStorage {
 
+    private val RIDE_ID = "RIDE_ID"
+    private val CASH_RIDE_REALM_NAME = "cashride.realm"
+    private val CASH_REQUEST_REALM_NAME = "cashrequest.realm"
+
     private var realm: Realm? = null
     private var realmCash: Realm? = null
 
-    fun initRealm() {
-//        if (realm == null) {
-//            val context = createRidePresenter.createRideView.context
-//
-//            if (context != null) {
-//                Realm.init(context)
-//                val config = RealmConfiguration.Builder()
-//                    .name(Constants.CASH_RIDE_REALM_NAME)
-//                    .deleteRealmIfMigrationNeeded()
-//                    .build()
-//                realm = Realm.getInstance(config)
-//            }
-//        }
+    override fun initRealm() {
+        val context = App.appComponent.getContext()
+
+        if (realm == null) {
+            Realm.init(context)
+            val config = RealmConfiguration.Builder()
+                .name(CASH_RIDE_REALM_NAME)
+                .deleteRealmIfMigrationNeeded()
+                .build()
+            realm = Realm.getInstance(config)
+
+        }
+
+        if (realmCash == null) {
+            Realm.init(context)
+            val config = RealmConfiguration.Builder()
+                .name(CASH_REQUEST_REALM_NAME)
+                .deleteRealmIfMigrationNeeded()
+                .build()
+            realmCash = Realm.getInstance(config)
+        }
     }
 
 
-    fun initRealmCash() {
-//        if (realmCash == null) {
-//            val context = createRidePresenter.createRideView.context
-//
-//            if (context != null) {
-//                Realm.init(context)
-//                val config = RealmConfiguration.Builder()
-//                    .name(Constants.CASH_REQUEST_REALM_NAME)
-//                    .deleteRealmIfMigrationNeeded()
-//                    .build()
-//                realmCash = Realm.getInstance(config)
-//            }
-//        }
+    override fun saveRideId(id: Int) {
+        val pref = App.appComponent.getSharedPref()
+        val editor = pref.edit()
+        editor.putInt(RIDE_ID, id)
+        editor.apply()
+    }
+
+
+    override fun getRideId(): Int {
+        val pref = App.appComponent.getSharedPref()
+        return pref.getInt(RIDE_ID, -1)
+    }
+
+
+    override fun removeRideId() {
+        val pref = App.appComponent.getSharedPref()
+        val editor = pref.edit()
+        editor.remove(RIDE_ID)
+        editor.apply()
     }
 
 
     //Cash suggest request
-    override fun saveCashRequest(cashRequest: ArrayList<Ride>) {
+    override fun saveCashRequest(cashRequest: ArrayList<Address>) {
         cashRequest.forEach {
             it.isCashed = true
         }
@@ -60,31 +80,42 @@ class GetDriverStorage : IGetDriverStorage {
     }
 
 
-    override fun getCashRequest(request: String): RealmResults<Ride>? {
-        return realmCash?.where(Ride::class.java)
-            ?.beginsWith("address", request.trim(), Case.INSENSITIVE)?.findAll()
+    override fun getCashRequest(request: String): RealmResults<Address>? {
+        val typeQuery = "address"
+        return realmCash?.where(Address::class.java)
+            ?.beginsWith(typeQuery, request.trim(), Case.INSENSITIVE)?.findAll()
     }
 
 
     //Cash suggest for offer
-    override fun saveCashSuggest(cashRides: ArrayList<Ride>) {
+    override fun saveCashSuggest(cashAddresses: ArrayList<Address>) {
         realm?.executeTransaction {
-            cashRides.forEach {
+            cashAddresses.forEach {
                 realm?.insertOrUpdate(it)
             }
         }
+
     }
 
 
-    override fun getCashSuggest(): RealmResults<Ride>? {
-        return realm?.where(Ride::class.java)?.findAll()
+    override fun getCashSuggest(): RealmResults<Address>? {
+        return realm?.where(Address::class.java)?.findAll()
     }
 
 
-    override fun deleteCashSuggest(ride: Ride) {
+    override fun deleteCashSuggest(address: Address) {
+        val id = "id"
         realm?.executeTransaction {
-            ride.deleteFromRealm()
+            it.where(Address::class.java).equalTo(id, address.id).findAll().deleteAllFromRealm()
         }
     }
 
+
+    override fun closeRealm() {
+        realm?.close()
+        realmCash?.close()
+
+        realm = null
+        realmCash = null
+    }
 }

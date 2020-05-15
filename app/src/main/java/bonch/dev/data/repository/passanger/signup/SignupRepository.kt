@@ -2,9 +2,8 @@ package bonch.dev.data.repository.passanger.signup
 
 import android.util.Log
 import bonch.dev.App
-import bonch.dev.data.network.passanger.signup.SignupService
-import bonch.dev.data.repository.passanger.profile.pojo.Profile
-import bonch.dev.data.repository.passanger.profile.pojo.ProfileData
+import bonch.dev.data.network.passanger.SignupService
+import bonch.dev.domain.entities.common.profile.ProfileData
 import bonch.dev.domain.entities.passanger.signup.Token
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,13 +78,11 @@ class SignupRepository : ISignupRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val stringStringMap = hashMapOf<String, String>()
-                stringStringMap["Authorization"] = "Bearer $token"
-                stringStringMap["Content-Type"] = "application/json"
-                stringStringMap["Accept"] = "application/json"
+                val headers = hashMapOf<String, String>()
+                headers["Authorization"] = "Bearer $token"
 
                 //send request
-                response = service.getUserId(stringStringMap)
+                response = service.getUserId(headers)
 
                 withContext(Dispatchers.Main) {
                     if (response != null && response!!.isSuccessful) {
@@ -100,50 +97,6 @@ class SignupRepository : ISignupRepository {
             } catch (err: Exception) {
                 //Error
                 callback(null, null)
-                Log.e("Retrofit", "${err.printStackTrace()}")
-            }
-        }
-    }
-
-
-    override fun sendProfileData(
-        id: Int,
-        token: String,
-        profileData: Profile,
-        callback: SignupHandler
-    ) {
-        var response: Response<*>
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                //send request
-                if (profileData.firstName != null && profileData.lastName != null) {
-
-                    //set headers
-                    val stringStringMap = hashMapOf<String, String>()
-                    stringStringMap["Authorization"] = "Bearer $token"
-
-                    response = service.sendProfileData(
-                        stringStringMap,
-                        id,
-                        profileData.firstName!!,
-                        profileData.lastName!!
-                    )
-                    withContext(Dispatchers.Main) {
-                        if (response.isSuccessful) {
-                            //Success
-                            callback(null)
-                        } else {
-                            //Error
-                            callback(response.code().toString())
-                        }
-                    }
-                }
-
-
-            } catch (err: Exception) {
-                //Error
-                callback(err.message)
                 Log.e("Retrofit", "${err.printStackTrace()}")
             }
         }

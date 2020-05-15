@@ -1,16 +1,17 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme is the default theme. -->
 
     <style name="Theme.MyAppTheme" parent="@style/Theme.Design.NoActionBar">
         <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/colorStatusBar</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@drawable/splash_bg</item>
+    </style>
+
+    <style name="CustomProgressBar" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorBlue</item>
     </style>
 
 
-    <style name="RatingBar" parent="@android:style/Widget.RatingBar">
-        <item name="android:minHeight">32dip</item>
-        <item name="android:minWidth">36dip</item>
-        <item name="android:progressDrawable">@drawable/bg_rating_bar</item>
-    </style>
 </resources>

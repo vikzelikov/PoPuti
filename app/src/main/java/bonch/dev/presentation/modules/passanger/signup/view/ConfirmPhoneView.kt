@@ -26,7 +26,7 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
     lateinit var confirmPhonePresenter: ContractPresenter.IConfirmPhonePresenter
 
     init {
-        SignupComponent.signupComponent?.inject(this)
+        SignupComponent.passangerSignupComponent?.inject(this)
 
         confirmPhonePresenter.instance().attachView(this)
     }
@@ -58,39 +58,32 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
 
 
     override fun setListeners() {
+        val activity = activity as? MainActivity
+
         show_phone.text = getString(R.string.showPhone).plus(" ").plus(DataSignup.phone)
 
         retry_send.setOnClickListener {
-            confirmPhonePresenter.startTimerRetrySend(activity as MainActivity)
+            activity?.let{
+                confirmPhonePresenter.startTimerRetrySend(it)
+            }
         }
 
         btn_done.setOnClickListener {
-            Keyboard.hideKeyboard(activity as MainActivity, view)
+            hideKeyboard()
             confirmPhonePresenter.checkCode(DataSignup.phone, getCode())
         }
 
         back_btn.setOnClickListener {
-            val activity = activity as MainActivity
-            confirmPhonePresenter.back(activity)
+            activity?.let {
+                confirmPhonePresenter.back(it)
+            }
         }
 
 
         code_edit_text.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(
-                s: CharSequence,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-            }
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable) {
                 confirmPhonePresenter.isCodeEnter()
@@ -154,8 +147,16 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
     }
 
 
-    override fun getNavHost(): NavController {
-        return (activity as MainActivity).navController
+    override fun hideKeyboard() {
+        val activity = activity as? MainActivity
+        activity?.let {
+            Keyboard.hideKeyboard(activity, view)
+        }
+    }
+
+
+    override fun getNavHost(): NavController? {
+        return (activity as? MainActivity)?.navController
     }
 
 

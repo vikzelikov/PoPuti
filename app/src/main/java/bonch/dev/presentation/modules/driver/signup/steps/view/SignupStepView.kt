@@ -1,76 +1,91 @@
-package bonch.dev.presentation.driver.signup
+package bonch.dev.presentation.modules.driver.signup.steps.view
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.data.driver.signup.pojo.DocsStep
-import bonch.dev.data.driver.signup.SignupMainData
-import bonch.dev.presentation.modules.driver.signup.steps.presenter.DriverSignupPresenter
+import bonch.dev.domain.entities.driver.signup.SignupMainData
+import bonch.dev.domain.entities.driver.signup.SignupStep
 import bonch.dev.domain.utils.Camera
-import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.Gallery
-import kotlinx.android.synthetic.main.driver_signup_step_fragment.view.*
+import bonch.dev.presentation.modules.driver.signup.DriverSignupActivity
+import bonch.dev.presentation.modules.driver.signup.SignupComponent
+import bonch.dev.presentation.modules.driver.signup.steps.presenter.ISignupStepPresenter
+import kotlinx.android.synthetic.main.driver_signup_step_fragment.*
+import javax.inject.Inject
 
-class SignupStepView : Fragment() {
+class SignupStepView : Fragment(), ISignupStepView {
 
-    private var driverSignupPresenter: DriverSignupPresenter? = null
+    @Inject
+    lateinit var signupStepPresenter: ISignupStepPresenter
+
+    private var blockHandler: Handler? = null
+    private var isBlock = false
+
 
     init {
-        if (driverSignupPresenter == null) {
-            driverSignupPresenter =
-                DriverSignupPresenter(
-                    null
-                )
-        }
+        SignupComponent.driverSignupComponent?.inject(this)
+
+        signupStepPresenter.instance().attachView(this)
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.driver_signup_step_fragment, container, false)
-
-        val stepData = driverSignupPresenter?.getNextStepDocs(SignupMainData.idStep)
-        setDataStep(root, stepData!!)
-
-        setListeners(root)
-
-        return root
+        return inflater.inflate(R.layout.driver_signup_step_fragment, container, false)
     }
 
 
-    private fun setDataStep(root: View, stepData: DocsStep) {
-        val titleStep = root.title_step_signup
-        val subtitleStep = root.subtitle_step_signup
-        val imgDocs = root.img_step_signup
-        val descriptionStep = root.description_docs_signup
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        titleStep.text = stepData.title
-        subtitleStep.text = stepData.subtitle
-        descriptionStep.text = stepData.descriptionDocs
+        startProcessBlock()
 
-        if(stepData.imgDocs != null){
-            imgDocs.setImageResource(stepData.imgDocs!!)
-        }
+        val stepData = signupStepPresenter.getStepData(SignupMainData.idStep)
+        setDataStep(stepData)
+
+        setListeners()
     }
 
 
-    private fun setListeners(root: View) {
-        val makePhoto = root.make_photo
-        val clipPhoto = root.clip_photo
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        signupStepPresenter.onActivityResult(this, requestCode, resultCode, data)
+    }
 
-        makePhoto.setOnClickListener {
-            driverSignupPresenter?.getCamera(this)
+
+    override fun setDataStep(stepData: SignupStep) {
+        title_step_signup.text = stepData.title
+        subtitle_step_signup.text = stepData.subtitle
+        description_docs_signup.text = stepData.descriptionDocs
+        img_step_signup.setImageResource(stepData.imgDocs)
+    }
+
+
+    override fun setListeners() {
+        //TODO holder block btn
+
+        make_photo.setOnClickListener {
+            if (!isBlock) {
+                signupStepPresenter.getCamera(this)
+                isBlock = true
+            }
         }
 
-        clipPhoto.setOnClickListener {
-            val activity = activity as DriverSignupActivity
-            Gallery.getPhoto(activity)
+        clip_photo.setOnClickListener {
+            if (!isBlock) {
+                Gallery.getPhoto(this)
+                isBlock = true
+            }
         }
     }
 
@@ -80,11 +95,47 @@ class SignupStepView : Fragment() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        val activity = activity as DriverSignupActivity
-        if(Permissions.isAccess(Constants.STORAGE_PERMISSION, activity)){
-            SignupMainData.imgUri = Camera.getCamera(activity).toString()
-        }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        context?.let {
+            if (Permissions.isAccess(Permissions.STORAGE_PERMISSION, it)) {
+                SignupMainData.imgUri = Camera.getCamera(this).toString()
+            }
+        }
+    }
+
+
+    private fun startProcessBlock() {
+        if (blockHandler == null) {
+            blockHandler = Handler()
+        }
+
+        blockHandler?.postDelayed(object : Runnable {
+            override fun run() {
+                isBlock = false
+                blockHandler?.postDelayed(this, 2500)
+            }
+        }, 0)
+    }
+
+
+    override fun getNavHost(): NavController? {
+        return (activity as? DriverSignupActivity)?.navController
+    }
+
+
+    override fun showNotification(text: String) {
+        (activity as? DriverSignupActivity)?.showNotification(text)
+    }
+
+
+    override fun hideKeyboard() {}
+
+
+    override fun onDestroy() {
+        blockHandler?.removeCallbacksAndMessages(null)
+        signupStepPresenter.instance().detachView()
+        super.onDestroy()
     }
 
 }

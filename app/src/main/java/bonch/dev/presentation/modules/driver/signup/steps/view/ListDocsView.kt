@@ -1,52 +1,51 @@
-package bonch.dev.presentation.driver.signup
+package bonch.dev.presentation.modules.driver.signup.steps.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import bonch.dev.R
-import bonch.dev.presentation.modules.driver.signup.steps.presenter.DriverSignupPresenter
-import kotlinx.android.synthetic.main.signup_docs_fragment.view.*
+import bonch.dev.presentation.interfaces.IBaseView
+import bonch.dev.presentation.modules.driver.signup.DriverSignupActivity
+import bonch.dev.route.MainRouter
+import kotlinx.android.synthetic.main.signup_docs_fragment.*
 
-class ListDocsView : Fragment() {
-
-    private var driverSignupPresenter: DriverSignupPresenter? = null
-
-
-    init {
-        if (driverSignupPresenter == null) {
-            driverSignupPresenter =
-                DriverSignupPresenter(
-                    null
-                )
-        }
-    }
-
+class ListDocsView : Fragment(), IBaseView {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.signup_docs_fragment, container, false)
-
-        setListeners(root)
-
-        return root
+        return inflater.inflate(R.layout.signup_docs_fragment, container, false)
     }
 
 
-    private fun setListeners(root: View) {
-        root.start_driver_signup.setOnClickListener {
-            val fm = (activity as DriverSignupActivity).supportFragmentManager
-            driverSignupPresenter?.startDriverSignup(fm)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setListeners()
+    }
+
+
+    override fun setListeners() {
+        start_driver_signup.setOnClickListener {
+            MainRouter.showView(R.id.show_car_info_view, getNavHost(), null)
         }
 
 
-        root.back_btn.setOnClickListener {
-            val activity = activity as DriverSignupActivity
-            driverSignupPresenter?.finish(activity)
+        back_btn.setOnClickListener {
+            (activity as? DriverSignupActivity)?.finish()
         }
+    }
+
+
+    override fun hideKeyboard() {}
+
+
+    override fun getNavHost(): NavController? {
+        return (activity as? DriverSignupActivity)?.navController
     }
 }

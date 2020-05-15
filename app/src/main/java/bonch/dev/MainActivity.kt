@@ -1,28 +1,33 @@
 package bonch.dev
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.widget.LinearLayout
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import bonch.dev.data.repository.passanger.getdriver.pojo.DriverObject
-import bonch.dev.domain.utils.Constants.PHONE_VIEW
-import bonch.dev.domain.utils.Keyboard.hideKeyboard
-import bonch.dev.presentation.base.MainPresenter
-import bonch.dev.route.Coordinator.replaceFragment
-import bonch.dev.route.passanger.signup.ISignupRouter
+import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.interfaces.IMainActivity
+import bonch.dev.presentation.interfaces.IMainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IMainActivity {
 
+    @Inject
+    lateinit var mainPresenter: IMainPresenter
 
-    private var mainPresenter: MainPresenter? = null
+    private var handlerAnimation: Handler? = null
+
 
     init {
-        mainPresenter = MainPresenter(this)
+        App.appComponent.inject(this)
+
+        mainPresenter.instance().attachView(this)
     }
 
     val navController by lazy(LazyThreadSafetyMode.NONE) {
@@ -35,50 +40,92 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //check user login
-        val accessToken = mainPresenter?.getToken()
-        println(accessToken)
+        val accessToken = mainPresenter.getToken()
 
-        if (accessToken == null) {
+
+        if (accessToken != null) {
+            //TODO check with server if created ride already (redirect to TrackRideView)
             //redirect to full app
-            DriverObject.driver = mainPresenter?.getDriverData(applicationContext)
             navController.navigate(R.id.main_passanger_fragment)
-
-
-            if (DriverObject.driver != null) {
-                //ride already created
-                //replaceFragment(GET_DRIVER_VIEW, null, supportFragmentManager)
-                //replaceFragment(PHONE_VIEW, null, supportFragmentManager)
-
-            } else {
-                //not created
-                //replaceFragment(MAIN_FRAGMENT, null, supportFragmentManager)
-                //Coordinator.showDriverView(supportFragmentManager)
-                //replaceFragment(PHONE_VIEW, null, supportFragmentManager)
-            }
-
         }
+    }
 
 
+    override fun hideKeyboard() {
+        Keyboard.hideKeyboard(this, main_activity_container)
+    }
+
+
+    override fun setListeners() {}
+
+
+    override fun getNavHost(): NavController? {
+        return navController
     }
 
 
     override fun onPause() {
         super.onPause()
-        hideKeyboard(this, findViewById<LinearLayout>(R.id.fragment_container))
+        hideKeyboard()
     }
 
 
     fun showNotification(text: String) {
-        mainPresenter?.showNotification(text)
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+
+                val view = general_notification
+
+                view.text = text
+                handlerAnimation?.removeCallbacksAndMessages(null)
+                handlerAnimation = Handler()
+                view.translationY = 0.0f
+                view.alpha = 0.0f
+
+                view.animate()
+                    .setDuration(500L)
+                    .translationY(100f)
+                    .alpha(1.0f)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            super.onAnimationEnd(animation)
+                            handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
+                        }
+                    })
+            }
+        }
+
+
+        mainHandler.post(myRunnable)
     }
 
 
-    fun pressBack() {
+    private fun hideNotifications() {
+        val view = general_notification
+
+        view.animate()
+            .setDuration(500L)
+            .translationY(-100f)
+            .alpha(0.0f)
+    }
+
+    override fun finishActivity() {
+        finish()
+    }
+
+
+    override fun getFM(): FragmentManager {
+        return supportFragmentManager
+    }
+
+
+    override fun pressBack() {
         super.onBackPressed()
     }
 
 
     override fun onBackPressed() {
-        mainPresenter?.onBackPressed()
+        mainPresenter.onBackPressed()
     }
 }

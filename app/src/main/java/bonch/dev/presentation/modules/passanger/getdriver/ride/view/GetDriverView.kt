@@ -1,62 +1,74 @@
 package bonch.dev.presentation.modules.passanger.getdriver.ride.view
 
-import android.graphics.Color
-import android.graphics.PointF
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.MainActivity
-import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.data.repository.passanger.getdriver.pojo.DriverObject
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.GetDriverPresenter
+import bonch.dev.domain.entities.passanger.getdriver.*
 import bonch.dev.domain.utils.Constants
-import bonch.dev.domain.utils.Constants.REASON1
-import bonch.dev.domain.utils.Constants.REASON2
-import bonch.dev.domain.utils.Constants.REASON3
-import bonch.dev.domain.utils.Constants.REASON4
+import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.base.MBottomSheet
+import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
+import bonch.dev.presentation.modules.passanger.getdriver.ride.adapters.DriversListAdapter
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentHandler
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentMapHandler
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.yandex.mapkit.Animation
-import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.layers.ObjectEvent
-import com.yandex.mapkit.logo.Alignment
-import com.yandex.mapkit.logo.HorizontalAlignment
-import com.yandex.mapkit.logo.VerticalAlignment
-import com.yandex.mapkit.map.*
-import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.user_location.UserLocationLayer
-import com.yandex.mapkit.user_location.UserLocationObjectListener
-import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.runtime.image.ImageProvider
-import kotlinx.android.synthetic.main.driver_info_layout.view.cancel_ride
-import kotlinx.android.synthetic.main.driver_info_layout.view.reasons_bottom_sheet
-import kotlinx.android.synthetic.main.get_driver_layout.view.*
+import kotlinx.android.synthetic.main.get_driver_layout.*
+import kotlinx.android.synthetic.main.get_driver_layout.comment_back_btn
+import kotlinx.android.synthetic.main.get_driver_layout.comment_bottom_sheet
+import kotlinx.android.synthetic.main.get_driver_layout.comment_btn
+import kotlinx.android.synthetic.main.get_driver_layout.comment_done
+import kotlinx.android.synthetic.main.get_driver_layout.comment_min_text
+import kotlinx.android.synthetic.main.get_driver_layout.comment_text
+import kotlinx.android.synthetic.main.get_driver_layout.from_address
+import kotlinx.android.synthetic.main.get_driver_layout.main_info_layout
+import kotlinx.android.synthetic.main.get_driver_layout.offer_price
+import kotlinx.android.synthetic.main.get_driver_layout.to_address
+import javax.inject.Inject
 
-class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
 
-    var mapView: MapView? = null
-    var cancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
-    var confirmCancelBottomSheetBehavior: BottomSheetBehavior<*>? = null
-    var expiredTimeBottomSheetBehavior: BottomSheetBehavior<*>? = null
-    var confirmGetBottomSheetBehavior: BottomSheetBehavior<*>? = null
-    var getDriverPresenter: GetDriverPresenter? = null
-    var userLocationLayer: UserLocationLayer? = null
+class GetDriverView : Fragment(), ContractView.IGetDriverView {
+
+    @Inject
+    lateinit var getDriverPresenter: ContractPresenter.IGetDriverPresenter
+
+    @Inject
+    lateinit var driversListAdapter: DriversListAdapter
+
+    private val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
+
+    private var cancelBottomSheet: BottomSheetBehavior<*>? = null
+    private var confirmCancelBottomSheet: BottomSheetBehavior<*>? = null
+    private var expiredTimeBottomSheet: BottomSheetBehavior<*>? = null
+    private var confirmGetBottomSheet: BottomSheetBehavior<*>? = null
+    private var commentBottomSheet: BottomSheetBehavior<*>? = null
+
+    lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
+    lateinit var nextFragment: ParentHandler<FragmentManager>
+    lateinit var mapView: ParentMapHandler<MapView>
 
 
     init {
-        if (getDriverPresenter == null) {
-            getDriverPresenter =
-                GetDriverPresenter(
-                    this
-                )
-        }
+        GetDriverComponent.getDriverComponent?.inject(this)
+
+        getDriverPresenter.instance().attachView(this)
     }
 
 
@@ -65,269 +77,448 @@ class GetDriverView : Fragment(), UserLocationObjectListener, CameraListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //init map
-        MapKitFactory.setApiKey(Constants.API_KEY)
-        MapKitFactory.initialize(context)
-        SearchFactory.initialize(context)
-        DirectionsFactory.initialize(context)
-
-        val root = inflater.inflate(R.layout.get_driver_fragment, container, false)
-        mapView = root.findViewById(R.id.map) as MapView
-        getDriverPresenter?.root = root
-
-        //set map correct relative other views
-        getDriverPresenter?.correctMapView()
-
-        mapView?.map?.addCameraListener(this)
-        mapView?.map?.isRotateGesturesEnabled = false
-
-        mapView?.map?.apply {
-            val alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
-            logo.setAlignment(alignment)
-        }
-
-        getDriverPresenter?.receiveUserData(arguments)
-
-        setBottomSheet(root)
-
-        setListeners(root)
-
-        getDriverPresenter?.startSearchDrivers(root)
-
-        return root
+        return inflater.inflate(R.layout.get_driver_layout, container, false)
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //access geo permission
-        if (Permissions.isAccess(Constants.GEO_PERMISSION, activity as MainActivity)) {
-            setUserLocation()
-        } else {
-            Permissions.access(Constants.GEO_PERMISSION_REQUEST, this)
-        }
-
-        if (DriverObject.driver != null) {
-            //ride already created
-            //TODO update driver status net
-            getDriverPresenter?.selectDriver(DriverObject.driver!!)
-        }
-
         super.onViewCreated(view, savedInstanceState)
+
+        correctMapView()
+
+        receiveUserData(arguments)
+
+        initializeAdapter()
+
+        getDriverPresenter.startSearchDrivers()
+
+        setBottomSheet()
+
+        setListeners()
     }
 
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (Permissions.isAccess(Constants.GEO_PERMISSION, activity as MainActivity)) {
-            setUserLocation()
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
+    private fun receiveUserData(bundle: Bundle?) {
+        bundle?.let {
+            val rideInfo: RideInfo? = it.getParcelable(RIDE_DETAIL_INFO)
 
+            rideInfo?.let {
 
-    override fun onObjectRemoved(view: UserLocationView) {}
+                //create ride with SERVER
+                getDriverPresenter.createRide(rideInfo)
 
-    //add user location icon
-    override fun onObjectAdded(userLocationView: UserLocationView) {
-        val pinIcon = userLocationView.pin.useCompositeIcon()
+                from_address.text = rideInfo.fromAdr?.address
+                to_address.text = rideInfo.toAdr?.address
 
-        //for moving
-        val userMark = getDriverPresenter?.getBitmap(R.drawable.ic_user_mark)
-        userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
+                if (rideInfo.price != null) {
+                    offer_price.text = rideInfo.price.toString()
+                }
 
-        userLocationLayer!!.setAnchor(
-            PointF(
-                (mapView!!.width * 0.5).toFloat(),
-                (mapView!!.height * 0.5).toFloat()
-            ),
-            PointF(
-                (mapView!!.width * 0.5).toFloat(),
-                (mapView!!.height * 0.83).toFloat()
-            )
-        )
-
-        //for staying
-        pinIcon.setIcon(
-            "pin",
-            ImageProvider.fromBitmap(userMark),
-            IconStyle().setAnchor(PointF(0.5f, 0.5f))
-                .setRotationType(RotationType.ROTATE)
-                .setZIndex(1f)
-        )
-
-        userLocationView.accuracyCircle.fillColor = Color.TRANSPARENT
-    }
-
-
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
-        getDriverPresenter?.onUserLocationAttach()
-    }
-
-
-    private fun setUserLocation() {
-        val mapKit = MapKitFactory.getInstance()
-        mapView!!.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
-
-        //init user location service
-        userLocationLayer = mapKit.createUserLocationLayer(mapView!!.mapWindow)
-        userLocationLayer?.let {
-            it.isHeadingEnabled = false
-            it.isVisible = true
-            it.setObjectListener(this)
+                val comment = rideInfo.comment
+                comment?.let {
+                    if (comment.isNotEmpty()) {
+                        comment_min_text.text = rideInfo.comment
+                    } else {
+                        comment_btn.visibility = View.GONE
+                    }
+                }
+            }
         }
     }
 
 
-    override fun onCameraPositionChanged(
-        p0: Map,
-        p1: CameraPosition,
-        p2: CameraUpdateSource,
-        p3: Boolean
-    ) {
-        if (p3) {
-            userLocationLayer?.resetAnchor()
-        }
-    }
-
-
-    private fun setListeners(r: View) {
+    override fun setListeners() {
         //set deafult reason
-        var reasonID: Int = REASON4
+        var reasonID = ReasonCancel.MISTAKE
 
-        r.cancel_ride.setOnClickListener {
-            getDriverPresenter?.getCancelReason()
+        cancel_ride.setOnClickListener {
+            getCancelReason()
         }
 
-        r.case1.setOnClickListener {
-            reasonID = REASON1
-            getDriverPresenter?.getConfirmCancel()
+        case1.setOnClickListener {
+            reasonID = ReasonCancel.DRIVER_CANCEL
+            getConfirmCancel()
         }
 
-        r.case2.setOnClickListener {
-            reasonID = REASON2
-            getDriverPresenter?.getConfirmCancel()
+        case2.setOnClickListener {
+            reasonID = ReasonCancel.WAIT_LONG
+            getConfirmCancel()
         }
 
-        r.case3.setOnClickListener {
-            reasonID = REASON3
-            getDriverPresenter?.getConfirmCancel()
+        case3.setOnClickListener {
+            reasonID = ReasonCancel.MISTAKE
+            getConfirmCancel()
         }
 
-        r.case4.setOnClickListener {
-            reasonID = REASON4
-            getDriverPresenter?.getConfirmCancel()
+        case4.setOnClickListener {
+            reasonID = ReasonCancel.OTHER
+            getOtherReasonComment()
         }
 
-        r.cancel.setOnClickListener {
-            getDriverPresenter?.cancelDone(reasonID)
+        comment_done.setOnClickListener {
+            getDriverPresenter.cancelDoneOtherReason(comment_text.text.toString())
         }
 
-        r.not_cancel.setOnClickListener {
-            getDriverPresenter?.hideAllBottomSheet()
+        cancel.setOnClickListener {
+            getDriverPresenter.cancelDone(reasonID)
         }
 
-        r.on_map_view.setOnClickListener {
-            getDriverPresenter?.hideAllBottomSheet()
+        expired_time_ok_btn.setOnClickListener {
+            getDriverPresenter.timeExpiredOk()
         }
 
-        r.expired_time_ok_btn.setOnClickListener {
-            getDriverPresenter?.timeExpiredOk()
+        confirm_accept_driver.setOnClickListener {
+            getDriverPresenter.confirmAccept()
         }
 
-        r.confirm_accept_driver.setOnClickListener {
-            getDriverPresenter?.confirmAccept()
+        not_cancel.setOnClickListener {
+            hideAllBottomSheet()
+        }
+
+        on_view_cancel.setOnClickListener {
+            hideAllBottomSheet()
+        }
+
+        on_view_cancel_reason.setOnClickListener {
+            hideAllBottomSheet()
+        }
+
+        comment_back_btn.setOnClickListener {
+            hideAllBottomSheet()
+            comment_text.clearFocus()
+            hideKeyboard()
         }
     }
 
 
-    private fun setBottomSheet(root: View) {
-        cancelBottomSheetBehavior =
-            BottomSheetBehavior.from<View>(root.reasons_bottom_sheet)
-        confirmCancelBottomSheetBehavior =
-            BottomSheetBehavior.from<View>(root.confirm_cancel_bottom_sheet)
-        expiredTimeBottomSheetBehavior =
-            BottomSheetBehavior.from<View>(root.time_expired_bottom_sheet)
-        confirmGetBottomSheetBehavior =
-            BottomSheetBehavior.from<View>(root.confirm_get_bottom_sheet)
+    private fun setBottomSheet() {
+        cancelBottomSheet = BottomSheetBehavior.from<View>(reasons_bottom_sheet)
+        confirmCancelBottomSheet = BottomSheetBehavior.from<View>(confirm_cancel_bottom_sheet)
+        expiredTimeBottomSheet = BottomSheetBehavior.from<View>(time_expired_bottom_sheet)
+        confirmGetBottomSheet = BottomSheetBehavior.from<View>(confirm_get_bottom_sheet)
+        commentBottomSheet = BottomSheetBehavior.from<View>(comment_bottom_sheet)
 
-
-        cancelBottomSheetBehavior!!.addBottomSheetCallback(object :
+        cancelBottomSheet?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideCancelReason(slideOffset)
+                onSlideCancelReason(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onChangedStateCancelReason(newState)
+                onChangedStateCancelReason(newState)
             }
         })
 
-
-        confirmCancelBottomSheetBehavior!!.addBottomSheetCallback(object :
+        confirmCancelBottomSheet?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideConfirmCancel(slideOffset)
+                onSlideConfirmCancel(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onChangedStateConfirmCancel(newState)
+                onChangedStateConfirmCancel(newState)
             }
         })
 
-
-        confirmGetBottomSheetBehavior!!.addBottomSheetCallback(object :
+        confirmGetBottomSheet?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                getDriverPresenter?.onSlideCancelReason(slideOffset)
+                onSlideCancelReason(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                getDriverPresenter?.onChangedStateCancelReason(newState)
+                onChangedStateCancelReason(newState)
+            }
+        })
+
+        commentBottomSheet?.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                onSlideCancelReason(slideOffset)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                onChangedStateCancelReason(newState)
             }
         })
     }
 
 
-    fun startAnimSearch(point: Point) {
-        //TODO delete stop timer
-        Handler().postDelayed({
-            val zoom = mapView!!.map.cameraPosition.zoom - 1
-            moveCamera(zoom, point)
-        }, 2000)
+    override fun startAnimSearch(point: Point) {
+        val zoom = getMap()?.map?.cameraPosition?.zoom?.minus(1)
+        zoom?.let {
+            Handler().postDelayed({
+                getDriverPresenter.moveCamera(zoom, point)
+            }, 1000)
+        }
     }
 
 
-    fun moveCamera(zoom: Float, point: Point) {
-        mapView?.map?.move(
-            CameraPosition(point, zoom, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 30f),
-            null
-        )
+    private fun setConfirmAcceptData(driver: Driver?) {
+        //set data in BottomSheet for confirm or cancel
+
+        driver?.let {
+            bs_driver_name.text = it.nameDriver
+            bs_car_name.text = it.carName
+            bs_driver_rating.text = it.rating.toString()
+            bs_price.text = it.price.toString().plus(" ₽")
+
+            Glide.with(bs_img_driver.context).load(it.imgDriver)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .into(bs_img_driver)
+        }
     }
 
 
-    override fun onStop() {
-        super.onStop()
-        MapKitFactory.getInstance().onStop()
-        mapView!!.onStop()
+    fun onSlideCancelReason(slideOffset: Float) {
+        if (slideOffset > 0) {
+            on_view_cancel.alpha = slideOffset * 0.8f
+        }
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-        mapView!!.onStart()
+    fun onSlideConfirmCancel(slideOffset: Float) {
+        if (slideOffset > 0) {
+            on_view_cancel_reason.alpha = slideOffset * 0.5f
+        }
     }
 
 
-    fun onBackPressed(): Boolean {
-        return getDriverPresenter?.onBackPressed()!!
+    fun onChangedStateCancelReason(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+            hideKeyboard()
+            comment_text.clearFocus()
+        }
+
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            on_view_cancel.visibility = View.GONE
+            main_info_layout.elevation = 30f
+            hideAllBottomSheet()
+        } else {
+            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            on_view_cancel.visibility = View.VISIBLE
+            main_info_layout.elevation = 0f
+        }
+    }
+
+
+    fun onChangedStateConfirmCancel(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            on_view_cancel_reason.visibility = View.GONE
+        } else {
+            on_view_cancel_reason.visibility = View.VISIBLE
+        }
+    }
+
+
+    private fun getCancelReason() {
+        cancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    private fun getConfirmCancel() {
+        confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    override fun getConfirmAccept() {
+        setConfirmAcceptData(DriverObject.driver)
+        confirmGetBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    private fun getOtherReasonComment() {
+        commentBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+
+        if (!comment_text.isFocused) {
+            comment_text.requestFocus()
+            //set a little timer to open keyboard
+            Handler().postDelayed({
+                val activity = activity as? MainActivity
+                activity?.let {
+                    Keyboard.showKeyboard(activity)
+                }
+            }, 200)
+        }
+    }
+
+
+    override fun getExpiredTimeConfirm() {
+        hideAllBottomSheet()
+
+        (expiredTimeBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
+        main_info_layout.elevation = 0f
+        on_view_cancel.visibility = View.VISIBLE
+        on_view_cancel.alpha = 0.8f
+
+        expiredTimeBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    private fun hideAllBottomSheet() {
+        if (expiredTimeBottomSheet?.state == BottomSheetBehavior.STATE_COLLAPSED) {
+            on_view_cancel?.visibility = View.GONE
+            on_view_cancel_reason?.visibility = View.GONE
+
+            cancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            confirmGetBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
+
+    override fun hideConfirmAccept() {
+        confirmGetBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+
+    override fun hideKeyboard() {
+        val activity = activity as? MainActivity
+        activity?.let {
+            Keyboard.hideKeyboard(it, view)
+        }
+    }
+
+
+    override fun getNavHost(): NavController? {
+        return (activity as? MainActivity)?.navController
+    }
+
+
+    private fun initializeAdapter() {
+        driversListAdapter.list = arrayListOf()
+
+        driver_list.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = driversListAdapter
+        }
+
+        driver_list.visibility = View.VISIBLE
+    }
+
+
+    private fun correctMapView() {
+        Thread(Runnable {
+            while (true) {
+                try {
+                    val height = main_info_layout?.height
+                    if (height in 100..1000) {
+                        val mainHandler = Handler(Looper.getMainLooper())
+                        val myRunnable = Runnable {
+                            kotlin.run {
+                                val layoutParams: RelativeLayout.LayoutParams =
+                                    RelativeLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT
+                                    )
+                                //"-10" for correct view radius corners
+                                if (height != null) {
+                                    layoutParams.setMargins(0, 0, 0, height - 10)
+                                }
+                                getMap()?.layoutParams = layoutParams
+                            }
+                        }
+
+                        mainHandler.post(myRunnable)
+
+                        break
+                    }
+                } catch (ex: java.lang.Exception) {
+                    break
+                }
+
+            }
+        }).start()
+    }
+
+
+    override fun getAdapter(): DriversListAdapter {
+        return driversListAdapter
+    }
+
+
+    override fun checkoutBackground(isShow: Boolean) {
+        //unsupported exception
+        try {
+            if (on_view_main != null) {
+                if (isShow) {
+                    get_driver_center_text?.visibility = View.VISIBLE
+                    on_view_main?.alpha = 0f
+                } else {
+                    get_driver_center_text?.visibility = View.GONE
+                    on_view_main?.alpha = 0.8f
+                }
+            }
+        } catch (ex: Exception) {
+        }
+    }
+
+
+    override fun removeBackground() {
+        try {
+            if (on_view_main != null) {
+                get_driver_center_text?.visibility = View.GONE
+                on_view_main?.visibility = View.GONE
+            }
+        } catch (ex: Exception) {
+        }
+    }
+
+
+    override fun onBackPressed(): Boolean {
+        var isBackPressed = true
+
+        if (cancelBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || confirmCancelBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || expiredTimeBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || confirmGetBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+        ) {
+
+            //hide all bottom sheets
+            hideAllBottomSheet()
+
+            isBackPressed = false
+        }
+
+        return isBackPressed
+    }
+
+
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun getUserLocationLayer(): UserLocationLayer? {
+        return locationLayer()
+    }
+
+
+    override fun getMap(): MapView? {
+        return mapView()
+    }
+
+
+    override fun nextFragment() {
+        val fm = (activity as? MainActivity)?.supportFragmentManager
+        fm?.let {
+            nextFragment(it)
+        }
+    }
+
+
+    override fun getRecyclerView(): RecyclerView {
+        return driver_list
+    }
+
+
+    override fun onObjectUpdated() {
+        getDriverPresenter.onUserLocationAttach()
     }
 
 }

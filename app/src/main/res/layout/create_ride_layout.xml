@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/get_driver_layout"
+    android:id="@+id/create_ride_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:visibility="visible">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/frame_container"
-        android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
-
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_back_btn"
+        android:elevation="12dp"
+        android:padding="13dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_back_arrow" />
 
     <View
         android:id="@+id/on_map_view"
@@ -24,8 +28,8 @@
 
     <ImageButton
         android:id="@+id/my_pos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|right"
@@ -33,7 +37,7 @@
         android:layout_marginBottom="170dp"
         android:background="@drawable/bg_back_btn"
         android:elevation="10dp"
-        android:padding="18dp"
+        android:paddingRight="2dp"
         android:src="@drawable/ic_my_position" />
 
     <ImageView

@@ -1,8 +1,9 @@
 package bonch.dev.domain.interactor.passanger.signup
 
-import bonch.dev.data.repository.passanger.profile.pojo.Profile
+import bonch.dev.data.repository.common.profile.IProfileRepository
 import bonch.dev.data.repository.passanger.signup.ISignupRepository
-import bonch.dev.data.storage.passanger.signup.ISignupStorage
+import bonch.dev.data.storage.common.profile.IProfileStorage
+import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.passanger.signup.DataSignup
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import javax.inject.Inject
@@ -13,12 +14,17 @@ class SignupInteractor : ISignupInteractor {
     lateinit var signupRepository: ISignupRepository
 
     @Inject
-    lateinit var signupStorage: ISignupStorage
+    lateinit var profileRepository: IProfileRepository
+
+    @Inject
+    lateinit var profileStorage: IProfileStorage
 
     init {
-        SignupComponent.signupComponent?.inject(this)
+        SignupComponent.passangerSignupComponent?.inject(this)
     }
 
+
+    //NETWORK
     override fun sendSms(
         phone: String,
         callback: SignupHandler<String?>
@@ -71,26 +77,39 @@ class SignupInteractor : ISignupInteractor {
 
 
     override fun retrySendProfileData(id: Int, token: String, profileData: Profile) {
-        signupRepository.sendProfileData(id, token, profileData) { error ->
+        profileRepository.saveProfile(id, token, profileData) { error ->
             if (error != null) {
                 //Retry request
-                signupRepository.sendProfileData(id, token, profileData) {}
+                profileRepository.saveProfile(id, token, profileData) {}
             }
         }
 
         profileData.id = id
 
-        //update profile locale
+        //remove old data
+        profileStorage.removeProfileData()
+
+        //local save data
         saveProfileData(profileData)
     }
 
 
+    override fun initRealm() {
+        profileStorage.initRealm()
+    }
+
+
     override fun saveToken(token: String) {
-        signupStorage.saveToken(token)
+        profileStorage.saveToken(token)
     }
 
 
     override fun saveProfileData(profileData: Profile) {
-        signupStorage.saveProfileData(profileData)
+        profileStorage.saveProfileData(profileData)
+    }
+
+
+    override fun closeRealm() {
+        profileStorage.closeRealm()
     }
 }

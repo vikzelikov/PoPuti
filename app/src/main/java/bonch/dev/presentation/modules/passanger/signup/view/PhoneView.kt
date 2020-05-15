@@ -15,15 +15,13 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
 import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.di.component.passanger.DaggerSignupComponent
-import bonch.dev.di.module.passanger.SignupModule
+import bonch.dev.di.component.passanger.DaggerPassangerSignupComponent
+import bonch.dev.di.module.passanger.PassangerSignupModule
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.presenter.ContractPresenter
 import com.redmadrobot.inputmask.MaskedTextChangedListener.Companion.installOn
@@ -39,18 +37,23 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
     lateinit var phonePresenter: ContractPresenter.IPhonePresenter
 
     init {
-        //first build DI component
-        if (SignupComponent.signupComponent == null) {
-            SignupComponent.signupComponent = DaggerSignupComponent
+        initDI()
+
+        SignupComponent.passangerSignupComponent?.inject(this)
+
+        phonePresenter.instance().attachView(this)
+    }
+
+
+    //first build DI component
+    private fun initDI() {
+        if (SignupComponent.passangerSignupComponent == null) {
+            SignupComponent.passangerSignupComponent = DaggerPassangerSignupComponent
                 .builder()
-                .signupModule(SignupModule())
+                .passangerSignupModule(PassangerSignupModule())
                 .appComponent(App.appComponent)
                 .build()
         }
-
-        SignupComponent.signupComponent?.inject(this)
-
-        phonePresenter.instance().attachView(this)
     }
 
 
@@ -73,8 +76,7 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setListeners()
 
-        (activity as MainActivity).window
-            .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        (activity as? MainActivity)?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         setPhoneMask()
 
@@ -104,7 +106,7 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
         btn_done.setOnClickListener {
             val phone = phone_number.text.toString().trim()
 
-            phonePresenter.hideKeyboard(activity as MainActivity)
+            hideKeyboard()
 
             Handler().postDelayed({
                 //wait for keyboard hide
@@ -158,13 +160,21 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
     }
 
 
-    override fun showError(text: String) {
-        (activity as MainActivity).showNotification(text)
+    override fun hideKeyboard() {
+        val activity = activity as? MainActivity
+        activity?.let {
+            Keyboard.hideKeyboard(activity, view)
+        }
     }
 
 
-    override fun getNavHost(): NavController {
-        return (activity as MainActivity).navController
+    override fun showError(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun getNavHost(): NavController? {
+        return (activity as? MainActivity)?.navController
     }
 
 

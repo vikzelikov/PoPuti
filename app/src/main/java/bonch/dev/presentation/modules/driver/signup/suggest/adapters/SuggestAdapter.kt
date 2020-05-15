@@ -3,18 +3,18 @@ package bonch.dev.presentation.modules.driver.signup.suggest.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.presentation.modules.driver.signup.suggest.presenter.SuggestPresenter
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.modules.driver.signup.suggest.presenter.ISuggestPresenter
 import kotlinx.android.synthetic.main.car_suggest_item.view.*
+import javax.inject.Inject
 
 
-class SuggestAdapter(
-    private val suggestPresenter: SuggestPresenter,
-    var list: ArrayList<String>
+class SuggestAdapter @Inject constructor(
+    private var suggestPresenter: ISuggestPresenter
 ) : RecyclerView.Adapter<SuggestAdapter.ItemPostHolder>() {
+
+    var list: ArrayList<String> = arrayListOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
@@ -40,10 +40,7 @@ class SuggestAdapter(
 
 
         holder.itemView.setOnTouchListener { _, _ ->
-            val activity = suggestPresenter.suggestView
-            val rootView = activity.findViewById<ContentFrameLayout>(android.R.id.content).rootView
-            Keyboard.hideKeyboard(activity, rootView)
-
+            suggestPresenter.instance().getView()?.hideKeyboard()
             false
         }
 

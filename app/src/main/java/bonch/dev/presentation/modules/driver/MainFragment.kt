@@ -1,4 +1,4 @@
-package bonch.dev.presentation.driver
+package bonch.dev.presentation.modules.driver
 
 
 import android.os.Bundle
@@ -8,12 +8,9 @@ import androidx.fragment.app.FragmentManager
 
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.utils.Constants.CREATE_RIDE_VIEW
-import bonch.dev.domain.utils.Constants.PROFILE_VIEW
-import bonch.dev.domain.utils.Constants.REGULAR_DRIVING_VIEW
 import bonch.dev.presentation.modules.driver.getpassanger.orders.view.OrdersView
 import bonch.dev.presentation.driver.rating.RatingView
-import bonch.dev.presentation.modules.passanger.profile.view.ProfileView
+import bonch.dev.presentation.modules.common.profile.view.ProfileView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment() {
@@ -39,13 +36,13 @@ class MainFragment : Fragment() {
         active = ordersView
         navView.selectedItemId = R.id.get_driver
 
-        fm!!.beginTransaction().add(R.id.nav_host_fragment, profile!!, PROFILE_VIEW.toString())
-            .hide(profile!!).commit()
-        fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, ratingView!!, REGULAR_DRIVING_VIEW.toString())
-            .hide(ratingView!!).commit()
-        fm!!.beginTransaction()
-            .add(R.id.nav_host_fragment, ordersView!!, CREATE_RIDE_VIEW.toString()).commit()
+//        fm!!.beginTransaction().add(R.id.nav_host_fragment, profile!!, PROFILE_VIEW.toString())
+//            .hide(profile!!).commit()
+//        fm!!.beginTransaction()
+//            .add(R.id.nav_host_fragment, ratingView!!, REGULAR_DRIVING_VIEW.toString())
+//            .hide(ratingView!!).commit()
+//        fm!!.beginTransaction()
+//            .add(R.id.nav_host_fragment, ordersView!!, CREATE_RIDE_VIEW.toString()).commit()
 
 
         navView.setOnNavigationItemSelectedListener(null)

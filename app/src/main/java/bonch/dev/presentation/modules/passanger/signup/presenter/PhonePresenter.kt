@@ -9,7 +9,7 @@ import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.view.ContractView
-import bonch.dev.route.passanger.signup.ISignupRouter
+import bonch.dev.route.MainRouter
 import javax.inject.Inject
 
 class PhonePresenter : BasePresenter<ContractView.IPhoneView>(), ContractPresenter.IPhonePresenter {
@@ -17,11 +17,8 @@ class PhonePresenter : BasePresenter<ContractView.IPhoneView>(), ContractPresent
     @Inject
     lateinit var signupInteractor: ISignupInteractor
 
-    @Inject
-    lateinit var router: ISignupRouter
-
     init {
-        SignupComponent.signupComponent?.inject(this)
+        SignupComponent.passangerSignupComponent?.inject(this)
     }
 
 
@@ -43,8 +40,7 @@ class PhonePresenter : BasePresenter<ContractView.IPhoneView>(), ContractPresent
 //                        mainHandler.post(myRunnable)
 //                    })
 
-                val nav = getView()?.getNavHost()
-                router.showConfirmPhoneView(nav)
+                MainRouter.showView(R.id.show_confirm_phone_view, getView()?.getNavHost(), null)
             } else {
                 val error = "${res?.getString(R.string.waitFor)}" +
                         " ${RetrySendTimer.seconds}" +

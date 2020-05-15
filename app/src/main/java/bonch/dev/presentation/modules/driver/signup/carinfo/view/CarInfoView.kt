@@ -1,6 +1,8 @@
-package bonch.dev.presentation.driver.signup
+package bonch.dev.presentation.modules.driver.signup.carinfo.view
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,22 +10,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import bonch.dev.R
-import bonch.dev.presentation.modules.driver.signup.carinfo.presenter.CarInfoPresenter
-import kotlinx.android.synthetic.main.signup_car_info_fragment.view.*
+import bonch.dev.domain.entities.driver.signup.DriverData
+import bonch.dev.domain.entities.driver.signup.SignupMainData
+import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.modules.driver.signup.DriverSignupActivity
+import bonch.dev.presentation.modules.driver.signup.SignupComponent
+import bonch.dev.presentation.modules.driver.signup.carinfo.presenter.ICarInfoPresenter
+import kotlinx.android.synthetic.main.signup_car_info_fragment.*
+import javax.inject.Inject
 
-class CarInfoView : Fragment() {
+class CarInfoView : Fragment(), ICarInfoView {
 
-    private var carInfoPresenter: CarInfoPresenter? = null
+    @Inject
+    lateinit var carInfoPresenter: ICarInfoPresenter
 
+    private val BOOL_DATA = "BOOL_DATA"
+    private val STRING_DATA = "STRING_DATA"
 
     init {
-        if (carInfoPresenter == null) {
-            carInfoPresenter =
-                CarInfoPresenter(
-                    this
-                )
-        }
+        SignupComponent.driverSignupComponent?.inject(this)
+
+        carInfoPresenter.instance().attachView(this)
     }
 
 
@@ -32,64 +41,140 @@ class CarInfoView : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.signup_car_info_fragment, container, false)
+        return inflater.inflate(R.layout.signup_car_info_fragment, container, false)
+    }
 
-        setHintListener(root)
 
-        setListeners(root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        return root
+        setHintListener()
+
+        setListeners()
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        carInfoPresenter?.onActivityResult(resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val isCarNameSuggest = data.getBooleanExtra(BOOL_DATA, false)
+            val textSuggest = data.getStringExtra(STRING_DATA)
+
+            if (isCarNameSuggest) {
+                car_name.text = textSuggest
+                car_name.setTextColor(Color.parseColor("#000000"))
+
+                //show next step
+                car_model.text = resources.getString(R.string.carModel)
+                car_model.setTextColor(Color.parseColor("#60000000"))
+                car_model.visibility = View.VISIBLE
+                car_number_layout.visibility = View.GONE
+            } else {
+                car_model.text = textSuggest
+                car_model.setTextColor(Color.parseColor("#000000"))
+
+                //show next step
+                car_number_layout.visibility = View.VISIBLE
+            }
+        }
     }
 
 
-    private fun setListeners(root: View) {
-        val carName = root.car_name
-        val carModel = root.car_model
-        val carNumber = root.car_number
-        val nextBtn = root.next_btn
-
-        nextBtn.setOnClickListener {
-            if (carInfoPresenter!!.isCarInfoEntered(root)) {
-                val fm = (activity as DriverSignupActivity).supportFragmentManager
-                carInfoPresenter!!.startSettingDocs(fm)
+    override fun setListeners() {
+        next_btn.setOnClickListener {
+            if (isCarInfoEntered()) {
+                //save data
+                SignupMainData.driverData = getData()
+                //and next
+                carInfoPresenter.startSetDocs()
             }
         }
 
 
-        carName.setOnClickListener {
-            carInfoPresenter?.showSuggest(true)
+        car_name.setOnClickListener {
+            carInfoPresenter.showSuggest(this, true)
         }
 
 
-        carModel.setOnClickListener {
-            carInfoPresenter?.showSuggest(false)
+        car_model.setOnClickListener {
+            carInfoPresenter.showSuggest(this, false)
         }
 
 
-        carNumber.addTextChangedListener(object : TextWatcher {
+        car_number.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                carInfoPresenter?.isCarInfoEntered(root)
+                isCarInfoEntered()
             }
         })
     }
 
 
-    private fun setHintListener(root: View) {
-        val carNumber = root.car_number
-
-        carNumber.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            root.car_number_layout.isHintEnabled = hasFocus
+    private fun setHintListener() {
+        car_number.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            car_number_layout.isHintEnabled = hasFocus
         }
+    }
+
+
+    override fun getData(): DriverData {
+        val car = DriverData()
+
+        car.carName = car_name.text.toString().trim()
+        car.carModel = car_model.text.toString().trim()
+        car.carNumber = car_number.text.toString().trim()
+
+        return car
+    }
+
+
+    private fun isCarInfoEntered(): Boolean {
+        var result = false
+
+        if (car_name.text.toString().trim().isNotEmpty() &&
+            car_model.text.toString().trim().isNotEmpty() &&
+            car_number.text.toString().trim().isNotEmpty()
+        ) {
+            changeBtnEnable(true)
+            result = true
+        } else {
+            changeBtnEnable(false)
+        }
+
+
+        return result
+    }
+
+
+    override fun changeBtnEnable(enable: Boolean) {
+        if (enable) {
+            next_btn.setBackgroundResource(R.drawable.bg_btn_blue)
+        } else {
+            next_btn.setBackgroundResource(R.drawable.bg_btn_gray)
+        }
+    }
+
+
+    override fun hideKeyboard() {
+        val activity = activity as? DriverSignupActivity
+        activity?.let {
+            Keyboard.hideKeyboard(activity, car_info_container)
+        }
+    }
+
+
+    override fun getNavHost(): NavController? {
+        return (activity as? DriverSignupActivity)?.navController
+    }
+
+
+    override fun onDestroy() {
+        carInfoPresenter.instance().detachView()
+        super.onDestroy()
     }
 
 }

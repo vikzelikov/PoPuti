@@ -9,11 +9,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.data.repository.passanger.profile.pojo.Profile
-import bonch.dev.domain.entities.passanger.signup.DataSignup
+import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.presenter.ContractPresenter
@@ -29,7 +27,7 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
 
 
     init {
-        SignupComponent.signupComponent?.inject(this)
+        SignupComponent.passangerSignupComponent?.inject(this)
 
         fullNamePresenter.instance().attachView(this)
     }
@@ -61,11 +59,11 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
 
 
     override fun setHintListener() {
-        first_name.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+        first_name.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             first_name_layout.isHintEnabled = hasFocus
         }
 
-        last_name.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+        last_name.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             last_name_layout.isHintEnabled = hasFocus
         }
     }
@@ -80,19 +78,22 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
 
 
     override fun setListeners() {
+        val activity = activity as? MainActivity
+
         btn_done.setOnClickListener {
-            val activity = activity as MainActivity
-            Keyboard.hideKeyboard(activity, view)
+            hideKeyboard()
 
             if (fullNamePresenter.isNameEntered()) {
                 //end signup as passanger
-                activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                 fullNamePresenter.doneSignup()
             }
         }
 
         back_btn.setOnClickListener {
-            fullNamePresenter.back(activity as MainActivity)
+            activity?.let{
+                fullNamePresenter.back(it)
+            }
         }
 
         first_name.addTextChangedListener(object : TextWatcher {
@@ -137,8 +138,16 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
     }
 
 
-    override fun getNavHost(): NavController {
-        return (activity as MainActivity).navController
+    override fun hideKeyboard() {
+        val activity = activity as? MainActivity
+        activity?.let {
+            Keyboard.hideKeyboard(activity, view)
+        }
+    }
+
+
+    override fun getNavHost(): NavController? {
+        return (activity as? MainActivity)?.navController
     }
 
 

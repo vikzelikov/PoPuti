@@ -51,6 +51,10 @@ class OrdersView : Fragment(), IBaseView {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun hideKeyboard() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 
     override fun onDestroy() {
         ordersPresenter.detachView()

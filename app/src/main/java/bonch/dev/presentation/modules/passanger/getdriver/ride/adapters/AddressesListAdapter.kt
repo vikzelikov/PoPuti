@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
+import bonch.dev.domain.entities.passanger.getdriver.Address
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
 import kotlinx.android.synthetic.main.ride_item.view.*
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AddressesListAdapter @Inject constructor(private val createRidePresenter: ContractPresenter.ICreateRidePresenter) :
     RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
 
-    var list: ArrayList<Ride> = arrayListOf()
+    var list: ArrayList<Address> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
@@ -31,7 +31,6 @@ class AddressesListAdapter @Inject constructor(private val createRidePresenter: 
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-
         holder.bind(list[position])
 
         holder.itemView.setOnClickListener {
@@ -40,9 +39,7 @@ class AddressesListAdapter @Inject constructor(private val createRidePresenter: 
 
 
         holder.itemView.setOnTouchListener { _, _ ->
-            //            val activity = createRideView.activity!!
-//            hideKeyboard(activity, createRideView.view!!)
-
+            createRidePresenter.instance().getView()?.hideKeyboard()
             false
         }
 
@@ -50,7 +47,7 @@ class AddressesListAdapter @Inject constructor(private val createRidePresenter: 
 
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(post: Ride) {
+        fun bind(post: Address) {
             itemView.address.text = post.address
             itemView.city.text = post.description
         }

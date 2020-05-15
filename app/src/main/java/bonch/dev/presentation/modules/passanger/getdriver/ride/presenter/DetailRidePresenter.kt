@@ -1,93 +1,74 @@
 package bonch.dev.presentation.modules.passanger.getdriver.ride.presenter
 
+import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.data.repository.passanger.getdriver.SearchPlace
-import bonch.dev.data.repository.passanger.getdriver.pojo.Coordinate.fromAdr
-import bonch.dev.data.repository.passanger.getdriver.pojo.Coordinate.toAdr
-import bonch.dev.data.repository.passanger.getdriver.pojo.PaymentCard
-import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
-import bonch.dev.data.repository.passanger.getdriver.pojo.RideDetailInfo
-import bonch.dev.presentation.modules.passanger.getdriver.ride.adapters.PaymentsListAdapter
-import bonch.dev.domain.utils.Constants
-import bonch.dev.domain.utils.Constants.ADD_BANK_CARD_VIEW
-import bonch.dev.domain.utils.Constants.AVERAGE_PRICE
-import bonch.dev.domain.utils.Constants.CARD_IMG
-import bonch.dev.domain.utils.Constants.FROM
-import bonch.dev.domain.utils.Constants.GET_DRIVER_VIEW
-import bonch.dev.domain.utils.Constants.OFFER_PRICE
-import bonch.dev.domain.utils.Constants.OFFER_PRICE_VIEW
-import bonch.dev.domain.utils.Constants.RIDE_DETAIL_INFO
-import bonch.dev.domain.utils.Constants.TO
-import bonch.dev.route.Coordinator.openActivity
-import bonch.dev.route.Coordinator.replaceFragment
-import bonch.dev.domain.utils.Keyboard.hideKeyboard
-import bonch.dev.domain.utils.Keyboard.showKeyboard
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapView
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.DetailRideView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.passanger.getdriver.AddressPoint
+import bonch.dev.domain.entities.passanger.getdriver.BankCard
+import bonch.dev.domain.entities.passanger.getdriver.Coordinate.fromAdr
+import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
+import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView
+import bonch.dev.presentation.modules.common.orfferprice.view.OfferPriceView
+import bonch.dev.presentation.modules.passanger.getdriver.ride.view.ContractView
+import bonch.dev.route.MainRouter
 import com.yandex.mapkit.geometry.Point
-import kotlinx.android.synthetic.main.detail_ride_layout.*
-import kotlinx.android.synthetic.main.map_fragment.*
+import com.yandex.mapkit.mapview.MapView
 
-class DetailRidePresenter(private val detailRideView: DetailRideView) {
+class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
+    ContractPresenter.IDetailRidePresenter {
 
-    var paymentsListAdapter: PaymentsListAdapter? = null
+    val OFFER_PRICE = 1
+    val ADD_BANK_CARD = 2
+    private val AVERAGE_PRICE = "AVERAGE_PRICE"
+    private val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
+
+
     private var searchPlace: SearchPlace? = null
     private var routing: Routing? = null
     var fromPoint: Point? = null
     var toPoint: Point? = null
 
-
     init {
-        if (searchPlace == null) {
-            searchPlace = SearchPlace(this)
+        searchPlace = SearchPlace(this)
+    }
+
+
+    override fun offerPrice(context: Context, fragment: Fragment) {
+        val intent = Intent(context, OfferPriceView::class.java)
+        fragment.startActivityForResult(intent, OFFER_PRICE)
+    }
+
+
+    override fun addBankCard(context: Context, fragment: Fragment) {
+        val intent = Intent(context, AddBankCardView::class.java)
+        fragment.startActivityForResult(intent, ADD_BANK_CARD)
+    }
+
+
+    override fun checkAddressPoints(fromAddress: Address, toAddress: Address) {
+        val fromUri = fromAddress.uri
+        val toUri = toAddress.uri
+        val fromAdrStr = fromAddress.address
+        val toAdrStr = toAddress.address
+        val fromP = fromAddress.point
+        val toP = toAddress.point
+
+        //set address in view
+        if (fromAdrStr != null && toAdrStr != null) {
+            getView()?.setAddresses(fromAdrStr, toAdrStr)
         }
 
-//        if (routing == null) {
-//            val context = detailRideView.getView().context!!
-//            routing =
-//                Routing(
-//                    context,
-//                    detailRideView
-//                )
-//        }
-    }
-
-
-    fun offerPrice(fragment: Fragment) {
-//        val activity = detailRideView.getView().activity!!
-//        openActivity(OFFER_PRICE_VIEW, activity, fragment)
-    }
-
-
-    fun addBankCard(fragment: Fragment) {
-//        val activity = detailRideView.getView().activity!!
-//        openActivity(ADD_BANK_CARD_VIEW, activity, fragment)
-    }
-
-
-    fun receiveAddresses(fromAddress: Ride?, toAddress: Ride?) {
-        val fromUri = fromAddress?.uri
-        val toUri = toAddress?.uri
-
-        detailRideView.setAddresses(fromAddress?.address!!, toAddress?.address!!)
-
-        if (fromAddress.point != null) {
-            fromPoint = Point(fromAddress.point!!.latitude, fromAddress.point!!.longitude)
+        if (fromP != null) {
+            fromPoint = Point(fromP.latitude, fromP.longitude)
         }
 
-        if (toAddress.point != null) {
-            toPoint = Point(toAddress.point!!.latitude, toAddress.point!!.longitude)
+        if (toP != null) {
+            toPoint = Point(toP.latitude, toP.longitude)
         }
 
         //50 - ok length for detect correct URI or no
@@ -95,7 +76,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             if (fromUri.length > 50) {
                 fromPoint = getPoint(fromUri)
             } else {
-                searchPlace!!.request(fromUri)
+                searchPlace?.request(fromUri)
             }
         }
 
@@ -103,7 +84,7 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
             if (toUri.length > 50) {
                 toPoint = getPoint(toUri)
             } else {
-                searchPlace!!.request(toUri)
+                searchPlace?.request(toUri)
             }
         }
 
@@ -111,17 +92,29 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun submitRoute() {
-        if (fromPoint != null && toPoint != null) {
-            routing!!.submitRequest(fromPoint!!, toPoint!!)
+    override fun submitRoute() {
+        val from = fromPoint
+        val to = toPoint
+
+        if (from != null && to != null) {
+            //update points
+            fromAdr?.point = AddressPoint(from.latitude, from.longitude)
+            toAdr?.point = AddressPoint(to.latitude, to.longitude)
+
+            routing = Routing(this)
+            routing?.submitRequest(from, to)
         }
     }
 
 
-    fun removeRoute() {
-        if (routing != null) {
-            routing!!.removeRoute()
-        }
+    override fun showRoute() {
+        routing?.showRoute()
+    }
+
+
+    override fun removeRoute() {
+        routing?.removeRoute()
+        routing = null
     }
 
 
@@ -147,234 +140,59 @@ class DetailRidePresenter(private val detailRideView: DetailRideView) {
     }
 
 
-    fun offerPriceDone(data: Intent?) {
-        val offerPrice = getView().offer_price
-        val priceLabelColor = getView().info_price
-        val price = data!!.getStringExtra(OFFER_PRICE)
-        val averagePrice = data.getIntExtra(AVERAGE_PRICE, 0)
+    override fun offerPriceDone(data: Intent?) {
+        val price = data?.getIntExtra(OFFER_PRICE.toString(), 0)
+        val averagePrice = data?.getIntExtra(AVERAGE_PRICE, 0)
 
-        offerPrice.textSize = 22f
-        offerPrice.setPadding(0, 5, 0, 25)
-        offerPrice.setTextColor(Color.parseColor("#000000"))
-        offerPrice.typeface = Typeface.DEFAULT_BOLD
-
-        if (averagePrice <= (price!!.toInt())) {
-            priceLabelColor.visibility = View.GONE
-        } else {
-            priceLabelColor.visibility = View.VISIBLE
-        }
-
-        offerPrice.text = price
-
-        //change btn enabled in case completed detail info
-        isDataComplete()
-    }
-
-
-    fun addBankCardDone(data: Intent?) {
-        val cardNumber = data?.getStringExtra(Constants.CARD_NUMBER)
-        val validUntil = data?.getStringExtra(Constants.VALID_UNTIL)
-        val cvc = data?.getStringExtra(Constants.CVC)
-        val img = data?.getIntExtra(CARD_IMG, R.drawable.ic_visa)
-
-        val paymentCard = PaymentCard(cardNumber, validUntil, cvc, img)
-
-        paymentsListAdapter?.list?.add(paymentCard)
-        paymentsListAdapter?.notifyDataSetChanged()
-    }
-
-
-    fun setSelectedBankCard(paymentCard: PaymentCard) {
-        getView().selected_payment_method.visibility = View.VISIBLE
-        getView().payment_method.visibility = View.GONE
-
-        getView().number_card.text = paymentCard.numberCard
-        if (paymentCard.img != null) {
-            getView().payment_method_img.setImageResource(paymentCard.img!!)
-        }
-
-        detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-
-        //change btn enabled in case completed detail info
-        isDataComplete()
-    }
-
-
-    fun getPaymentMethods() {
-        detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-    }
-
-
-    fun getInfoPrice() {
-        detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-    }
-
-
-    fun commentStart() {
-        val commentText = getView().comment_text
-        val activity = getView().activity as MainActivity
-        detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
-
-        if (!commentText.isFocused) {
-            commentText.requestFocus()
-            //set a little timer to open keyboard
-            Handler().postDelayed({
-                showKeyboard(activity)
-            }, 200)
+        if (price != null && averagePrice != null) {
+            getView()?.offerPriceDone(price, averagePrice)
         }
     }
 
 
-    fun commentDone() {
-        val commentText = getView().comment_text
-        commentText?.clearFocus()
+    override fun addBankCardDone(data: Intent?) {
+        val bankCard = data?.getParcelableExtra<BankCard>(ADD_BANK_CARD.toString())
 
-        hideAllBottomSheet()
+        val paymentCard = BankCard(bankCard?.numberCard, bankCard?.validUntil, bankCard?.cvc, bankCard?.img)
+
+        val adapter = getView()?.getPaymentsAdapter()
+        adapter?.list?.add(paymentCard)
+        adapter?.notifyDataSetChanged()
     }
 
 
-    fun hideAllBottomSheet(){
-//        val activity = getView().activity as MainActivity
-//        val root = getView().view!!
-//
-//        hideKeyboard(activity, root)
-//
-//        detailRideView.commentBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-//        detailRideView.cardsBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-//        detailRideView.infoPriceBottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-    }
+    override fun getDriver() {
+        val view = getView()
 
-
-    fun showRoute() {
-        routing?.showRoute()
-    }
-
-
-    fun onSlideBottomSheet(slideOffset: Float) {
-//        val onMapView = getView().on_map_view_detail
-//        val backBtn = getView().back_btn
-//        val showRoute = getView().show_route
-//
-//        if (slideOffset > 0 && slideOffset < 1) {
-//            onMapView.alpha = slideOffset * 0.8f
-//            backBtn.alpha = 1 - slideOffset * 0.99f
-//            showRoute.alpha = 1 - slideOffset * 0.99f
-//        }
-    }
-
-
-    fun onStateChangedBottomSheet(newState: Int) {
-//        val commentText = getView().comment_text
-//        val onMapView = getView().on_map_view_detail
-//        val mainInfoLayout = getView().container_detail_ride
-//
-//        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-//            val activity = getView().activity as MainActivity
-//            val root = getView().view!!
-//            hideKeyboard(activity, root)
-//            commentText.clearFocus()
-//        }
-//
-//        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-//            onMapView.visibility = View.GONE
-//            mainInfoLayout.elevation = 30f
-//        } else {
-//            onMapView.visibility = View.VISIBLE
-//            mainInfoLayout.elevation = 0f
-//        }
-    }
-
-
-    fun getDriver() {
-        if (isDataComplete()) {
+        if (view != null && view.isDataComplete()) {
+            val rideInfo = getView()?.getRideInfo()
             val bundle = Bundle()
-            val fm = (getView().activity as MainActivity).supportFragmentManager
-            val comment = getView().comment_min_text.text.toString().trim()
-            val price = getView().offer_price.text.toString().trim()
 
-            bundle.putParcelable(FROM, fromAdr)
-            bundle.putParcelable(TO, toAdr)
-            bundle.putParcelable(RIDE_DETAIL_INFO, RideDetailInfo(price, comment))
+            rideInfo?.fromAdr = fromAdr
+            rideInfo?.toAdr = toAdr
 
-            replaceFragment(GET_DRIVER_VIEW, bundle, fm)
+            bundle.putParcelable(RIDE_DETAIL_INFO, rideInfo)
+
+            MainRouter.showView(R.id.show_get_driver_fragment, getView()?.getNavHost(), bundle)
         }
     }
 
-
-    private fun isDataComplete(): Boolean {
-        val isComplete: Boolean
-        val offerPrice = getView().offer_price.text.toString().trim()
-
-        if (getView().selected_payment_method.visibility == View.VISIBLE && offerPrice.length < 5) {
-            isComplete = true
-            changeBtnEnable(true)
-        } else {
-            isComplete = false
-            changeBtnEnable(false)
-        }
-
-        return isComplete
+    override fun removeTickSelected() {
+        getView()?.removeTickSelected()
     }
 
 
-    private fun changeBtnEnable(isEnable: Boolean) {
-        val nextBtn = getView().get_driver_btn
-
-        if (isEnable) {
-            nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
-        } else {
-            nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
-        }
+    override fun setSelectedBankCard(bankCard: BankCard) {
+        getView()?.setSelectedBankCard(bankCard)
     }
 
 
-    fun onBackPressed(): Boolean {
-        val isBackPressed: Boolean
-        val cardsBottomSheetBehavior = detailRideView.cardsBottomSheetBehavior
-        val commentBottomSheetBehavior = detailRideView.commentBottomSheetBehavior
-
-        if (cardsBottomSheetBehavior!!.state != BottomSheetBehavior.STATE_COLLAPSED
-            || commentBottomSheetBehavior!!.state != BottomSheetBehavior.STATE_COLLAPSED) {
-            //hide all bottom sheet
-            hideAllBottomSheet()
-
-            isBackPressed = false
-        } else {
-            val offerPrice = getView().offer_price
-            getView().info_price.visibility = View.GONE
-            offerPrice.text = getView().resources.getString(R.string.offer_price)
-            offerPrice.textSize = 14f
-            offerPrice.setPadding(0, 15, 0, 35)
-            offerPrice.setTextColor(Color.parseColor("#50000000"))
-            offerPrice.typeface = Typeface.DEFAULT
-
-            isBackPressed = true
-        }
-
-        return isBackPressed
+    override fun getMap(): MapView? {
+        return getView()?.getMap()
     }
 
 
-    fun correctMapView() {
-        Thread(Runnable {
-            while (true) {
-                val height = getView().container_detail_ride.height
-                if (height > 0) {
-                    val layoutParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                    )
-                    //"-10" for correct view radius corners
-                    layoutParams.setMargins(0, 0, 0, height - 10)
-                    getView().map.layoutParams = layoutParams
-                    break
-                }
-            }
-        }).start()
-    }
-
-
-    private fun getView(): MapView {
-        return detailRideView.getView()
+    override fun instance(): DetailRidePresenter {
+        return this
     }
 }

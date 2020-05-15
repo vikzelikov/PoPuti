@@ -2,10 +2,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/get_driver_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/get_driver_layout"
-    tools:context=".presentation.modules.passanger.getdriver.ride.view.GetDriverView">
+    tools:context=".presentation.modules.passanger.getdriver.ride.view.MapGetDriverView">
+
+
+    <TextView
+        android:id="@+id/get_driver_center_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="40dp"
+        android:fontFamily="@font/roboto"
+        android:gravity="center_vertical"
+        android:text="@string/offerYourPrice"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/on_view_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@android:color/black"
+        android:clickable="true"
+        android:focusable="true" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/driver_list"
@@ -14,6 +39,7 @@
         android:layout_above="@id/main_info_layout"
         android:paddingTop="12dp"
         android:visibility="gone" />
+
 
     <LinearLayout
         android:id="@+id/main_info_layout"
@@ -190,8 +216,7 @@
         android:id="@+id/get_driver_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="10dp"
-        tools:context="ui.dashboard.HomeFragment">
+        android:elevation="10dp">
 
         <LinearLayout
             android:id="@+id/reasons_bottom_sheet"
@@ -491,20 +516,84 @@
                 android:text="@string/letsGo"
                 android:textAllCaps="false"
                 android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/comment_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="450dp"
+            android:background="@drawable/bg_corners_layout"
+            android:elevation="30dp"
+            android:orientation="vertical"
+            app:behavior_peekHeight="0dp"
+            app:layout_behavior=".presentation.base.MBottomSheet">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/comment_back_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingStart="15dp"
+                    android:paddingTop="15dp"
+                    android:paddingEnd="50dp"
+                    android:paddingBottom="15dp"
+                    android:src="@drawable/ic_arrow_left" />
+
+
+                <TextView
+                    android:id="@+id/comment_done"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto"
+                    android:gravity="end"
+                    android:padding="15dp"
+                    android:text="@string/send"
+                    android:textColor="@color/colorBlue"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+
+
+            <EditText
+                android:id="@+id/comment_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginTop="20dp"
+                android:background="@null"
+                android:hint="@string/writeYourProblem"
+                android:inputType="textMultiLine"
+                android:textColor="@android:color/black"
+                android:textColorHint="#60000000"
+                android:textCursorDrawable="@drawable/bg_color_cursor" />
+
 
         </LinearLayout>
+
+
 
         <View
             android:id="@+id/on_view_cancel_reason"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0"
-            android:background="@android:color/black" />
+            android:background="@android:color/black"
+            android:visibility="gone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+
     <View
-        android:id="@+id/on_map_view"
+        android:id="@+id/on_view_cancel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0"

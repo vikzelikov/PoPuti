@@ -5,8 +5,8 @@
         android:drawable="@drawable/ic_disabled_star" />
     <item
         android:id="@android:id/secondaryProgress"
-        android:drawable="@drawable/ic_active_star" />
+        android:drawable="@drawable/ic_disabled_star" />
     <item
-        android:id="@android:id/progress"
+        android:id="@android:id/secondaryProgress"
         android:drawable="@drawable/ic_active_star" />
 </layer-list>

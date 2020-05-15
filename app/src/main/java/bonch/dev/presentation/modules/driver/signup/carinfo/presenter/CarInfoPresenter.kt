@@ -1,90 +1,41 @@
 package bonch.dev.presentation.modules.driver.signup.carinfo.presenter
 
-import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.view.View
-import android.widget.Button
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
 import bonch.dev.R
-import bonch.dev.domain.utils.Constants
-import bonch.dev.route.Coordinator
-import bonch.dev.presentation.driver.signup.CarInfoView
-import kotlinx.android.synthetic.main.signup_car_info_fragment.*
-import kotlinx.android.synthetic.main.signup_car_info_fragment.view.*
+import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.modules.driver.signup.carinfo.view.ICarInfoView
+import bonch.dev.presentation.modules.driver.signup.suggest.view.SuggestView
+import bonch.dev.route.MainRouter
 
 
-class CarInfoPresenter(private val carInfoView: CarInfoView) {
+class CarInfoPresenter : BasePresenter<ICarInfoView>(), ICarInfoPresenter {
+
+    private val BOOL_DATA = "BOOL_DATA"
+    private val STRING_DATA = "STRING_DATA"
 
 
-    fun startSettingDocs(fm: FragmentManager) {
-        Coordinator.replaceFragment(Constants.DRIVER_SIGNUP_STEP_VIEW, null, fm)
+    override fun startSetDocs() {
+        MainRouter.showView(R.id.show_signup_step_view, getView()?.getNavHost(), null)
     }
 
 
-    fun showSuggest(isCarName: Boolean) {
+    override fun showSuggest(fragment: Fragment, isCarName: Boolean) {
         var carName: String? = null
-        val context = carInfoView.requireContext()
+        val context = fragment.context
 
         if (!isCarName) {
-            carName = carInfoView.car_name.text.toString().trim()
+            carName = getView()?.getData()?.carName
         }
 
-        Coordinator.showCarInfoSuggest(context, carInfoView, isCarName, carName)
+        val intent = Intent(context, SuggestView::class.java)
+        intent.putExtra(BOOL_DATA, isCarName)
+        carName?.let { intent.putExtra(STRING_DATA, it) }
+        fragment.startActivityForResult(intent, 1)
     }
 
 
-    fun onActivityResult(resultCode: Int, data: Intent?) {
-        //MODE_PRIVATE - it is flag of suggest car info
-        if (resultCode == Activity.MODE_PRIVATE && data != null) {
-            val isCarNameSuggest = data.getBooleanExtra(Constants.BOOL_DATA, false)
-            val textSuggest = data.getStringExtra(Constants.STRING_DATA)
-
-            if (isCarNameSuggest) {
-                carInfoView.car_name.text = textSuggest
-                carInfoView.car_name.setTextColor(Color.parseColor("#000000"))
-
-                //show next step
-                carInfoView.car_model.visibility = View.VISIBLE
-            } else {
-                carInfoView.car_model.text = textSuggest
-                carInfoView.car_model.setTextColor(Color.parseColor("#000000"))
-
-                //show next step
-                carInfoView.car_number_layout.visibility = View.VISIBLE
-            }
-        }
-    }
-
-
-    fun isCarInfoEntered(root: View): Boolean {
-        var result = false
-
-        val carName = root.car_name
-        val carModel = root.car_model
-        val carNumber = root.car_number
-        val nextBtn = root.next_btn
-
-        if (carName.text.toString().trim().isNotEmpty() &&
-            carModel.text.toString().trim().isNotEmpty() &&
-            carNumber.text.toString().trim().isNotEmpty()
-        ) {
-            changeBtnEnable(true, nextBtn)
-            result = true
-        } else {
-            changeBtnEnable(false, nextBtn)
-        }
-
-
-        return result
-    }
-
-
-    private fun changeBtnEnable(enable: Boolean, nextBtn: Button) {
-        if (enable) {
-            nextBtn.setBackgroundResource(R.drawable.bg_btn_blue)
-        } else {
-            nextBtn.setBackgroundResource(R.drawable.bg_btn_gray)
-        }
+    override fun instance(): CarInfoPresenter {
+        return this
     }
 }

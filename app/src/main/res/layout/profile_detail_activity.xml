@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context=".presentation.modules.passanger.profile.view.ProfileDetailView">
+    tools:context=".presentation.modules.common.profile.view.ProfileDetailView">
 
     <TextView
         android:id="@+id/notification"

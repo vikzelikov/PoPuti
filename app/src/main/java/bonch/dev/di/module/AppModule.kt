@@ -4,7 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import bonch.dev.App
+import bonch.dev.data.storage.common.profile.IProfileStorage
+import bonch.dev.data.storage.common.profile.ProfileStorage
 import bonch.dev.di.scope.ApplicationContext
+import bonch.dev.domain.interactor.BaseInteractor
+import bonch.dev.domain.interactor.IBaseInteractor
+import bonch.dev.presentation.base.MainPresenter
+import bonch.dev.presentation.interfaces.IMainPresenter
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -34,4 +40,18 @@ class AppModule(private val application: App) {
         return application
     }
 
+
+    @Provides
+    @Singleton
+    fun provideMainPresenter(): IMainPresenter = MainPresenter()
+
+
+    @Provides
+    @Singleton
+    fun provideBaseInteractor(): IBaseInteractor = BaseInteractor()
+
+
+    @Provides
+    @Singleton
+    fun provideProfileStorage(): IProfileStorage = ProfileStorage()
 }

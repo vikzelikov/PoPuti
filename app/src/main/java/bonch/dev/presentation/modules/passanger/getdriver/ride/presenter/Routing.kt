@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
+import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.DetailRideView
 import com.yandex.mapkit.Animation
@@ -23,7 +24,7 @@ import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import java.util.*
 
-class Routing(var context: Context, private var detailRideView: DetailRideView) :
+class Routing(private val detailRidePresenter: ContractPresenter.IDetailRidePresenter) :
     DrivingSession.DrivingRouteListener {
 
     private var mapView: MapView? = null
@@ -34,9 +35,7 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
 
 
     init {
-        mapView = detailRideView.mapView.mapView
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
-        mapObjects = mapView!!.map.mapObjects.addCollection()
     }
 
 
@@ -51,6 +50,7 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
             }
 
             //adding start and end placemarks
+            val context = App.appComponent.getContext()
             val fromMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_from)
             val toMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_to)
             mapObjects?.addPlacemark(
@@ -62,8 +62,8 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
                 ImageProvider.fromBitmap(toMark)
             )
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-
 
         //move camera to show the route
         showRoute()
@@ -75,6 +75,12 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
             alternativeCount = 1
         }
         val requestPoints = ArrayList<RequestPoint>()
+
+        if (mapView == null){
+            mapView = detailRidePresenter.getMap()
+            mapObjects = mapView?.map?.mapObjects?.addCollection()
+        }
+
 
         //get boundingBox around two point
         boundingBox = BoundingBox(
@@ -103,27 +109,33 @@ class Routing(var context: Context, private var detailRideView: DetailRideView) 
 
 
     fun removeRoute() {
-        if (mapView != null) {
-            mapView!!.map.mapObjects.remove(mapObjects!!)
+        mapObjects?.let {
+            mapView?.map?.mapObjects?.remove(it)
         }
     }
 
 
-    fun showRoute(){
-        var cameraPosition = mapView!!.map.cameraPosition(boundingBox!!)
+    fun showRoute() {
+        val box = boundingBox
+        box?.let {
+            var cameraPosition = mapView?.map?.cameraPosition(box)
 
-        cameraPosition = CameraPosition(
-            cameraPosition.target,
-            cameraPosition.zoom - 0.3f,
-            cameraPosition.azimuth,
-            cameraPosition.tilt
-        )
+            if (cameraPosition != null) {
+                cameraPosition = CameraPosition(
+                    cameraPosition.target,
+                    cameraPosition.zoom - 0.3f,
+                    cameraPosition.azimuth,
+                    cameraPosition.tilt
+                )
 
-        mapView!!.map.move(
-            cameraPosition,
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
+                mapView!!.map.move(
+                    cameraPosition,
+                    Animation(Animation.Type.SMOOTH, 1f),
+                    null
+                )
+            }
+
+        }
     }
 
 

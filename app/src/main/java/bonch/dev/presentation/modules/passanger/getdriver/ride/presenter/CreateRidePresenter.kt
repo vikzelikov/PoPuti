@@ -2,20 +2,15 @@ package bonch.dev.presentation.modules.passanger.getdriver.ride.presenter
 
 import android.os.Handler
 import android.view.View
-import bonch.dev.data.repository.passanger.getdriver.GetDriverRepository
-import bonch.dev.data.repository.passanger.getdriver.pojo.Coordinate
-import bonch.dev.data.repository.passanger.getdriver.pojo.Coordinate.fromAdr
-import bonch.dev.data.repository.passanger.getdriver.pojo.Coordinate.toAdr
-import bonch.dev.data.repository.passanger.getdriver.pojo.Ride
-import bonch.dev.data.repository.passanger.getdriver.pojo.RidePoint
+import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.passanger.getdriver.AddressPoint
+import bonch.dev.domain.entities.passanger.getdriver.Coordinate.fromAdr
+import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
 import bonch.dev.domain.interactor.passanger.getdriver.IGetDriverInteractor
-import bonch.dev.domain.utils.Constants
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.ContractView
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.DetailRideView
 import com.yandex.mapkit.geometry.Point
-import io.realm.RealmResults
 import javax.inject.Inject
 
 
@@ -25,30 +20,35 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     @Inject
     lateinit var getDriverInteractor: IGetDriverInteractor
 
-    private var getDriverRepository: GetDriverRepository? = null
-    private var cashSuggest: RealmResults<Ride>? = null
     private var blockRequestHandler: Handler? = null
-    private var detailRideView: DetailRideView? = null
 
-    private var isBlockRequest = true
     var isFromMapSearch = true
+    private var isBlockRequest = true
+
+    private var cashEvent: CashEvent
+    private val BLOCK_REQUEST_GEOCODER = 1500L
+    private val NOT_DESCRIPTION = "Место"
+
 
 
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
+
+        cashEvent = CashEvent(this)
     }
 
 
     override fun addressesDone(): Boolean {
         var isSuccess = false
+        val from = fromAdr
+        val to = toAdr
 
-        if (fromAdr != null && toAdr != null) {
+        if (from != null && to != null) {
+            getView()?.showDetailRide()
+
             //cash data (both of adr)
-            saveCashSuggest(fromAdr!!)
-            saveCashSuggest(toAdr!!)
-
-            //go to the next screen
-            showDetailRideView()
+            cashEvent.saveCashSuggest(from)
+            cashEvent.saveCashSuggest(to)
 
             stopProcessBlockRequest()
             isSuccess = true
@@ -61,33 +61,42 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     override fun requestGeocoder(point: Point?) {
         if (!isBlockRequest && point != null) {
             //send request and set block for several seconds
-            getDriverInteractor.requestGeocoder(point)
+            getDriverInteractor.requestGeocoder(point) { address, responsePoint ->
+                responseGeocoder(address, responsePoint)
+            }
             isBlockRequest = true
         }
     }
 
 
-    fun responseGeocoder(address: String?, point: Point?) {
-        if (address != null && point != null) {
-            if (isFromMapSearch) {
-                Coordinate.fromAdr = Ride(
+    private fun responseGeocoder(address: String?, point: Point) {
+        val actualFocus = getView()?.getActualFocus()
+
+        if (address != null) {
+            if (isFromMapSearch || (actualFocus != null && !actualFocus)) {
+                fromAdr = Address(
                     0,
                     address,
-                    Constants.NOT_DESCRIPTION,
+                    NOT_DESCRIPTION,
                     null,
-                    RidePoint(point.latitude, point.longitude)
+                    AddressPoint(point.latitude, point.longitude)
                 )
             } else {
-                Coordinate.toAdr = Ride(
+                toAdr = Address(
                     0,
                     address,
-                    Constants.NOT_DESCRIPTION,
+                    NOT_DESCRIPTION,
                     null,
-                    RidePoint(point.latitude, point.longitude)
+                    AddressPoint(point.latitude, point.longitude)
                 )
             }
 
-            getView()?.setAddressView(isFromMapSearch, address)
+            if (actualFocus != null && !actualFocus) {
+                getView()?.setAddressView(true, address)
+            } else {
+                getView()?.setAddressView(isFromMapSearch, address)
+            }
+
 
         }
     }
@@ -110,7 +119,9 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                     isBlockRequest = true
 
                 } else {
-                    getDriverInteractor.requestSuggest(query, getUserPoint())
+                    getDriverInteractor.requestSuggest(query, getUserPoint()) {
+                        responseSuggest(it)
+                    }
                 }
 
                 isBlockRequest = true
@@ -126,7 +137,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     }
 
 
-    fun responseSuggest(suggestResult: ArrayList<Ride>) {
+    private fun responseSuggest(suggestResult: ArrayList<Address>) {
         //cash request
         getDriverInteractor.saveCashRequest(suggestResult)
 
@@ -144,111 +155,15 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     }
 
 
-    private fun saveCashSuggest(addressRide: Ride) {
-        val tempList = arrayListOf<Ride>()
-
-        //copy object
-        val adr = Ride()
-        adr.apply {
-            id = addressRide.id
-            address = addressRide.address
-            description = addressRide.description
-            uri = addressRide.uri
-            point = addressRide.point
-            isCashed = addressRide.isCashed
-        }
-
-
-        if (!cashSuggest.isNullOrEmpty()) {
-            tempList.addAll(cashSuggest!!)
-            //sort by Realm-id
-            tempList.sortBy {
-                it.id
-            }
-        }
-
-        if (!tempList.contains(adr)) {
-            if (tempList.isEmpty()) {
-                adr.id = tempList.size + 1
-                tempList.add(adr)
-            } else {
-                //get id the last item > inc > init
-                adr.id = tempList.last().id + 1
-                tempList.add(adr)
-            }
-
-            //clear cash if it has too much memory
-            if (tempList.size > Constants.CASH_VALUE_COUNT) {
-                var rideDel = Ride()
-//                for (i in 0 until cashSuggest!!.size) {
-//                    if (cashSuggest[i] == tempList[0]) {
-//                        rideDel = cashSuggest[i]
-//                        break
-//                    }
-//                }
-
-                getDriverInteractor.deleteCashSuggest(rideDel)
-                tempList.removeAt(0)
-            }
-
-            //update or save cash
-            getDriverInteractor.saveCashSuggest(tempList)
-            //clear and get again
-            cashSuggest = null
-            getCashSuggest()
-        }
-    }
-
-
     override fun getCashSuggest() {
-        if (cashSuggest == null) {
-            getDriverInteractor.initRealm()
-            cashSuggest = getDriverInteractor.getCashSuggest()
-        }
-
-        if (cashSuggest != null) {
-            val adapter = getView()?.getAddressesAdapter()
-            adapter?.list?.clear()
-            adapter?.list?.addAll(cashSuggest!!)
-            adapter?.notifyDataSetChanged()
-        }
+        cashEvent.getCashSuggest()
     }
 
 
-    override fun onClickItem(ride: Ride) {
-//        val fromAdrView = createRideView.from_adr
-//        val toAdrView = createRideView.to_adr
-//
-//        if (isFromMapSearch) {
-//            fromAdrView.setText(ride.address)
-//            fromAdrView.setSelection(fromAdrView.text.length)
-//            fromAdr = ride
-//        } else {
-//            toAdrView.setText(ride.address)
-//            toAdrView.setSelection(toAdrView.text.length)
-//            toAdr = ride
-//        }
+    override fun onClickItem(address: Address) {
+        getView()?.onClickItem(address, isFromMapSearch)
 
         addressesDone()
-    }
-
-
-    private fun showDetailRideView() {
-        //dynamic add layout
-        //dynamicReplaceView(true)
-
-        //create next screen
-//        detailRideView =
-//            DetailRideView(
-//                getView()
-//
-//            )
-        detailRideView?.onCreateView()
-    }
-
-
-    override fun clearMapObjects() {
-        detailRideView?.removeRoute()
     }
 
 
@@ -267,15 +182,13 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
         //update current focus
         isFromMapSearch = isFrom
-        //set favourite addresses
-        getCashSuggest()
     }
 
 
     override fun touchMapBtn(isFrom: Boolean) {
         isFromMapSearch = isFrom
 
-        getView()?.addressesMapViewChanged(isFrom)
+        getView()?.addressesMapViewChanged()
     }
 
 
@@ -292,19 +205,14 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
         val userPoint = getUserPoint()
 
         if (userPoint != null) {
-            getView()?.getParentView()?.moveCamera(userPoint)
+            getView()?.moveCamera(userPoint)
         }
     }
 
 
     private fun getUserPoint(): Point? {
-        var point: Point? = null
-        val userLocation = getView()?.getParentView()?.getUserLocation()
-        if (userLocation?.cameraPosition() != null) {
-            point = userLocation.cameraPosition()!!.target
-        }
-
-        return point
+        val userLocation = getView()?.getUserLocationLayer()
+        return userLocation?.cameraPosition()?.target
     }
 
 
@@ -318,7 +226,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                 isBlockRequest = false
                 if (fromAdr == null)
                     requestGeocoder(getUserPoint())
-                blockRequestHandler?.postDelayed(this, Constants.BLOCK_REQUEST_GEOCODER / 2)
+                blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER)
             }
         }, 0)
     }
@@ -349,7 +257,17 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     }
 
 
+    override fun backEvent() {
+        //block too often request
+        startProcessBlockRequest()
+
+        toAdr = null
+    }
+
+
     override fun onDestroy() {
+        cashEvent.cashSuggest = null
+        blockRequestHandler = null
         getDriverInteractor.closeRealm()
     }
 

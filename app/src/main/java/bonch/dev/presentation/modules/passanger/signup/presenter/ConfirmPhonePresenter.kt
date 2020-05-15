@@ -10,7 +10,7 @@ import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.view.ContractView
-import bonch.dev.route.passanger.signup.ISignupRouter
+import bonch.dev.route.MainRouter
 import javax.inject.Inject
 
 class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
@@ -19,16 +19,13 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
     @Inject
     lateinit var signupInteractor: ISignupInteractor
 
-    @Inject
-    lateinit var router: ISignupRouter
-
 
     private val maxInterval = 60000L
     private val interval = 15000L
 
 
     init {
-        SignupComponent.signupComponent?.inject(this)
+        SignupComponent.passangerSignupComponent?.inject(this)
     }
 
 
@@ -43,8 +40,7 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
 
     override fun onResponseCheckCode(isCorrect: Boolean) {
         if (isCorrect) {
-            val nav = getView()?.getNavHost()
-            router.showFullNameView(nav)
+            MainRouter.showView(R.id.show_full_name_view, getView()?.getNavHost(), null)
         } else {
             //change view from another thread (get Main thread)
             val mainHandler = Handler(Looper.getMainLooper())

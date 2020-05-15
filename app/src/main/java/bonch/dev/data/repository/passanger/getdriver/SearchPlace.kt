@@ -3,8 +3,9 @@ package bonch.dev.data.repository.passanger.getdriver
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.DetailRidePresenter
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
+import java.lang.IndexOutOfBoundsException
 
-class SearchPlace(val detailRidePresenter: DetailRidePresenter) : Session.SearchListener {
+class SearchPlace(private val detailRidePresenter: DetailRidePresenter) : Session.SearchListener {
 
     private var searchSession: Session? = null
     private var searchManager: SearchManager =
@@ -21,13 +22,16 @@ class SearchPlace(val detailRidePresenter: DetailRidePresenter) : Session.Search
 
 
     override fun onSearchResponse(response: Response) {
-        val point = response.collection.children[0].obj?.geometry?.first()?.point
+        try {
+            val point = response.collection.children.first().obj?.geometry?.first()?.point
 
-        if (detailRidePresenter.fromPoint == null) {
-            detailRidePresenter.fromPoint = point
-        } else {
-            detailRidePresenter.toPoint = point
-        }
+            if (detailRidePresenter.fromPoint == null) {
+                detailRidePresenter.fromPoint = point
+            } else {
+                detailRidePresenter.toPoint = point
+            }
+        }catch (ex: NoSuchElementException){}
+
 
         detailRidePresenter.submitRoute()
     }

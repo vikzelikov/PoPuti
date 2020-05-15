@@ -1,125 +1,106 @@
 package bonch.dev.presentation.base
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.content.Context
-import android.os.Handler
 import androidx.navigation.get
-import bonch.dev.MainActivity
+import bonch.dev.App
 import bonch.dev.R
-import bonch.dev.data.MainRepository
-import bonch.dev.data.repository.passanger.getdriver.DriverInfoModel
-import bonch.dev.data.repository.passanger.getdriver.pojo.Driver
-import bonch.dev.domain.utils.Constants
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.MapView
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.GetDriverView
-import bonch.dev.presentation.modules.passanger.signup.view.ConfirmPhoneView
-import bonch.dev.presentation.modules.passanger.signup.view.FullNameView
-import bonch.dev.presentation.modules.passanger.signup.view.PhoneView
-import kotlinx.android.synthetic.main.activity_main.*
+import bonch.dev.domain.interactor.IBaseInteractor
+import bonch.dev.presentation.interfaces.IMainActivity
+import bonch.dev.presentation.interfaces.IMainPresenter
+import bonch.dev.presentation.modules.common.rate.view.RateRideView
+import bonch.dev.presentation.modules.passanger.getdriver.ride.view.*
+import javax.inject.Inject
 
-class MainPresenter(private val mainActivity: MainActivity) {
 
-    private var mainRepository: MainRepository? = null
-    private var driverInfoModel: DriverInfoModel? = null
-    private var handlerAnimation: Handler? = null
+class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
+
+    @Inject
+    lateinit var baseInteractor: IBaseInteractor
 
 
     init {
-        mainRepository = MainRepository()
-        driverInfoModel = DriverInfoModel()
-    }
-
-    fun getToken(): String? {
-        return mainRepository?.getToken()
+        App.appComponent.inject(this)
     }
 
 
-    fun getDriverData(context: Context): Driver? {
-        driverInfoModel?.initSP(context)
-        return driverInfoModel?.getDriverData()
+    override fun getToken(): String? {
+        return baseInteractor.getToken()
     }
 
 
-    fun showNotification(text: String) {
-        val view = mainActivity.general_notification
+    override fun onBackPressed() {
 
-        view.text = text
-        handlerAnimation?.removeCallbacksAndMessages(null)
-        handlerAnimation = Handler()
-        view.translationY = 0.0f
-        view.alpha = 0.0f
+        onBackPressedSignupPassanger()
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(100f)
-            .alpha(1.0f)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    super.onAnimationEnd(animation)
-                    handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
-                }
-            })
+        onBackPressedGetDriver()
+
     }
 
 
-    private fun hideNotifications() {
-        val view = mainActivity.general_notification
+    private fun onBackPressedSignupPassanger(){
+        val nav = getView()?.getNavHost()
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(-100f)
-            .alpha(0.0f)
+        if (nav != null) {
+            if (nav.currentDestination == nav.graph[R.id.phone_view]) {
+                getView()?.finishActivity()
+            }
+
+            if (nav.currentDestination == nav.graph[R.id.confirm_phone_view]) {
+                nav.popBackStack()
+            }
+
+            if (nav.currentDestination == nav.graph[R.id.full_name_view]) {
+                nav.popBackStack()
+            }
+        }
     }
 
 
-    fun onBackPressed() {
-        val fm = mainActivity.supportFragmentManager
-        val nav = mainActivity.navController
+    private fun onBackPressedGetDriver(){
+        val fm = getView()?.getFM()
+        val navHostFragment = fm?.findFragmentById(R.id.fragment_container)
+        val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
         val createRideView =
-            fm.findFragmentByTag(Constants.CREATE_RIDE_VIEW.toString()) as MapView?
+            fm?.findFragmentByTag(CreateRideView::class.java.simpleName) as? CreateRideView?
+        val detailRideView =
+            fm?.findFragmentByTag(DetailRideView::class.java.simpleName) as? DetailRideView?
         val getDriverView =
-            fm.findFragmentByTag(Constants.GET_DRIVER_VIEW.toString()) as GetDriverView?
-        val phoneFragment =
-            fm.findFragmentByTag(Constants.PHONE_VIEW.toString()) as PhoneView?
-        val confirmPhoneFragment =
-            fm.findFragmentByTag(Constants.CONFIRM_PHONE_VIEW.toString()) as ConfirmPhoneView?
-        val fullNameFragment =
-            fm.findFragmentByTag(Constants.FULL_NAME_VIEW.toString()) as FullNameView?
-
+            fm?.findFragmentByTag(GetDriverView::class.java.simpleName) as? GetDriverView?
+        val trackRideView =
+            fm?.findFragmentByTag(TrackRideView::class.java.simpleName) as? TrackRideView?
+        val rateRideView =
+            fm?.findFragmentByTag(RateRideView::class.java.simpleName) as? RateRideView?
 
 
         if (createRideView?.view != null && createRideView.onBackPressed()) {
-            mainActivity.pressBack()
+            getView()?.pressBack()
         }
 
-        if (phoneFragment?.view != null) {
-            mainActivity.pressBack()
+        if (fragment is MapGetDriverView) {
+            if (fragment.onBackPressed()) {
+                getView()?.pressBack()
+            }
         }
 
-        if (confirmPhoneFragment?.view != null) {
-            mainActivity.pressBack()
+        if (detailRideView?.view != null) {
+            detailRideView.onBackPressed()
         }
 
-        if (fullNameFragment?.view != null) {
-            mainActivity.pressBack()
+        if (getDriverView?.view != null) {
+            getDriverView.onBackPressed()
         }
 
-        if (getDriverView?.view != null && getDriverView.onBackPressed()) {
-            mainActivity.pressBack()
+        if (trackRideView?.view != null) {
+            trackRideView.onBackPressed()
         }
 
-        if (nav.currentDestination == nav.graph[R.id.phone_view]){
-            mainActivity.finish()
+        if (rateRideView?.view != null) {
+            rateRideView.onBackPressed()
         }
+    }
 
-        if (nav.currentDestination == nav.graph[R.id.confirm_phone_view]){
-            nav.popBackStack()
-        }
 
-        if (nav.currentDestination == nav.graph[R.id.full_name_view]){
-            nav.popBackStack()
-        }
-
+    override fun instance(): MainPresenter {
+        return this
     }
 }

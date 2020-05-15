@@ -1,13 +1,14 @@
 package bonch.dev.presentation.modules.passanger.signup.presenter
 
 import androidx.fragment.app.FragmentActivity
+import bonch.dev.R
 import bonch.dev.domain.entities.passanger.signup.DataSignup
 import bonch.dev.domain.interactor.passanger.signup.ISignupInteractor
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passanger.signup.SignupComponent
 import bonch.dev.presentation.modules.passanger.signup.view.ContractView
-import bonch.dev.route.passanger.signup.ISignupRouter
+import bonch.dev.route.MainRouter
 import javax.inject.Inject
 
 class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
@@ -16,32 +17,27 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
     @Inject
     lateinit var signupInteractor: ISignupInteractor
 
-    @Inject
-    lateinit var router: ISignupRouter
-
 
     init {
-        SignupComponent.signupComponent?.inject(this)
+        SignupComponent.passangerSignupComponent?.inject(this)
     }
 
 
     override fun doneSignup() {
+        signupInteractor.initRealm()
         //save Data:
         //save token
         saveToken()
-        //save profile data (first name and last name)
-        saveProfileData()
-        //send profile data to server
+        //save and send profile data to server
         sendProfileData()
 
         //clear data
-        SignupComponent.signupComponent = null
+        SignupComponent.passangerSignupComponent = null
         DataSignup.phone = null
         DataSignup.token = null
 
         //next transition
-        val nav = getView()?.getNavHost()
-        router.showMainFragment(nav)
+        MainRouter.showView(R.id.show_main_passanger_fragment, getView()?.getNavHost(), null)
     }
 
 
@@ -49,10 +45,10 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
         var result = false
 
         if (getView() != null) {
-            val firstName = getView()!!.getFirstName()
-            val lastName = getView()!!.getLastName()
+            val firstName = getView()?.getFirstName()
+            val lastName = getView()?.getLastName()
 
-            if (firstName.isNotEmpty() && lastName.isNotEmpty()) {
+            if (!firstName.isNullOrEmpty() && firstName.length < 20 && !lastName.isNullOrEmpty() && lastName.length < 20) {
                 getView()?.changeBtnEnable(true)
                 result = true
             } else {
@@ -64,37 +60,26 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
     }
 
 
-    override fun saveProfileData() {
-        val profileData = getView()?.getProfileData()
-
-        profileData?.let {
-            if (it.firstName != null && it.lastName != null) {
-                if (it.firstName!!.isNotEmpty() && it.lastName!!.isNotEmpty()) {
-                    profileData.fullName = it.firstName.plus(" ").plus(it.lastName)
-                }
-
-                if (DataSignup.phone?.trim()!!.isNotEmpty()) {
-                    profileData.phone = DataSignup.phone?.trim()
-                }
-
-                signupInteractor.saveProfileData(profileData)
-            }
-        }
-    }
-
-
     override fun sendProfileData() {
         val profileData = getView()?.getProfileData()
+        val token = DataSignup.token
+        profileData?.phone = DataSignup.phone
 
-        if (DataSignup.token != null && profileData != null) {
-            signupInteractor.sendProfileData(DataSignup.token!!, profileData)
+        if (token != null && profileData != null) {
+            //local save
+            signupInteractor.saveProfileData(profileData)
+
+            //remote save
+            signupInteractor.sendProfileData(token, profileData)
         }
     }
 
 
     override fun saveToken() {
-        if (DataSignup.token != null) {
-            signupInteractor.saveToken(DataSignup.token!!)
+        val token = DataSignup.token
+
+        if (token != null) {
+            signupInteractor.saveToken(token)
         }
     }
 

@@ -1,39 +1,34 @@
 package bonch.dev.presentation.modules.passanger.getdriver.ride.adapters
 
 
-import android.content.Context
-import android.graphics.Point
-import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.data.repository.passanger.getdriver.pojo.Driver
-import bonch.dev.data.repository.passanger.getdriver.pojo.DriverObject
+import bonch.dev.domain.entities.passanger.getdriver.Driver
+import bonch.dev.domain.entities.passanger.getdriver.DriverObject
+import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.DriverItemTimer
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.DriverMainTimer
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.GetDriverPresenter
-import bonch.dev.domain.utils.Constants.TIMER_USER_GET_DRIVER
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.driver_item.view.*
-import kotlinx.android.synthetic.main.get_driver_layout.view.*
+import javax.inject.Inject
 
 
-class DriversListAdapter(
-    var list: ArrayList<Driver>,
-    val context: Context,
-    val getDriverPresenter: GetDriverPresenter
-) : RecyclerView.Adapter<DriversListAdapter.ItemPostHolder>() {
+class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPresenter.IGetDriverPresenter) :
+    RecyclerView.Adapter<DriversListAdapter.ItemPostHolder>() {
+
+    var list: ArrayList<Driver> = arrayListOf()
 
     init {
-        DriverMainTimer.getInstance(list, this)!!.start()
+        DriverMainTimer.getInstance(this)?.start()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
-            LayoutInflater.from(context)
+            LayoutInflater.from(parent.context)
                 .inflate(R.layout.driver_item, parent, false)
         )
     }
@@ -45,56 +40,54 @@ class DriversListAdapter(
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
         val driver = list[position]
         val timeLine = holder.itemView.timer_driver_offer
-        val startTime = driver.timeLine!!.toLong() * TIMER_USER_GET_DRIVER
+        val startTime = driver.timeLine
 
         holder.bind(driver)
 
-        holder.driverItemTimer?.cancel()
-        holder.driverItemTimer =
-            DriverItemTimer(
-                startTime,
-                10,
-                timeLine
-            )
-        holder.driverItemTimer?.start()
+        timeLine.post({
+            if (DriverMainTimer.DEFAULT_WIDTH == 0) {
+                DriverMainTimer.DEFAULT_WIDTH = timeLine.measuredWidth
+            }
+
+            if (DriverMainTimer.ratio == 100) {
+                //calc ration
+                while ((DriverMainTimer.DEFAULT_WIDTH / (DriverMainTimer.TIME_EXPIRED_ITEM.toInt() * DriverMainTimer.ratio)) == 0) {
+                    DriverMainTimer.ratio--
+                }
+            }
+
+            holder.driverItemTimer?.cancel()
+            holder.driverItemTimer = DriverItemTimer(startTime.toLong() * 1000, 10, timeLine)
+            holder.driverItemTimer?.start()
+
+        })
+
 
         holder.itemView.accept_driver.setOnClickListener {
             DriverObject.driver = driver
-            getDriverPresenter.getConfirmAccept()
+            getDriverPresenter.instance().getView()?.getConfirmAccept()
         }
     }
 
 
     fun setNewDriver(driver: Driver) {
-        val activity = getDriverPresenter.getDriverView.activity
-
-        activity?.let {
-            if (driver.timeLine == null) {
-                val display: Display = it.windowManager.defaultDisplay
-                val size = Point()
-                display.getSize(size)
-                val width: Int = size.x
-                driver.timeLine = width - 70
-            }
-        }
-
         list.add(0, driver)
         notifyItemInserted(0)
         notifyItemChanged(0)
 
-        if (list.size != 0) {
-            getDriverPresenter.checkBackground(true)
+        if (list.isNotEmpty()) {
+            getDriverPresenter.instance().getView()?.checkoutBackground(false)
         }
     }
 
 
     fun rejectDriver(position: Int?, isUserAction: Boolean) {
-        val recyclerView = getDriverPresenter.getDriverView.view?.driver_list
+        val recyclerView = getDriverPresenter.instance().getView()?.getRecyclerView()
 
         recyclerView?.post {
             try {
-                if (isUserAction) {
-                    list.removeAt(position!!)
+                if (isUserAction && position != null) {
+                    list.removeAt(position)
                     notifyItemRemoved(position)
                 }
             } catch (ex: java.lang.IndexOutOfBoundsException) {
@@ -103,43 +96,39 @@ class DriversListAdapter(
 
             try {
                 if (!isUserAction) {
+                    if (DriverObject.driver == list[list.size - 1]) {
+                        getDriverPresenter.instance().getView()?.hideConfirmAccept()
+                    }
+
                     list.removeAt(list.size - 1)
                     notifyItemRemoved(list.size)
                 }
             } catch (ex: IndexOutOfBoundsException) {
                 println(ex.message)
             }
-        }
 
-        getDriverPresenter.hideConfirmAccept()
-
-        if (list.size <= 1) {
-            getDriverPresenter.checkBackground(false)
+            if (list.isEmpty()) {
+                getDriverPresenter.instance().getView()?.checkoutBackground(true)
+            }
         }
     }
 
 
     inner class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var driverItemTimer: DriverItemTimer? = null
-        private val driverName = itemView.driver_name
-        private val carName = itemView.car_name
-        private val rating = itemView.driver_rating
-        private val driverImg = itemView.img_driver
-        private val price = itemView.price
-
 
         fun bind(driver: Driver) {
-            driverName.text = driver.nameDriver
-            carName.text = driver.carName
-            rating.text = driver.rating.toString()
-            price.text = driver.price.toString().plus(" ₽")
+            itemView.driver_name.text = driver.nameDriver
+            itemView.car_name.text = driver.carName
+            itemView.driver_rating.text = driver.rating.toString()
+            itemView.price.text = driver.price.toString().plus(" ₽")
 
-            Glide.with(context).load(driver.imgDriver)
+            Glide.with(itemView.context).load(driver.imgDriver)
                 .apply(RequestOptions().centerCrop().circleCrop())
-                .into(driverImg)
+                .into(itemView.img_driver)
 
             itemView.reject_driver.setOnClickListener {
-                driverItemTimer!!.cancel()
+                driverItemTimer?.cancel()
                 rejectDriver(adapterPosition, true)
             }
         }

@@ -1,208 +1,256 @@
 package bonch.dev.presentation.modules.driver.signup.tabledocs.presenter
 
-import android.graphics.Color
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
+import bonch.dev.App
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.data.driver.signup.DriverSignupModel
-import bonch.dev.data.driver.signup.pojo.DocsRealm
-import bonch.dev.data.driver.signup.SignupMainData
+import bonch.dev.domain.entities.driver.signup.Docs
+import bonch.dev.domain.entities.driver.signup.NewPhoto
+import bonch.dev.domain.entities.driver.signup.SignupMainData
+import bonch.dev.domain.entities.driver.signup.SignupMainData.idStep
+import bonch.dev.domain.entities.driver.signup.SignupMainData.listDocs
+import bonch.dev.domain.entities.driver.signup.Step
+import bonch.dev.domain.interactor.driver.signup.ISignupInteractor
 import bonch.dev.domain.utils.Constants
-import bonch.dev.presentation.driver.signup.DriverSignupActivity
-import bonch.dev.presentation.driver.signup.TableDocsView
-import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.android.synthetic.main.table_docs_fragment.view.*
+import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.modules.common.checkphoto.CheckPhotoView
+import bonch.dev.presentation.modules.common.media.IMediaEvent
+import bonch.dev.presentation.modules.common.media.MediaEvent
+import bonch.dev.presentation.modules.driver.signup.SignupComponent
+import bonch.dev.presentation.modules.driver.signup.tabledocs.view.ITableDocsView
+import javax.inject.Inject
 
 
-class TableDocsPresenter(val tableDocsView: TableDocsView) {
+class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter {
+
+    @Inject
+    lateinit var signupInteractor: ISignupInteractor
+
+    private var mediaEvent: IMediaEvent
 
 
-    var driverSignupModel: DriverSignupModel? = null
-    lateinit var root: View
+    private val PHOTO = "PHOTO"
+    private val TITLE = "TITLE"
+    private val CHECK_PHOTO = 12
+
+    var isDriverCreated = false
 
 
     init {
-        if (driverSignupModel == null) {
-            driverSignupModel = DriverSignupModel(this)
-        }
+        SignupComponent.driverSignupComponent?.inject(this)
+
+        mediaEvent = MediaEvent()
     }
 
 
-    fun removeStartStatus() {
-        driverSignupModel?.removeStartStatus()
-    }
-
-
-    fun getStatusDocs(bundle: Bundle?): ArrayList<DocsRealm> {
-        val listDocsStatus: ArrayList<DocsRealm> = arrayListOf()
-
-        for (i in 0..7) {
-            val docsRealm = DocsRealm()
-            docsRealm.isAccess = i % 2 == 0
-            listDocsStatus.add(docsRealm)
-        }
-        if (bundle != null) {
-            //get object with data
-            //TODO
-        }
-
-        return listDocsStatus
-    }
-
-
-    fun getDocsDB(): ArrayList<DocsRealm> {
-        //TODO with server get images from net
-        val listDocs = driverSignupModel!!.getDocsDB()
-
-        if (!listDocs.isNullOrEmpty()) {
-            SignupMainData.listDocs = listDocs
-        }
-
-        return listDocs
-    }
-
-
-    fun setDocs(list: ArrayList<DocsRealm>) {
-        val viewsImgDocs = getImgDocs()
-        val viewsTitleDocs = getTitleDocs()
-        val viewsTicsDocs = getTicsDocs()
-
-        if (list.isNotEmpty()) {
-
-            val mainHandler = Handler(Looper.getMainLooper())
-            val myRunnable = Runnable {
-                kotlin.run {
-                    try {
-                        for (i in 0 until list.size) {
-                            if (list[i + 1].isAccess != null) {
-                                if (list[i + 1].isAccess!!) {
-                                    //docs is valid
-                                    viewsImgDocs[i].isClickable = false
-                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#149319"))
-                                    viewsTicsDocs[i].setImageDrawable(
-                                        ContextCompat.getDrawable(
-                                            root.context,
-                                            R.drawable.ic_green_tick
-                                        )
-                                    )
-                                } else {
-                                    //docs not valid
-                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#D03131"))
-                                    viewsTicsDocs[i].setImageDrawable(
-                                        ContextCompat.getDrawable(
-                                            root.context,
-                                            R.drawable.ic_red_cross
-                                        )
-                                    )
-                                }
-                            } else {
-                                //docs still is processing
-                                viewsTitleDocs[i].setTextColor(Color.parseColor("#000000"))
-                                viewsTicsDocs[i].visibility = View.GONE
-                            }
-
-                            Glide.with(root.context).load(list[i + 1].imgDocs).into(viewsImgDocs[i])
-                        }
-                    } catch (ex: IndexOutOfBoundsException) {
-                        println(ex.message)
+    //create driver with server
+    override fun createDriver() {
+        val driverData = SignupMainData.driverData
+        if (driverData != null) {
+            val arr = IntArray(listDocs.size)
+            for (i in arr.indices) {
+                while (true) {
+                    val imageId = listDocs[i].id
+                    if (imageId != null) {
+                        arr[i] = imageId
+                        break
                     }
                 }
             }
 
-            mainHandler.post(myRunnable)
+            driverData.docArray = arr
+
+            signupInteractor.createDriver(driverData) { isSuccess ->
+                if (!isSuccess) {
+                    //error show
+                    val res = App.appComponent.getContext().resources
+                    getView()?.showNotification(res.getString(R.string.errorSystem))
+                }
+
+                isDriverCreated = true
+            }
         }
     }
 
 
-    fun saveDocs(list: ArrayList<DocsRealm>) {
-        driverSignupModel?.saveDocs(list)
+    override fun getCamera(fragment: Fragment) {
+        Permissions.access(Permissions.STORAGE_PERMISSION_REQUEST, fragment)
     }
 
 
-    fun getReshootBottomSheet(idDoc: Int) {
-        SignupMainData.idStep = idDoc
-        tableDocsView.reshootBottomSheet!!.state = BottomSheetBehavior.STATE_EXPANDED
-    }
+    override fun onActivityResult(
+        fragment: Fragment,
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CHECK_PHOTO) {
+                //block UI
+                isDriverCreated = false
 
+                //do it with server
+                remakePhotoDone()
+            } else {
+                if (requestCode == Constants.GALLERY) {
+                    //if not camera
+                    SignupMainData.imgUri = data?.data.toString()
+                }
 
-    fun hideReshootBottomSheet() {
-        tableDocsView.reshootBottomSheet!!.state = BottomSheetBehavior.STATE_COLLAPSED
-    }
-
-
-    fun getCamera(fragment: Fragment) {
-        Permissions.access(Constants.STORAGE_PERMISSION_REQUEST, fragment)
-    }
-
-
-    fun onSlideBottomSheet(slideOffset: Float) {
-        val onMapView = root.on_view_table
-
-        if (slideOffset > 0) {
-            onMapView?.alpha = slideOffset * 0.8f
+                val img = SignupMainData.imgUri
+                val title = TitlePhoto.getTitleForCheckPhoto(idStep)
+                if (img != null) {
+                    showCheckPhoto(fragment, img, title)
+                }
+            }
         }
     }
 
 
-    fun onStateChangedBottomSheet(newState: Int) {
-        val onMapView = root.on_view_table
+    private fun remakePhotoDone() {
+        //save photo
+        if (SignupMainData.imgUri != null) {
+            try {
+                //at first delete photo
+                val imgId = listDocs[idStep.step].id
+                if (imgId != null) {
+                    signupInteractor.deletePhoto(imgId) { isSuccess ->
+                        if (isSuccess) {
+                            //success delete old photo from server
+                            val docs = Docs()
+                            docs.id = idStep.step
+                            docs.imgDocs = SignupMainData.imgUri
+                            docs.isVerify = null
+                            listDocs[idStep.step] = docs
 
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            onMapView?.visibility = View.GONE
-        } else {
-            onMapView?.visibility = View.VISIBLE
+                            //sent photo to server
+                            sentPhoto(docs)
+
+                            //put new photo
+                            Thread(Runnable {
+                                putNewPhoto()
+                            }).start()
+                        } else {
+                            //error delete old photo from server
+                            val res = App.appComponent.getContext().resources
+                            getView()?.showNotification(res.getString(R.string.errorSystem))
+                        }
+                    }
+                }
+            } catch (ex: IndexOutOfBoundsException) {
+            }
         }
     }
 
 
-    fun getImgDocs(): Array<ImageView> {
-        return arrayOf(
-            root.passport,
-            root.self_passport,
-            root.passport_address,
-            root.driver_doc_front,
-            root.driver_doc_back,
-            root.sts_front,
-            root.sts_back
-        )
+    private fun putNewPhoto() {
+        while (true) {
+            val imageId = listDocs[idStep.step].id
+            if (imageId != null) {
+                val photo = NewPhoto()
+                photo.docArray = intArrayOf(imageId)
+                signupInteractor.putNewPhoto(photo) { isSuccess ->
+                    //remove block UI
+                    isDriverCreated = true
+
+                    if (isSuccess) {
+                        getView()?.loadPhoto()
+                    } else {
+                        //error put new photo
+                        val res = App.appComponent.getContext().resources
+                        getView()?.showNotification(res.getString(R.string.errorSystem))
+                    }
+                }
+                break
+            }
+        }
     }
 
 
-    fun getTitleDocs(): Array<TextView> {
-        return arrayOf(
-            root.text_passport,
-            root.text_self_passport,
-            root.text_passport_address,
-            root.text_driver_doc_front,
-            root.text_driver_doc_back,
-            root.text_sts_front,
-            root.text_sts_back
-        )
+    private fun sentPhoto(docs: Docs) {
+        val uri = Uri.parse(docs.imgDocs)
+        if (uri != null) {
+            //convert to Bitmap
+            val btm = mediaEvent.getBitmap(uri)
+
+            val position = docs.id
+
+            if (position != null) {
+                listDocs[position].id = null
+
+                //get title
+                val title = TitlePhoto.getTitlePhoto(getByValue(position))
+
+                title?.let {
+                    //get orientation
+                    val exifOrientation = mediaEvent.getOrientation(uri)
+
+                    //compress and convert to JPEG
+                    val file = mediaEvent.convertImage(btm, it)
+
+                    if (file != null) {
+                        //save orientation
+                        if (exifOrientation != null) {
+                            val newExif = ExifInterface(file)
+                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
+                            newExif.saveAttributes()
+                        }
+
+                        //upload
+                        signupInteractor.loadDocs(file, position) { isSuccess ->
+                            if (!isSuccess) {
+                                //error show
+                                val res = App.appComponent.getContext().resources
+                                getView()?.showNotification(res.getString(R.string.errorSystem))
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
-    fun getTicsDocs(): Array<ImageView> {
-        return arrayOf(
-            root.status_passport,
-            root.status_self_passport,
-            root.status_passport_address,
-            root.status_driver_doc_front,
-            root.status_driver_doc_back,
-            root.status_sts_front,
-            root.status_sts_back
-        )
+    private fun showCheckPhoto(fragment: Fragment, img: String, title: String?) {
+        val context = App.appComponent.getContext()
+        val intent = Intent(context, CheckPhotoView::class.java)
+        intent.putExtra(PHOTO, img)
+        intent.putExtra(TITLE, title)
+        fragment.startActivityForResult(intent, CHECK_PHOTO)
     }
 
 
-    fun finish(activity: DriverSignupActivity) {
-        activity.finish()
+    //sort docs by title
+    override fun sortDocs() {
+        //copy arr
+        val arr = arrayListOf<Docs>()
+        arr.addAll(listDocs)
+
+        arr.forEach {
+            val title = it.imgName
+            if (title != null) {
+                val step = TitlePhoto.getStepByTitle(title)
+                try {
+                    listDocs[step.step] = it
+                } catch (ex: IndexOutOfBoundsException) {
+                }
+            }
+        }
     }
+
+
+    override fun getByValue(step: Int) = Step.values().firstOrNull { it.step == step }
+
+
+    override fun instance(): TableDocsPresenter {
+        return this
+    }
+
+
+    override fun onBackPressed(): Boolean = isDriverCreated
+
 }

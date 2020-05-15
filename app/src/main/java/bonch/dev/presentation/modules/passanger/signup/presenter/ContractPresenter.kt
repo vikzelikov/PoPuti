@@ -29,7 +29,6 @@ interface ContractPresenter {
     interface IFullNamePresenter {
         fun instance(): FullNamePresenter
         fun isNameEntered(): Boolean
-        fun saveProfileData()
         fun sendProfileData()
         fun saveToken()
         fun doneSignup()

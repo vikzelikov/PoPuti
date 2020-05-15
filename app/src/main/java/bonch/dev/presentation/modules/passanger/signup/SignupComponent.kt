@@ -1,7 +1,7 @@
 package bonch.dev.presentation.modules.passanger.signup
 
-import bonch.dev.di.component.passanger.SignupComponent
+import bonch.dev.di.component.passanger.PassangerSignupComponent
 
 object SignupComponent {
-    var signupComponent: SignupComponent? = null
+    var passangerSignupComponent: PassangerSignupComponent? = null
 }
