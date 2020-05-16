@@ -15,8 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.passanger.getdriver.*
-import bonch.dev.domain.utils.Constants
+import bonch.dev.domain.entities.passanger.getdriver.Driver
+import bonch.dev.domain.entities.passanger.getdriver.DriverObject
+import bonch.dev.domain.entities.passanger.getdriver.ReasonCancel
+import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.MBottomSheet
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
@@ -31,16 +33,6 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.get_driver_layout.*
-import kotlinx.android.synthetic.main.get_driver_layout.comment_back_btn
-import kotlinx.android.synthetic.main.get_driver_layout.comment_bottom_sheet
-import kotlinx.android.synthetic.main.get_driver_layout.comment_btn
-import kotlinx.android.synthetic.main.get_driver_layout.comment_done
-import kotlinx.android.synthetic.main.get_driver_layout.comment_min_text
-import kotlinx.android.synthetic.main.get_driver_layout.comment_text
-import kotlinx.android.synthetic.main.get_driver_layout.from_address
-import kotlinx.android.synthetic.main.get_driver_layout.main_info_layout
-import kotlinx.android.synthetic.main.get_driver_layout.offer_price
-import kotlinx.android.synthetic.main.get_driver_layout.to_address
 import javax.inject.Inject
 
 

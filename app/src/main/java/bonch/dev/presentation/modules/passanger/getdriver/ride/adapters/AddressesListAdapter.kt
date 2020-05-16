@@ -25,9 +25,7 @@ class AddressesListAdapter @Inject constructor(private val createRidePresenter: 
     }
 
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    override fun getItemCount(): Int = list.size
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {

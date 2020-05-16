@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager
 
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.presentation.modules.driver.getpassanger.orders.view.OrdersView
+import bonch.dev.presentation.modules.driver.getpassanger.view.OrdersView
 import bonch.dev.presentation.driver.rating.RatingView
 import bonch.dev.presentation.modules.common.profile.view.ProfileView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -120,7 +120,8 @@ class MainFragment : Fragment() {
         fm = (activity as MainActivity).supportFragmentManager
 
         if (ordersView == null) {
-            ordersView = OrdersView()
+            ordersView =
+                OrdersView()
         }
 
         if (ratingView == null) {
