@@ -1,7 +1,6 @@
 package bonch.dev.presentation.modules.driver.getpassanger.view
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.data.driver.getpassanger.pojo.Order
 import bonch.dev.di.component.driver.DaggerGetPassangerComponent
 import bonch.dev.di.module.driver.GetPassangerModule
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.driver.getpassanger.GetPassangerComponent
 import bonch.dev.presentation.modules.driver.getpassanger.adapters.OrdersAdapter
 import bonch.dev.presentation.modules.driver.getpassanger.presenter.ContractPresenter
+import bonch.dev.presentation.modules.driver.getpassanger.presenter.OrdersTimer
 import kotlinx.android.synthetic.main.orders_view_fragment.*
 import javax.inject.Inject
 
@@ -66,6 +65,11 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
         initAdapter()
 
         setListeners()
+
+        ordersPresenter.startSearchOrders()
+
+        //observable on searching orders
+        OrdersTimer.startTimer(ordersAdapter)
     }
 
 
@@ -90,22 +94,11 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = ordersAdapter
         }
+    }
 
 
-        val arr = arrayListOf<Order>()
-        arr.add(Order(3333))
-        arr.add(Order(123))
-
-
-        ordersAdapter.list = arr
-        ordersAdapter.notifyDataSetChanged()
-
-        Handler().postDelayed({
-            val order = Order(96)
-            ordersAdapter.list.add(order)
-            ordersAdapter.notifyItemInserted(2)
-        }, 5000)
-
+    override fun getAdapter(): OrdersAdapter {
+        return ordersAdapter
     }
 
 

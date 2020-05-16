@@ -25,9 +25,7 @@ class SuggestAdapter @Inject constructor(
     }
 
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    override fun getItemCount() = list.size
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {

@@ -18,14 +18,14 @@
 
 
             <ImageView
-                android:id="@+id/img_driver"
+                android:id="@+id/img_passanger"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:layout_marginTop="10dp"
                 android:src="@drawable/ava" />
 
             <TextView
-                android:id="@+id/driver_name"
+                android:id="@+id/passanger_name"
                 android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -38,7 +38,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/driver_rating"
+                android:id="@+id/passanger_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -111,7 +111,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/order_distance"
+                android:id="@+id/user_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"

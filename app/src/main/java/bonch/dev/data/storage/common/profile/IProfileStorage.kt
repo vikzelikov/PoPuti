@@ -14,19 +14,23 @@ interface IProfileStorage {
 
     fun saveToken(token: String)
 
+    fun getToken(): String?
+
+    fun removeToken()
+
     fun getUserId(): Int
 
     fun saveDriverId(id: Int)
 
     fun getDriverId(): Int
 
-    fun getToken(): String?
-
     fun saveDriverAccess()
 
     fun getDriverAccess(): Boolean
 
-    fun removeToken()
+    fun saveCheckoutDriver(isDriver: Boolean)
+
+    fun isCheckoutDriver(): Boolean
 
     fun closeRealm()
 

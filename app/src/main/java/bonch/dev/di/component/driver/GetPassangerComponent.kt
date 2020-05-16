@@ -3,6 +3,7 @@ package bonch.dev.di.component.driver
 import bonch.dev.di.component.AppComponent
 import bonch.dev.di.module.driver.GetPassangerModule
 import bonch.dev.di.scope.CompScope
+import bonch.dev.domain.interactor.driver.getpassanger.GetPassangerInteractor
 import bonch.dev.presentation.modules.driver.getpassanger.presenter.OrdersPresenter
 import bonch.dev.presentation.modules.driver.getpassanger.view.OrdersView
 import dagger.Component
@@ -12,8 +13,12 @@ import dagger.Component
 interface GetPassangerComponent {
 
     //orders
-    fun inject(view: OrdersView)
+    fun inject(target: OrdersView)
 
-    fun inject(presenter: OrdersPresenter)
+    fun inject(target: OrdersPresenter)
+
+
+    //interactors
+    fun inject(target: GetPassangerInteractor)
 
 }

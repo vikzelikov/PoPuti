@@ -39,15 +39,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //check user login
-        val accessToken = mainPresenter.getToken()
-
-
-        if (accessToken != null) {
-            //TODO check with server if created ride already (redirect to TrackRideView)
-            //redirect to full app
-            navController.navigate(R.id.main_passanger_fragment)
-        }
+        mainPresenter.navigate()
     }
 
 

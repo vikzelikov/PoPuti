@@ -54,6 +54,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
             if (isPassanger) {
                 if (profileInteractor.getDriverAccess()) {
                     //redirect to driver
+                    profileInteractor.saveCheckoutDriver(true)
                     MainRouter.showView(R.id.show_main_driver_fragment, getView()?.getNavHost(), null)
                 } else {
                     //redirect to signup as driver
@@ -62,6 +63,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                 }
             } else {
                 //redirect to passanger
+                profileInteractor.saveCheckoutDriver(false)
                 MainRouter.showView(R.id.show_main_passanger_fragment, getView()?.getNavHost(), null)
             }
         } else {

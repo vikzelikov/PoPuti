@@ -22,6 +22,10 @@ interface IProfileInteractor {
 
     fun getDriverAccess(): Boolean
 
+    fun saveCheckoutDriver(isDriver: Boolean)
+
+    fun isCheckoutDriver(): Boolean
+
     fun removeToken()
 
     fun closeRealm()
