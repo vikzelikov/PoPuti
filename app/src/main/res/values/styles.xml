@@ -6,12 +6,19 @@
         <item name="android:statusBarColor">@color/colorStatusBar</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@drawable/splash_bg</item>
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 
     <style name="CustomProgressBar" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/colorBlue</item>
     </style>
 
+    <style name="SplashTheme" parent="@style/Theme.Design.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/colorStatusBar</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@drawable/splash_bg</item>
+    </style>
 
 </resources>

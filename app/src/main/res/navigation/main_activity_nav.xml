@@ -114,6 +114,13 @@
         android:label="main_driver_fragment"
         tools:layout="@layout/main_driver_fragment">
 
+        <action
+            android:id="@+id/show_main_passanger_fragment"
+            app:destination="@id/main_passanger_fragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/main_driver_fragment"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
 </navigation>

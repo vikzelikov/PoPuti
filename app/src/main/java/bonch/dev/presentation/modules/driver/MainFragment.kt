@@ -36,14 +36,10 @@ class MainFragment : Fragment() {
         active = ordersView
         navView.selectedItemId = R.id.get_driver
 
-//        fm!!.beginTransaction().add(R.id.nav_host_fragment, profile!!, PROFILE_VIEW.toString())
-//            .hide(profile!!).commit()
-//        fm!!.beginTransaction()
-//            .add(R.id.nav_host_fragment, ratingView!!, REGULAR_DRIVING_VIEW.toString())
-//            .hide(ratingView!!).commit()
-//        fm!!.beginTransaction()
-//            .add(R.id.nav_host_fragment, ordersView!!, CREATE_RIDE_VIEW.toString()).commit()
+        //set type UI
+        profile?.isForPassanger = false
 
+        addToBackStack()
 
         navView.setOnNavigationItemSelectedListener(null)
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -52,25 +48,67 @@ class MainFragment : Fragment() {
     }
 
 
+    private fun addToBackStack() {
+        val orders = ordersView
+        val rating = ratingView
+        val profile = profile
+
+        if (profile != null) {
+            fm?.beginTransaction()
+                ?.add(R.id.nav_host_fragment, profile, ProfileView::class.java.simpleName)
+                ?.hide(profile)
+                ?.commit()
+        }
+
+        if (rating != null) {
+            fm?.beginTransaction()
+                ?.add(R.id.nav_host_fragment, rating, RatingView::class.java.simpleName)
+                ?.hide(rating)
+                ?.commit()
+        }
+
+        if (orders != null) {
+            fm?.beginTransaction()
+                ?.add(R.id.nav_host_fragment, orders, OrdersView::class.java.simpleName)
+                ?.commit()
+
+        }
+    }
+
+
     private val mOnNavigationItemSelectedListener: BottomNavigationView.OnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.orders -> {
-                    fm!!.beginTransaction().hide(active!!).show(ordersView!!).commit()
-                    item.isChecked = true
-                    active = ordersView
-                }
 
-                R.id.rating -> {
-                    fm!!.beginTransaction().hide(active!!).show(ratingView!!).commit()
-                    item.isChecked = true
-                    active = ratingView
-                }
+            val active = active
+            val orders = ordersView
+            val rating = ratingView
+            val profile = profile
 
-                R.id.profile -> {
-                    fm!!.beginTransaction().hide(active!!).show(profile!!).commit()
-                    item.isChecked = true
-                    active = profile
+            if(active != null){
+                when (item.itemId) {
+                    R.id.orders -> {
+                        if(orders != null){
+                            fm?.beginTransaction()?.hide(active)?.show(orders)?.commit()
+                            item.isChecked = true
+                            this.active = ordersView
+                        }
+                    }
+
+                    R.id.rating -> {
+                        if(rating != null){
+                            fm?.beginTransaction()?.hide(active)?.show(rating)?.commit()
+                            item.isChecked = true
+                            this.active = ratingView
+                        }
+                    }
+
+                    R.id.profile -> {
+                        if(profile != null){
+                            fm?.beginTransaction()?.hide(active)?.show(profile)?.commit()
+                            item.isChecked = true
+                            this.active = profile
+                        }
+                    }
                 }
             }
 
@@ -82,8 +120,7 @@ class MainFragment : Fragment() {
         fm = (activity as MainActivity).supportFragmentManager
 
         if (ordersView == null) {
-            ordersView =
-                OrdersView()
+            ordersView = OrdersView()
         }
 
         if (ratingView == null) {
@@ -91,8 +128,7 @@ class MainFragment : Fragment() {
         }
 
         if (profile == null) {
-            profile =
-                ProfileView()
+            profile = ProfileView()
         }
     }
 
