@@ -1,6 +1,6 @@
 package bonch.dev.presentation.modules.common.rate.presenter
 
-import android.os.Handler
+import android.app.Activity.RESULT_OK
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.interactor.common.rate.IRateRideInteractor
@@ -14,6 +14,7 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
 
     @Inject
     lateinit var rateRideInteractor: IRateRideInteractor
+    private val FEEDBACK = 1
 
     init {
         CommonComponent.commonComponent?.inject(this)
@@ -22,18 +23,15 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
 
     override fun rateDone(rating: Float, comment: String?) {
         //TODO send to server data about rate
-        val res = App.appComponent.getContext().resources
-        getView()?.showNotification(res.getString(R.string.thanksForRate))
-
         val isForPassanger = getView()?.isPassanger()
 
         if (isForPassanger != null) {
             if (isForPassanger) {
+                val res = App.appComponent.getContext().resources
+                getView()?.showNotification(res.getString(R.string.thanksForRate))
                 MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
             } else {
-                Handler().postDelayed({
-                    getView()?.finish()
-                }, 500)
+                getView()?.finish(FEEDBACK)
             }
         }
     }
@@ -46,9 +44,7 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
             if (isForPassanger) {
                 MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
             } else {
-                Handler().postDelayed({
-                    getView()?.finish()
-                }, 500)
+                getView()?.finish(RESULT_OK)
             }
         }
     }

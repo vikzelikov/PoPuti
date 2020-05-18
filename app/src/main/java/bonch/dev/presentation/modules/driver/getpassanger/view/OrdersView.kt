@@ -1,5 +1,6 @@
 package bonch.dev.presentation.modules.driver.getpassanger.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.App
 import bonch.dev.MainActivity
+import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.di.component.driver.DaggerGetPassangerComponent
 import bonch.dev.di.module.driver.GetPassangerModule
@@ -28,6 +30,8 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
     @Inject
     lateinit var ordersAdapter: OrdersAdapter
 
+    private val FEEDBACK = 1
+    private val TIME_EXPIRED = 2
 
     init {
         initDI()
@@ -62,21 +66,59 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
+
         ordersPresenter.startProcessBlock()
 
         initAdapter()
 
         setListeners()
 
-        ordersPresenter.startSearchOrders()
-
         //observable on searching orders
         OrdersTimer.startTimer(ordersAdapter)
     }
 
 
-    override fun setListeners() {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        context?.let {
+            ordersPresenter.instance().isUserGeoAccess =
+                if (Permissions.isAccess(Permissions.GEO_PERMISSION, it)) {
+                    true
+                } else {
+                    Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
+                    false
+                }
+        }
 
+        ordersPresenter.startSearchOrders()
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == FEEDBACK) {
+            (activity as? MainActivity)?.showNotification(getString(R.string.thanksForRate))
+        }
+
+        if (resultCode == TIME_EXPIRED) {
+            (activity as? MainActivity)?.showNotification(getString(R.string.userCancelledRide))
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+
+    override fun setListeners() {}
+
+
+    override fun showRecycler() {
+        orders_recycler.visibility = View.VISIBLE
+        text_orders_empty.visibility = View.GONE
     }
 
 
@@ -101,6 +143,11 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
     override fun getAdapter(): OrdersAdapter {
         return ordersAdapter
+    }
+
+
+    override fun getFragment(): Fragment {
+        return this
     }
 
 

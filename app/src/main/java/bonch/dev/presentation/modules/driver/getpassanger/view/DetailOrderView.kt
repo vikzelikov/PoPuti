@@ -1,8 +1,9 @@
 package bonch.dev.presentation.modules.driver.getpassanger.view
 
-import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
@@ -16,7 +17,6 @@ import androidx.navigation.NavController
 import bonch.dev.R
 import bonch.dev.domain.entities.driver.getpassanger.Order
 import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
-import bonch.dev.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.driver.getpassanger.GetPassangerComponent
@@ -36,10 +36,13 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     lateinit var detailOrderPresenter: ContractPresenter.IDetailOrderPresenter
 
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
-    lateinit var finish: ParentEmptyHandler
+    private var timer: TimerToClose? = null
+    lateinit var finish: ParentHandler<Int>
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var nextFragment: ParentHandler<FragmentManager>
+
+    private val TIME_EXPIRED = 2
 
 
     init {
@@ -94,18 +97,22 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             comment.text = order.comment
             comment_detail.text = order.comment
         }
+
+        timer = TimerToClose(order.time.toLong())
+        timer?.start()
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == detailOrderPresenter.instance().OFFER_PRICE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == detailOrderPresenter.instance().OFFER_PRICE && resultCode == RESULT_OK) {
             val price = data?.getIntExtra(1.toString(), 0)
+            //todo send price
             show_animation.visibility = View.VISIBLE
 
             Handler().postDelayed({
-                show_animation.visibility = View.GONE
                 val activity = activity as? MapOrderView
                 activity?.let { nextFragment(it.supportFragmentManager) }
+                show_animation.visibility = View.GONE
             }, 3000)
         }
     }
@@ -137,12 +144,12 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
         cancel_ride.setOnClickListener {
             SelectOrder.order = null
-            finish()
+            finish(RESULT_OK)
         }
 
         back_btn.setOnClickListener {
             SelectOrder.order = null
-            finish()
+            finish(RESULT_OK)
         }
     }
 
@@ -212,7 +219,6 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
                 } catch (ex: Exception) {
                     break
                 }
-
             }
         }).start()
     }
@@ -262,7 +268,19 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     }
 
 
+    inner class TimerToClose(start: Long) : CountDownTimer(start * 1000, 1000) {
+        override fun onFinish() {
+            //close activity
+            SelectOrder.order = null
+            finish(TIME_EXPIRED)
+        }
+
+        override fun onTick(millisUntilFinished: Long) {}
+    }
+
+
     override fun onDestroy() {
+        timer = null
         detailOrderPresenter.instance().detachView()
         super.onDestroy()
     }

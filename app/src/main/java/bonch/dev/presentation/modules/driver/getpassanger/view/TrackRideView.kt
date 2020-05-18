@@ -1,16 +1,15 @@
 package bonch.dev.presentation.modules.driver.getpassanger.view
 
 import android.graphics.Color
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -34,6 +33,7 @@ import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.order_track_ride_layout.*
 import javax.inject.Inject
 
+
 class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     @Inject
@@ -43,6 +43,9 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private var confirmCancelBottomSheet: BottomSheetBehavior<*>? = null
     private var passangerCancelledBottomSheet: BottomSheetBehavior<*>? = null
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
+
+    private var blockHandler: Handler? = null
+    private var isBlock = false
 
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var nextFragment: ParentHandler<FragmentManager>
@@ -64,6 +67,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         context?.let { Vibration.start(it) }
         showNotification(getString(R.string.rideCreated))
 
+        startProcessBlock()
+
         return inflater.inflate(R.layout.order_track_ride_layout, container, false)
     }
 
@@ -78,6 +83,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         setListeners()
 
         setBottomSheet()
+
+        onSlideToNextStep()
     }
 
 
@@ -104,11 +111,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
                     textStatus = getString(R.string.waitingTime)
 
                     if (sec > 60) {
-                        val minutes = (sec % 3600) / 60;
-                        val seconds = sec % 60;
+                        val minutes = (sec % 3600) / 60
+                        val seconds = sec.rem(60)
 
                         timeString =
-                            String.format("%2d ${getString(R.string.min)} %2d", minutes, seconds);
+                            String.format(
+                                "%2d ${getString(R.string.min)} %2d",
+                                minutes,
+                                seconds
+                            )
                     }
 
                 } else {
@@ -136,6 +147,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         order_addresses_layout.visibility = View.GONE
         status_order_layout.visibility = View.VISIBLE
 
+        text_step_seekbar.text = getString(R.string.letsGo)
+
         correctMapView()
     }
 
@@ -147,6 +160,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         navigator_layout.visibility = View.VISIBLE
         order_addresses_layout.visibility = View.VISIBLE
 
+        text_step_seekbar.text = getString(R.string.toEndRide)
+
         correctMapView()
     }
 
@@ -157,13 +172,35 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
+    private fun onSlideToNextStep() {
+        seekBar.setSlideButtonListener(object : SlideButtonListener {
+            override fun handleSlide() {
+                if (!isBlock) {
+                    trackRidePresenter.nextStep()
+                    isBlock = true
+                }
+            }
+        })
+
+        seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                try {
+                    text_step_seekbar?.alpha = 1 - (progress / 100.0f) * 2f
+                } catch (ex: IllegalStateException) {
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+
+        })
+    }
+
+
     override fun setListeners() {
         //set deafult reason
         var reasonID = ReasonCancel.PROBLEM_WITH_CAR
-
-        go.setOnClickListener {
-            trackRidePresenter.nextStep()
-        }
 
         cancel_order.setOnClickListener {
             getCancelReason()
@@ -427,6 +464,26 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
             }
         }).start()
+    }
+
+
+    private fun startProcessBlock() {
+        if (blockHandler == null) {
+            blockHandler = Handler()
+        }
+
+        blockHandler?.postDelayed(object : Runnable {
+            override fun run() {
+                isBlock = false
+                blockHandler?.postDelayed(this, 1500)
+            }
+        }, 0)
+    }
+
+
+    override fun onBackPressed(): Boolean {
+        hideAllBottomSheet()
+        return false
     }
 
 

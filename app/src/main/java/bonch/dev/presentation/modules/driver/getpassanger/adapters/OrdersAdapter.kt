@@ -30,10 +30,6 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
         holder.bind(list[position])
-
-        holder.itemView.setOnClickListener {
-            ordersPresenter.onClickItem(list[position])
-        }
     }
 
 
@@ -61,18 +57,27 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
     }
 
 
-    class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(post: Order) {
             itemView.passanger_name.text = post.name
             itemView.passanger_rating.text = post.rating.toString()
-            itemView.user_distance.text = post.userDistance.toString().plus(" м")
             itemView.from_order.text = post.from
             itemView.to_order.text = post.to
             itemView.order_price.text = post.price.toString().plus(" ₽")
 
+            if (ordersPresenter.instance().isUserGeoAccess) {
+                itemView.user_distance.text = post.userDistance.toString().plus(" м")
+            } else {
+                itemView.user_distance.visibility = View.GONE
+            }
+
             Glide.with(itemView.context).load(post.img)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .into(itemView.img_passanger)
+
+            itemView.setOnClickListener {
+                ordersPresenter.onClickItem(list[adapterPosition])
+            }
         }
     }
 }

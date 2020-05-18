@@ -322,19 +322,37 @@
         </LinearLayout>
 
 
-        <Button
-            android:id="@+id/go"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/bg_btn_black"
-            android:fontFamily="@font/roboto"
-            android:text="@string/isPlace"
-            android:textAllCaps="false"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp">
 
+            <TextView
+                android:id="@+id/text_step_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:elevation="100dp"
+                android:gravity="center"
+                android:text="@string/isPlace"
+                android:textColor="@android:color/black" />
+
+            <bonch.dev.presentation.modules.driver.getpassanger.view.SlideButton
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:paddingStart="2dp"
+                android:paddingEnd="0dp"
+                android:progress="0"
+                android:progressDrawable="@drawable/bg_seekbar"
+                android:splitTrack="false"
+                android:thumb="@drawable/ic_seekbar_thumb"
+                android:thumbOffset="2dp" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -491,6 +509,7 @@
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
             app:layout_behavior=".presentation.base.MBottomSheet">
+
 
             <LinearLayout
                 android:layout_width="match_parent"

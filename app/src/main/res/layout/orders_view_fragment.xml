@@ -17,7 +17,16 @@
         android:paddingTop="20dp"
         android:paddingBottom="20dp"/>
 
+    <TextView
+        android:id="@+id/text_orders_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/ordersEmpty"
+        android:textColor="@android:color/darker_gray" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
         android:id="@+id/orders_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

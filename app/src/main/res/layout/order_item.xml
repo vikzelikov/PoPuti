@@ -35,7 +35,6 @@
                 android:alpha="0.4"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="Александр"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
 
@@ -47,7 +46,6 @@
                 android:drawableStart="@drawable/ic_mini_star"
                 android:drawablePadding="5dp"
                 android:fontFamily="@font/roboto"
-                android:text="4.6"
                 android:textColor="#50000000"
                 android:textSize="13sp" />
 
@@ -72,7 +70,6 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto"
                 android:maxLines="2"
-                android:text="Чкалe wrgwe s asdas цуайцуацуауцацауdasdasdsa"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -88,7 +85,6 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/roboto"
                 android:maxLines="2"
-                android:text="Чкалов7 sadasdas derfasdasdsa"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
@@ -107,7 +103,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto"
-                android:text="350"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -120,7 +115,6 @@
                 android:drawableStart="@drawable/ic_distance"
                 android:drawablePadding="4dp"
                 android:fontFamily="@font/roboto"
-                android:text="900 м"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 

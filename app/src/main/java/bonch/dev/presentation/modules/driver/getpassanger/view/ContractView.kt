@@ -1,5 +1,6 @@
 package bonch.dev.presentation.modules.driver.getpassanger.view
 
+import androidx.fragment.app.Fragment
 import bonch.dev.domain.entities.driver.getpassanger.Order
 import bonch.dev.presentation.interfaces.IBaseView
 import bonch.dev.presentation.modules.driver.getpassanger.adapters.OrdersAdapter
@@ -11,13 +12,16 @@ interface ContractView {
 
     interface IOrdersView : IBaseView {
         fun getAdapter(): OrdersAdapter
+        fun getFragment(): Fragment
+        fun showRecycler()
     }
 
 
     interface IMapOrderView : IBaseView {
         fun moveCamera(point: Point)
         fun getMap(): MapView
-        fun finishActivity()
+        fun finishMapActivity()
+        fun finishMapActivity(resultCode: Int)
         fun getUserLocation(): UserLocationLayer?
     }
 
@@ -36,6 +40,7 @@ interface ContractView {
         fun getPassangerCancelled()
         fun showNotification(text: String)
         fun tickTimerWaitPassanger(sec: Int, isPaidWaiting: Boolean)
+        fun onBackPressed(): Boolean
         fun stepWaitPassanger()
         fun getMap(): MapView?
         fun stepDoneRide()

@@ -17,7 +17,7 @@ import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
 import bonch.dev.domain.entities.passanger.getdriver.DriverObject
 import bonch.dev.domain.utils.Keyboard
-import bonch.dev.presentation.interfaces.ParentEmptyHandler
+import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.rate.presenter.IRateRidePresenter
@@ -42,7 +42,8 @@ class RateRideView : Fragment(), IRateRideView {
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
     lateinit var mapView: ParentMapHandler<MapView>
-    lateinit var finishActivity: ParentEmptyHandler
+    lateinit var finishActivity: ParentHandler<Int>
+
 
     var isForPassanger = true
 
@@ -118,7 +119,7 @@ class RateRideView : Fragment(), IRateRideView {
                     comment_text_label.visibility = View.GONE
                 }
 
-                if (rating == 4.0f) {
+                if (rating == 4.0f || rating == 3.0f) {
                     status_rating.text = resources.getString(R.string.good)
                 }
 
@@ -195,9 +196,14 @@ class RateRideView : Fragment(), IRateRideView {
             comment_text.requestFocus()
             //set a little timer to open keyboard
             Handler().postDelayed({
-                val activity = activity as? MainActivity
-                activity?.let {
-                    Keyboard.showKeyboard(activity)
+                //for passanger
+                (activity as? MainActivity)?.let {
+                    Keyboard.showKeyboard(it)
+                }
+
+                //for driver
+                (activity as? MapOrderView)?.let {
+                    Keyboard.showKeyboard(it)
                 }
             }, 200)
         }
@@ -242,9 +248,14 @@ class RateRideView : Fragment(), IRateRideView {
 
 
     override fun hideKeyboard() {
-        val activity = activity as? MainActivity
-        activity?.let {
-            Keyboard.hideKeyboard(activity, this.rate_container)
+        //for passanger
+        (activity as? MainActivity)?.let {
+            Keyboard.hideKeyboard(it, this.rate_container)
+        }
+
+        //for driver
+        (activity as? MapOrderView)?.let {
+            Keyboard.hideKeyboard(it, this.rate_container)
         }
     }
 
@@ -254,8 +265,8 @@ class RateRideView : Fragment(), IRateRideView {
     }
 
 
-    override fun finish() {
-        finishActivity()
+    override fun finish(resultCode: Int) {
+        finishActivity(resultCode)
     }
 
 

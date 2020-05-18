@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.Permissions
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.RideStatus
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.presentation.modules.driver.getpassanger.GetPassangerComponent
 import bonch.dev.presentation.modules.driver.getpassanger.presenter.ContractPresenter
@@ -25,7 +27,6 @@ import com.yandex.mapkit.logo.VerticalAlignment
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
@@ -91,11 +92,9 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-
         if (Permissions.isAccess(Permissions.GEO_PERMISSION, this)) {
             setUserLocation()
         }
-
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -250,19 +249,26 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
 
-    override fun finishActivity() {
+    override fun finishMapActivity(resultCode: Int) {
+        setResult(resultCode)
+        finish()
+    }
+
+
+    override fun finishMapActivity() {
         finish()
     }
 
 
     override fun onBackPressed() {
-        if(mapOrderPresenter.onBackPressed()){
+        if (mapOrderPresenter.onBackPressed()) {
             super.onBackPressed()
         }
     }
 
 
     override fun onDestroy() {
+        RideStatus.status = StatusRide.WAIT_FOR_DRIVER
         mapOrderPresenter.instance().detachView()
         super.onDestroy()
     }

@@ -29,7 +29,7 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
 
         //pass callback
         childFragment.nextFragment = { attachTrackRide(it) }
-        childFragment.finish = { getView()?.finishActivity() }
+        childFragment.finish = { getView()?.finishMapActivity(it) }
         childFragment.locationLayer = { getView()?.getUserLocation() }
         childFragment.mapView = { getView()?.getMap() }
 
@@ -50,7 +50,7 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
         //pass callback
         childFragment.mapView = { getView()?.getMap() }
         childFragment.nextFragment = { attachRateRide(it) }
-        childFragment.finishActivity = { getView()?.finishActivity() }
+        childFragment.finishActivity = { getView()?.finishMapActivity() }
 
 
         this.childTrackRide = childFragment
@@ -65,13 +65,12 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
         //all clear
         childDetailOrder = null
         childTrackRide = null
-        GetPassangerComponent.getPassangerComponent = null
 
         val childFragment = RateRideView()
 
         //pass callback
         childFragment.mapView = { getView()?.getMap() }
-        childFragment.finishActivity = { getView()?.finishActivity() }
+        childFragment.finishActivity = { getView()?.finishMapActivity(it) }
 
         //set type UI
         childFragment.isForPassanger = false
@@ -115,6 +114,14 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
         var isBackPressed = true
 
         childDetailOrder?.let {
+            isBackPressed = it.onBackPressed()
+        }
+
+        childTrackRide?.let {
+            isBackPressed = it.onBackPressed()
+        }
+
+        childRateRide?.let {
             isBackPressed = it.onBackPressed()
         }
 

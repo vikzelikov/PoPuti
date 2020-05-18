@@ -130,6 +130,7 @@
     <string name="waitingTime">Время простоя</string>
     <string name="navigator">Навигатор</string>
     <string name="rideEnd">Поездка завершена</string>
+    <string name="toEndRide">Завершить поездку</string>
     <string name="ratePassanger">Оцените пассажира</string>
     <string name="perfect">Отлично</string>
     <string name="whatHappens">Что случилось?</string>
@@ -193,5 +194,7 @@
     <string name="passangerNotGoOut">Пассажир не вышел</string>
     <string name="passangerWithChild">Пассажир не указал, что он будет с ребенком</string>
     <string name="rideCreated">Поездка создана</string>
+    <string name="ordersEmpty">Заказов нет</string>
+    <string name="userCancelledRide">Пассажир отменил поездку</string>
 
 </resources>

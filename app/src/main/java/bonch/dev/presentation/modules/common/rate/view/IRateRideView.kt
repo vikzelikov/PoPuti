@@ -10,6 +10,6 @@ interface IRateRideView : IBaseView {
 
     fun onBackPressed(): Boolean
 
-    fun finish()
+    fun finish(resultCode: Int)
 
 }

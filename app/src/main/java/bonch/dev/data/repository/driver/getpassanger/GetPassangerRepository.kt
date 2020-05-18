@@ -11,6 +11,7 @@ class GetPassangerRepository : IGetPassangerRepository {
     override fun getNewOrder(callback: NewOrder) {
         val order = if (i % 2 == 0) {
             Order(
+                i,
                 "Костя $i",
                 R.drawable.ava,
                 344 + i * 9,
@@ -25,6 +26,7 @@ class GetPassangerRepository : IGetPassangerRepository {
             )
         } else {
             Order(
+                i,
                 "Александр $i",
                 R.drawable.ava1,
                 412 + i * 5,

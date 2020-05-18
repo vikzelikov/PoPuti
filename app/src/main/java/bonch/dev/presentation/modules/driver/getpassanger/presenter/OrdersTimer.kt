@@ -6,10 +6,10 @@ import java.util.*
 
 object OrdersTimer {
 
-    const val TIME_EXPIRED_ITEM = 30 //sec
+    const val TIME_EXPIRED_ITEM = 300 //sec
 
     private var timer: Timer? = null
-    private var mTimerTask: TimerTask? = null
+    private var mTimerTask: OrdersTimerTask? = null
 
 
     fun startTimer(adapter: OrdersAdapter) {
@@ -21,16 +21,12 @@ object OrdersTimer {
     }
 
 
-    fun cancelTimer() {
-        if (timer != null) {
-            timer?.cancel()
-            timer = null;
-        }
+    fun getInstance(): OrdersTimerTask? {
+        return mTimerTask
     }
 
 
-    // Метод для описания того, что будет происходить при работе таймера (задача для таймера):
-    private class OrdersTimerTask(val adapter: OrdersAdapter) : TimerTask() {
+    class OrdersTimerTask(val adapter: OrdersAdapter) : TimerTask() {
         override fun run() {
             try {
                 val list = adapter.list
