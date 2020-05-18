@@ -196,5 +196,6 @@
     <string name="rideCreated">Поездка создана</string>
     <string name="ordersEmpty">Заказов нет</string>
     <string name="userCancelledRide">Пассажир отменил поездку</string>
+    <string name="userCancellPrice">Пассажир отклонил предложение</string>
 
 </resources>

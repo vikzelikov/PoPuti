@@ -109,10 +109,17 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             //todo send price
             show_animation.visibility = View.VISIBLE
 
+            //todo replace to work with server
             Handler().postDelayed({
-                val activity = activity as? MapOrderView
-                activity?.let { nextFragment(it.supportFragmentManager) }
+                if (SelectOrder.order!!.id % 2 == 0) {
+                    val activity = activity as? MapOrderView
+                    activity?.let { nextFragment(it.supportFragmentManager) }
+                } else {
+                    showNotification(getString(R.string.userCancellPrice))
+                }
+
                 show_animation.visibility = View.GONE
+
             }, 3000)
         }
     }
