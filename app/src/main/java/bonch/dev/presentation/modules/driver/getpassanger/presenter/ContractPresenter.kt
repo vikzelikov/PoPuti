@@ -41,8 +41,10 @@ interface ContractPresenter {
         fun instance(): TrackRidePresenter
         fun receiveOrder(order: Order?)
         fun showChat(context: Context, fragment: Fragment)
+        fun tickTimerWaitPassanger(sec: Int, isPaidWating: Boolean)
         fun cancelDoneOtherReason(comment: String)
         fun cancelDone(reasonID: ReasonCancel)
+        fun nextStep()
     }
 
 }

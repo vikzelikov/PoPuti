@@ -1,7 +1,7 @@
 package bonch.dev.data.repository.passanger.getdriver
 
 import bonch.dev.domain.entities.passanger.getdriver.RideInfo
-import bonch.dev.domain.entities.passanger.getdriver.StatusRide
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.passanger.getdriver.CommonHandler
 import bonch.dev.domain.interactor.passanger.getdriver.GeocoderHandler
 import bonch.dev.domain.interactor.passanger.getdriver.NewDriver

@@ -3,7 +3,7 @@ package bonch.dev.domain.interactor.passanger.getdriver
 import bonch.dev.domain.entities.passanger.getdriver.Address
 import bonch.dev.domain.entities.passanger.getdriver.Driver
 import bonch.dev.domain.entities.passanger.getdriver.RideInfo
-import bonch.dev.domain.entities.passanger.getdriver.StatusRide
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.presentation.interfaces.NotificationHandler
 import com.yandex.mapkit.geometry.Point
 

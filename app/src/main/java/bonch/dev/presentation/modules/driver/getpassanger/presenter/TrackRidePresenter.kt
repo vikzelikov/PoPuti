@@ -1,14 +1,18 @@
 package bonch.dev.presentation.modules.driver.getpassanger.presenter
 
 import android.content.Context
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.RideStatus
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassanger.Order
 import bonch.dev.domain.entities.driver.getpassanger.ReasonCancel
 import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
 import bonch.dev.domain.interactor.driver.getpassanger.IGetPassangerInteractor
 import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.modules.common.chat.view.ChatView
 import bonch.dev.presentation.modules.driver.getpassanger.view.ContractView
 import bonch.dev.route.MainRouter
 import javax.inject.Inject
@@ -19,6 +23,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     @Inject
     lateinit var getPassangerInteractor: IGetPassangerInteractor
 
+    private var timer: WaitingTimer? = null
 
     override fun receiveOrder(order: Order?) {
         if (order != null) {
@@ -29,6 +34,39 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
             getView()?.showNotification(res.getString(R.string.errorSystem))
         }
     }
+
+
+    override fun nextStep() {
+        val oldStep = RideStatus.status
+        val nextStep = getByValue(oldStep.status.inc())
+
+        if (nextStep != null) {
+            RideStatus.status = nextStep
+        }
+
+        if (nextStep == StatusRide.WAIT_FOR_PASSANGER) {
+            getView()?.stepWaitPassanger()
+            timer = WaitingTimer()
+            timer?.startTimer(this)
+        }
+
+        if (nextStep == StatusRide.IN_WAY) {
+            timer?.cancelTimer()
+            getView()?.stepInWay()
+        }
+
+        if(nextStep == StatusRide.GET_PLACE){
+            getView()?.stepDoneRide()
+        }
+    }
+
+
+    override fun tickTimerWaitPassanger(sec: Int, isPaidWating: Boolean) {
+        getView()?.tickTimerWaitPassanger(sec, isPaidWating)
+    }
+
+
+    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
     override fun cancelDone(reasonID: ReasonCancel) {
@@ -61,7 +99,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun showChat(context: Context, fragment: Fragment) {
-        MainRouter.showView(R.id.show_chat, getView()?.getNavHost(), null)
+        val intent = Intent(context, ChatView::class.java)
+        fragment.startActivityForResult(intent, 1)
     }
 
 

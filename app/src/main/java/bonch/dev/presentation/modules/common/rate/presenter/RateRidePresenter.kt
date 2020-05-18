@@ -1,5 +1,6 @@
 package bonch.dev.presentation.modules.common.rate.presenter
 
+import android.os.Handler
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.interactor.common.rate.IRateRideInteractor
@@ -30,7 +31,9 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
             if (isForPassanger) {
                 MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
             } else {
-                //other redirect
+                Handler().postDelayed({
+                    getView()?.finish()
+                }, 500)
             }
         }
     }
@@ -43,7 +46,9 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
             if (isForPassanger) {
                 MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
             } else {
-                //other redirect
+                Handler().postDelayed({
+                    getView()?.finish()
+                }, 500)
             }
         }
     }

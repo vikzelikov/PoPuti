@@ -178,7 +178,6 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-
                 val view = general_notification
 
                 view.text = text
@@ -199,7 +198,6 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
                     })
             }
         }
-
 
         mainHandler.post(myRunnable)
     }

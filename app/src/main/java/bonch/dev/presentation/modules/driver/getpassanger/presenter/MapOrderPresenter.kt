@@ -71,6 +71,7 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
 
         //pass callback
         childFragment.mapView = { getView()?.getMap() }
+        childFragment.finishActivity = { getView()?.finishActivity() }
 
         //set type UI
         childFragment.isForPassanger = false

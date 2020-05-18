@@ -4,6 +4,7 @@ import android.util.Log
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.data.network.passanger.GetDriverService
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*
 import bonch.dev.domain.interactor.passanger.getdriver.CommonHandler
 import bonch.dev.domain.interactor.passanger.getdriver.GeocoderHandler

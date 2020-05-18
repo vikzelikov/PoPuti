@@ -17,6 +17,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.RideStatus
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler

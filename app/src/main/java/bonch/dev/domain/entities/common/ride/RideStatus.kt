@@ -1,4 +1,4 @@
-package bonch.dev.domain.entities.passanger.getdriver
+package bonch.dev.domain.entities.common.ride
 
 /**
  * 1 - search driver
@@ -10,7 +10,7 @@ package bonch.dev.domain.entities.passanger.getdriver
  * */
 
 object RideStatus {
-    var status: StatusRide = StatusRide.SEARCH
+    var status: StatusRide = StatusRide.WAIT_FOR_DRIVER
 }
 
 enum class StatusRide(val status: Int) {

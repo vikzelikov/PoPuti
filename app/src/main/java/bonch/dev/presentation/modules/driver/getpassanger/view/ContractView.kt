@@ -35,7 +35,11 @@ interface ContractView {
         fun setOrder(order: Order)
         fun getPassangerCancelled()
         fun showNotification(text: String)
+        fun tickTimerWaitPassanger(sec: Int, isPaidWaiting: Boolean)
+        fun stepWaitPassanger()
         fun getMap(): MapView?
+        fun stepDoneRide()
+        fun stepInWay()
         fun finish()
     }
 

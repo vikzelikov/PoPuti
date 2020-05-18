@@ -111,10 +111,11 @@
     <string name="save">СОХРАНИТЬ</string>
     <string name="rub">руб.</string>
     <string name="rubles">рублей</string>
-    <string name="sec">сек.</string>
+    <string name="sec">сек</string>
     <string name="seconds">секунд</string>
     <string name="seconds1">секунды</string>
     <string name="second">секунду</string>
+    <string name="min">мин</string>
     <string name="waitFor">Ожидайте еще</string>
     <string name="call">Позвонить</string>
     <string name="message">Написать</string>
@@ -191,5 +192,6 @@
     <string name="passangerError">Некорректное поведение пассажира</string>
     <string name="passangerNotGoOut">Пассажир не вышел</string>
     <string name="passangerWithChild">Пассажир не указал, что он будет с ребенком</string>
+    <string name="rideCreated">Поездка создана</string>
 
 </resources>

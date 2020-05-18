@@ -17,9 +17,11 @@ import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
 import bonch.dev.domain.entities.passanger.getdriver.DriverObject
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.rate.presenter.IRateRidePresenter
+import bonch.dev.presentation.modules.driver.getpassanger.view.MapOrderView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.rate_layout.*
@@ -40,6 +42,7 @@ class RateRideView : Fragment(), IRateRideView {
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
     lateinit var mapView: ParentMapHandler<MapView>
+    lateinit var finishActivity: ParentEmptyHandler
 
     var isForPassanger = true
 
@@ -177,7 +180,11 @@ class RateRideView : Fragment(), IRateRideView {
 
 
     override fun showNotification(text: String) {
+        //for passanger
         (activity as? MainActivity)?.showNotification(text)
+
+        //for driver
+        (activity as? MapOrderView)?.showNotification(text)
     }
 
 
@@ -244,6 +251,11 @@ class RateRideView : Fragment(), IRateRideView {
 
     override fun isPassanger(): Boolean {
         return isForPassanger
+    }
+
+
+    override fun finish() {
+        finishActivity()
     }
 
 
