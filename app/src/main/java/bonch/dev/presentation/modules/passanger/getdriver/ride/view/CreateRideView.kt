@@ -25,11 +25,11 @@ import bonch.dev.domain.entities.passanger.getdriver.Coordinate
 import bonch.dev.domain.utils.ChangeOpacity
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.MBottomSheet
+import bonch.dev.presentation.interfaces.ParentHandler
+import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passanger.getdriver.ride.adapters.AddressesListAdapter
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentHandler
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentMapHandler
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.user_location.UserLocationLayer
@@ -494,7 +494,6 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
 
     override fun onDestroy() {
-        //createRidePresenter.instance().detachView()
         createRidePresenter.onDestroy()
         super.onDestroy()
     }

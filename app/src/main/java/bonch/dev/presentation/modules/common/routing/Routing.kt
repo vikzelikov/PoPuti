@@ -1,12 +1,13 @@
-package bonch.dev.presentation.modules.passanger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.common.routing
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
+import android.os.Handler
 import androidx.core.content.ContextCompat
 import bonch.dev.App
 import bonch.dev.R
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.DetailRideView
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.RequestPoint
 import com.yandex.mapkit.RequestPointType
@@ -17,21 +18,25 @@ import com.yandex.mapkit.directions.driving.DrivingRouter
 import com.yandex.mapkit.directions.driving.DrivingSession
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.map.PolylineMapObject
+import com.yandex.mapkit.map.internal.PolylineMapObjectBinding
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import java.util.*
+import javax.inject.Inject
 
-class Routing(private val detailRidePresenter: ContractPresenter.IDetailRidePresenter) :
-    DrivingSession.DrivingRouteListener {
+class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
 
     private var mapView: MapView? = null
     private var mapObjects: MapObjectCollection? = null
     private var drivingRouter: DrivingRouter? = null
     private var drivingSession: DrivingSession? = null
     private var boundingBox: BoundingBox? = null
+    private var isWaypoint = true
 
 
     init {
@@ -46,48 +51,66 @@ class Routing(private val detailRidePresenter: ContractPresenter.IDetailRidePres
         //unsupported Yandex Map exception
         try {
             for (route in routes) {
-                mapObjects?.addPolyline(route.geometry)
+                val pol = mapObjects?.addPolyline(route.geometry)
+
+                //set color for direction
+                pol?.strokeColor = if (isWaypoint) {
+                    Color.parseColor("#1152FD")
+                } else {
+                    Color.parseColor("#00C72C")
+                }
             }
 
-            //adding start and end placemarks
-            val context = App.appComponent.getContext()
-            val fromMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_from)
-            val toMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_to)
-            mapObjects?.addPlacemark(
-                routes.first().geometry.points.first(),
-                ImageProvider.fromBitmap(fromMark)
-            )
-            mapObjects?.addPlacemark(
-                routes.last().geometry.points.last(),
-                ImageProvider.fromBitmap(toMark)
-            )
+            if (isWaypoint) {
+                //adding start and end placemarks
+                val context = App.appComponent.getContext()
+                val fromMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_from)
+                val toMark = context.getBitmapFromVectorDrawable(R.drawable.ic_input_marker_to)
+                mapObjects?.addPlacemark(
+                    routes.first().geometry.points.first(),
+                    ImageProvider.fromBitmap(fromMark)
+                )
+                mapObjects?.addPlacemark(
+                    routes.last().geometry.points.last(),
+                    ImageProvider.fromBitmap(toMark)
+                )
+            }
+
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
 
         //move camera to show the route
-        showRoute()
+        Handler().postDelayed({
+            showRoute()
+        }, 500)
+
     }
 
 
-    fun submitRequest(startLocation: Point, endLocation: Point) {
+    fun submitRequest(
+        startLocation: Point,
+        endLocation: Point,
+        isWaypoint: Boolean,
+        mapView: MapView
+    ) {
         val drivingOptions = DrivingOptions().apply {
             alternativeCount = 1
         }
         val requestPoints = ArrayList<RequestPoint>()
 
-        if (mapView == null){
-            mapView = detailRidePresenter.getMap()
-            mapObjects = mapView?.map?.mapObjects?.addCollection()
-        }
+        this.mapView = mapView
+        this.isWaypoint = isWaypoint
+        mapObjects = mapView.map?.mapObjects?.addCollection()
 
 
         //get boundingBox around two point
-        boundingBox = BoundingBox(
-            Point(startLocation.latitude, startLocation.longitude),
-            Point(endLocation.latitude, endLocation.longitude)
-        )
-
+        if (isWaypoint) {
+            boundingBox = BoundingBox(
+                Point(startLocation.latitude, startLocation.longitude),
+                Point(endLocation.latitude, endLocation.longitude)
+            )
+        }
         requestPoints.add(
             RequestPoint(
                 startLocation,
@@ -128,13 +151,12 @@ class Routing(private val detailRidePresenter: ContractPresenter.IDetailRidePres
                     cameraPosition.tilt
                 )
 
-                mapView!!.map.move(
+                mapView?.map?.move(
                     cameraPosition,
                     Animation(Animation.Type.SMOOTH, 1f),
                     null
                 )
             }
-
         }
     }
 

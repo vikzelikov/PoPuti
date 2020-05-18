@@ -43,45 +43,7 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
                 attachCreateRide(fm)
             }
         }
-
     }
-
-    override fun onObjectUpdate() {
-        childCreateRide?.onObjectUpdate()
-    }
-
-
-    override fun instance(): MapCreateRidePresenter {
-        return this
-    }
-
-
-    override fun requestGeocoder(point: Point?) {
-        childCreateRide?.requestGeocoder(point)
-    }
-
-
-    override fun getBitmap(drawableId: Int): Bitmap? {
-        val context = App.appComponent.getContext()
-        return context.getBitmapFromVectorDrawable(drawableId)
-    }
-
-
-    private fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
-        val drawable = ContextCompat.getDrawable(this, drawableId) ?: return null
-
-        val bitmap = Bitmap.createBitmap(
-            drawable.intrinsicWidth,
-            drawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        ) ?: return null
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-
-        return bitmap
-    }
-
 
     //Child fragments
     override fun attachCreateRide(fm: FragmentManager) {
@@ -125,6 +87,43 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
 
     override fun getUserLocation(): UserLocationLayer? {
         return getView()?.getUserLocation()
+    }
+
+
+    override fun onObjectUpdate() {
+        childCreateRide?.onObjectUpdate()
+    }
+
+
+    override fun instance(): MapCreateRidePresenter {
+        return this
+    }
+
+
+    override fun requestGeocoder(point: Point?) {
+        childCreateRide?.requestGeocoder(point)
+    }
+
+
+    override fun getBitmap(drawableId: Int): Bitmap? {
+        val context = App.appComponent.getContext()
+        return context.getBitmapFromVectorDrawable(drawableId)
+    }
+
+
+    private fun Context.getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
+        val drawable = ContextCompat.getDrawable(this, drawableId) ?: return null
+
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        ) ?: return null
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 
 

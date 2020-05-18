@@ -2,6 +2,7 @@ package bonch.dev.data.repository.driver.getpassanger
 
 import bonch.dev.R
 import bonch.dev.domain.entities.driver.getpassanger.Order
+import bonch.dev.domain.entities.passanger.getdriver.AddressPoint
 import bonch.dev.domain.interactor.driver.getpassanger.NewOrder
 
 class GetPassangerRepository : IGetPassangerRepository {
@@ -14,9 +15,13 @@ class GetPassangerRepository : IGetPassangerRepository {
                 R.drawable.ava,
                 344 + i * 9,
                 4.3,
-                "Вокзальная улица, 71",
-                "Бонч-Бруевича на Дыбенко около метро кофе",
-                12.2 + i * 9
+                "Метро площадь Ленина, Финляндский вокзал, Санкт-Петербург",
+                "Парнас Сити",
+                12.2 + i * 9,
+                "Со мной будет собака, а еще можно проветрить автомобиль до моего приезда пожалуйта хочу ехать в проветренном автомобиле",
+                59.953859, 30.354942,
+                60.065902, 30.339715
+
             )
         } else {
             Order(
@@ -24,9 +29,12 @@ class GetPassangerRepository : IGetPassangerRepository {
                 R.drawable.ava1,
                 412 + i * 5,
                 3.9,
-                "Бонч-Бруевича на Дыбенко около метро кофе",
-                "Вокзальная улица, 96А",
-                3.4 + i * 9
+                "ТРЦ Галерея, Лиговский проспект",
+                "Дворцовая площадь, Palace Square, Saint Petersburg",
+                3.4 + i * 9,
+                null,
+                59.928005, 30.360806,
+                59.938738, 30.314848
             )
         }
 

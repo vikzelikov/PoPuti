@@ -42,6 +42,10 @@
         <activity
             android:name=".presentation.modules.driver.signup.suggest.view.SuggestView"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.driver.getpassanger.view.MapOrderView"
+            android:screenOrientation="portrait" />
+
 
         <meta-data
             android:name="preloaded_fonts"
@@ -50,8 +54,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/SplashTheme"
             android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,11 +1,14 @@
 package bonch.dev.presentation.modules.driver.getpassanger.presenter
 
 import android.os.Handler
+import bonch.dev.R
 import bonch.dev.domain.entities.driver.getpassanger.Order
+import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
 import bonch.dev.domain.interactor.driver.getpassanger.IGetPassangerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.driver.getpassanger.GetPassangerComponent
 import bonch.dev.presentation.modules.driver.getpassanger.view.ContractView
+import bonch.dev.route.MainRouter
 import javax.inject.Inject
 
 
@@ -15,7 +18,9 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     @Inject
     lateinit var getPassangerInteractor: IGetPassangerInteractor
 
+    private var blockHandler: Handler? = null
     private var mainHandler: Handler? = null
+    private var isBlock = false
 
     init {
         GetPassangerComponent.getPassangerComponent?.inject(this)
@@ -23,7 +28,11 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
 
     override fun onClickItem(order: Order) {
-        //show detail orders
+        if (!isBlock) {
+            SelectOrder.order = order
+            MainRouter.showView(R.id.show_map_order_activity, getView()?.getNavHost(), null)
+            isBlock = true
+        }
     }
 
 
@@ -38,6 +47,20 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                 mainHandler?.postDelayed(this, 5000)
             }
         }, 1000)
+    }
+
+
+    override fun startProcessBlock() {
+        if (blockHandler == null) {
+            blockHandler = Handler()
+        }
+
+        blockHandler?.postDelayed(object : Runnable {
+            override fun run() {
+                isBlock = false
+                blockHandler?.postDelayed(this, 3500)
+            }
+        }, 0)
     }
 
 

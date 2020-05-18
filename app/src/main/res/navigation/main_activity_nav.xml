@@ -107,7 +107,6 @@
         android:label="chat_activity" />
 
 
-
     <fragment
         android:id="@+id/main_driver_fragment"
         android:name="bonch.dev.presentation.modules.driver.MainFragment"
@@ -121,6 +120,16 @@
             app:popUpTo="@id/main_driver_fragment"
             app:popUpToInclusive="true" />
 
+        <action
+            android:id="@+id/show_map_order_activity"
+            app:destination="@id/map_order_activity" />
+
     </fragment>
+
+
+    <activity
+        android:id="@+id/map_order_activity"
+        android:name="bonch.dev.presentation.modules.driver.getpassanger.view.MapOrderView"
+        android:label="map_order_activity" />
 
 </navigation>

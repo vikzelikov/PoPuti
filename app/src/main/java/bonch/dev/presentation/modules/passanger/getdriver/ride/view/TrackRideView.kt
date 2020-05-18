@@ -19,10 +19,10 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.domain.entities.passanger.getdriver.*
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.interfaces.ParentHandler
+import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentHandler
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentMapHandler
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -122,9 +122,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         confirmCancelBottomSheet?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                onSlideConfirmCancel(slideOffset)
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 onChangedStateConfirmCancel(newState)
@@ -148,12 +146,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         commentBottomSheet?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                onSlideCancelReason(slideOffset)
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                onChangedStateCancelReason(newState)
+                onChangedStateComment(newState)
             }
         })
     }
@@ -245,11 +241,11 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     private fun hideAllBottomSheet() {
         on_map_view?.visibility = View.GONE
-        on_view_cancel_reason?.visibility = View.GONE
+        comment_text.clearFocus()
+        hideKeyboard()
 
         cancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-        driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
@@ -288,24 +284,11 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    private fun onSlideConfirmCancel(slideOffset: Float) {
-        if (slideOffset > 0) {
-            on_view_cancel_reason.visibility = View.VISIBLE
-            on_view_cancel_reason.alpha = slideOffset * 0.5f
-        }
-    }
-
-
     private fun onChangedStateCancelReason(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-            hideKeyboard()
-            comment_text.clearFocus()
-        }
-
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             on_map_view.visibility = View.GONE
             main_info_layout.elevation = 30f
-            hideAllBottomSheet()
+            comment_text.clearFocus()
         } else {
             confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             on_map_view.visibility = View.VISIBLE
@@ -316,9 +299,25 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     private fun onChangedStateConfirmCancel(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view_cancel_reason.visibility = View.GONE
+            main_coordinator.elevation = 10f
         } else {
-            on_view_cancel_reason.visibility = View.VISIBLE
+            main_coordinator.elevation = 0f
+        }
+    }
+
+
+    private fun onChangedStateComment(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+            hideKeyboard()
+            comment_text.clearFocus()
+        }
+
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            comment_text.clearFocus()
+        } else {
+            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            on_map_view.visibility = View.VISIBLE
+            main_info_layout.elevation = 0f
         }
     }
 
@@ -382,6 +381,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             text_message.text = resources.getString(R.string.messageWarningDriverIs)
         }
 
+        main_coordinator.elevation = 0f
         confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 

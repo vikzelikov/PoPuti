@@ -62,6 +62,8 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        ordersPresenter.startProcessBlock()
+
         initAdapter()
 
         setListeners()

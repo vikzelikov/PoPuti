@@ -17,9 +17,9 @@ import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
 import bonch.dev.domain.entities.passanger.getdriver.DriverObject
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.rate.presenter.IRateRidePresenter
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentMapHandler
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.rate_layout.*
@@ -257,7 +257,6 @@ class RateRideView : Fragment(), IRateRideView {
         }
 
         return isBackPressed
-
     }
 
 

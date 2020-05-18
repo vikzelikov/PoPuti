@@ -15,6 +15,8 @@ import bonch.dev.R
 import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
 import bonch.dev.domain.entities.common.chat.Message
+import bonch.dev.domain.entities.driver.getpassanger.Order
+import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
 import bonch.dev.domain.entities.passanger.getdriver.Driver
 import bonch.dev.domain.entities.passanger.getdriver.DriverObject
 import bonch.dev.domain.utils.Keyboard
@@ -62,8 +64,11 @@ class ChatView : AppCompatActivity(), IChatView {
         setContentView(R.layout.chat_activity)
 
         val driver = DriverObject.driver
+        val order = SelectOrder.order
         if (driver != null) {
             setDriverInfo(driver)
+        } else if (order != null) {
+            setPassangerInfo(order)
         }
 
         initChatAdapter()
@@ -81,13 +86,14 @@ class ChatView : AppCompatActivity(), IChatView {
     }
 
 
+    private fun setPassangerInfo(order: Order) {
+        name_driver.text = order.name
+    }
+
+
     override fun setListeners() {
         send_message.setOnClickListener {
             chatPresenter.sendMessage()
-        }
-
-        clip_photo.setOnClickListener {
-            Toast.makeText(this, "Clip photo", Toast.LENGTH_SHORT).show()
         }
 
         back_btn.setOnClickListener {

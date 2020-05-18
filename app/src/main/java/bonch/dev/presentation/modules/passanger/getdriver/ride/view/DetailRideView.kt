@@ -25,11 +25,11 @@ import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
 import bonch.dev.domain.entities.passanger.getdriver.BankCard
 import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.interfaces.ParentHandler
+import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passanger.getdriver.ride.adapters.PaymentsListAdapter
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentHandler
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentMapHandler
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView

@@ -91,10 +91,10 @@
         app:layout_constraintTop_toBottomOf="@+id/header_info_chat" />
 
     <TextView
-        android:layout_marginTop="10dp"
         android:id="@+id/chat_empty_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/roboto"
         android:text="@string/chatEmpty"
         android:textColor="#D0D0D0"
@@ -117,22 +117,11 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
 
-        <ImageButton
-            android:id="@+id/clip_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@android:color/white"
-            android:paddingStart="15dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="15dp"
-            android:paddingBottom="5dp"
-            android:src="@drawable/ic_clip_gray" />
-
         <EditText
             android:id="@+id/message_text_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
             android:layout_weight="1"
             android:background="@drawable/bg_edittext_chat"
             android:fontFamily="@font/roboto"

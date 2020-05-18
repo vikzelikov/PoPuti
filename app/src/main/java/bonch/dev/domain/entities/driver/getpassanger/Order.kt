@@ -10,5 +10,10 @@ open class Order (
     var from: String? = null,
     var to: String? = null,
     var userDistance: Double? = null,
+    var comment: String? = null,
+    var fromLat: Double? = null,
+    var fromLng: Double? = null,
+    var toLat: Double? = null,
+    var toLng: Double? = null,
     var time: Int = OrdersTimer.TIME_EXPIRED_ITEM
 )

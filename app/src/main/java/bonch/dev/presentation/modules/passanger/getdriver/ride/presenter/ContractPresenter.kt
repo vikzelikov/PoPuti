@@ -13,9 +13,6 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 
-typealias ParentHandler<T> = (T) -> Unit
-typealias ParentMapHandler<T> = () -> T?
-
 interface ContractPresenter {
 
     interface IMapCreateRidePresenter {

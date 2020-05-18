@@ -116,8 +116,6 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         //TODO remove it
         val intent = Intent(context, ChatView::class.java)
         fragment.startActivityForResult(intent, 1)
-
-
     }
 
 

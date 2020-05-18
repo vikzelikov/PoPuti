@@ -186,5 +186,10 @@
     <string name="driverLicenseBack">driverLicenseReverseSide</string>
     <string name="stsFront">frontsideSTS</string>
     <string name="stsBack">backsideSTS</string>
+    <string name="offerYourPriceWait">Предлагаем вашу цену, ожидайте</string>
+    <string name="problemWithCar">Проблемы с машиной</string>
+    <string name="passangerError">Некорректное поведение пассажира</string>
+    <string name="passangerNotGoOut">Пассажир не вышел</string>
+    <string name="passangerWithChild">Пассажир не указал, что он будет с ребенком</string>
 
 </resources>
