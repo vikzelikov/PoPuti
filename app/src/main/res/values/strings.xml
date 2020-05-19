@@ -199,5 +199,20 @@
     <string name="ordersEmpty">Заказов нет</string>
     <string name="userCancelledRide">Пассажир отменил поездку</string>
     <string name="userCancellPrice">Пассажир отклонил предложение</string>
+    <string name="saveC">Сохранить</string>
+    <string name="selectTime">Выбрать время</string>
+    <string name="selectDate">Выбрать дату</string>
+    <string name="sunday">Воскресенье</string>
+    <string name="monday">Понедельник</string>
+    <string name="tuesday">Вторник</string>
+    <string name="wednesday">Среда</string>
+    <string name="thursday">Четверг</string>
+    <string name="friday">Пятница</string>
+    <string name="saturday">Суббота</string>
+    <string name="cancelC">Отмена</string>
+    <string name="everyDay">Ежедневно</string>
+    <string name="selectDays">Выбрать дни</string>
+    <string name="workDays">По будням</string>
+
 
 </resources>

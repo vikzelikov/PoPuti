@@ -10,6 +10,6 @@
         android:fillAlpha="0.3"
         android:strokeColor="#000000"
         android:strokeAlpha="0.3"
-        android:strokeWidth="1"
+        android:strokeWidth="0.5"
         android:pathData="M0.5,2.18557e-8 L0.499999,28" />
 </vector>
