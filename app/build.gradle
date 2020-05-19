@@ -81,4 +81,7 @@ dependencies {
     //Saving metadata of media
     implementation "androidx.exifinterface:exifinterface:1.2.0"
 
+    //Date Time picker as ios
+    implementation 'com.github.florent37:singledateandtimepicker:2.2.5'
+
 }

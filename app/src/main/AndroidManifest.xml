@@ -16,6 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:screenOrientation="portrait"
         android:theme="@style/Theme.MyAppTheme"
         tools:ignore="LockedOrientationActivity">
         <activity
@@ -44,6 +45,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.modules.driver.getpassanger.view.MapOrderView"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".presentation.modules.passanger.regulardrive.view.CreateRegularDriveView"
             android:screenOrientation="portrait" />
 
 

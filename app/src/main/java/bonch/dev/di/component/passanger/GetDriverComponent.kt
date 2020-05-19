@@ -48,7 +48,7 @@ interface GetDriverComponent {
     fun inject(target: GetDriverPresenter)
 
 
-    //bg_seekbar_track ride
+    //track ride
     fun inject(target: TrackRideView)
 
     fun inject(target: TrackRidePresenter)
