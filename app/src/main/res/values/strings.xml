@@ -116,6 +116,8 @@
     <string name="seconds1">секунды</string>
     <string name="second">секунду</string>
     <string name="min">мин</string>
+    <string name="metr">м</string>
+    <string name="km">км</string>
     <string name="waitFor">Ожидайте еще</string>
     <string name="call">Позвонить</string>
     <string name="message">Написать</string>

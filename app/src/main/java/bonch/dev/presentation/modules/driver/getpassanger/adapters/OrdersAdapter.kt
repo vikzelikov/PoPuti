@@ -2,17 +2,23 @@ package bonch.dev.presentation.modules.driver.getpassanger.adapters
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.driver.getpassanger.Order
 import bonch.dev.presentation.modules.driver.getpassanger.presenter.ContractPresenter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.order_item.view.*
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPresenter.IOrdersPresenter) :
     RecyclerView.Adapter<OrdersAdapter.ItemPostHolder>() {
@@ -58,6 +64,7 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
 
 
     inner class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         fun bind(post: Order) {
             itemView.passanger_name.text = post.name
             itemView.passanger_rating.text = post.rating.toString()
@@ -65,9 +72,24 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
             itemView.to_order.text = post.to
             itemView.order_price.text = post.price.toString().plus(" ₽")
 
+            //calculate distance
             if (ordersPresenter.instance().isUserGeoAccess) {
-                itemView.user_distance.text = post.userDistance.toString().plus(" м")
+                val fromLat = post.fromLat
+                val fromLng = post.fromLng
+                if (fromLat != null && fromLng != null) {
+                    val point = Point(fromLat, fromLng)
+                    //get my position
+                    ordersPresenter.getMyPosition {
+                        //set in view
+                        val distance = formatDistance(ordersPresenter.calcDistance(it, point))
+                        itemView.user_distance.text = distance
+                    }
+                } else {
+                    //hide in case error
+                    itemView.user_distance.visibility = View.GONE
+                }
             } else {
+                //hide in case error
                 itemView.user_distance.visibility = View.GONE
             }
 
@@ -77,6 +99,21 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
 
             itemView.setOnClickListener {
                 ordersPresenter.onClickItem(list[adapterPosition])
+            }
+        }
+
+
+        private fun formatDistance(dist: Int): String {
+            val res = App.appComponent.getContext().resources
+
+            Log.e("WWW", dist.toString())
+            val dDist = (dist.toDouble() / 1000)
+            Log.e("WWW", dDist.toString())
+
+            return if (dist > 1000) {
+                String.format("%.2f", dDist).plus(" ${res.getString(R.string.km)}")
+            } else {
+                (dist).toString().plus(" ${res.getString(R.string.metr)}")
             }
         }
     }

@@ -31,12 +31,12 @@ class GetPassangerRepository : IGetPassangerRepository {
                 R.drawable.ava1,
                 412 + i * 5,
                 3.9,
-                "ТРЦ Галерея, Лиговский проспект",
                 "Дворцовая площадь, Palace Square, Saint Petersburg",
+                "ТРЦ Галерея, Лиговский проспект",
                 3.4 + i * 9,
                 null,
-                59.928005, 30.360806,
-                59.938738, 30.314848
+                59.938738, 30.314848,
+                59.928005, 30.360806
             )
         }
 
