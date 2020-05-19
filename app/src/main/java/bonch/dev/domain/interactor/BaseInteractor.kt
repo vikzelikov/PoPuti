@@ -17,7 +17,13 @@ class BaseInteractor : IBaseInteractor {
 
     //for authorization
     override fun getToken(): String? {
-       return profileStorage.getToken()
+        return profileStorage.getToken()
+    }
+
+
+    //for access to driver UI
+    override fun isCheckoutDriver(): Boolean {
+        return profileStorage.isCheckoutDriver()
     }
 
 }

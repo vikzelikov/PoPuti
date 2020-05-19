@@ -6,8 +6,8 @@ interface IMainPresenter {
 
     fun instance(): MainPresenter
 
-    fun getToken(): String?
-
     fun onBackPressed()
+
+    fun navigate()
 
 }

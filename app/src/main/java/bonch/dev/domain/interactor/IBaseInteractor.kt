@@ -4,4 +4,6 @@ interface IBaseInteractor {
 
     fun getToken(): String?
 
+    fun isCheckoutDriver(): Boolean
+
 }

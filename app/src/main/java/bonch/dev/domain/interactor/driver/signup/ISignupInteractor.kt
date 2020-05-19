@@ -20,6 +20,10 @@ interface ISignupInteractor {
 
     fun saveDriverAccess()
 
+    fun saveCheckoutDriver(isDriver: Boolean)
+
+    fun isCheckoutDriver(): Boolean
+
     fun deletePhoto(imageId: Int, callback: NotificationHandler)
 
     fun putNewPhoto(photo: NewPhoto, callback: NotificationHandler)

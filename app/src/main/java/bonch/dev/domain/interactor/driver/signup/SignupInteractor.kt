@@ -142,6 +142,16 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
+    override fun isCheckoutDriver(): Boolean {
+        return profileStorage.isCheckoutDriver()
+    }
+
+
+    override fun saveCheckoutDriver(isDriver: Boolean) {
+        profileStorage.saveCheckoutDriver(isDriver)
+    }
+
+
     override fun getUser(callback: SignupHandler<Profile?>) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()

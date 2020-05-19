@@ -53,13 +53,18 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
         if (NetworkUtil.isNetworkConnected(context)) {
             if (isPassanger) {
                 if (profileInteractor.getDriverAccess()) {
-                    MainRouter.showView(R.id.main_driver_fragment, getView()?.getNavHost(), null)
+                    //redirect to driver
+                    profileInteractor.saveCheckoutDriver(true)
+                    MainRouter.showView(R.id.show_main_driver_fragment, getView()?.getNavHost(), null)
                 } else {
+                    //redirect to signup as driver
                     val intent = Intent(context, DriverSignupActivity::class.java)
                     fragment.startActivityForResult(intent, 1)
                 }
             } else {
-                //TODO
+                //redirect to passanger
+                profileInteractor.saveCheckoutDriver(false)
+                MainRouter.showView(R.id.show_main_passanger_fragment, getView()?.getNavHost(), null)
             }
         } else {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))

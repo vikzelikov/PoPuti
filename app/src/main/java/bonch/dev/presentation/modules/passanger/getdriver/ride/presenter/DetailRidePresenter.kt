@@ -12,28 +12,34 @@ import bonch.dev.domain.entities.passanger.getdriver.BankCard
 import bonch.dev.domain.entities.passanger.getdriver.Coordinate.fromAdr
 import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
 import bonch.dev.presentation.base.BasePresenter
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView
 import bonch.dev.presentation.modules.common.orfferprice.view.OfferPriceView
+import bonch.dev.presentation.modules.common.routing.Routing
+import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
+import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.ContractView
 import bonch.dev.route.MainRouter
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
+import javax.inject.Inject
 
 class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     ContractPresenter.IDetailRidePresenter {
+
+    @Inject
+    lateinit var routing: Routing
 
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
     private val AVERAGE_PRICE = "AVERAGE_PRICE"
     private val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
 
-
     private var searchPlace: SearchPlace? = null
-    private var routing: Routing? = null
     var fromPoint: Point? = null
     var toPoint: Point? = null
 
+
     init {
+        GetDriverComponent.getDriverComponent?.inject(this)
         searchPlace = SearchPlace(this)
     }
 
@@ -95,26 +101,25 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     override fun submitRoute() {
         val from = fromPoint
         val to = toPoint
+        val map = getMap()
 
-        if (from != null && to != null) {
+        if (from != null && to != null && map != null) {
             //update points
             fromAdr?.point = AddressPoint(from.latitude, from.longitude)
             toAdr?.point = AddressPoint(to.latitude, to.longitude)
 
-            routing = Routing(this)
-            routing?.submitRequest(from, to)
+            routing.submitRequest(from, to, true, map)
         }
     }
 
 
     override fun showRoute() {
-        routing?.showRoute()
+        routing.showRoute()
     }
 
 
     override fun removeRoute() {
-        routing?.removeRoute()
-        routing = null
+        routing.removeRoute()
     }
 
 

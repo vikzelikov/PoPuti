@@ -111,10 +111,13 @@
     <string name="save">СОХРАНИТЬ</string>
     <string name="rub">руб.</string>
     <string name="rubles">рублей</string>
-    <string name="sec">сек.</string>
+    <string name="sec">сек</string>
     <string name="seconds">секунд</string>
     <string name="seconds1">секунды</string>
     <string name="second">секунду</string>
+    <string name="min">мин</string>
+    <string name="metr">м</string>
+    <string name="km">км</string>
     <string name="waitFor">Ожидайте еще</string>
     <string name="call">Позвонить</string>
     <string name="message">Написать</string>
@@ -129,6 +132,7 @@
     <string name="waitingTime">Время простоя</string>
     <string name="navigator">Навигатор</string>
     <string name="rideEnd">Поездка завершена</string>
+    <string name="toEndRide">Завершить поездку</string>
     <string name="ratePassanger">Оцените пассажира</string>
     <string name="perfect">Отлично</string>
     <string name="whatHappens">Что случилось?</string>
@@ -186,5 +190,14 @@
     <string name="driverLicenseBack">driverLicenseReverseSide</string>
     <string name="stsFront">frontsideSTS</string>
     <string name="stsBack">backsideSTS</string>
+    <string name="offerYourPriceWait">Предлагаем вашу цену, ожидайте</string>
+    <string name="problemWithCar">Проблемы с машиной</string>
+    <string name="passangerError">Некорректное поведение пассажира</string>
+    <string name="passangerNotGoOut">Пассажир не вышел</string>
+    <string name="passangerWithChild">Пассажир не указал, что он будет с ребенком</string>
+    <string name="rideCreated">Поездка создана</string>
+    <string name="ordersEmpty">Заказов нет</string>
+    <string name="userCancelledRide">Пассажир отменил поездку</string>
+    <string name="userCancellPrice">Пассажир отклонил предложение</string>
 
 </resources>

@@ -12,6 +12,7 @@ class ProfileStorage : IProfileStorage {
     private val DRIVER_ID = "DRIVER_ID"
     private val ACCESS_TOKEN = "ACCESS_TOKEN"
     private val DRIVER_ACCESS = "DRIVER_ACCESS"
+    private val CHECKOUT_AS_DRIVER = "CHECKOUT_AS_DRIVER"
 
 
     private var realm: Realm? = null
@@ -135,6 +136,19 @@ class ProfileStorage : IProfileStorage {
     override fun getDriverAccess(): Boolean {
         val pref = App.appComponent.getSharedPref()
         return pref.getBoolean(DRIVER_ACCESS, false)
+    }
+
+
+    override fun saveCheckoutDriver(isDriver: Boolean) {
+        val editor = App.appComponent.getSharedPref().edit()
+        editor.putBoolean(CHECKOUT_AS_DRIVER, isDriver)
+        editor.apply()
+    }
+
+
+    override fun isCheckoutDriver(): Boolean {
+        val pref = App.appComponent.getSharedPref()
+        return pref.getBoolean(CHECKOUT_AS_DRIVER, false)
     }
 
 

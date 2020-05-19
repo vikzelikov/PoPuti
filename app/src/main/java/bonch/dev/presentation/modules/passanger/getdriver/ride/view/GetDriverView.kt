@@ -15,15 +15,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.passanger.getdriver.*
-import bonch.dev.domain.utils.Constants
+import bonch.dev.domain.entities.passanger.getdriver.Driver
+import bonch.dev.domain.entities.passanger.getdriver.DriverObject
+import bonch.dev.domain.entities.passanger.getdriver.ReasonCancel
+import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.MBottomSheet
+import bonch.dev.presentation.interfaces.ParentHandler
+import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passanger.getdriver.ride.adapters.DriversListAdapter
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentHandler
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ParentMapHandler
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -31,16 +33,6 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.get_driver_layout.*
-import kotlinx.android.synthetic.main.get_driver_layout.comment_back_btn
-import kotlinx.android.synthetic.main.get_driver_layout.comment_bottom_sheet
-import kotlinx.android.synthetic.main.get_driver_layout.comment_btn
-import kotlinx.android.synthetic.main.get_driver_layout.comment_done
-import kotlinx.android.synthetic.main.get_driver_layout.comment_min_text
-import kotlinx.android.synthetic.main.get_driver_layout.comment_text
-import kotlinx.android.synthetic.main.get_driver_layout.from_address
-import kotlinx.android.synthetic.main.get_driver_layout.main_info_layout
-import kotlinx.android.synthetic.main.get_driver_layout.offer_price
-import kotlinx.android.synthetic.main.get_driver_layout.to_address
 import javax.inject.Inject
 
 
@@ -179,9 +171,6 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
             hideAllBottomSheet()
         }
 
-        on_view_cancel_reason.setOnClickListener {
-            hideAllBottomSheet()
-        }
 
         comment_back_btn.setOnClickListener {
             hideAllBottomSheet()
@@ -213,9 +202,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         confirmCancelBottomSheet?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                onSlideConfirmCancel(slideOffset)
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 onChangedStateConfirmCancel(newState)
@@ -237,12 +224,10 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         commentBottomSheet?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                onSlideCancelReason(slideOffset)
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                onChangedStateCancelReason(newState)
+                onChangedStateComment(newState)
             }
         })
     }
@@ -273,31 +258,18 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         }
     }
 
-
-    fun onSlideCancelReason(slideOffset: Float) {
+    private fun onSlideCancelReason(slideOffset: Float) {
         if (slideOffset > 0) {
             on_view_cancel.alpha = slideOffset * 0.8f
         }
     }
 
 
-    fun onSlideConfirmCancel(slideOffset: Float) {
-        if (slideOffset > 0) {
-            on_view_cancel_reason.alpha = slideOffset * 0.5f
-        }
-    }
-
-
-    fun onChangedStateCancelReason(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-            hideKeyboard()
-            comment_text.clearFocus()
-        }
-
+    private fun onChangedStateCancelReason(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             on_view_cancel.visibility = View.GONE
             main_info_layout.elevation = 30f
-            hideAllBottomSheet()
+            comment_text.clearFocus()
         } else {
             confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             on_view_cancel.visibility = View.VISIBLE
@@ -306,11 +278,27 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    fun onChangedStateConfirmCancel(newState: Int) {
+    private fun onChangedStateConfirmCancel(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view_cancel_reason.visibility = View.GONE
+            get_driver_coordinator.elevation = 10f
         } else {
-            on_view_cancel_reason.visibility = View.VISIBLE
+            get_driver_coordinator.elevation = 0f
+        }
+    }
+
+
+    private fun onChangedStateComment(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+            hideKeyboard()
+            comment_text.clearFocus()
+        }
+
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            comment_text.clearFocus()
+        } else {
+            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+            on_view_cancel.visibility = View.VISIBLE
+            main_info_layout.elevation = 0f
         }
     }
 
@@ -322,6 +310,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
     private fun getConfirmCancel() {
         confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+        get_driver_coordinator.elevation = 0f
     }
 
 
@@ -362,13 +351,15 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     private fun hideAllBottomSheet() {
         if (expiredTimeBottomSheet?.state == BottomSheetBehavior.STATE_COLLAPSED) {
             on_view_cancel?.visibility = View.GONE
-            on_view_cancel_reason?.visibility = View.GONE
 
             cancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             confirmGetBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+
+        comment_text.clearFocus()
+        hideKeyboard()
     }
 
 

@@ -4,6 +4,7 @@ import android.util.Log
 import bonch.dev.data.repository.passanger.getdriver.IGetDriverRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.passanger.getdriver.IGetDriverStorage
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*
 import bonch.dev.presentation.interfaces.NotificationHandler
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent

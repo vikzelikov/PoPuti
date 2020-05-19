@@ -79,7 +79,6 @@ class DriverSignupActivity : AppCompatActivity() {
                 //try to get driver with driverId
                 if (driver.isVerify) {
                     //local save access to driver UI
-                    signupInteractor.saveDriverAccess()
                     showDriverUI()
                 } else {
                     showTableDocsView(driver)
@@ -95,7 +94,6 @@ class DriverSignupActivity : AppCompatActivity() {
                     } else if (driverData != null) {
                         if (driverData.isVerify) {
                             //local save access to driver UI
-                            signupInteractor.saveDriverAccess()
                             showDriverUI()
                         } else {
                             showTableDocsView(driverData)
@@ -206,6 +204,9 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun showDriverUI() {
+        signupInteractor.saveCheckoutDriver(true)
+        signupInteractor.saveDriverAccess()
+
         setResult(CHECKOUT)
 
         Handler().postDelayed({

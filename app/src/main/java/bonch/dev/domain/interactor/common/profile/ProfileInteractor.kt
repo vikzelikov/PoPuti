@@ -101,6 +101,16 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
+    override fun saveCheckoutDriver(isDriver: Boolean) {
+        profileStorage.saveCheckoutDriver(isDriver)
+    }
+
+
+    override fun isCheckoutDriver(): Boolean {
+        return profileStorage.isCheckoutDriver()
+    }
+
+
     override fun removeToken() {
         profileStorage.removeToken()
     }

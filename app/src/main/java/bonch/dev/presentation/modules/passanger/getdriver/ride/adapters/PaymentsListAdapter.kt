@@ -27,9 +27,7 @@ class PaymentsListAdapter @Inject constructor(private val detailRidePresenter: C
     }
 
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    override fun getItemCount() = list.size
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {

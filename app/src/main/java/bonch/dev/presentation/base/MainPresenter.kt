@@ -7,6 +7,7 @@ import bonch.dev.domain.interactor.IBaseInteractor
 import bonch.dev.presentation.interfaces.IMainActivity
 import bonch.dev.presentation.interfaces.IMainPresenter
 import bonch.dev.presentation.modules.common.rate.view.RateRideView
+import bonch.dev.presentation.modules.driver.getpassanger.view.OrdersView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.*
 import javax.inject.Inject
 
@@ -22,21 +23,37 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
     }
 
 
-    override fun getToken(): String? {
-        return baseInteractor.getToken()
+    override fun navigate() {
+        //check user login
+        val accessToken = baseInteractor.getToken()
+
+
+        if (accessToken != null) {
+            //TODO check with server if created ride already (redirect to TrackRideView)
+            //redirect to full app
+
+            if (baseInteractor.isCheckoutDriver()) {
+                getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
+            } else {
+                getView()?.getNavHost()?.navigate(R.id.main_passanger_fragment)
+            }
+        }
     }
 
 
+    //todo переделать все onBackPress выглядит некрасиво
     override fun onBackPressed() {
 
         onBackPressedSignupPassanger()
 
         onBackPressedGetDriver()
 
+        onBackPressedGetPassanger()
+
     }
 
 
-    private fun onBackPressedSignupPassanger(){
+    private fun onBackPressedSignupPassanger() {
         val nav = getView()?.getNavHost()
 
         if (nav != null) {
@@ -55,7 +72,7 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
     }
 
 
-    private fun onBackPressedGetDriver(){
+    private fun onBackPressedGetDriver() {
         val fm = getView()?.getFM()
         val navHostFragment = fm?.findFragmentById(R.id.fragment_container)
         val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
@@ -96,6 +113,16 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
         if (rateRideView?.view != null) {
             rateRideView.onBackPressed()
+        }
+    }
+
+
+    private fun onBackPressedGetPassanger() {
+        val fm = getView()?.getFM()
+
+        val ordersView = fm?.findFragmentByTag(OrdersView::class.java.simpleName) as? OrdersView?
+        if (ordersView?.view != null) {
+            getView()?.pressBack()
         }
     }
 
