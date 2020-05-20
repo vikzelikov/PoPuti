@@ -236,4 +236,9 @@ class SignupInteractor : ISignupInteractor {
         }
     }
 
+
+    override fun saveDriverID(driverId: Int) {
+        profileStorage.saveDriverId(driverId)
+    }
+
 }

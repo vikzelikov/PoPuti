@@ -124,7 +124,7 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
                             val docs = Docs()
                             docs.id = idStep.step
                             docs.imgDocs = SignupMainData.imgUri
-                            docs.isVerify = null
+                            docs.isVerify = 0
                             listDocs[idStep.step] = docs
 
                             //sent photo to server
@@ -170,7 +170,7 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
         }
     }
 
-
+    //todo remove comment code
     private fun sentPhoto(docs: Docs) {
         val uri = Uri.parse(docs.imgDocs)
         if (uri != null) {
@@ -187,18 +187,18 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
 
                 title?.let {
                     //get orientation
-                    val exifOrientation = mediaEvent.getOrientation(uri)
+                    //val exifOrientation = mediaEvent.getOrientation(uri)
 
                     //compress and convert to JPEG
                     val file = mediaEvent.convertImage(btm, it)
 
                     if (file != null) {
                         //save orientation
-                        if (exifOrientation != null) {
-                            val newExif = ExifInterface(file)
-                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
-                            newExif.saveAttributes()
-                        }
+//                        if (exifOrientation != null) {
+//                            val newExif = ExifInterface(file)
+//                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
+//                            newExif.saveAttributes()
+//                        }
 
                         //upload
                         signupInteractor.loadDocs(file, position) { isSuccess ->

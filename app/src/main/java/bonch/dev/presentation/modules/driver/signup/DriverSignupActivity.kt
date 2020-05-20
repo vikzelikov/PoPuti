@@ -73,35 +73,61 @@ class DriverSignupActivity : AppCompatActivity() {
     private fun navigateOnSignup() {
         //try to get info about driver and docs
         signupInteractor.getDriver { driver, _ ->
-            isLoading = false
 
             if (driver != null) {
-                //try to get driver with driverId
-                if (driver.isVerify) {
-                    //local save access to driver UI
-                    showDriverUI()
-                } else {
-                    showTableDocsView(driver)
-                }
+                isLoading = false
+
+                getDriverResponse(driver)
             } else {
                 //try to get driver with userId
-                signupInteractor.getUser { profile, error ->
-                    isLoading = false
-
+                signupInteractor.getUser { profile, _ ->
                     val driverData = profile?.driver
-                    if (error != null) {
-                        showNotification(resources.getString(R.string.errorSystem))
-                    } else if (driverData != null) {
+
+                    if (driverData == null) {
+                        isLoading = false
+                    } else {
                         if (driverData.isVerify) {
-                            //local save access to driver UI
+                            isLoading = false
                             showDriverUI()
+
                         } else {
-                            showTableDocsView(driverData)
+                            val driverId = driverData.driverId
+                            if (driverId != null) {
+                                signupInteractor.saveDriverID(driverId)
+
+                                signupInteractor.getDriver { driver, _ ->
+                                    driver?.let { getDriverResponse(it) }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+
+    private fun getDriverResponse(driver: DriverData) {
+        isLoading = false
+
+        if (driver.isVerify) {
+            showDriverUI()
+        } else {
+            showTableDocsView(driver)
+        }
+    }
+
+
+    private fun showDriverUI() {
+        signupInteractor.saveCheckoutDriver(true)
+        signupInteractor.saveDriverAccess()
+
+        setResult(CHECKOUT)
+
+        Handler().postDelayed({
+            //todo remove
+            finish()
+        }, 3000)
     }
 
 
@@ -200,19 +226,6 @@ class DriverSignupActivity : AppCompatActivity() {
                     on_view.visibility = View.GONE
                 }
             })
-    }
-
-
-    private fun showDriverUI() {
-        signupInteractor.saveCheckoutDriver(true)
-        signupInteractor.saveDriverAccess()
-
-        setResult(CHECKOUT)
-
-        Handler().postDelayed({
-            //todo remove
-            finish()
-        }, 3000)
     }
 
 

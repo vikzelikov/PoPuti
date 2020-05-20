@@ -125,8 +125,8 @@ class TableDocsView : Fragment(), ITableDocsView {
                         for (i in 0 until list.size) {
                             val isVerify = list[i].isVerify
 
-                            if (isVerify != null) {
-                                if (isVerify) {
+                            if (isVerify != 0) {
+                                if (isVerify == 1) {
                                     //docs is valid
                                     viewsImgDocs[i].isClickable = false
                                     viewsTitleDocs[i].setTextColor(Color.parseColor("#149319"))

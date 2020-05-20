@@ -28,4 +28,6 @@ interface ISignupInteractor {
 
     fun putNewPhoto(photo: NewPhoto, callback: NotificationHandler)
 
+    fun saveDriverID(driverId: Int)
+
 }

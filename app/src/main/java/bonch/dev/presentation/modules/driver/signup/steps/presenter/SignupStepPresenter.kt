@@ -131,6 +131,7 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
     }
 
 
+    //todo remove comment code
     private fun sentPhoto(docs: Docs) {
         val uri = Uri.parse(docs.imgDocs)
         if (uri != null) {
@@ -147,18 +148,18 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
 
                 title?.let {
                     //get orientation
-                    val exifOrientation = mediaEvent.getOrientation(uri)
+                    //val exifOrientation = mediaEvent.getOrientation(uri)
 
                     //compress and convert to JPEG
                     val file = mediaEvent.convertImage(btm, it)
 
                     if (file != null) {
                         //save orientation
-                        if (exifOrientation != null) {
-                            val newExif = ExifInterface(file)
-                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
-                            newExif.saveAttributes()
-                        }
+//                        if (exifOrientation != null) {
+//                            val newExif = ExifInterface(file)
+//                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
+//                            newExif.saveAttributes()
+//                        }
 
                         //upload
                         signupInteractor.loadDocs(file, position) { isSuccess ->

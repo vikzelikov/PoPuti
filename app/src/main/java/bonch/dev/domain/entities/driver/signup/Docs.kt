@@ -20,5 +20,5 @@ data class Docs (
 
     @SerializedName("verify")
     @Expose
-    var isVerify: Boolean? = null
+    var isVerify: Int = 0
 )
