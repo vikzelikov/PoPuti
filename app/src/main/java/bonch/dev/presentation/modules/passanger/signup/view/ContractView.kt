@@ -15,6 +15,8 @@ interface ContractView {
     interface IConfirmView : IBaseView {
         fun changeBtnEnable(enable: Boolean)
         fun getCode(): String
+        fun hideLoading()
+        fun startAnimLoading()
         fun showError()
         fun hideError()
         fun setViewTimer()

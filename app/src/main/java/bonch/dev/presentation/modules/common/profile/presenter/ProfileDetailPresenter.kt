@@ -2,14 +2,10 @@ package bonch.dev.presentation.modules.common.profile.presenter
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -20,12 +16,10 @@ import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.domain.utils.Camera
 import bonch.dev.presentation.base.BasePresenter
-import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import bonch.dev.presentation.modules.common.checkphoto.CheckPhotoView
+import bonch.dev.presentation.modules.common.media.MediaEvent
+import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import bonch.dev.presentation.modules.common.profile.view.IProfileDetailView
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
 import javax.inject.Inject
 
 
@@ -36,18 +30,23 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     lateinit var profileInteractor: IProfileInteractor
 
     private var startDataProfile: Profile? = null
+    private var mediaEvent: MediaEvent? = null
 
     private val PHOTO = "PHOTO"
     private val PROFILE_CHECK_PHOTO = 12
 
     private var isDataSaved = false
 
+
     var tempImageUri: Uri? = null
+    var oldImageUri: Uri? = null
     var imageUri: Uri? = null
 
 
     init {
         ProfileComponent.profileComponent?.inject(this)
+
+        mediaEvent = MediaEvent()
     }
 
 
@@ -80,35 +79,26 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
             //remote save
             profileInteractor.sendProfileData(profileData)
 
+
             //update start data
             startDataProfile = profileData
 
-            //TODO
             //load photo
-            //val uri = Uri.parse(profileData.imgUser)
-//            val uri = Uri.parse("")
-//            if (uri != null) {
-//                val contentResolver = App.appComponent.getContext().contentResolver
-//
-//                val btm = if (android.os.Build.VERSION.SDK_INT >= 29) {
-//                    // To handle deprication use
-//                    ImageDecoder.decodeBitmap(
-//                        ImageDecoder.createSource(
-//                            contentResolver,
-//                            uri
-//                        )
-//                    )
-//                } else {
-//                    // Use older version
-//                    MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-//                }
-//
-//                val file = convertImage(btm)
-//
-//                if (file != null) {
-//                    //profileInteractor.loadPhoto(file)
-//                }
-//            }
+            val uri = Uri.parse(profileData.imgUser)
+            val oldUri = oldImageUri
+            if (uri != null && uri != oldUri) {
+                val btm = mediaEvent?.getBitmap(uri)
+
+                if (btm != null) {
+
+                    val file = mediaEvent?.convertImage(btm, "profile")
+                    if (file != null) {
+                        println("ASDFAEWFAWEFAWEF")
+
+                        profileInteractor.loadPhoto(file)
+                    }
+                }
+            }
         }
     }
 
@@ -251,24 +241,8 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     }
 
 
-    private fun convertImage(bitmap: Bitmap): File? {
-        val context = App.appComponent.getContext()
-        val filesDir: File = context.filesDir
-        var file: File?
-
-        val os: OutputStream
-        try {
-            file = File(filesDir, "profile.jpg")
-            os = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
-            os.flush()
-            os.close()
-        } catch (e: java.lang.Exception) {
-            file = null
-            Log.e(javaClass.simpleName, "Error writing bitmap", e)
-        }
-
-        return file
+    override fun saveOldImage() {
+        oldImageUri = imageUri
     }
 
 

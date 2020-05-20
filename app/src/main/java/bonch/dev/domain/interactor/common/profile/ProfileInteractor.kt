@@ -66,17 +66,16 @@ class ProfileInteractor : IProfileInteractor {
         val userId = profileStorage.getUserId()
 
         if (token != null && userId != -1) {
-            mediaRepository.loadPhoto(token, image) { imageId, error ->
+            mediaRepository.loadPhoto(token, image) { media, error ->
                 if (error != null) {
                     //Retry request
                     //retryLoadPhoto(token, image)
-                } else if (imageId != null) {
+                } else if (media != null) {
                     val profile = profileStorage.getProfileData()
-                    //
-                    println("AAA ${imageId.id}")
-                    //TODO fix server
+
                     if (profile != null) {
-                        //profile.imgId = intArrayOf(imageId)
+                        profile.imgId = intArrayOf(media.id)
+                        println("AAAA ${profile.imgId}")
                         profileRepository.saveProfile(userId, token, profile) {}
                     }
                 }

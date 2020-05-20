@@ -1,7 +1,10 @@
 package bonch.dev.presentation.modules.passanger.signup.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -24,6 +27,8 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
 
     @Inject
     lateinit var confirmPhonePresenter: ContractPresenter.IConfirmPhonePresenter
+
+    private var isLoading = true
 
     init {
         SignupComponent.passangerSignupComponent?.inject(this)
@@ -63,7 +68,7 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
         show_phone.text = getString(R.string.showPhone).plus(" ").plus(DataSignup.phone)
 
         retry_send.setOnClickListener {
-            activity?.let{
+            activity?.let {
                 confirmPhonePresenter.startTimerRetrySend(it)
             }
         }
@@ -157,6 +162,27 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
 
     override fun getNavHost(): NavController? {
         return (activity as? MainActivity)?.navController
+    }
+
+
+    override fun startAnimLoading() {
+        progress_bar.visibility = View.VISIBLE
+        on_view.visibility = View.VISIBLE
+    }
+
+
+    override fun hideLoading() {
+        progress_bar.visibility = View.GONE
+        on_view.alpha = 0.7f
+        on_view.animate()
+            .alpha(0f)
+            .setDuration(500)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    //go to the next screen
+                    on_view.visibility = View.GONE
+                }
+            })
     }
 
 

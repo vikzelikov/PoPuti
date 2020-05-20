@@ -20,6 +20,8 @@ interface IProfileDetailPresenter {
 
     fun listenerEditText(editText: EditText)
 
+    fun saveOldImage()
+
     fun back(): Boolean
 
     fun logout()

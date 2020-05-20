@@ -264,6 +264,7 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
             if (requestCode == PROFILE_CHECK_PHOTO) {
                 //after check photo
                 //set new photo
+                profileDetailPresenter.saveOldImage()
                 profileDetailPresenter.instance().imageUri = tempImageUri
 
                 Glide.with(img_user.context).load(tempImageUri)

@@ -56,7 +56,6 @@
                 android:textSize="14sp" />
 
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,11 +67,11 @@
                     android:id="@+id/code_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_et_selector"
                     android:cursorVisible="false"
                     android:digits="1234567890"
-                    android:maxLength="4"
-                    android:background="@drawable/bg_et_selector"
                     android:inputType="number"
+                    android:maxLength="4"
                     android:textIsSelectable="false"
                     android:textSize="36sp" />
 
@@ -129,5 +128,26 @@
             android:textSize="16sp" />
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/on_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.7"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/CustomProgressBar"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
