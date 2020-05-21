@@ -6,8 +6,8 @@ import bonch.dev.data.network.driver.SignupService
 import bonch.dev.domain.entities.driver.signup.DriverData
 import bonch.dev.domain.entities.driver.signup.DriverDataDTO
 import bonch.dev.domain.entities.driver.signup.NewPhoto
-import bonch.dev.domain.interactor.driver.signup.SignupHandler
-import bonch.dev.presentation.interfaces.NotificationHandler
+import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ class SignupRepository : ISignupRepository {
         driverData: DriverData,
         token: String,
         userId: Int,
-        callback: SignupHandler<DriverDataDTO?>
+        callback: DataHandler<DriverDataDTO?>
     ) {
         var response: Response<DriverDataDTO>
 
@@ -71,7 +71,7 @@ class SignupRepository : ISignupRepository {
     override fun getDriver(
         driverId: Int,
         token: String,
-        callback: SignupHandler<DriverData?>
+        callback: DataHandler<DriverData?>
     ) {
         var response: Response<DriverData>
 
@@ -116,7 +116,7 @@ class SignupRepository : ISignupRepository {
         photo: NewPhoto,
         token: String,
         driverId: Int,
-        callback: NotificationHandler
+        callback: SuccessHandler
     ) {
         var response: Response<*>
 

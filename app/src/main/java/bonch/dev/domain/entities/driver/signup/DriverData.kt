@@ -1,5 +1,6 @@
 package bonch.dev.domain.entities.driver.signup
 
+import bonch.dev.domain.entities.common.media.Photo
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -34,7 +35,7 @@ open class DriverData(
 
     @SerializedName("documents")
     @Expose
-    var docsArray: Array<Docs> = arrayOf()
+    var photoArray: Array<Photo> = arrayOf()
 )
 
 

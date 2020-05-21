@@ -2,6 +2,7 @@ package bonch.dev.domain.entities.common.profile
 
 import android.os.Parcel
 import android.os.Parcelable
+import bonch.dev.domain.entities.common.media.Photo
 import bonch.dev.domain.entities.driver.signup.DriverData
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -55,6 +56,11 @@ open class Profile(
     @SerializedName("photo")
     @Expose
     var imgId: IntArray? = intArrayOf(),
+
+    @Ignore
+    @SerializedName("photos")
+    @Expose
+    var photos: Array<Photo>? = null,
 
     @Ignore
     @SerializedName("driver")

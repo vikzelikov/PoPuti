@@ -6,7 +6,9 @@ import bonch.dev.domain.entities.common.profile.Profile
 
 interface IProfileDetailPresenter {
 
-    fun getProfileDataDB()
+    fun getProfile()
+
+    fun saveProfile(profileData: Profile?)
 
     fun instance(): ProfileDetailPresenter
 
@@ -14,13 +16,9 @@ interface IProfileDetailPresenter {
 
     fun isValidEmail(target: String): Boolean
 
-    fun saveProfileData(profileData: Profile?)
-
     fun showCheckPhoto(activity: Activity, img: String)
 
     fun listenerEditText(editText: EditText)
-
-    fun saveOldImage()
 
     fun back(): Boolean
 

@@ -3,12 +3,11 @@ package bonch.dev.presentation.modules.driver.signup.steps.presenter
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.domain.entities.driver.signup.Docs
+import bonch.dev.domain.entities.common.media.Photo
 import bonch.dev.domain.entities.driver.signup.SignupMainData
 import bonch.dev.domain.entities.driver.signup.SignupMainData.idStep
 import bonch.dev.domain.entities.driver.signup.SignupMainData.imgUri
@@ -104,7 +103,7 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
                 if (idStep == Step.USER_PHOTO) {
                     //todo sent this photo to profile
                 } else {
-                    val docs = Docs()
+                    val docs = Photo()
                     docs.id = idStep.step
                     docs.imgDocs = imgUri
                     listDocs.add(docs)
@@ -132,13 +131,13 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
 
 
     //todo remove comment code
-    private fun sentPhoto(docs: Docs) {
-        val uri = Uri.parse(docs.imgDocs)
+    private fun sentPhoto(photo: Photo) {
+        val uri = Uri.parse(photo.imgDocs)
         if (uri != null) {
             //convert to Bitmap
             val btm = mediaEvent.getBitmap(uri)
 
-            val position = docs.id
+            val position = photo.id
 
             if (position != null) {
                 listDocs[position].id = null

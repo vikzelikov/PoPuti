@@ -10,7 +10,8 @@ import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.driver.signup.DriverData
 import bonch.dev.domain.entities.driver.signup.NewPhoto
 import bonch.dev.domain.entities.driver.signup.SignupMainData
-import bonch.dev.presentation.interfaces.NotificationHandler
+import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.driver.signup.SignupComponent
 import java.io.File
 import javax.inject.Inject
@@ -38,7 +39,7 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun loadDocs(image: File, id: Int, callback: NotificationHandler) {
+    override fun loadDocs(image: File, id: Int, callback: SuccessHandler) {
         val token = profileStorage.getToken()
 
         if (token != null) {
@@ -75,7 +76,7 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun createDriver(driver: DriverData, callback: NotificationHandler) {
+    override fun createDriver(driver: DriverData, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
@@ -108,7 +109,7 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun getDriver(callback: SignupHandler<DriverData?>) {
+    override fun getDriver(callback: DataHandler<DriverData?>) {
         val token = profileStorage.getToken()
         val driverId = profileStorage.getDriverId()
 
@@ -152,7 +153,7 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun getUser(callback: SignupHandler<Profile?>) {
+    override fun getUser(callback: DataHandler<Profile?>) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
@@ -181,7 +182,7 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun putNewPhoto(photo: NewPhoto, callback: NotificationHandler) {
+    override fun putNewPhoto(photo: NewPhoto, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val driverId = profileStorage.getDriverId()
 
@@ -210,7 +211,7 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun deletePhoto(imageId: Int, callback: NotificationHandler) {
+    override fun deletePhoto(imageId: Int, callback: SuccessHandler) {
         val token = profileStorage.getToken()
 
         if (token != null) {

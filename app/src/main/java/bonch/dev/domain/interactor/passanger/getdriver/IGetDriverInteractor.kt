@@ -4,7 +4,7 @@ import bonch.dev.domain.entities.passanger.getdriver.Address
 import bonch.dev.domain.entities.passanger.getdriver.Driver
 import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.presentation.interfaces.NotificationHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import com.yandex.mapkit.geometry.Point
 
 typealias GeocoderHandler = (address: String?, point: Point) -> Unit
@@ -23,7 +23,7 @@ interface IGetDriverInteractor {
 
 
     //Ride
-    fun createRide(rideInfo: RideInfo, callback: NotificationHandler)
+    fun createRide(rideInfo: RideInfo, callback: SuccessHandler)
 
     fun updateRideStatus(status: StatusRide)
 

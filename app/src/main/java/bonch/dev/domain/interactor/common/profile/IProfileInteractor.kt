@@ -1,10 +1,10 @@
 package bonch.dev.domain.interactor.common.profile
 
 import bonch.dev.domain.entities.common.profile.Profile
+import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import java.io.File
 
-typealias ProfileHandler = (error: String?) -> Unit
-typealias ProfileDataHandler<T> = (data: T, error: String?) -> Unit
 
 interface IProfileInteractor {
 
@@ -16,9 +16,11 @@ interface IProfileInteractor {
 
     fun sendProfileData(profile: Profile)
 
-    fun loadPhoto(image: File)
+    fun getProfileRemote(callback: DataHandler<Profile?>)
 
-    fun getProfileData(): Profile?
+    fun loadPhoto(image: File, profile: Profile, callback: SuccessHandler)
+
+    fun getProfileLocate(): Profile?
 
     fun getDriverAccess(): Boolean
 

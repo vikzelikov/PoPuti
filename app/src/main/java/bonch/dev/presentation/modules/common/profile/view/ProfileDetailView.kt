@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -23,9 +24,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.profile_detail_activity.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import javax.inject.Inject
 
 
@@ -44,7 +42,6 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     private val EXIT = -2
 
 
-
     init {
         ProfileComponent.profileComponent?.inject(this)
 
@@ -56,7 +53,9 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.profile_detail_activity)
 
-        profileDetailPresenter.getProfileDataDB()
+        profileDetailPresenter.instance().imageUri = null
+
+        profileDetailPresenter.getProfile()
 
         setBottomSheet()
 
@@ -76,30 +75,25 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     }
 
 
-    override fun getProfileData(): Profile {
+    override fun getProfile(): Profile {
         val profileData = Profile()
         val firstName = first_name.text.toString().trim()
         val lastName = last_name.text.toString().trim()
         val email = email.text.toString().trim()
         val imageUri = profileDetailPresenter.instance().imageUri
 
-        if (imageUri != null) {
-            //if user change ava
+        //if user change ava
+        if (imageUri != null)
             profileData.imgUser = imageUri.toString()
-        }
 
-        if (firstName.isNotEmpty() && firstName.length < 20) {
+        if (firstName.isNotEmpty() && firstName.length < 20)
             profileData.firstName = firstName
-        }
 
-        if (lastName.isNotEmpty() && lastName.length < 20) {
+        if (lastName.isNotEmpty() && lastName.length < 20)
             profileData.lastName = lastName
-        }
 
         if (profileDetailPresenter.isValidEmail(email))
             profileData.email = email
-        else
-            profileData.email = ""
 
         profileData.isNotificationsEnable = notifications_switch.isChecked
         profileData.isCallsEnable = calls_switch.isChecked
@@ -108,13 +102,20 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     }
 
 
-    override fun setProfileData(profileData: Profile) {
-        if (profileData.imgUser != null) {
-            val imageUri = Uri.parse(profileData.imgUser)
-            Glide.with(img_user.context).load(imageUri)
-                .apply(RequestOptions().centerCrop().circleCrop())
-                .into(img_user)
+    override fun setProfile(profileData: Profile) {
+        val img = when {
+            profileData.photos?.last()?.imgUrl != null -> {
+                profileData.photos?.last()?.imgUrl
+            }
+            profileData.imgUser != null -> {
+                Uri.parse(profileData.imgUser)
+            }
+            else -> null
         }
+
+        Glide.with(img_user.context).load(img)
+            .apply(RequestOptions().centerCrop().circleCrop())
+            .into(img_user)
 
         phone_number.text = profileData.phone
         first_name.setText(profileData.firstName)
@@ -122,6 +123,12 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
         email.setText(profileData.email)
         notifications_switch.isChecked = profileData.isNotificationsEnable
         calls_switch.isChecked = profileData.isCallsEnable
+
+        if (profileData.rating == null) {
+            user_rating.text = "0.0"
+        } else {
+            user_rating.text = profileData.rating.toString()
+        }
     }
 
 
@@ -141,7 +148,9 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
 
 
         back_btn.setOnClickListener {
-            profileDetailPresenter.back()
+            if (profileDetailPresenter.back()) {
+                finish()
+            }
         }
 
         make_photo.setOnClickListener {
@@ -264,7 +273,6 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
             if (requestCode == PROFILE_CHECK_PHOTO) {
                 //after check photo
                 //set new photo
-                profileDetailPresenter.saveOldImage()
                 profileDetailPresenter.instance().imageUri = tempImageUri
 
                 Glide.with(img_user.context).load(tempImageUri)
@@ -288,29 +296,37 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     }
 
 
-    override fun showNotifications(isPositive: Boolean) {
-        val view = notification
+    override fun showNotifications(text: String, isPositive: Boolean) {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                val view = notification
 
-        if (isPositive) {
-            handlerAnimation?.removeCallbacksAndMessages(null)
-            handlerAnimation = Handler()
-            view.translationY = 0.0f
-            view.alpha = 0.0f
+                if (isPositive) {
+                    view.text = text
+                    handlerAnimation?.removeCallbacksAndMessages(null)
+                    handlerAnimation = Handler()
+                    view.translationY = 0.0f
+                    view.alpha = 0.0f
 
-            view.animate()
-                .setDuration(500L)
-                .translationY(100f)
-                .alpha(1.0f)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        super.onAnimationEnd(animation)
-                        handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
-                    }
-                })
-        } else {
-            //error popup
-            getBottomSheet(errorBottomSheet)
+                    view.animate()
+                        .setDuration(500L)
+                        .translationY(100f)
+                        .alpha(1.0f)
+                        .setListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator?) {
+                                super.onAnimationEnd(animation)
+                                handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
+                            }
+                        })
+                } else {
+                    //error popup
+                    getBottomSheet(errorBottomSheet)
+                }
+            }
         }
+
+        mainHandler.post(myRunnable)
     }
 
 
@@ -331,11 +347,6 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     }
 
 
-    override fun finishAvtivity() {
-        finish()
-    }
-
-
     override fun getNavHost(): NavController? {
         return null
     }
@@ -353,7 +364,30 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     }
 
 
+    override fun startAnimLoading() {
+        progress_bar.visibility = View.VISIBLE
+        on_view.visibility = View.VISIBLE
+    }
+
+
+    override fun hideLoading() {
+        progress_bar.visibility = View.GONE
+        on_view.alpha = 0.7f
+        on_view.animate()
+            .alpha(0f)
+            .setDuration(500)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    //go to the next screen
+                    on_view.visibility = View.GONE
+                }
+            })
+    }
+
+
     override fun onDestroy() {
+        profileDetailPresenter.instance().imageUri = null
+        profileDetailPresenter.instance().tempImageUri = null
         profileDetailPresenter.instance().detachView()
         profileDetailPresenter.onDestroy()
         super.onDestroy()

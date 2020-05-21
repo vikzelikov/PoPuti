@@ -1,6 +1,8 @@
 package bonch.dev.presentation.modules.common.profile.presenter
 
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
@@ -30,13 +32,34 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     }
 
 
-    override fun getProfileDataDB() {
+    override fun getProfile() {
+        var profile: Profile?
+
+        val context = App.appComponent.getContext()
+        if (!NetworkUtil.isNetworkConnected(context)) {
+            getView()?.showNotification(context.resources.getString(R.string.checkInternet))
+        }
+
         profileInteractor.initRealm()
 
-        val profileData = profileInteractor.getProfileData()
+        profileInteractor.getProfileRemote { profileData, _ ->
+            val mainHandler = Handler(Looper.getMainLooper())
+            val myRunnable = Runnable {
+                kotlin.run {
+                    profile = profileData
+                    profile = profileData
 
-        profileData?.let {
-            getView()?.setProfileData(it)
+                    //try to get from locate storage
+                    if (profile == null) {
+                        profile = profileInteractor.getProfileLocate()
+                    }
+
+                    profile?.let {
+                        getView()?.setProfile(it)
+                    }
+                }
+            }
+            mainHandler.post(myRunnable)
         }
     }
 
@@ -55,7 +78,11 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                 if (profileInteractor.getDriverAccess()) {
                     //redirect to driver
                     profileInteractor.saveCheckoutDriver(true)
-                    MainRouter.showView(R.id.show_main_driver_fragment, getView()?.getNavHost(), null)
+                    MainRouter.showView(
+                        R.id.show_main_driver_fragment,
+                        getView()?.getNavHost(),
+                        null
+                    )
                 } else {
                     //redirect to signup as driver
                     val intent = Intent(context, DriverSignupActivity::class.java)
@@ -64,7 +91,11 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
             } else {
                 //redirect to passanger
                 profileInteractor.saveCheckoutDriver(false)
-                MainRouter.showView(R.id.show_main_passanger_fragment, getView()?.getNavHost(), null)
+                MainRouter.showView(
+                    R.id.show_main_passanger_fragment,
+                    getView()?.getNavHost(),
+                    null
+                )
             }
         } else {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
@@ -83,7 +114,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
         val profileData = data.getParcelableExtra<Profile>(PROFILE_DATA)
         profileData?.let {
-            getView()?.setProfileData(it)
+            getView()?.setProfile(it)
         }
     }
 

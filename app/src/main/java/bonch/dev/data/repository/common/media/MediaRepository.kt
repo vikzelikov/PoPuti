@@ -5,7 +5,7 @@ import bonch.dev.App
 import bonch.dev.data.network.common.MediaService
 import bonch.dev.domain.entities.common.media.Media
 import bonch.dev.domain.entities.common.media.MediaObject
-import bonch.dev.presentation.interfaces.NotificationHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,7 +73,7 @@ class MediaRepository : IMediaRepository {
     }
 
 
-    override fun deletePhoto(token: String, imageId: Int, callback: NotificationHandler) {
+    override fun deletePhoto(token: String, imageId: Int, callback: SuccessHandler) {
         var response: Response<*>
 
         CoroutineScope(Dispatchers.IO).launch {

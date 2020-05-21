@@ -6,7 +6,7 @@ import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.passanger.getdriver.IGetDriverStorage
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*
-import bonch.dev.presentation.interfaces.NotificationHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
 import com.yandex.mapkit.geometry.Point
 import io.realm.RealmResults
@@ -48,7 +48,7 @@ class GetDriverInteractor : IGetDriverInteractor {
 
 
     //create ride with server
-    override fun createRide(rideInfo: RideInfo, callback: NotificationHandler) {
+    override fun createRide(rideInfo: RideInfo, callback: SuccessHandler) {
         val userId = profileStorage.getUserId()
         val token = profileStorage.getToken()
 

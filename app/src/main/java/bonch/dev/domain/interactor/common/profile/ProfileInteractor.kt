@@ -5,6 +5,8 @@ import bonch.dev.data.repository.common.media.IMediaRepository
 import bonch.dev.data.repository.common.profile.IProfileRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.domain.entities.common.profile.Profile
+import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import java.io.File
 import javax.inject.Inject
@@ -61,36 +63,76 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun loadPhoto(image: File) {
+    override fun getProfileRemote(callback: DataHandler<Profile?>) {
+        val token = profileStorage.getToken()
+        val userId = profileStorage.getUserId()
+
+        if (token != null && userId != -1) {
+            profileRepository.getProfile(userId, token) { profile, error ->
+                if (error != null) {
+                    //retry request
+                    profileRepository.getProfile(userId, token) { profileData, _ ->
+                        if (profileData != null) {
+                            //ok
+                            callback(profile, null)
+                        } else {
+                            //error
+                            callback(null, "Error")
+                        }
+                    }
+                } else if (profile != null) {
+                    //ok
+                    callback(profile, null)
+                }
+            }
+        } else {
+            //error
+            callback(null, "Error")
+        }
+    }
+
+
+    override fun loadPhoto(image: File, profile: Profile, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
         if (token != null && userId != -1) {
             mediaRepository.loadPhoto(token, image) { media, error ->
-                if (error != null) {
-                    //Retry request
-                    //retryLoadPhoto(token, image)
-                } else if (media != null) {
-                    val profile = profileStorage.getProfileData()
-
-                    if (profile != null) {
-                        profile.imgId = intArrayOf(media.id)
-                        println("AAAA ${profile.imgId}")
-                        profileRepository.saveProfile(userId, token, profile) {}
+                when {
+                    error != null -> {
+                        //Retry request
+                        mediaRepository.loadPhoto(token, image) { mediaObj, _ ->
+                            if (mediaObj != null) {
+                                profile.imgId = intArrayOf(mediaObj.id)
+                                profileRepository.saveProfile(userId, token, profile) { err ->
+                                    if (err != null) {
+                                        //Retry request
+                                        profileRepository.saveProfile(userId, token, profile) {
+                                            callback(true)
+                                        }
+                                    } else callback(true)
+                                }
+                            } else callback(false)
+                        }
                     }
+                    media != null -> {
+                        profile.imgId = intArrayOf(media.id)
+                        profileRepository.saveProfile(userId, token, profile) { err ->
+                            if (err != null) {
+                                //Retry request
+                                profileRepository.saveProfile(userId, token, profile) {
+                                    callback(true)
+                                }
+                            } else callback(true)
+                        }
+                    } else -> callback(false)
                 }
             }
-        } else {
-            Log.d(
-                "LOAD_PHOTO",
-                "Load photo to server failed (token: $token)"
-            )
-        }
+        } else callback(false)
     }
 
 
-
-    override fun getProfileData(): Profile? {
+    override fun getProfileLocate(): Profile? {
         return profileStorage.getProfileData()
     }
 

@@ -1,9 +1,9 @@
-package bonch.dev.domain.entities.driver.signup
+package bonch.dev.domain.entities.common.media
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class Docs (
+data class Photo (
     @SerializedName("id")
     @Expose
     var id: Int? = null,

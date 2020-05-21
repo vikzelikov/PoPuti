@@ -5,7 +5,7 @@ import bonch.dev.presentation.interfaces.IBaseView
 
 interface IProfileView : IBaseView {
 
-    fun setProfileData(profileData: Profile?)
+    fun setProfile(profileData: Profile)
 
     fun showNotification(text: String)
 

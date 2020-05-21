@@ -3,6 +3,8 @@ package bonch.dev.presentation.modules.common.profile.presenter
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -12,9 +14,11 @@ import android.widget.EditText
 import android.widget.TextView
 import bonch.dev.App
 import bonch.dev.Permissions
+import bonch.dev.R
 import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.domain.utils.Camera
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.checkphoto.CheckPhotoView
 import bonch.dev.presentation.modules.common.media.MediaEvent
@@ -36,10 +40,10 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     private val PROFILE_CHECK_PHOTO = 12
 
     private var isDataSaved = false
+    private var isPhotoUploaded = true
 
 
     var tempImageUri: Uri? = null
-    var oldImageUri: Uri? = null
     var imageUri: Uri? = null
 
 
@@ -50,25 +54,55 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     }
 
 
-    override fun getProfileDataDB() {
+    override fun getProfile() {
+        var profile: Profile?
+
+        val context = App.appComponent.getContext()
+        if (!NetworkUtil.isNetworkConnected(context)) {
+            getView()?.showNotifications(context.resources.getString(R.string.checkInternet), true)
+        }
+
         profileInteractor.initRealm()
+        getView()?.startAnimLoading()
 
-        val profileData = profileInteractor.getProfileData()
+        profileInteractor.getProfileRemote { profileData, _ ->
+            val mainHandler = Handler(Looper.getMainLooper())
+            val myRunnable = Runnable {
+                kotlin.run {
+                    profile = profileData
 
-        profileData?.let {
-            //set start data
-            startDataProfile = profileData
+                    //try to get from locate storage
+                    if (profile == null) {
+                        profile = profileInteractor.getProfileLocate()
+                    }
+                    //todo remove it ******** пока не свяжем это с сервером
+                    val x = profileInteractor.getProfileLocate()
+                    x?.let {
+                        profile?.isCallsEnable = x.isCallsEnable
+                        profile?.isNotificationsEnable = x.isNotificationsEnable
+                    }
+                    //todo*********
 
-            if (it.imgUser != null) {
-                imageUri = Uri.parse(it.imgUser)
+                    getView()?.hideLoading()
+
+                    profile?.let {
+                        //set start data
+                        startDataProfile = profile
+
+                        if (it.imgUser != null) {
+                            imageUri = Uri.parse(it.imgUser)
+                        }
+
+                        getView()?.setProfile(it)
+                    }
+                }
             }
-
-            getView()?.setProfileData(it)
+            mainHandler.post(myRunnable)
         }
     }
 
 
-    override fun saveProfileData(profileData: Profile?) {
+    override fun saveProfile(profileData: Profile?) {
         if (profileData != null) {
             //set phone (not allow user to change it)
             profileData.phone = startDataProfile?.phone
@@ -79,25 +113,25 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
             //remote save
             profileInteractor.sendProfileData(profileData)
 
-
             //update start data
             startDataProfile = profileData
 
             //load photo
-            val uri = Uri.parse(profileData.imgUser)
-            val oldUri = oldImageUri
-            if (uri != null && uri != oldUri) {
-                val btm = mediaEvent?.getBitmap(uri)
+            imageUri?.let {
+                isPhotoUploaded = false
+                imageUri = null
 
-                if (btm != null) {
-
-                    val file = mediaEvent?.convertImage(btm, "profile")
-                    if (file != null) {
-                        println("ASDFAEWFAWEFAWEF")
-
-                        profileInteractor.loadPhoto(file)
-                    }
-                }
+                Thread(Runnable {
+                    val btm = mediaEvent?.getBitmap(it)
+                    if (btm != null) {
+                        val file = mediaEvent?.convertImage(btm, "photo")
+                        if (file != null) {
+                            profileInteractor.loadPhoto(file, profileData) {
+                                isPhotoUploaded = true
+                            }
+                        } else isPhotoUploaded = true
+                    } else isPhotoUploaded = true
+                }).start()
             }
         }
     }
@@ -124,27 +158,33 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     override fun back(): Boolean {
         getView()?.hideKeyboard()
 
+        if (!NetworkUtil.isNetworkConnected(App.appComponent.getContext())) return true
+
         val isDataComplete = getView()?.isDataNamesComplete()
+        val res = App.appComponent.getContext().resources
 
         return if (isDataComplete != null) {
             if (isDataComplete) {
-                val profileData = getView()?.getProfileData()
-                profileData?.imgUser = imageUri?.toString()
-                setDataIntent(profileData)
 
-                saveProfileData(profileData)
+                if (isDataChanged()) {
+                    val profileData = getView()?.getProfile()
 
-                getView()?.finishAvtivity()
+                    setDataIntent(profileData)
 
-                true
+                    saveProfile(profileData)
+                }
+
+                if (isPhotoUploaded) {
+                    true
+                } else {
+                    getView()?.showNotifications(res.getString(R.string.photoProfileLoading), true)
+                    false
+                }
             } else {
-                getView()?.showNotifications(false)
+                getView()?.showNotifications(res.getString(R.string.dataSaved), false)
                 false
             }
-
-        } else {
-            false
-        }
+        } else false
     }
 
 
@@ -155,13 +195,16 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
             isShowPopup = true
         }
 
+        profileData?.imgUser = tempImageUri?.toString()
+
         getView()?.setDataIntent(isShowPopup, profileData)
     }
 
 
     private fun isDataChanged(): Boolean {
         var isChanged = false
-        val actualProfile = getView()?.getProfileData()
+        val actualProfile = getView()?.getProfile()
+
         //set photo
         actualProfile?.imgUser = imageUri?.toString()
 
@@ -170,6 +213,8 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                 || it.lastName != actualProfile?.lastName
                 || it.email != actualProfile?.email
                 || it.imgUser != actualProfile?.imgUser
+                || it.isNotificationsEnable != actualProfile?.isNotificationsEnable
+                || it.isCallsEnable != actualProfile.isCallsEnable
             ) {
                 isChanged = true
             }
@@ -189,10 +234,13 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                 val isDataComplete = getView()?.isDataNamesComplete()
 
                 isDataSaved = if (isDataComplete != null && isDataComplete) {
-                    val profileData = getView()?.getProfileData()
-                    profileData?.imgUser = imageUri?.toString()
+                    if (isDataChanged()) {
+                        val profileData = getView()?.getProfile()
 
-                    saveProfileData(profileData)
+                        saveProfile(profileData)
+
+                        startDataProfile = profileData
+                    }
 
                     true
                 } else {
@@ -200,7 +248,8 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                 }
 
                 isDataComplete?.let {
-                    getView()?.showNotifications(it)
+                    val res = App.appComponent.getContext().resources
+                    getView()?.showNotifications(res.getString(R.string.dataSaved), it)
                 }
 
                 getView()?.hideKeyboard()
@@ -238,11 +287,6 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
         } else {
             Patterns.EMAIL_ADDRESS.matcher(target).matches() && target.length < 40
         }
-    }
-
-
-    override fun saveOldImage() {
-        oldImageUri = imageUri
     }
 
 

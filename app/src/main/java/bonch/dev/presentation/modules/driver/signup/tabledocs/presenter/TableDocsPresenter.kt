@@ -3,12 +3,11 @@ package bonch.dev.presentation.modules.driver.signup.tabledocs.presenter
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.domain.entities.driver.signup.Docs
+import bonch.dev.domain.entities.common.media.Photo
 import bonch.dev.domain.entities.driver.signup.NewPhoto
 import bonch.dev.domain.entities.driver.signup.SignupMainData
 import bonch.dev.domain.entities.driver.signup.SignupMainData.idStep
@@ -121,7 +120,8 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
                     signupInteractor.deletePhoto(imgId) { isSuccess ->
                         if (isSuccess) {
                             //success delete old photo from server
-                            val docs = Docs()
+                            val docs =
+                                Photo()
                             docs.id = idStep.step
                             docs.imgDocs = SignupMainData.imgUri
                             docs.isVerify = 0
@@ -171,13 +171,13 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
     }
 
     //todo remove comment code
-    private fun sentPhoto(docs: Docs) {
-        val uri = Uri.parse(docs.imgDocs)
+    private fun sentPhoto(photo: Photo) {
+        val uri = Uri.parse(photo.imgDocs)
         if (uri != null) {
             //convert to Bitmap
             val btm = mediaEvent.getBitmap(uri)
 
-            val position = docs.id
+            val position = photo.id
 
             if (position != null) {
                 listDocs[position].id = null
@@ -227,7 +227,7 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
     //sort docs by title
     override fun sortDocs() {
         //copy arr
-        val arr = arrayListOf<Docs>()
+        val arr = arrayListOf<Photo>()
         arr.addAll(listDocs)
 
         arr.forEach {

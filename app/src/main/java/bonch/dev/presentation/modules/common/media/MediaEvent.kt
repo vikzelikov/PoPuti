@@ -23,7 +23,7 @@ class MediaEvent : IMediaEvent {
         try {
             file = File(filesDir, "$name.jpg")
             os = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, os)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, os)
             os.flush()
             os.close()
         } catch (e: java.lang.Exception) {

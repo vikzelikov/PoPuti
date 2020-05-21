@@ -23,6 +23,7 @@ import bonch.dev.route.MainRouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.profile_fragment.*
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -77,7 +78,7 @@ class ProfileView : Fragment(), IProfileView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        profilePresenter.getProfileDataDB()
+        profilePresenter.getProfile()
 
         setListeners()
 
@@ -175,15 +176,30 @@ class ProfileView : Fragment(), IProfileView {
     }
 
 
-    override fun setProfileData(profileData: Profile?) {
-        name_user.text = profileData?.firstName.plus(" ").plus(profileData?.lastName)
+    override fun setProfile(profileData: Profile) {
+        name_user.text = profileData.firstName.plus(" ").plus(profileData.lastName)
 
-        if (profileData?.imgUser != null) {
-            val imageUri = Uri.parse(profileData.imgUser)
-            Glide.with(img_user.context).load(imageUri)
+        val img = when {
+            profileData.photos?.last()?.imgUrl != null -> {
+                profileData.photos?.last()?.imgUrl
+            }
+            profileData.imgUser != null -> {
+                Uri.parse(profileData.imgUser)
+            }
+            else -> null
+        }
+
+        if (img != null)
+            Glide.with(img_user.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .into(img_user)
+
+        if (profileData.rating == null) {
+            user_rating.text = "0.0"
+        } else {
+            user_rating.text = profileData.rating.toString()
         }
+
     }
 
 

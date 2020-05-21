@@ -8,7 +8,7 @@ interface IProfilePresenter {
 
     fun instance(): ProfilePresenter
 
-    fun getProfileDataDB()
+    fun getProfile()
 
     fun showFullProfile(fragment: Fragment)
 

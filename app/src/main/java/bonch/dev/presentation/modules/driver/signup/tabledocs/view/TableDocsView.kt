@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.domain.entities.driver.signup.Docs
+import bonch.dev.domain.entities.common.media.Photo
 import bonch.dev.domain.entities.driver.signup.SignupMainData
 import bonch.dev.domain.entities.driver.signup.Step
 import bonch.dev.domain.utils.Camera
@@ -83,7 +83,7 @@ class TableDocsView : Fragment(), ITableDocsView {
 
     override fun loadPhoto() {
         Thread(Runnable {
-            val listDocs: ArrayList<Docs> = SignupMainData.listDocs
+            val listDocs: ArrayList<Photo> = SignupMainData.listDocs
             setDocs(listDocs)
         }).start()
     }
@@ -112,7 +112,7 @@ class TableDocsView : Fragment(), ITableDocsView {
     }
 
 
-    private fun setDocs(list: ArrayList<Docs>) {
+    private fun setDocs(list: ArrayList<Photo>) {
         val viewsImgDocs = getImgDocs()
         val viewsTitleDocs = getTitleDocs()
         val viewsTicsDocs = getTicsDocs()

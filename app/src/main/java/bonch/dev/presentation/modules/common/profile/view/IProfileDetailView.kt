@@ -7,16 +7,18 @@ import java.io.InputStream
 
 interface IProfileDetailView : IBaseView {
 
-    fun setProfileData(profileData: Profile)
+    fun setProfile(profileData: Profile)
 
-    fun getProfileData(): Profile
+    fun getProfile(): Profile
 
     fun isDataNamesComplete(): Boolean
 
     fun setDataIntent(isShowPopup: Boolean, profileData: Profile?)
 
-    fun showNotifications(isPositive: Boolean)
+    fun showNotifications(text: String, isPositive: Boolean)
 
-    fun finishAvtivity()
+    fun startAnimLoading()
+
+    fun hideLoading()
 
 }

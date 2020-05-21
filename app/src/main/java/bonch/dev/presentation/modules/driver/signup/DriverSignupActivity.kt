@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
@@ -33,7 +32,6 @@ class DriverSignupActivity : AppCompatActivity() {
     private var handlerAnimation: Handler? = null
 
     private val DRIVER_CREATED = "DRIVER_CREATED"
-    private var isLoading = true
     private val CHECKOUT = -3
 
     init {
@@ -75,7 +73,7 @@ class DriverSignupActivity : AppCompatActivity() {
         signupInteractor.getDriver { driver, _ ->
 
             if (driver != null) {
-                isLoading = false
+                hideLoading()
 
                 getDriverResponse(driver)
             } else {
@@ -84,10 +82,10 @@ class DriverSignupActivity : AppCompatActivity() {
                     val driverData = profile?.driver
 
                     if (driverData == null) {
-                        isLoading = false
+                        hideLoading()
                     } else {
                         if (driverData.isVerify) {
-                            isLoading = false
+                            hideLoading()
                             showDriverUI()
 
                         } else {
@@ -108,7 +106,7 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun getDriverResponse(driver: DriverData) {
-        isLoading = false
+        hideLoading()
 
         if (driver.isVerify) {
             showDriverUI()
@@ -124,17 +122,14 @@ class DriverSignupActivity : AppCompatActivity() {
 
         setResult(CHECKOUT)
 
-        Handler().postDelayed({
-            //todo remove
-            finish()
-        }, 3000)
+        finish()
     }
 
 
     private fun showTableDocsView(driver: DriverData) {
         val bundle = Bundle()
         bundle.putBoolean(DRIVER_CREATED, true)
-        SignupMainData.listDocs = driver.docsArray.toCollection(ArrayList())
+        SignupMainData.listDocs = driver.photoArray.toCollection(ArrayList())
 
         //show table docs
         MainRouter.showView(R.id.show_start_table_docs_view, navController, bundle)
@@ -142,22 +137,8 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun startAnimLoading() {
-        Thread(Runnable {
-            while (true) {
-                val isLoading = this.isLoading
-                if (!isLoading) {
-                    val mainHandler = Handler(Looper.getMainLooper())
-                    val myRunnable = Runnable {
-                        kotlin.run {
-                            hideLoading()
-                        }
-                    }
-
-                    mainHandler.post(myRunnable)
-                    break
-                }
-            }
-        }).start()
+        progress_bar.visibility = View.VISIBLE
+        on_view.visibility = View.VISIBLE
     }
 
 

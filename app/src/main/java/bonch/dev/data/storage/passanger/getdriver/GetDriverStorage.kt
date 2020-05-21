@@ -94,7 +94,6 @@ class GetDriverStorage : IGetDriverStorage {
                 realm?.insertOrUpdate(it)
             }
         }
-
     }
 
 

@@ -142,6 +142,7 @@
     <string name="callSupport">Обратитесь в техническую поддержку</string>
     <string name="errorSystem">Произошла ошибка системы</string>
     <string name="photoLoading">Фото загружаются…</string>
+    <string name="photoProfileLoading">Фото загружается…</string>
     <string name="place">Место</string>
     <string name="chatEmpty">Сообщений нет</string>
     <string name="checkInternet">Проверьте Интернет-соединение</string>

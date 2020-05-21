@@ -4,8 +4,8 @@ import android.util.Log
 import bonch.dev.App
 import bonch.dev.data.network.common.ProfileService
 import bonch.dev.domain.entities.common.profile.Profile
-import bonch.dev.domain.interactor.common.profile.ProfileDataHandler
-import bonch.dev.domain.interactor.common.profile.ProfileHandler
+import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.ErrorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class ProfileRepository : IProfileRepository {
         id: Int,
         token: String,
         profileData: Profile,
-        callback: ProfileHandler
+        callback: ErrorHandler
     ) {
         var response: Response<*>
 
@@ -33,6 +33,8 @@ class ProfileRepository : IProfileRepository {
                 //set headers
                 val headers = hashMapOf<String, String>()
                 headers["Authorization"] = "Bearer $token"
+
+                if(profileData.email == null) profileData.email = ""
 
                 response = service.saveProfile(headers, id, profileData)
 
@@ -62,7 +64,7 @@ class ProfileRepository : IProfileRepository {
     override fun getProfile(
         id: Int,
         token: String,
-        callback: ProfileDataHandler<Profile?>
+        callback: DataHandler<Profile?>
     ) {
         var response: Response<Profile>
 
