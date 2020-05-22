@@ -2,10 +2,10 @@ package bonch.dev.presentation.modules.passanger.getdriver.ride.presenter
 
 import android.os.Handler
 import android.view.View
-import bonch.dev.domain.entities.passanger.getdriver.Address
-import bonch.dev.domain.entities.passanger.getdriver.AddressPoint
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.fromAdr
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
+import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.AddressPoint
+import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
+import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.domain.interactor.passanger.getdriver.IGetDriverInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
@@ -79,7 +79,10 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                     address,
                     NOT_DESCRIPTION,
                     null,
-                    AddressPoint(point.latitude, point.longitude)
+                    AddressPoint(
+                        point.latitude,
+                        point.longitude
+                    )
                 )
             } else {
                 toAdr = Address(
@@ -87,7 +90,10 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                     address,
                     NOT_DESCRIPTION,
                     null,
-                    AddressPoint(point.latitude, point.longitude)
+                    AddressPoint(
+                        point.latitude,
+                        point.longitude
+                    )
                 )
             }
 

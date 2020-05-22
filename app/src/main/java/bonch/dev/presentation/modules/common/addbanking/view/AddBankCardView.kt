@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passanger.getdriver.addcard.view
+package bonch.dev.presentation.modules.common.addbanking.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -11,17 +11,18 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.R
-import bonch.dev.domain.entities.passanger.getdriver.BankCard
+import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.domain.utils.Keyboard.hideKeyboard
 import bonch.dev.domain.utils.Keyboard.showKeyboard
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.presenter.IAddBankCardPresenter
+import bonch.dev.presentation.modules.common.addbanking.presenter.IAddBankCardPresenter
 import kotlinx.android.synthetic.main.add_bank_card_activity.*
 import javax.inject.Inject
 
 
-class AddBankCardView : AppCompatActivity(), IAddBankCardView {
+class AddBankCardView : AppCompatActivity(),
+    IAddBankCardView {
 
     @Inject
     lateinit var addBankCardPresenter: IAddBankCardPresenter

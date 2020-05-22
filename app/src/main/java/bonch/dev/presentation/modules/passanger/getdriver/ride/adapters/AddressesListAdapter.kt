@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
 import kotlinx.android.synthetic.main.ride_item.view.*
 import javax.inject.Inject

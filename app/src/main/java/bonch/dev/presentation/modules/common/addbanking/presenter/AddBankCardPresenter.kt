@@ -1,17 +1,15 @@
-package bonch.dev.presentation.modules.passanger.getdriver.addcard.presenter
+package bonch.dev.presentation.modules.common.addbanking.presenter
 
 import android.text.Editable
-import android.view.View
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.presentation.base.BasePresenter
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.IAddBankCardView
-import kotlinx.android.synthetic.main.add_bank_card_activity.view.*
+import bonch.dev.presentation.modules.common.addbanking.view.IAddBankCardView
 import java.lang.Exception
 import java.lang.IndexOutOfBoundsException
 
-class AddBankCardPresenter : BasePresenter<IAddBankCardView>(), IAddBankCardPresenter {
+class AddBankCardPresenter : BasePresenter<IAddBankCardView>(),
+    IAddBankCardPresenter {
 
     private var lock = false
     private val VISA = 4

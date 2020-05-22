@@ -7,8 +7,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import bonch.dev.domain.entities.common.banking.BankCard
+import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.passanger.getdriver.*
-import bonch.dev.presentation.modules.common.rate.presenter.RateRidePresenter
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer

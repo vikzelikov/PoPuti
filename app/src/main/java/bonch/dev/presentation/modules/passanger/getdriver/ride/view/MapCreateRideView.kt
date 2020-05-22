@@ -18,7 +18,7 @@ import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.di.component.passanger.DaggerGetDriverComponent
 import bonch.dev.di.module.passanger.GetDriverModule
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.fromAdr
+import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.domain.utils.Constants.API_KEY
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent

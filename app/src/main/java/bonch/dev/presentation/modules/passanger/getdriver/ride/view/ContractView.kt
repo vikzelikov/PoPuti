@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.domain.entities.passanger.getdriver.Address
-import bonch.dev.domain.entities.passanger.getdriver.BankCard
+import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.passanger.getdriver.Driver
 import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import bonch.dev.presentation.interfaces.IBaseView

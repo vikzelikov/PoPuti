@@ -8,8 +8,8 @@ import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.common.profile.ProfileStorage
 import bonch.dev.domain.interactor.passanger.getdriver.GetDriverInteractor
 import bonch.dev.domain.interactor.passanger.getdriver.IGetDriverInteractor
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.presenter.AddBankCardPresenter
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.presenter.IAddBankCardPresenter
+import bonch.dev.presentation.modules.common.addbanking.presenter.AddBankCardPresenter
+import bonch.dev.presentation.modules.common.addbanking.presenter.IAddBankCardPresenter
 import bonch.dev.di.scope.CompScope
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.*
 import dagger.Module
@@ -36,7 +36,8 @@ class GetDriverModule {
 
     @Provides
     @CompScope
-    fun provideAddBankCardPresenter(): IAddBankCardPresenter = AddBankCardPresenter()
+    fun provideAddBankCardPresenter(): IAddBankCardPresenter =
+        AddBankCardPresenter()
 
 
     @Provides

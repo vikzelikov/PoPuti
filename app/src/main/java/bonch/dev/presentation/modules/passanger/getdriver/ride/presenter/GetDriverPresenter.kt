@@ -7,7 +7,7 @@ import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
+import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.domain.interactor.passanger.getdriver.IGetDriverInteractor
 import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.BasePresenter

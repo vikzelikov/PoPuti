@@ -1,110 +1,201 @@
 package bonch.dev.presentation.modules.passanger.regulardrive.view
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
-import android.graphics.PointF
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import bonch.dev.Permissions
+import androidx.recyclerview.widget.LinearLayoutManager
+import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.utils.Constants
+import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.utils.Keyboard
-import bonch.dev.presentation.modules.passanger.regulardrive.RegularDriveComponent
+import bonch.dev.presentation.interfaces.ParentMapHandler
+import bonch.dev.presentation.modules.passanger.regulardrive.adapters.PaymentsListAdapter
 import bonch.dev.presentation.modules.passanger.regulardrive.presenter.ContractPresenter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.yandex.mapkit.Animation
-import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.directions.DirectionsFactory
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.layers.ObjectEvent
-import com.yandex.mapkit.logo.Alignment
-import com.yandex.mapkit.logo.HorizontalAlignment
-import com.yandex.mapkit.logo.VerticalAlignment
-import com.yandex.mapkit.map.*
-import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.search.SearchFactory
-import com.yandex.mapkit.user_location.UserLocationLayer
-import com.yandex.mapkit.user_location.UserLocationObjectListener
-import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.runtime.image.ImageProvider
-import kotlinx.android.synthetic.main.regular_create_ride.*
+import kotlinx.android.synthetic.main.regular_create_ride_layout.*
+import kotlinx.android.synthetic.main.regular_create_ride_layout.back_btn
+import kotlinx.android.synthetic.main.regular_create_ride_layout.cards_bottom_sheet
+import kotlinx.android.synthetic.main.regular_create_ride_layout.comment_bottom_sheet
+import kotlinx.android.synthetic.main.regular_create_ride_layout.comment_text
+import kotlinx.android.synthetic.main.regular_create_ride_layout.info_price
+import kotlinx.android.synthetic.main.regular_create_ride_layout.info_price_bottom_sheet
+import kotlinx.android.synthetic.main.regular_create_ride_layout.main_info_layout
+import kotlinx.android.synthetic.main.regular_create_ride_layout.number_card
+import kotlinx.android.synthetic.main.regular_create_ride_layout.offer_price
+import kotlinx.android.synthetic.main.regular_create_ride_layout.payment_method
+import kotlinx.android.synthetic.main.regular_create_ride_layout.payment_method_img
+import kotlinx.android.synthetic.main.regular_create_ride_layout.payments_list
+import kotlinx.android.synthetic.main.regular_create_ride_layout.selected_payment_method
+import kotlinx.android.synthetic.main.regular_create_ride_layout.show_route
 import javax.inject.Inject
 
-class CreateRegularDriveView : AppCompatActivity(), UserLocationObjectListener, CameraListener,
-    ContractView.ICreateRegularDriveView {
+class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView {
 
     @Inject
     lateinit var createRegularDrivePresenter: ContractPresenter.ICreateRegularDrivePresenter
 
-    private lateinit var mapView: MapView
-    private var userLocationLayer: UserLocationLayer? = null
-    private var handlerAnimation: Handler? = null
-    private var selectDateBottomSheet: BottomSheetBehavior<*>? = null
+    @Inject
+    lateinit var paymentsListAdapter: PaymentsListAdapter
+
+    private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    private var infoPriceBottomSheetBehavior: BottomSheetBehavior<*>? = null
+    private var daysBottomSheet: BottomSheetBehavior<*>? = null
+    private var addressesBottomSheet: BottomSheetBehavior<*>? = null
+    private var dateBottomSheet: BottomSheetBehavior<*>? = null
+    private var timeBottomSheet: BottomSheetBehavior<*>? = null
+
+    lateinit var mapView: ParentMapHandler<MapView>
 
 
-
-    init {
-        RegularDriveComponent.regularDriveComponent?.inject(this)
-
-        createRegularDrivePresenter.instance().attachView(this)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.regular_create_ride_layout, container, false)
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        //init map
-        MapKitFactory.setApiKey(Constants.API_KEY)
-        MapKitFactory.initialize(this)
-        SearchFactory.initialize(this)
-        DirectionsFactory.initialize(this)
-
-        setContentView(R.layout.regular_create_ride)
-
-        mapView = map
-
-        mapView.map?.addCameraListener(this)
-        mapView.map?.isRotateGesturesEnabled = false
-
-        mapView.map?.apply {
-            val alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
-            logo.setAlignment(alignment)
-        }
-
-        setBottomSheet()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setListeners()
 
-        onPermission()
-
+        setBottomSheet()
     }
 
 
-    private fun getSelectBottomSheet(){
-        selectDateBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    override fun setListeners() {
+
+        select_date.setOnClickListener {
+            dateBottomSheet?.let { getBottomSheet(it) }
+        }
+
+        select_time.setOnClickListener {
+            timeBottomSheet?.let { getBottomSheet(it) }
+        }
+
+        payment_method.setOnClickListener {
+            cardsBottomSheetBehavior?.let { getBottomSheet(it) }
+        }
+
+        select_days.setOnClickListener {
+            daysBottomSheet?.let { getBottomSheet(it) }
+        }
+
+        comment_btn.setOnClickListener{
+            commentEditStart()
+        }
+
+        offer_price.setOnClickListener {
+
+        }
+
+        back_btn.setOnClickListener {
+            (activity as? MapCreateRegularDrive)?.finish()
+        }
+
+        on_view.setOnClickListener {
+            hideAllBottomSheet()
+        }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == createRegularDrivePresenter.instance().OFFER_PRICE && resultCode == Activity.RESULT_OK) {
+            createRegularDrivePresenter.offerPriceDone(data)
+        }
+
+        if (requestCode == createRegularDrivePresenter.instance().ADD_BANK_CARD && resultCode == Activity.RESULT_OK) {
+            createRegularDrivePresenter.addBankCardDone(data)
+        }
+    }
+
+
+    private fun initBankingAdapter() {
+        val list = arrayListOf<BankCard>()
+
+        //add google pay
+        list.add(
+            BankCard(
+                null,
+                null,
+                null,
+                R.drawable.ic_google_pay
+            )
+        )
+        paymentsListAdapter.list = list
+
+        payments_list.apply {
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = paymentsListAdapter
+        }
     }
 
 
     private fun setBottomSheet() {
-        selectDateBottomSheet = BottomSheetBehavior.from<View>(select_time_bottom_sheet)
+        cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(cards_bottom_sheet)
+        commentBottomSheetBehavior = BottomSheetBehavior.from<View>(comment_bottom_sheet)
+        infoPriceBottomSheetBehavior = BottomSheetBehavior.from<View>(info_price_bottom_sheet)
+        daysBottomSheet = BottomSheetBehavior.from<View>(days_bottom_sheet)
+        addressesBottomSheet = BottomSheetBehavior.from<View>(bottom_sheet_addresses)
+        dateBottomSheet = BottomSheetBehavior.from<View>(select_date_bottom_sheet)
+        timeBottomSheet = BottomSheetBehavior.from<View>(select_time_bottom_sheet)
 
-        selectDateBottomSheet?.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
+        val arrView: Array<BottomSheetBehavior<*>?> = arrayOf(
+            cardsBottomSheetBehavior,
+            cardsBottomSheetBehavior,
+            infoPriceBottomSheetBehavior,
+            daysBottomSheet,
+            addressesBottomSheet,
+            dateBottomSheet,
+            timeBottomSheet
+        )
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                onSlideBottomSheet(slideOffset)
-            }
+        arrView.forEach {
+            it?.addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
 
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                onStateChangedBottomSheet(newState)
-            }
-        })
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    onSlideBottomSheet(slideOffset)
+                }
+
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    onStateChangedBottomSheet(newState)
+                }
+            })
+        }
+    }
+
+
+    override fun getBottomSheet(bottomSheetBehavior: BottomSheetBehavior<*>) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    override fun hideAllBottomSheet() {
+        hideKeyboard()
+        comment_text.clearFocus()
+
+        commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+        cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+        infoPriceBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+        daysBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+        addressesBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+        dateBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+        timeBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
 
@@ -118,9 +209,16 @@ class CreateRegularDriveView : AppCompatActivity(), UserLocationObjectListener, 
 
 
     private fun onStateChangedBottomSheet(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+            hideKeyboard()
+            comment_text.clearFocus()
+        }
+
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             on_view.visibility = View.GONE
             main_info_layout.elevation = 30f
+            comment_text.clearFocus()
+            hideAllBottomSheet()
         } else {
             on_view.visibility = View.VISIBLE
             main_info_layout.elevation = 0f
@@ -128,174 +226,107 @@ class CreateRegularDriveView : AppCompatActivity(), UserLocationObjectListener, 
     }
 
 
-    private fun onPermission() {
-        if (Permissions.isAccess(Permissions.GEO_PERMISSION, this)) {
-            setUserLocation()
+    override fun isDataComplete(): Boolean {
+        val isComplete: Boolean
+        val offerPrice = offer_price.text.toString().trim()
+
+        if (selected_payment_method.visibility == View.VISIBLE && offerPrice.length < 5) {
+            isComplete = true
+            changeBtnEnable(true)
         } else {
-            Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
+            isComplete = false
+            changeBtnEnable(false)
+        }
+
+        return isComplete
+    }
+
+
+    override fun offerPriceDone(price: Int, averagePrice: Int) {
+        offer_price.textSize = 22f
+        offer_price.setPadding(0, 5, 0, 25)
+        offer_price.setTextColor(Color.parseColor("#000000"))
+        offer_price.typeface = Typeface.DEFAULT_BOLD
+
+        if (averagePrice <= price) {
+            info_price.visibility = View.GONE
+        } else {
+            info_price.visibility = View.VISIBLE
+        }
+
+        try {
+            offer_price.text = price.toString()
+        } catch (ex: NumberFormatException) {
+            offer_price.text = "0"
+        }
+
+        //change btn enabled in case completed detail info
+        isDataComplete()
+    }
+
+
+    override fun setSelectedBankCard(bankCard: BankCard) {
+        selected_payment_method.visibility = View.VISIBLE
+        payment_method.visibility = View.GONE
+
+        number_card.text = bankCard.numberCard
+        val img = bankCard.img
+        if (img != null) {
+            payment_method_img.setImageResource(img)
+        }
+
+        cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        //change btn enabled in case completed detail info
+        isDataComplete()
+    }
+
+
+    override fun removeTickSelected() {
+        val childCount = payments_list.childCount
+
+        for (i in 0 until childCount) {
+            val holder = payments_list.getChildViewHolder(payments_list.getChildAt(i))
+            val tick = holder.itemView.findViewById<ImageView>(R.id.tick)
+            tick.setImageResource(R.drawable.ic_tick)
         }
     }
 
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (Permissions.isAccess(Permissions.GEO_PERMISSION, this)) {
-            setUserLocation()
-        }
+    override fun commentEditStart() {
+        commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-
-    override fun setListeners() {
-        select_date.setOnClickListener {
-            getSelectBottomSheet()
+        if (!comment_text.isFocused) {
+            comment_text.requestFocus()
+            //set a little timer to open keyboard
+            Handler().postDelayed({
+                val activity = activity as? MainActivity
+                activity?.let {
+                    Keyboard.showKeyboard(activity)
+                }
+            }, 200)
         }
     }
 
 
-    override fun onCameraPositionChanged(
-        p0: Map,
-        p1: CameraPosition,
-        p2: CameraUpdateSource,
-        p3: Boolean
-    ) {
-        if (p3) {
-            userLocationLayer?.resetAnchor()
+    private fun commentDone() {
+        comment_text?.clearFocus()
+
+        hideAllBottomSheet()
+    }
+
+
+    private fun changeBtnEnable(isEnable: Boolean) {
+        if (isEnable) {
+            save_ride.setBackgroundResource(R.drawable.bg_btn_blue)
+        } else {
+            save_ride.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
 
 
-    override fun getUserLocation(): UserLocationLayer? {
-        return userLocationLayer
-    }
-
-
-    override fun getMap(): MapView {
-        return mapView
-    }
-
-
-    override fun moveCamera(point: Point) {
-        mapView.map?.move(
-            CameraPosition(point, 35.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
-    }
-
-
-    override fun onObjectRemoved(view: UserLocationView) {}
-
-    //add user location icon
-    override fun onObjectAdded(userLocationView: UserLocationView) {
-        val pinIcon = userLocationView.pin.useCompositeIcon()
-
-        //for moving
-        val userMark = createRegularDrivePresenter.getBitmap(R.drawable.ic_user_mark)
-        userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
-
-        userLocationLayer?.setAnchor(
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.5).toFloat()
-            ),
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.83).toFloat()
-            )
-        )
-
-        //for staying
-        pinIcon.setIcon(
-            "pin",
-            ImageProvider.fromBitmap(userMark),
-            IconStyle().setAnchor(PointF(0.5f, 0.5f))
-                .setRotationType(RotationType.ROTATE)
-                .setZIndex(1f)
-        )
-
-        userLocationView.accuracyCircle.fillColor = Color.TRANSPARENT
-    }
-
-
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
-
-
-    private fun setUserLocation() {
-        val mapKit = MapKitFactory.getInstance()
-        //set correct zoom
-        mapView.map?.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
-
-        //init user location service
-        userLocationLayer = mapKit.createUserLocationLayer(mapView.mapWindow)
-        userLocationLayer?.let {
-            it.isHeadingEnabled = false
-            it.isVisible = true
-            it.setObjectListener(this)
-        }
-    }
-
-
-    fun showNotification(text: String) {
-        val mainHandler = Handler(Looper.getMainLooper())
-        val myRunnable = Runnable {
-            kotlin.run {
-                val view = general_notification
-
-                view.text = text
-                handlerAnimation?.removeCallbacksAndMessages(null)
-                handlerAnimation = Handler()
-                view.translationY = 0.0f
-                view.alpha = 0.0f
-
-                view.animate()
-                    .setDuration(500L)
-                    .translationY(100f)
-                    .alpha(1.0f)
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
-                            super.onAnimationEnd(animation)
-                            handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
-                        }
-                    })
-            }
-        }
-
-        mainHandler.post(myRunnable)
-    }
-
-
-    private fun hideNotifications() {
-        val view = general_notification
-
-        view.animate()
-            .setDuration(500L)
-            .translationY(-100f)
-            .alpha(0.0f)
-    }
-
-
-    override fun onStop() {
-        super.onStop()
-        MapKitFactory.getInstance().onStop()
-        mapView.onStop()
-    }
-
-
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-        mapView.onStart()
-    }
-
-
-    override fun onDestroy() {
-        createRegularDrivePresenter.instance().detachView()
-        super.onDestroy()
+    override fun getPaymentsAdapter(): PaymentsListAdapter {
+        return paymentsListAdapter
     }
 
 
@@ -304,8 +335,17 @@ class CreateRegularDriveView : AppCompatActivity(), UserLocationObjectListener, 
     }
 
 
-    override fun hideKeyboard() {
-        Keyboard.hideKeyboard(this, create_regular_ride_container)
+    override fun getMap(): MapView? {
+        return mapView()
     }
+
+
+    override fun hideKeyboard() {
+        val activity = activity as? MapCreateRegularDrive
+        activity?.let {
+            Keyboard.hideKeyboard(activity, view)
+        }
+    }
+
 
 }

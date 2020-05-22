@@ -4,6 +4,8 @@ import android.util.Log
 import bonch.dev.data.repository.passanger.getdriver.IGetDriverRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.passanger.getdriver.IGetDriverStorage
+import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.AddressPoint
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*
 import bonch.dev.presentation.interfaces.SuccessHandler
@@ -202,7 +204,11 @@ class GetDriverInteractor : IGetDriverInteractor {
 
                     val p = it.point
                     if (p != null) {
-                        tempAdr.point = AddressPoint(p.latitude, p.longitude)
+                        tempAdr.point =
+                            AddressPoint(
+                                p.latitude,
+                                p.longitude
+                            )
 
                     }
                 }

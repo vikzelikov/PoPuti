@@ -1,6 +1,6 @@
-package bonch.dev.data.repository.passanger.getdriver
+package bonch.dev.data.repository.common.ride
 
-import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.interactor.passanger.getdriver.SuggestHandler
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point

@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passanger.getdriver.addcard.view
+package bonch.dev.presentation.modules.common.addbanking.view
 
 import bonch.dev.presentation.interfaces.IBaseView
 

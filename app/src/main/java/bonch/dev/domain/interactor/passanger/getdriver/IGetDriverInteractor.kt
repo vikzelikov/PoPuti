@@ -1,6 +1,6 @@
 package bonch.dev.domain.interactor.passanger.getdriver
 
-import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.passanger.getdriver.Driver
 import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide

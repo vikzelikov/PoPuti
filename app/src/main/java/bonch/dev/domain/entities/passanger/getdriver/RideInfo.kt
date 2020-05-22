@@ -2,6 +2,7 @@ package bonch.dev.domain.entities.passanger.getdriver
 
 import android.os.Parcel
 import android.os.Parcelable
+import bonch.dev.domain.entities.common.ride.Address
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 

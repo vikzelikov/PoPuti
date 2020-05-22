@@ -20,9 +20,9 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.fromAdr
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
-import bonch.dev.domain.entities.passanger.getdriver.BankCard
+import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
+import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
+import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.passanger.getdriver.RideInfo
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler
@@ -84,7 +84,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
         setBottomSheet()
 
-        initBankCardRecycler()
+        initBankingAdapter()
 
         correctMapView()
     }
@@ -211,11 +211,18 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     }
 
 
-    private fun initBankCardRecycler() {
+    private fun initBankingAdapter() {
         val list = arrayListOf<BankCard>()
 
         //add google pay
-        list.add(BankCard(null, null, null, R.drawable.ic_google_pay))
+        list.add(
+            BankCard(
+                null,
+                null,
+                null,
+                R.drawable.ic_google_pay
+            )
+        )
         paymentsListAdapter.list = list
 
         payments_list.apply {
@@ -372,6 +379,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
     override fun hideAllBottomSheet() {
         hideKeyboard()
+        comment_text.clearFocus()
 
         commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED

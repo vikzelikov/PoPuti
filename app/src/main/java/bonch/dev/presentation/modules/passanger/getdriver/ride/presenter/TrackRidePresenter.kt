@@ -7,6 +7,7 @@ import android.os.Handler
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.Coordinate
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*

@@ -6,7 +6,6 @@ import bonch.dev.R
 import bonch.dev.data.network.driver.GetPassangerService
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassanger.Order
-import bonch.dev.domain.entities.passanger.getdriver.AddressPoint
 import bonch.dev.domain.interactor.driver.getpassanger.NewOrder
 import bonch.dev.domain.interactor.passanger.getdriver.CommonHandler
 import kotlinx.coroutines.CoroutineScope

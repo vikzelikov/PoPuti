@@ -3,7 +3,7 @@ package bonch.dev.presentation.modules.passanger.regulardrive.presenter
 import android.content.Intent
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passanger.regulardrive.view.ContractView
-import bonch.dev.presentation.modules.passanger.regulardrive.view.CreateRegularDriveView
+import bonch.dev.presentation.modules.passanger.regulardrive.view.MapCreateRegularDrive
 
 class RegularDrivePresenter : BasePresenter<ContractView.IRegularDriveView>(),
     ContractPresenter.IRegularDrivePresenter {
@@ -12,7 +12,7 @@ class RegularDrivePresenter : BasePresenter<ContractView.IRegularDriveView>(),
     override fun createRegularDrive() {
         getView()?.getFragment()?.context?.let {
             //show detail order
-            val intent = Intent(it, CreateRegularDriveView::class.java)
+            val intent = Intent(it, MapCreateRegularDrive::class.java)
             getView()?.getFragment()?.startActivityForResult(intent, 1)
         }
     }

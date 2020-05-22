@@ -1,6 +1,7 @@
-package bonch.dev.presentation.modules.passanger.getdriver.addcard.presenter
+package bonch.dev.presentation.modules.common.addbanking.presenter
 
 import android.text.Editable
+import bonch.dev.presentation.modules.common.addbanking.presenter.AddBankCardPresenter
 
 interface IAddBankCardPresenter {
 

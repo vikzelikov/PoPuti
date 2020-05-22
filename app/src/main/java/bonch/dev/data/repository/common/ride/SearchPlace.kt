@@ -1,9 +1,8 @@
-package bonch.dev.data.repository.passanger.getdriver
+package bonch.dev.data.repository.common.ride
 
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.DetailRidePresenter
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
-import java.lang.IndexOutOfBoundsException
 
 class SearchPlace(private val detailRidePresenter: DetailRidePresenter) : Session.SearchListener {
 

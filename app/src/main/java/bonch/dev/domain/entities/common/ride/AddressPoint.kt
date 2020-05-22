@@ -1,4 +1,4 @@
-package bonch.dev.domain.entities.passanger.getdriver
+package bonch.dev.domain.entities.common.ride
 
 import android.os.Parcel
 import android.os.Parcelable

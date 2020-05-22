@@ -4,6 +4,8 @@ import android.util.Log
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.data.network.passanger.GetDriverService
+import bonch.dev.data.repository.common.ride.Autocomplete
+import bonch.dev.data.repository.common.ride.Geocoder
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passanger.getdriver.*
 import bonch.dev.domain.interactor.passanger.getdriver.CommonHandler
@@ -47,7 +49,9 @@ class GetDriverRepository : IGetDriverRepository {
         callback: SuggestHandler
     ) {
         if (autocomplete == null) {
-            autocomplete = Autocomplete(userLocationPoint)
+            autocomplete = Autocomplete(
+                userLocationPoint
+            )
         }
 
         autocomplete?.requestSuggest(query) { suggest ->

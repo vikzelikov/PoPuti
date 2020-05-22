@@ -5,17 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import bonch.dev.R
-import bonch.dev.data.repository.passanger.getdriver.SearchPlace
-import bonch.dev.domain.entities.passanger.getdriver.Address
-import bonch.dev.domain.entities.passanger.getdriver.AddressPoint
-import bonch.dev.domain.entities.passanger.getdriver.BankCard
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.fromAdr
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate.toAdr
+import bonch.dev.data.repository.common.ride.SearchPlace
+import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.AddressPoint
+import bonch.dev.domain.entities.common.banking.BankCard
+import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
+import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.orfferprice.view.OfferPriceView
 import bonch.dev.presentation.modules.common.routing.Routing
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView
+import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.ContractView
 import bonch.dev.route.MainRouter
 import com.yandex.mapkit.geometry.Point
@@ -105,8 +105,14 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
         if (from != null && to != null && map != null) {
             //update points
-            fromAdr?.point = AddressPoint(from.latitude, from.longitude)
-            toAdr?.point = AddressPoint(to.latitude, to.longitude)
+            fromAdr?.point = AddressPoint(
+                from.latitude,
+                from.longitude
+            )
+            toAdr?.point = AddressPoint(
+                to.latitude,
+                to.longitude
+            )
 
             routing.submitRequest(from, to, true, map)
         }
@@ -158,7 +164,12 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     override fun addBankCardDone(data: Intent?) {
         val bankCard = data?.getParcelableExtra<BankCard>(ADD_BANK_CARD.toString())
 
-        val paymentCard = BankCard(bankCard?.numberCard, bankCard?.validUntil, bankCard?.cvc, bankCard?.img)
+        val paymentCard = BankCard(
+            bankCard?.numberCard,
+            bankCard?.validUntil,
+            bankCard?.cvc,
+            bankCard?.img
+        )
 
         val adapter = getView()?.getPaymentsAdapter()
         adapter?.list?.add(paymentCard)

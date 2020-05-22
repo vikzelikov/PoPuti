@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passanger.getdriver.ride.adapters
+package bonch.dev.presentation.modules.passanger.regulardrive.adapters
 
 
 import android.view.LayoutInflater
@@ -10,11 +10,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.domain.entities.common.banking.BankCard
-import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.ContractPresenter
+import bonch.dev.presentation.modules.passanger.regulardrive.presenter.ContractPresenter
 import javax.inject.Inject
 
 
-class PaymentsListAdapter @Inject constructor(private val detailRidePresenter: ContractPresenter.IDetailRidePresenter) :
+class PaymentsListAdapter @Inject constructor(private val createRegularDrivePresenter: ContractPresenter.ICreateRegularDrivePresenter) :
     RecyclerView.Adapter<PaymentsListAdapter.ItemPostHolder>() {
 
     var list: ArrayList<BankCard> = arrayListOf()
@@ -39,7 +39,7 @@ class PaymentsListAdapter @Inject constructor(private val detailRidePresenter: C
 
             setTickSelected(holder.itemView)
             post.isSelect = true
-            detailRidePresenter.setSelectedBankCard(post)
+            //detailRidePresenter.setSelectedBankCard(post)
         }
 
         if (position == 0) {
@@ -59,7 +59,7 @@ class PaymentsListAdapter @Inject constructor(private val detailRidePresenter: C
 
 
     private fun removeTickSelected() {
-        detailRidePresenter.removeTickSelected()
+        //detailRidePresenter.removeTickSelected()
         list.forEach {
             it.isSelect = false
         }
@@ -81,9 +81,6 @@ class PaymentsListAdapter @Inject constructor(private val detailRidePresenter: C
                 }
             }
         }
-
     }
-
-
 }
 

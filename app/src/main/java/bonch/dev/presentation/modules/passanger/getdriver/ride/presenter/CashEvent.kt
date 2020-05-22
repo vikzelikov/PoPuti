@@ -1,6 +1,6 @@
 package bonch.dev.presentation.modules.passanger.getdriver.ride.presenter
 
-import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.common.ride.Address
 
 /**
  * Class works with cash request to Yandex MapKit server

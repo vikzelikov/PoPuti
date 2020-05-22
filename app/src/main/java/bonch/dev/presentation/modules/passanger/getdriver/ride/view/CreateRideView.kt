@@ -20,8 +20,8 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.passanger.getdriver.Address
-import bonch.dev.domain.entities.passanger.getdriver.Coordinate
+import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.Coordinate
 import bonch.dev.domain.utils.ChangeOpacity
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.MBottomSheet

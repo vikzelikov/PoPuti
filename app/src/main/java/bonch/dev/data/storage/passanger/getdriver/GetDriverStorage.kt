@@ -1,7 +1,7 @@
 package bonch.dev.data.storage.passanger.getdriver
 
 import bonch.dev.App
-import bonch.dev.domain.entities.passanger.getdriver.Address
+import bonch.dev.domain.entities.common.ride.Address
 import io.realm.Case
 import io.realm.Realm
 import io.realm.RealmConfiguration

@@ -4,8 +4,8 @@ import bonch.dev.di.component.AppComponent
 import bonch.dev.di.module.passanger.GetDriverModule
 import bonch.dev.di.scope.CompScope
 import bonch.dev.domain.interactor.passanger.getdriver.GetDriverInteractor
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.presenter.AddBankCardPresenter
-import bonch.dev.presentation.modules.passanger.getdriver.addcard.view.AddBankCardView
+import bonch.dev.presentation.modules.common.addbanking.presenter.AddBankCardPresenter
+import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.presenter.*
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.*
 import dagger.Component

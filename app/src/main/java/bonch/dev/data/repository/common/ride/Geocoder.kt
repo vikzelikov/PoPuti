@@ -1,4 +1,4 @@
-package bonch.dev.data.repository.passanger.getdriver
+package bonch.dev.data.repository.common.ride
 
 import bonch.dev.domain.interactor.passanger.getdriver.GeocoderHandler
 import com.yandex.mapkit.geometry.Point
