@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,25 +19,14 @@ import bonch.dev.R
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentMapHandler
+import bonch.dev.presentation.modules.passanger.regulardrive.RegularDriveComponent
 import bonch.dev.presentation.modules.passanger.regulardrive.adapters.PaymentsListAdapter
 import bonch.dev.presentation.modules.passanger.regulardrive.presenter.ContractPresenter
+import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.regular_create_ride_layout.*
-import kotlinx.android.synthetic.main.regular_create_ride_layout.back_btn
-import kotlinx.android.synthetic.main.regular_create_ride_layout.cards_bottom_sheet
-import kotlinx.android.synthetic.main.regular_create_ride_layout.comment_bottom_sheet
-import kotlinx.android.synthetic.main.regular_create_ride_layout.comment_text
-import kotlinx.android.synthetic.main.regular_create_ride_layout.info_price
-import kotlinx.android.synthetic.main.regular_create_ride_layout.info_price_bottom_sheet
-import kotlinx.android.synthetic.main.regular_create_ride_layout.main_info_layout
-import kotlinx.android.synthetic.main.regular_create_ride_layout.number_card
-import kotlinx.android.synthetic.main.regular_create_ride_layout.offer_price
-import kotlinx.android.synthetic.main.regular_create_ride_layout.payment_method
-import kotlinx.android.synthetic.main.regular_create_ride_layout.payment_method_img
-import kotlinx.android.synthetic.main.regular_create_ride_layout.payments_list
-import kotlinx.android.synthetic.main.regular_create_ride_layout.selected_payment_method
-import kotlinx.android.synthetic.main.regular_create_ride_layout.show_route
+import java.util.*
 import javax.inject.Inject
 
 class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView {
@@ -58,6 +48,13 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     lateinit var mapView: ParentMapHandler<MapView>
 
 
+    init {
+        RegularDriveComponent.regularDriveComponent?.inject(this)
+
+        createRegularDrivePresenter.instance().attachView(this)
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,6 +67,8 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initBankingAdapter()
+
         setListeners()
 
         setBottomSheet()
@@ -77,6 +76,12 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
 
     override fun setListeners() {
+
+        listenerSelectDate()
+
+        listenerSelectDays()
+
+        listenerSelectTime()
 
         select_date.setOnClickListener {
             dateBottomSheet?.let { getBottomSheet(it) }
@@ -90,16 +95,53 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
             cardsBottomSheetBehavior?.let { getBottomSheet(it) }
         }
 
+        selected_payment_method.setOnClickListener {
+            cardsBottomSheetBehavior?.let { getBottomSheet(it) }
+        }
+
         select_days.setOnClickListener {
             daysBottomSheet?.let { getBottomSheet(it) }
         }
 
-        comment_btn.setOnClickListener{
+        cancel_days.setOnClickListener {
+            hideAllBottomSheet()
+        }
+
+        comment_btn.setOnClickListener {
             commentEditStart()
         }
 
-        offer_price.setOnClickListener {
+        info_price.setOnClickListener {
+            infoPriceBottomSheetBehavior?.let { getBottomSheet(it) }
+        }
 
+        show_route.setOnClickListener {
+            createRegularDrivePresenter.showRoute()
+        }
+
+        comment_back_btn.setOnClickListener {
+            commentDone()
+        }
+
+        comment_done.setOnClickListener {
+            val comment = comment_text.text.toString().trim()
+            comment_min_text.text = comment
+
+            commentDone()
+        }
+
+        offer_price.setOnClickListener {
+            val context = context
+            if (context != null) {
+                createRegularDrivePresenter.offerPrice(context, this)
+            }
+        }
+
+        add_card.setOnClickListener {
+            val context = context
+            if (context != null) {
+                createRegularDrivePresenter.addBankCard(context, this)
+            }
         }
 
         back_btn.setOnClickListener {
@@ -109,6 +151,129 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         on_view.setOnClickListener {
             hideAllBottomSheet()
         }
+    }
+
+
+    private fun listenerSelectDate() {
+        val arrView: Array<TextView> = arrayOf(every_day, work_day, select_days)
+
+        for (i in arrView.indices) {
+            arrView[i].setOnClickListener {
+
+                arrView.forEach {
+                    it.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_tick,
+                        0
+                    )
+                }
+
+                arrView[i].setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.ic_tick_selected,
+                    0
+                )
+            }
+        }
+    }
+
+
+    private fun listenerSelectDays() {
+        val arrSelectedDays = BooleanArray(7)
+        val arrView: Array<TextView> =
+            arrayOf(mondey, tuesday, wednesday, thursday, friday, saturday, sunday)
+
+        for (i in arrView.indices) {
+            arrView[i].setOnClickListener {
+
+                var icon = R.drawable.ic_selected_item
+
+                try {
+                    if (arrSelectedDays[i]) {
+                        arrSelectedDays[i] = false
+                        icon = R.drawable.ic_unselected_item
+                    } else {
+                        arrSelectedDays[i] = true
+                        icon = R.drawable.ic_selected_item
+                    }
+
+                } catch (ex: IndexOutOfBoundsException) {
+                }
+
+                arrView[i].setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    icon,
+                    0
+                )
+            }
+        }
+
+        save_days.setOnClickListener {
+            var daysStr = ""
+
+            for (i in arrSelectedDays.indices) {
+                if (arrSelectedDays[i]) {
+                    val day = getStrDay(i)
+                    daysStr = daysStr.plus(day).plus(" ")
+                }
+            }
+
+            select_date.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_calendar,
+                0,
+                0,
+                0
+            )
+
+            select_date.text = daysStr
+
+            hideAllBottomSheet()
+        }
+    }
+
+
+    private fun listenerSelectTime() {
+        picker_select_time.setIsAmPm(false)
+
+        var minutes: Long = 0
+        var hours: Long = 0
+
+        val changeListener =
+            SingleDateAndTimePicker.OnDateChangedListener { _: String?, date: Date? ->
+                val timeZone = GregorianCalendar().timeZone
+                val mGMTOffset =
+                    timeZone.rawOffset + if (timeZone.inDaylightTime(Date())) timeZone.dstSavings else 0
+
+                val milliseconds = date?.time?.plus(mGMTOffset)
+
+                if (milliseconds != null) {
+                    minutes = ((milliseconds / (1000 * 60)) % 60)
+                    hours = ((milliseconds / (1000 * 60 * 60)) % 24)
+                }
+            }
+
+        save_time.setOnClickListener {
+            var min = minutes.toString()
+            var hour = hours.toString()
+            if (min.length == 1) min = "0".plus(min)
+            if (hour.length == 1) hour = "0".plus(hour)
+
+            select_time.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_clock,
+                0,
+                0,
+                0
+            )
+
+            select_time.text = hour.plus(":").plus(min)
+
+            hideAllBottomSheet()
+        }
+
+        picker_select_time.addOnDateChangedListener(changeListener)
     }
 
 
@@ -156,7 +321,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
         val arrView: Array<BottomSheetBehavior<*>?> = arrayOf(
             cardsBottomSheetBehavior,
-            cardsBottomSheetBehavior,
+            commentBottomSheetBehavior,
             infoPriceBottomSheetBehavior,
             daysBottomSheet,
             addressesBottomSheet,
@@ -177,6 +342,16 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
                 }
             })
         }
+
+
+        //set correct height
+        val display = (activity as? MapCreateRegularDrive)?.windowManager?.defaultDisplay
+        val size = android.graphics.Point()
+        display?.getSize(size)
+        val height = size.y
+        val layoutParams: ViewGroup.LayoutParams = bottom_sheet_addresses.layoutParams
+        layoutParams.height = height - 200
+        bottom_sheet_addresses.layoutParams = layoutParams
     }
 
 
@@ -313,6 +488,20 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         comment_text?.clearFocus()
 
         hideAllBottomSheet()
+    }
+
+
+    private fun getStrDay(idDay: Int): String {
+        return when (idDay) {
+            0 -> getString(R.string.mondayC)
+            1 -> getString(R.string.tuesdayC)
+            2 -> getString(R.string.wednesdayC)
+            3 -> getString(R.string.thursdayC)
+            4 -> getString(R.string.fridayC)
+            5 -> getString(R.string.saturdayC)
+            6 -> getString(R.string.sundayC)
+            else -> getString(R.string.mondayC)
+        }
     }
 
 

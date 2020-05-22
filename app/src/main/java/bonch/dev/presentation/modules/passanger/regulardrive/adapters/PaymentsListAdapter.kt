@@ -39,7 +39,7 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
 
             setTickSelected(holder.itemView)
             post.isSelect = true
-            //detailRidePresenter.setSelectedBankCard(post)
+            createRegularDrivePresenter.setSelectedBankCard(post)
         }
 
         if (position == 0) {
@@ -59,7 +59,7 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
 
 
     private fun removeTickSelected() {
-        //detailRidePresenter.removeTickSelected()
+        createRegularDrivePresenter.removeTickSelected()
         list.forEach {
             it.isSelect = false
         }

@@ -27,7 +27,6 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
     private val AVERAGE_PRICE = "AVERAGE_PRICE"
-    private val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
 
     private var searchPlace: SearchPlace? = null
     var fromPoint: Point? = null

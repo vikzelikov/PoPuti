@@ -210,6 +210,13 @@
     <string name="thursday">Четверг</string>
     <string name="friday">Пятница</string>
     <string name="saturday">Суббота</string>
+    <string name="sundayC">вс</string>
+    <string name="mondayC">пн</string>
+    <string name="tuesdayC">вт</string>
+    <string name="wednesdayC">ср</string>
+    <string name="thursdayC">чт</string>
+    <string name="fridayC">пт</string>
+    <string name="saturdayC">сб</string>
     <string name="cancelC">Отмена</string>
     <string name="everyDay">Ежедневно</string>
     <string name="selectDays">Выбрать дни</string>
@@ -217,6 +224,7 @@
     <string name="ACTIVE">АКТИВНЫЕ</string>
     <string name="ARCHIVE">АРХИВИРОВАННЫЕ</string>
     <string name="forWatingPassanger">за простой</string>
+
 
 
 </resources>

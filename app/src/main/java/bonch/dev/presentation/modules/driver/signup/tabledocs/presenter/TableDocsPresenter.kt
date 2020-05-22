@@ -120,18 +120,17 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
                     signupInteractor.deletePhoto(imgId) { isSuccess ->
                         if (isSuccess) {
                             //success delete old photo from server
-                            val docs =
-                                Photo()
+                            val docs = Photo()
                             docs.id = idStep.step
                             docs.imgDocs = SignupMainData.imgUri
                             docs.isVerify = 0
                             listDocs[idStep.step] = docs
 
-                            //sent photo to server
-                            sentPhoto(docs)
-
-                            //put new photo
                             Thread(Runnable {
+                                //sent photo to server
+                                sentPhoto(docs)
+
+                                //put new photo
                                 putNewPhoto()
                             }).start()
                         } else {
@@ -149,7 +148,7 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
 
     private fun putNewPhoto() {
         while (true) {
-            val imageId = listDocs[idStep.step].id
+            val imageId = listDocs[idStep.step].imgId
             if (imageId != null) {
                 val photo = NewPhoto()
                 photo.docArray = intArrayOf(imageId)
@@ -182,8 +181,6 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
             val position = photo.id
 
             if (btm != null && position != null) {
-                listDocs[position].id = null
-
                 //get title
                 val title = TitlePhoto.getTitlePhoto(getByValue(position))
 
