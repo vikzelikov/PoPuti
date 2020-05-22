@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
@@ -151,24 +152,30 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     fun showNotification(text: String) {
-        val view = general_notification
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                val view = general_notification
+                view.text = text
+                handlerAnimation?.removeCallbacksAndMessages(null)
+                handlerAnimation = Handler()
+                view.translationY = 0.0f
+                view.alpha = 0.0f
 
-        view.text = text
-        handlerAnimation?.removeCallbacksAndMessages(null)
-        handlerAnimation = Handler()
-        view.translationY = 0.0f
-        view.alpha = 0.0f
+                view.animate()
+                    .setDuration(500L)
+                    .translationY(100f)
+                    .alpha(1.0f)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            super.onAnimationEnd(animation)
+                            handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
+                        }
+                    })
+            }
+        }
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(100f)
-            .alpha(1.0f)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    super.onAnimationEnd(animation)
-                    handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
-                }
-            })
+        mainHandler.post(myRunnable)
     }
 
 

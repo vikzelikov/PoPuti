@@ -39,7 +39,7 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun loadDocs(image: File, id: Int, callback: SuccessHandler) {
+    override fun loadPhoto(image: File, id: Int, callback: SuccessHandler) {
         val token = profileStorage.getToken()
 
         if (token != null) {
@@ -47,22 +47,38 @@ class SignupInteractor : ISignupInteractor {
                 if (error != null) {
                     //Retry request
                     mediaRepository.loadPhoto(token, image) { mediaObj, _ ->
-                        if (mediaObj != null) {
-                            //ok
-                            val imageId = mediaObj.id
-                            SignupMainData.listDocs[id].id = imageId
-                            callback(true)
-                        } else {
-                            //show error notification
-                            SignupMainData.listDocs[id].id = -1
+                        try {
+                            if (mediaObj != null) {
+                                //ok
+                                val imageId = mediaObj.id
+
+                                if (id != -1) {
+                                    SignupMainData.listDocs[id].imgId = imageId
+                                } else loadProfilePhoto(imageId)
+
+                                callback(true)
+                            } else {
+                                //show error notification
+                                SignupMainData.listDocs[id].imgId = -1
+                                callback(false)
+                            }
+                        } catch (ex: IndexOutOfBoundsException) {
                             callback(false)
                         }
                     }
                 } else if (media != null) {
                     //ok
-                    callback(true)
-                    val imageId = media.id
-                    SignupMainData.listDocs[id].id = imageId
+                    try {
+                        val imageId = media.id
+
+                        if (id != -1) {
+                            SignupMainData.listDocs[id].imgId = imageId
+                        } else loadProfilePhoto(imageId)
+
+                        callback(true)
+                    } catch (ex: IndexOutOfBoundsException) {
+                        callback(false)
+                    }
                 }
             }
         } else {
@@ -72,6 +88,38 @@ class SignupInteractor : ISignupInteractor {
                 "LOAD_PHOTO",
                 "Load photo to server failed (token: $token)"
             )
+        }
+    }
+
+
+    private fun loadProfilePhoto(imageId: Int) {
+        val token = profileStorage.getToken()
+        val userId = profileStorage.getUserId()
+
+        if (token != null && userId != -1) {
+            profileRepository.getProfile(userId, token) { profile, error ->
+                if (error != null) {
+                    profileRepository.getProfile(userId, token) { profileData, _ ->
+                        profileData?.let {
+                            profileData.imgId = intArrayOf(imageId)
+
+                            profileRepository.saveProfile(userId, token, it) { err ->
+                                if (err != null) {
+                                    profileRepository.saveProfile(userId, token, it) {}
+                                }
+                            }
+                        }
+                    }
+                } else if (profile != null) {
+                    profile.imgId = intArrayOf(imageId)
+
+                    profileRepository.saveProfile(userId, token, profile) { err ->
+                        if (err != null) {
+                            profileRepository.saveProfile(userId, token, profile) {}
+                        }
+                    }
+                }
+            }
         }
     }
 

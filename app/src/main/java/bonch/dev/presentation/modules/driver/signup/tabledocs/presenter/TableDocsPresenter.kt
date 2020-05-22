@@ -53,7 +53,7 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
             val arr = IntArray(listDocs.size)
             for (i in arr.indices) {
                 while (true) {
-                    val imageId = listDocs[i].id
+                    val imageId = listDocs[i].imgId
                     if (imageId != null) {
                         arr[i] = imageId
                         break
@@ -172,25 +172,27 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
 
     //todo remove comment code
     private fun sentPhoto(photo: Photo) {
+        val errText = App.appComponent.getApp().getString(R.string.errorSystem)
         val uri = Uri.parse(photo.imgDocs)
+
         if (uri != null) {
             //convert to Bitmap
             val btm = mediaEvent.getBitmap(uri)
 
             val position = photo.id
 
-            if (position != null) {
+            if (btm != null && position != null) {
                 listDocs[position].id = null
 
                 //get title
                 val title = TitlePhoto.getTitlePhoto(getByValue(position))
 
-                title?.let {
+                if (title != null) {
                     //get orientation
                     //val exifOrientation = mediaEvent.getOrientation(uri)
 
                     //compress and convert to JPEG
-                    val file = mediaEvent.convertImage(btm, it)
+                    val file = mediaEvent.convertImage(btm, title)
 
                     if (file != null) {
                         //save orientation
@@ -201,17 +203,17 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
 //                        }
 
                         //upload
-                        signupInteractor.loadDocs(file, position) { isSuccess ->
+                        signupInteractor.loadPhoto(file, position) { isSuccess ->
                             if (!isSuccess) {
                                 //error show
                                 val res = App.appComponent.getContext().resources
                                 getView()?.showNotification(res.getString(R.string.errorSystem))
                             }
                         }
-                    }
-                }
-            }
-        }
+                    } else getView()?.showNotification(errText)
+                } else getView()?.showNotification(errText)
+            } else getView()?.showNotification(errText)
+        } else getView()?.showNotification(errText)
     }
 
 

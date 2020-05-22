@@ -10,6 +10,8 @@ data class Photo (
 
     var imgDocs: String? = null,
 
+    var imgId: Int? = null,
+
     @SerializedName("name")
     @Expose
     var imgName: String? = null,

@@ -11,6 +11,7 @@ import bonch.dev.App
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.lang.Exception
 
 class MediaEvent : IMediaEvent {
 
@@ -26,7 +27,7 @@ class MediaEvent : IMediaEvent {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, os)
             os.flush()
             os.close()
-        } catch (e: java.lang.Exception) {
+        } catch (e: Exception) {
             file = null
             Log.e(javaClass.simpleName, "Error writing bitmap", e)
         }
@@ -35,20 +36,24 @@ class MediaEvent : IMediaEvent {
     }
 
 
-    override fun getBitmap(uri: Uri): Bitmap {
+    override fun getBitmap(uri: Uri): Bitmap? {
         val contentResolver = App.appComponent.getContext().contentResolver
 
-        return if (Build.VERSION.SDK_INT >= 29) {
-            // To handle deprication use
-            ImageDecoder.decodeBitmap(
-                ImageDecoder.createSource(
-                    contentResolver,
-                    uri
+        try {
+            return if (Build.VERSION.SDK_INT >= 29) {
+                // To handle deprication use
+                ImageDecoder.decodeBitmap(
+                    ImageDecoder.createSource(
+                        contentResolver,
+                        uri
+                    )
                 )
-            )
-        } else {
-            // Use older version
-            MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            } else {
+                // Use older version
+                MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            }
+        }catch (ex: Exception){
+            return null
         }
     }
 

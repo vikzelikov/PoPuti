@@ -183,7 +183,7 @@
     <string name="checkDriverDocBack">Убедитесь, что нет бликов, четко видно номер водительского удостоверения и категорию прав</string>
     <string name="checkStsDocFront">Убедитесь, что четко видно VIN, номер документа и другие данные</string>
     <string name="checkStsDocBack">Убедитесь, что четко видно номер документа и другие данные</string>
-    <string name="userPhoto">userPhoto</string>
+    <string name="userPhoto">photo</string>
     <string name="passportPhoto">passportPhoto</string>
     <string name="self_passport">selfieWithPassport</string>
     <string name="passportaddress">passportWithLivePlace</string>

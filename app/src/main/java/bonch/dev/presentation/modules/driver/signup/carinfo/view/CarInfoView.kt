@@ -134,10 +134,11 @@ class CarInfoView : Fragment(), ICarInfoView {
 
     private fun isCarInfoEntered(): Boolean {
         var result = false
+        val carNumber = car_number.text.toString().trim()
 
         if (car_name.text.toString().trim().isNotEmpty() &&
             car_model.text.toString().trim().isNotEmpty() &&
-            car_number.text.toString().trim().isNotEmpty()
+            carNumber.isNotEmpty() && carNumber.length in 4..8
         ) {
             changeBtnEnable(true)
             result = true

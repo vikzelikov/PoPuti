@@ -3,6 +3,8 @@ package bonch.dev.presentation.modules.driver.signup.steps.presenter
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.Permissions
@@ -38,7 +40,6 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
     private val PHOTO = "PHOTO"
     private val TITLE = "TITLE"
     private val CHECK_PHOTO = 12
-
 
 
     init {
@@ -100,17 +101,17 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
         //save photo
         if (imgUri != null) {
             try {
-                if (idStep == Step.USER_PHOTO) {
-                    //todo sent this photo to profile
-                } else {
-                    val docs = Photo()
-                    docs.id = idStep.step
-                    docs.imgDocs = imgUri
-                    listDocs.add(docs)
+                val photo = Photo()
+                photo.id = idStep.step
+                photo.imgDocs = imgUri
 
-                    //sent photo to server
-                    sentPhoto(docs)
-                }
+                if (idStep != Step.USER_PHOTO) listDocs.add(photo)
+
+                //sent photo to server
+                Thread(Runnable {
+                    sentPhoto(photo)
+                }).start()
+
             } catch (ex: IndexOutOfBoundsException) {
             }
         }
@@ -130,48 +131,36 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
     }
 
 
-    //todo remove comment code
     private fun sentPhoto(photo: Photo) {
+        val errText = App.appComponent.getApp().getString(R.string.errorSystem)
         val uri = Uri.parse(photo.imgDocs)
+
         if (uri != null) {
+            val position = photo.id
+
             //convert to Bitmap
             val btm = mediaEvent.getBitmap(uri)
 
-            val position = photo.id
-
-            if (position != null) {
-                listDocs[position].id = null
-
+            if (btm != null && position != null) {
                 //get title
                 val title = TitlePhoto.getTitlePhoto(getByValue(position))
 
-                title?.let {
-                    //get orientation
-                    //val exifOrientation = mediaEvent.getOrientation(uri)
-
+                if (title != null) {
                     //compress and convert to JPEG
-                    val file = mediaEvent.convertImage(btm, it)
+                    val file = mediaEvent.convertImage(btm, title)
 
                     if (file != null) {
-                        //save orientation
-//                        if (exifOrientation != null) {
-//                            val newExif = ExifInterface(file)
-//                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
-//                            newExif.saveAttributes()
-//                        }
-
                         //upload
-                        signupInteractor.loadDocs(file, position) { isSuccess ->
+                        signupInteractor.loadPhoto(file, position) { isSuccess ->
                             if (!isSuccess) {
                                 //error show
-                                val res = App.appComponent.getContext().resources
-                                getView()?.showNotification(res.getString(R.string.errorSystem))
+                                getView()?.showNotification(errText)
                             }
                         }
-                    }
-                }
-            }
-        }
+                    } else getView()?.showNotification(errText)
+                } else getView()?.showNotification(errText)
+            } else getView()?.showNotification(errText)
+        } else getView()?.showNotification(errText)
     }
 
 

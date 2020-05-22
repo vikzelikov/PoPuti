@@ -8,7 +8,7 @@ interface IMediaEvent {
 
     fun convertImage(bitmap: Bitmap, name: String): File?
 
-    fun getBitmap(uri: Uri): Bitmap
+    fun getBitmap(uri: Uri): Bitmap?
 
     fun getOrientation(uri: Uri): String?
 

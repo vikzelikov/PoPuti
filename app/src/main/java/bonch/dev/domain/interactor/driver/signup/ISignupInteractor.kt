@@ -10,7 +10,7 @@ import java.io.File
 
 interface ISignupInteractor {
 
-    fun loadDocs(image: File, id: Int, callback: SuccessHandler)
+    fun loadPhoto(image: File, id: Int, callback: SuccessHandler)
 
     fun createDriver(driver: DriverData, callback: SuccessHandler)
 
