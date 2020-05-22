@@ -27,7 +27,7 @@ interface IGetDriverInteractor {
 
     fun updateRideStatus(status: StatusRide)
 
-    fun linkDriverToRide(driverId: Int)
+    fun linkDriverToRide(userId: Int)
 
     fun getNewDriver(callback: NewDriver)
 

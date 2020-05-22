@@ -26,6 +26,10 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     private var timer: WaitingTimer? = null
 
     override fun receiveOrder(order: Order?) {
+
+        //set this account of driver into ride
+        getPassangerInteractor.linkDriverToRide()
+
         if (order != null) {
             //set UI
             getView()?.setOrder(order)
@@ -42,6 +46,9 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
         if (nextStep != null) {
             RideStatus.status = nextStep
+
+            //update status with server
+            getPassangerInteractor.updateRideStatus(nextStep)
         }
 
         if (nextStep == StatusRide.WAIT_FOR_PASSANGER) {

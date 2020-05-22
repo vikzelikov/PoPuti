@@ -1,4 +1,4 @@
-package bonch.dev.presentation.driver.rating
+package bonch.dev.presentation.modules.driver.rating.view
 
 import android.os.Bundle
 import android.view.LayoutInflater

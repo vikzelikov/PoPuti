@@ -111,7 +111,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
             //todo replace to work with server
             Handler().postDelayed({
-                if (SelectOrder.order!!.id % 2 == 0) {
+                if (SelectOrder.order!!.id!! % 2 == 0) {
                     val activity = activity as? MapOrderView
                     activity?.let { nextFragment(it.supportFragmentManager) }
                 } else {

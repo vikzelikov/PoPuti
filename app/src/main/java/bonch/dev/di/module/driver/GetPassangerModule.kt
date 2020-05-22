@@ -2,6 +2,8 @@ package bonch.dev.di.module.driver
 
 import bonch.dev.data.repository.driver.getpassanger.GetPassangerRepository
 import bonch.dev.data.repository.driver.getpassanger.IGetPassangerRepository
+import bonch.dev.data.storage.common.profile.IProfileStorage
+import bonch.dev.data.storage.common.profile.ProfileStorage
 import bonch.dev.di.scope.CompScope
 import bonch.dev.domain.interactor.driver.getpassanger.GetPassangerInteractor
 import bonch.dev.domain.interactor.driver.getpassanger.IGetPassangerInteractor
@@ -26,6 +28,10 @@ class GetPassangerModule {
 
     @Provides
     @CompScope
+    fun provideMapOrderPresenter(): ContractPresenter.IMapOrderPresenter = MapOrderPresenter()
+
+    @Provides
+    @CompScope
     fun provideGetPassangerInteractor(): IGetPassangerInteractor = GetPassangerInteractor()
 
     @Provides
@@ -34,7 +40,7 @@ class GetPassangerModule {
 
     @Provides
     @CompScope
-    fun provideMapOrderPresenter(): ContractPresenter.IMapOrderPresenter = MapOrderPresenter()
+    fun provideProfileStorage(): IProfileStorage = ProfileStorage()
 
 
 }

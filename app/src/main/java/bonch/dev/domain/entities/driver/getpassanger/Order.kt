@@ -3,7 +3,7 @@ package bonch.dev.domain.entities.driver.getpassanger
 import bonch.dev.presentation.modules.driver.getpassanger.presenter.OrdersTimer
 
 open class Order(
-    var id: Int = 0,
+    var id: Int? = null,
     var name: String? = null,
     var img: Int? = null,
     var price: Int? = null,

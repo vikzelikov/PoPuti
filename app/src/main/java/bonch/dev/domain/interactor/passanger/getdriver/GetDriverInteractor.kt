@@ -112,15 +112,15 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
-    override fun linkDriverToRide(driverId: Int) {
+    override fun linkDriverToRide(userId: Int) {
         val rideId = getDriverStorage.getRideId()
         val token = profileStorage.getToken()
 
         if (rideId != -1 && token != null) {
-            getDriverRepository.linkDriverToRide(driverId, rideId, token) { _, error ->
+            getDriverRepository.linkDriverToRide(userId, rideId, token) { _, error ->
                 if (error != null) {
                     //retry request
-                    getDriverRepository.linkDriverToRide(driverId, rideId, token) { _, _ -> }
+                    getDriverRepository.linkDriverToRide(userId, rideId, token) { _, _ -> }
                 }
             }
         } else {
