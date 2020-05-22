@@ -99,7 +99,7 @@ class RatingBar @JvmOverloads constructor(
 
     private fun getBitmapDrawableFromVectorDrawable(drawable: Drawable): BitmapDrawable {
         val bitmap = Bitmap.createBitmap(
-            drawable.intrinsicWidth + (20).toInt(), //dp between svg images  //* resources.displayMetrics.density
+            drawable.intrinsicWidth + (25).toInt(), //dp between svg images  //* resources.displayMetrics.density
             drawable.intrinsicHeight,
             Bitmap.Config.ARGB_8888
         )

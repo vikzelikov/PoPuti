@@ -404,10 +404,13 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun onChangedStateConfirmCancel(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            main_coordinator.elevation = 10f
-        } else {
-            main_coordinator.elevation = 0f
+        try {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                main_coordinator.elevation = 10f
+            } else {
+                main_coordinator.elevation = 0f
+            }
+        } catch (ex: java.lang.Exception) {
         }
     }
 
@@ -493,6 +496,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onDestroy() {
+        trackRidePresenter.instance().timer?.cancelTimer()
+        trackRidePresenter.instance().timer = null
         trackRidePresenter.instance().detachView()
         super.onDestroy()
     }

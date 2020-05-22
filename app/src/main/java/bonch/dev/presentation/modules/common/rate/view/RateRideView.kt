@@ -1,7 +1,9 @@
 package bonch.dev.presentation.modules.common.rate.view
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,7 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
+import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
 import bonch.dev.domain.entities.passanger.getdriver.DriverObject
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler
@@ -91,6 +94,7 @@ class RateRideView : Fragment(), IRateRideView {
 
         if (isForPassanger)
             setViewForPassanger()
+        else setViewForDriver()
     }
 
 
@@ -98,12 +102,41 @@ class RateRideView : Fragment(), IRateRideView {
         rating_title.text = resources.getString(R.string.youGetPlace)
         subtitle_rating.text = resources.getString(R.string.rateRide)
         price_ride.visibility = View.VISIBLE
+        wating_fee.visibility = View.GONE
+        plus_wating_fee.visibility = View.GONE
+        price_for_ride.visibility = View.GONE
         val driver = DriverObject.driver
         if (driver != null) {
             try {
                 price_ride.text = driver.price.toString().plus(" ₽")
             } catch (ex: NumberFormatException) {
+            }
+        }
+    }
 
+
+    private fun setViewForDriver() {
+        val order = SelectOrder.order
+        if (order != null) {
+            try {
+                price_for_ride.text = order.price.toString().plus(" ₽")
+                plus_wating_fee.visibility = View.VISIBLE
+                wating_fee.visibility = View.VISIBLE
+
+                //todo get waiting fee
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    wating_fee.text = Html.fromHtml(
+                        ("<b>21 ₽</b> ${resources.getString(R.string.forWatingPassanger)}"),
+                        Html.FROM_HTML_MODE_COMPACT
+                    )
+
+                } else {
+                    wating_fee.text = Html.fromHtml(
+                        ("<b>21 ₽</b> ${resources.getString(R.string.forWatingPassanger)}")
+                    )
+                }
+
+            } catch (ex: NumberFormatException) {
             }
         }
     }

@@ -13,6 +13,7 @@ import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
 import bonch.dev.domain.interactor.driver.getpassanger.IGetPassangerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.chat.view.ChatView
+import bonch.dev.presentation.modules.driver.getpassanger.GetPassangerComponent
 import bonch.dev.presentation.modules.driver.getpassanger.view.ContractView
 import bonch.dev.route.MainRouter
 import javax.inject.Inject
@@ -23,7 +24,13 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     @Inject
     lateinit var getPassangerInteractor: IGetPassangerInteractor
 
-    private var timer: WaitingTimer? = null
+    var timer: WaitingTimer? = null
+
+
+    init {
+        GetPassangerComponent.getPassangerComponent?.inject(this)
+    }
+
 
     override fun receiveOrder(order: Order?) {
 

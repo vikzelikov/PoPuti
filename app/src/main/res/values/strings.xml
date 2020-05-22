@@ -216,6 +216,7 @@
     <string name="workDays">По будням</string>
     <string name="ACTIVE">АКТИВНЫЕ</string>
     <string name="ARCHIVE">АРХИВИРОВАННЫЕ</string>
+    <string name="forWatingPassanger">за простой</string>
 
 
 </resources>
