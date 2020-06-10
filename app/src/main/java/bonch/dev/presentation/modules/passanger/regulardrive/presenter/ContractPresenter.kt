@@ -37,10 +37,13 @@ interface ContractPresenter {
         fun checkAddressPoints(fromAddress: Address, toAddress: Address)
         fun offerPrice(context: Context, fragment: Fragment)
         fun addBankCardDone(data: Intent?)
+        fun onClickItem(address: Address)
         fun offerPriceDone(data: Intent?)
-        fun showRoute()
+        fun getCashSuggest()
+        fun clearSuggest()
         fun removeRoute()
         fun submitRoute()
+        fun showRoute()
     }
 
 }

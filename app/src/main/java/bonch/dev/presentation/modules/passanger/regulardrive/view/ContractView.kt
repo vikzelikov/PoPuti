@@ -2,7 +2,9 @@ package bonch.dev.presentation.modules.passanger.regulardrive.view
 
 import androidx.fragment.app.Fragment
 import bonch.dev.domain.entities.common.banking.BankCard
+import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.presentation.interfaces.IBaseView
+import bonch.dev.presentation.modules.passanger.regulardrive.adapters.AddressesListAdapter
 import bonch.dev.presentation.modules.passanger.regulardrive.adapters.PaymentsListAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
@@ -24,14 +26,22 @@ interface ContractView {
 
 
     interface ICreateRegularDriveView : IBaseView {
-        fun hideAllBottomSheet()
-        fun getBottomSheet(bottomSheetBehavior: BottomSheetBehavior<*>)
-        fun offerPriceDone(price: Int, averagePrice: Int)
-        fun setSelectedBankCard(bankCard: BankCard)
+        fun showStartUI()
         fun commentEditStart()
-        fun removeTickSelected()
+        fun hideAllBottomSheet()
+        fun setSelectedBankCard(bankCard: BankCard)
+        fun offerPriceDone(price: Int, averagePrice: Int)
+        fun setAddressView(isFrom: Boolean, address: String)
+        fun getBottomSheet(bottomSheetBehavior: BottomSheetBehavior<*>)
+        fun onClickItem(address: Address, isFromMapSearch: Boolean)
+        fun getAddressesAdapter(): AddressesListAdapter
         fun getPaymentsAdapter(): PaymentsListAdapter
+        fun expandedBottomSheet(isFrom: Boolean)
+        fun removeAddressesView(isFrom: Boolean)
+        fun getActualFocus(): Boolean
         fun isDataComplete(): Boolean
+        fun addressesMapViewChanged()
+        fun removeTickSelected()
         fun getMap(): MapView?
     }
 

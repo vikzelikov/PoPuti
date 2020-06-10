@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.common.routing
+package bonch.dev.presentation.modules.common.ride
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -18,11 +18,8 @@ import com.yandex.mapkit.directions.driving.DrivingRouter
 import com.yandex.mapkit.directions.driving.DrivingSession
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapObjectCollection
-import com.yandex.mapkit.map.PolylineMapObject
-import com.yandex.mapkit.map.internal.PolylineMapObjectBinding
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider

@@ -97,7 +97,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         display?.getSize(size)
         val height = size.y
         val layoutParams: ViewGroup.LayoutParams = bottom_sheet_addresses.layoutParams
-        layoutParams.height = height - 200
+        layoutParams.height = height - 300
         bottom_sheet_addresses.layoutParams = layoutParams
 
         addresses_list.apply {

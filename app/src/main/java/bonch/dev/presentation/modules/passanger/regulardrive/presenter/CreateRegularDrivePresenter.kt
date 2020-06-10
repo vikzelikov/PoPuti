@@ -11,7 +11,7 @@ import bonch.dev.domain.entities.common.ride.Coordinate
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.presentation.modules.common.orfferprice.view.OfferPriceView
-import bonch.dev.presentation.modules.common.routing.Routing
+import bonch.dev.presentation.modules.common.ride.Routing
 import bonch.dev.presentation.modules.passanger.regulardrive.RegularDriveComponent
 import bonch.dev.presentation.modules.passanger.regulardrive.view.ContractView
 import com.yandex.mapkit.geometry.Point
@@ -31,6 +31,9 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
     private var searchPlace: SearchPlace? = null
     var fromPoint: Point? = null
     var toPoint: Point? = null
+
+    var isFromMapSearch = true
+
 
 
     init {
@@ -94,6 +97,25 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
 
             routing.submitRequest(from, to, true, map)
         }
+    }
+
+
+    override fun onClickItem(address: Address) {
+        getView()?.onClickItem(address, isFromMapSearch)
+
+        //addressesDone()
+    }
+
+
+    override fun clearSuggest() {
+        val adapter = getView()?.getAddressesAdapter()
+        adapter?.list?.clear()
+        adapter?.notifyDataSetChanged()
+    }
+
+
+    override fun getCashSuggest() {
+        //cashEvent.getCashSuggest()
     }
 
 

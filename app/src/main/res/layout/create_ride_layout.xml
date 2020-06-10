@@ -54,7 +54,7 @@
         android:id="@+id/bottom_sheet_addresses"
         android:layout_width="match_parent"
         android:layout_height="650dp"
-        android:background="@drawable/ic_bottom_sheet_collapsed"
+        android:background="@drawable/bg_bottom_sheet_collapsed"
         app:behavior_peekHeight="190dp"
         app:layout_behavior=".presentation.base.MBottomSheet">
 

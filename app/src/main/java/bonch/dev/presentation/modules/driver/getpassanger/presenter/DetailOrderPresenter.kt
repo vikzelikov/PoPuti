@@ -9,7 +9,7 @@ import bonch.dev.domain.entities.driver.getpassanger.Order
 import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.orfferprice.view.OfferPriceView
-import bonch.dev.presentation.modules.common.routing.Routing
+import bonch.dev.presentation.modules.common.ride.Routing
 import bonch.dev.presentation.modules.driver.getpassanger.GetPassangerComponent
 import bonch.dev.presentation.modules.driver.getpassanger.view.ContractView
 import com.yandex.mapkit.geometry.Point

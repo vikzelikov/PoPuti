@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.profile_detail_activity.*
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -103,19 +104,25 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
 
 
     override fun setProfile(profileData: Profile) {
-        val img = when {
-            profileData.photos?.last()?.imgUrl != null -> {
-                profileData.photos?.last()?.imgUrl
+        try {
+            val img = when {
+                profileData.photos?.last()?.imgUrl != null -> {
+                    profileData.photos?.last()?.imgUrl
+                }
+                profileData.imgUser != null -> {
+                    Uri.parse(profileData.imgUser)
+                }
+                else -> null
             }
-            profileData.imgUser != null -> {
-                Uri.parse(profileData.imgUser)
-            }
-            else -> null
-        }
 
-        Glide.with(img_user.context).load(img)
-            .apply(RequestOptions().centerCrop().circleCrop())
-            .into(img_user)
+            if (img != null)
+                Glide.with(img_user.context).load(img)
+                    .apply(RequestOptions().centerCrop().circleCrop())
+                    .into(img_user)
+        } catch (ex: NoSuchElementException) {
+
+        } catch (ex: Exception) {
+        }
 
         phone_number.text = profileData.phone
         first_name.setText(profileData.firstName)

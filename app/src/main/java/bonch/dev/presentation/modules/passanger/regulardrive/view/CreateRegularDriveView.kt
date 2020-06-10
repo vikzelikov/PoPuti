@@ -6,23 +6,27 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.domain.entities.common.banking.BankCard
+import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.Coordinate
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passanger.regulardrive.RegularDriveComponent
+import bonch.dev.presentation.modules.passanger.regulardrive.adapters.AddressesListAdapter
 import bonch.dev.presentation.modules.passanger.regulardrive.adapters.PaymentsListAdapter
 import bonch.dev.presentation.modules.passanger.regulardrive.presenter.ContractPresenter
-import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.regular_create_ride_layout.*
@@ -36,6 +40,9 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
     @Inject
     lateinit var paymentsListAdapter: PaymentsListAdapter
+
+    @Inject
+    lateinit var addressesListAdapter: AddressesListAdapter
 
     private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
@@ -77,11 +84,21 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
     override fun setListeners() {
 
+        setListenersAdr()
+
         listenerSelectDate()
 
         listenerSelectDays()
 
         listenerSelectTime()
+
+        from_address.setOnClickListener {
+            expandedBottomSheet(true)
+        }
+
+        to_address.setOnClickListener {
+            expandedBottomSheet(false)
+        }
 
         select_date.setOnClickListener {
             dateBottomSheet?.let { getBottomSheet(it) }
@@ -131,16 +148,14 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         }
 
         offer_price.setOnClickListener {
-            val context = context
-            if (context != null) {
-                createRegularDrivePresenter.offerPrice(context, this)
+            context?.let {
+                createRegularDrivePresenter.offerPrice(it, this)
             }
         }
 
         add_card.setOnClickListener {
-            val context = context
-            if (context != null) {
-                createRegularDrivePresenter.addBankCard(context, this)
+            context?.let {
+                createRegularDrivePresenter.addBankCard(it, this)
             }
         }
 
@@ -151,6 +166,106 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         on_view.setOnClickListener {
             hideAllBottomSheet()
         }
+    }
+
+
+    private fun setListenersAdr() {
+        from_adr.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    //  createRegularDrivePresenter.requestSuggest(from_adr.text.toString())
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.isNotEmpty() && addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    from_cross.visibility = View.VISIBLE
+                } else {
+                    from_cross.visibility = View.GONE
+                }
+            }
+        })
+
+        to_adr.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    //createRegularDrivePresenter.requestSuggest(to_adr.text.toString())
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.isNotEmpty() && addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    to_cross.visibility = View.VISIBLE
+                } else {
+                    to_cross.visibility = View.GONE
+                }
+            }
+        })
+    }
+
+
+    override fun expandedBottomSheet(isFrom: Boolean) {
+
+        addressesBottomSheet?.let { getBottomSheet(it) }
+
+        if (isFrom) {
+            if (to_adr.isFocused) {
+                createRegularDrivePresenter.clearSuggest()
+            }
+
+            from_adr.requestFocus()
+            from_adr.setSelection(from_adr.text.length)
+
+            expandedBottomSheetEvent()
+
+            btn_map_from.visibility = View.VISIBLE
+            btn_map_to.visibility = View.GONE
+            to_cross.visibility = View.GONE
+
+            if (from_adr.text.isNotEmpty()) {
+                from_cross.visibility = View.VISIBLE
+            } else {
+                //set favourite addresses
+                createRegularDrivePresenter.getCashSuggest()
+                from_cross.visibility = View.GONE
+            }
+        } else {
+            if (from_adr.isFocused) {
+                createRegularDrivePresenter.clearSuggest()
+            }
+
+            to_adr.requestFocus()
+            to_adr.setSelection(to_adr.text.length)
+
+            expandedBottomSheetEvent()
+
+            btn_map_from.visibility = View.GONE
+            btn_map_to.visibility = View.VISIBLE
+            from_cross.visibility = View.GONE
+
+            if (to_adr.text.isNotEmpty()) {
+                to_cross.visibility = View.VISIBLE
+            } else {
+                //set favourite addresses
+                createRegularDrivePresenter.getCashSuggest()
+                to_cross.visibility = View.GONE
+            }
+        }
+    }
+
+
+    private fun expandedBottomSheetEvent() {
+        val activity = activity as? MapCreateRegularDrive
+
+        Handler().postDelayed({
+            activity?.let {
+                Keyboard.showKeyboard(activity)
+            }
+        }, 300)
     }
 
 
@@ -238,42 +353,87 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     private fun listenerSelectTime() {
         picker_select_time.setIsAmPm(false)
 
-        var minutes: Long = 0
-        var hours: Long = 0
-
-        val changeListener =
-            SingleDateAndTimePicker.OnDateChangedListener { _: String?, date: Date? ->
-                val timeZone = GregorianCalendar().timeZone
-                val mGMTOffset =
-                    timeZone.rawOffset + if (timeZone.inDaylightTime(Date())) timeZone.dstSavings else 0
-
-                val milliseconds = date?.time?.plus(mGMTOffset)
-
-                if (milliseconds != null) {
-                    minutes = ((milliseconds / (1000 * 60)) % 60)
-                    hours = ((milliseconds / (1000 * 60 * 60)) % 24)
-                }
-            }
+        val timeZone = GregorianCalendar().timeZone
+        val mGMTOffset =
+            timeZone.rawOffset + if (timeZone.inDaylightTime(Date())) timeZone.dstSavings else 0
 
         save_time.setOnClickListener {
-            var min = minutes.toString()
-            var hour = hours.toString()
-            if (min.length == 1) min = "0".plus(min)
-            if (hour.length == 1) hour = "0".plus(hour)
+            val milliseconds = picker_select_time?.date?.time?.plus(mGMTOffset)
 
-            select_time.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_clock,
-                0,
-                0,
-                0
-            )
+            if (milliseconds != null) {
+                val minutes = ((milliseconds / (1000 * 60)) % 60)
+                val hours = ((milliseconds / (1000 * 60 * 60)) % 24)
 
-            select_time.text = hour.plus(":").plus(min)
+                var min = minutes.toString()
+                var hour = hours.toString()
+                if (min.length == 1) min = "0".plus(min)
+                if (hour.length == 1) hour = "0".plus(hour)
+
+                select_time.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_clock,
+                    0,
+                    0,
+                    0
+                )
+
+                select_time.text = hour.plus(":").plus(min)
+            }
 
             hideAllBottomSheet()
         }
+    }
 
-        picker_select_time.addOnDateChangedListener(changeListener)
+
+    override fun showStartUI() {
+        center_position.setImageResource(R.drawable.ic_map_marker)
+        main_addresses_layout.visibility = View.VISIBLE
+        addresses_list.visibility = View.VISIBLE
+        address_map_marker_layout.visibility = View.GONE
+        back_btn.visibility = View.GONE
+        addressesBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    override fun setAddressView(isFrom: Boolean, address: String) {
+        if (isFrom) {
+            from_adr.setText(address)
+        } else {
+            to_adr.setText(address)
+        }
+
+        address_map_text.text = address
+    }
+
+
+    override fun getActualFocus(): Boolean {
+        return (address_map_marker_layout.isVisible)
+    }
+
+
+    override fun removeAddressesView(isFrom: Boolean) {
+        if (isFrom) {
+            from_adr.setText("")
+//            not allow user to remove 'from' address
+//            fromAdr = null
+        } else {
+            to_adr.setText("")
+        }
+    }
+
+
+    override fun addressesMapViewChanged() {
+        main_addresses_layout.visibility = View.GONE
+        addresses_list.visibility = View.GONE
+        address_map_marker_layout.visibility = View.VISIBLE
+        back_btn.visibility = View.VISIBLE
+
+        address_map_text.isSelected = true
+        center_position.setImageResource(R.drawable.ic_map_marker_black)
+        circle_marker.setImageResource(R.drawable.ic_input_marker_to)
+        address_map_marker_btn.setBackgroundResource(R.drawable.bg_btn_black)
+
+        addressesBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+        hideKeyboard()
     }
 
 
@@ -475,7 +635,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
             comment_text.requestFocus()
             //set a little timer to open keyboard
             Handler().postDelayed({
-                val activity = activity as? MainActivity
+                val activity = activity as? MapCreateRegularDrive
                 activity?.let {
                     Keyboard.showKeyboard(activity)
                 }
@@ -505,6 +665,19 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     }
 
 
+    override fun onClickItem(address: Address, isFromMapSearch: Boolean) {
+        if (isFromMapSearch) {
+            from_adr.setText(address.address)
+            from_adr.setSelection(from_adr.text.length)
+            Coordinate.fromAdr = address
+        } else {
+            to_adr.setText(address.address)
+            to_adr.setSelection(to_adr.text.length)
+            Coordinate.toAdr = address
+        }
+    }
+
+
     private fun changeBtnEnable(isEnable: Boolean) {
         if (isEnable) {
             save_ride.setBackgroundResource(R.drawable.bg_btn_blue)
@@ -516,6 +689,11 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
     override fun getPaymentsAdapter(): PaymentsListAdapter {
         return paymentsListAdapter
+    }
+
+
+    override fun getAddressesAdapter(): AddressesListAdapter {
+        return addressesListAdapter
     }
 
 

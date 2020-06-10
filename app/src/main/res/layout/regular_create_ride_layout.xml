@@ -18,6 +18,17 @@
         android:src="@drawable/ic_back_arrow" />
 
 
+    <ImageView
+        android:id="@+id/center_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="55dp"
+        android:src="@drawable/ic_map_marker"
+        android:visibility="gone" />
+
+
     <ImageButton
         android:id="@+id/show_route"
         android:layout_width="50dp"
@@ -154,7 +165,7 @@
                 android:id="@+id/info_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="5dp"
                 android:background="@android:color/white"
                 android:src="@drawable/ic_info_price"
                 android:visibility="gone" />
@@ -232,6 +243,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginTop="2dp"
                     android:minWidth="40dp" />
 
                 <TextView
@@ -552,7 +564,7 @@
             android:id="@+id/bottom_sheet_addresses"
             android:layout_width="match_parent"
             android:layout_height="650dp"
-            android:background="@drawable/ic_bottom_sheet_collapsed"
+            android:background="@drawable/bg_corners_layout"
             app:behavior_peekHeight="0dp"
             app:layout_behavior=".presentation.base.MBottomSheet">
 
@@ -565,7 +577,6 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:alpha="0"
                 android:src="@drawable/ic_bottom_sheet_arrow" />
 
 
@@ -634,7 +645,7 @@
                             android:fontFamily="@font/roboto"
                             android:hint="@string/from"
                             android:inputType="textCapSentences|textMultiLine"
-                            android:maxLines="2"
+                            android:maxLines="1"
                             android:padding="5dp"
                             android:paddingStart="0dp"
                             android:textColor="@android:color/black"

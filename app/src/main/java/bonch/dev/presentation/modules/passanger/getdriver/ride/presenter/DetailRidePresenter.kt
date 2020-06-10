@@ -13,7 +13,7 @@ import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.orfferprice.view.OfferPriceView
-import bonch.dev.presentation.modules.common.routing.Routing
+import bonch.dev.presentation.modules.common.ride.Routing
 import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.presentation.modules.passanger.getdriver.ride.view.ContractView
