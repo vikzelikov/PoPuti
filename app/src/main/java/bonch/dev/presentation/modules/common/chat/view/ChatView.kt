@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,10 +14,10 @@ import bonch.dev.R
 import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
 import bonch.dev.domain.entities.common.chat.Message
-import bonch.dev.domain.entities.driver.getpassanger.Order
-import bonch.dev.domain.entities.driver.getpassanger.SelectOrder
-import bonch.dev.domain.entities.passanger.getdriver.Driver
-import bonch.dev.domain.entities.passanger.getdriver.DriverObject
+import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.passenger.getdriver.Driver
+import bonch.dev.domain.entities.passenger.getdriver.DriverObject
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.chat.adapters.ChatAdapter
@@ -86,8 +85,8 @@ class ChatView : AppCompatActivity(), IChatView {
     }
 
 
-    private fun setPassangerInfo(order: Order) {
-        name_driver.text = order.name
+    private fun setPassangerInfo(order: RideInfo) {
+        name_driver.text = order.passenger?.firstName
     }
 
 

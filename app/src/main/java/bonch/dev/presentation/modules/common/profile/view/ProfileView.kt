@@ -179,25 +179,20 @@ class ProfileView : Fragment(), IProfileView {
     override fun setProfile(profileData: Profile) {
         name_user.text = profileData.firstName.plus(" ").plus(profileData.lastName)
 
-        try {
-            val img = when {
-                profileData.photos?.last()?.imgUrl != null -> {
-                    profileData.photos?.last()?.imgUrl
-                }
-                profileData.imgUser != null -> {
-                    Uri.parse(profileData.imgUser)
-                }
-                else -> null
+        val img = when {
+            profileData.photos?.lastOrNull()?.imgUrl != null -> {
+                profileData.photos?.lastOrNull()?.imgUrl
             }
-
-            if (img != null)
-                Glide.with(img_user.context).load(img)
-                    .apply(RequestOptions().centerCrop().circleCrop())
-                    .into(img_user)
-        } catch (ex: NoSuchElementException) {
-
-        } catch (ex: Exception) {
+            profileData.imgUser != null -> {
+                Uri.parse(profileData.imgUser)
+            }
+            else -> null
         }
+
+        if (img != null)
+            Glide.with(img_user.context).load(img)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .into(img_user)
 
         if (profileData.rating == null) {
             user_rating.text = "0.0"

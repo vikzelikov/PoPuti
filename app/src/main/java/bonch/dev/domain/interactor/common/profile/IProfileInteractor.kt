@@ -10,11 +10,11 @@ interface IProfileInteractor {
 
     fun initRealm()
 
-    fun saveProfileData(profile: Profile)
+    fun localSaveProfile(profile: Profile)
 
     fun removeProfileData()
 
-    fun sendProfileData(profile: Profile)
+    fun remoteSaveProfile(profile: Profile)
 
     fun getProfileRemote(callback: DataHandler<Profile?>)
 

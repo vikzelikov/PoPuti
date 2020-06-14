@@ -6,9 +6,9 @@ import bonch.dev.R
 import bonch.dev.domain.interactor.IBaseInteractor
 import bonch.dev.presentation.interfaces.IMainActivity
 import bonch.dev.presentation.interfaces.IMainPresenter
-import bonch.dev.presentation.modules.common.rate.view.RateRideView
-import bonch.dev.presentation.modules.driver.getpassanger.view.OrdersView
-import bonch.dev.presentation.modules.passanger.getdriver.ride.view.*
+import bonch.dev.presentation.modules.common.ride.rate.view.RateRideView
+import bonch.dev.presentation.modules.driver.getpassenger.view.OrdersView
+import bonch.dev.presentation.modules.passenger.getdriver.ride.view.*
 import javax.inject.Inject
 
 
@@ -35,7 +35,7 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
             if (baseInteractor.isCheckoutDriver()) {
                 getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
             } else {
-                getView()?.getNavHost()?.navigate(R.id.main_passanger_fragment)
+                getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
             }
         }
     }

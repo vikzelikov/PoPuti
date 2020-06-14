@@ -15,7 +15,7 @@ import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.domain.utils.Keyboard.hideKeyboard
 import bonch.dev.domain.utils.Keyboard.showKeyboard
-import bonch.dev.presentation.modules.passanger.getdriver.GetDriverComponent
+import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.common.addbanking.presenter.IAddBankCardPresenter
 import kotlinx.android.synthetic.main.add_bank_card_activity.*
 import javax.inject.Inject

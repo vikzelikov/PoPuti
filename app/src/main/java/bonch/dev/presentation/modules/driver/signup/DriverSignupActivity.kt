@@ -112,7 +112,8 @@ class DriverSignupActivity : AppCompatActivity() {
         if (driver.isVerify) {
             showDriverUI()
         } else {
-            showTableDocsView(driver)
+//            showTableDocsView(driver)
+            showDriverUI()
         }
     }
 

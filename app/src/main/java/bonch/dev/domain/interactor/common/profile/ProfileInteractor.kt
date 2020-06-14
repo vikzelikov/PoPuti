@@ -4,7 +4,9 @@ import android.util.Log
 import bonch.dev.data.repository.common.media.IMediaRepository
 import bonch.dev.data.repository.common.profile.IProfileRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
+import bonch.dev.domain.entities.common.media.MediaObject
 import bonch.dev.domain.entities.common.profile.Profile
+import bonch.dev.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
@@ -33,7 +35,7 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun saveProfileData(profile: Profile) {
+    override fun localSaveProfile(profile: Profile) {
         profileStorage.saveProfileData(profile)
     }
 
@@ -43,7 +45,7 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun sendProfileData(profile: Profile) {
+    override fun remoteSaveProfile(profile: Profile) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
@@ -103,32 +105,38 @@ class ProfileInteractor : IProfileInteractor {
                         //Retry request
                         mediaRepository.loadPhoto(token, image) { mediaObj, _ ->
                             if (mediaObj != null) {
-                                profile.imgId = intArrayOf(mediaObj.id)
-                                profileRepository.saveProfile(userId, token, profile) { err ->
-                                    if (err != null) {
-                                        //Retry request
-                                        profileRepository.saveProfile(userId, token, profile) {
-                                            callback(true)
-                                        }
-                                    } else callback(true)
-                                }
+                                remoteSaveProfile(mediaObj, token, userId, callback)
                             } else callback(false)
                         }
                     }
                     media != null -> {
-                        profile.imgId = intArrayOf(media.id)
-                        profileRepository.saveProfile(userId, token, profile) { err ->
-                            if (err != null) {
-                                //Retry request
-                                profileRepository.saveProfile(userId, token, profile) {
-                                    callback(true)
-                                }
-                            } else callback(true)
-                        }
-                    } else -> callback(false)
+                        remoteSaveProfile(media, token, userId, callback)
+                    }
+                    else -> callback(false)
                 }
             }
         } else callback(false)
+    }
+
+
+    private fun remoteSaveProfile(
+        media: MediaObject,
+        token: String,
+        userId: Int,
+        callback: SuccessHandler
+    ) {
+        val photo = ProfilePhoto()
+        photo.apply {
+            imgId = intArrayOf(media.id)
+        }
+        profileRepository.savePhoto(userId, token, photo) { err ->
+            if (err != null) {
+                //Retry request
+                profileRepository.savePhoto(userId, token, photo) {
+                    callback(true)
+                }
+            } else callback(true)
+        }
     }
 
 

@@ -92,7 +92,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                 //redirect to passanger
                 profileInteractor.saveCheckoutDriver(false)
                 MainRouter.showView(
-                    R.id.show_main_passanger_fragment,
+                    R.id.show_main_passenger_fragment,
                     getView()?.getNavHost(),
                     null
                 )

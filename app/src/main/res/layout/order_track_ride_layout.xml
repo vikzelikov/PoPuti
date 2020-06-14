@@ -5,7 +5,7 @@
     android:id="@+id/order_get_passanger_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.modules.passanger.getdriver.ride.view.MapGetDriverView">
+    tools:context=".presentation.modules.passenger.getdriver.ride.view.MapGetDriverView">
 
 
     <LinearLayout
@@ -336,7 +336,7 @@
                 android:text="@string/isPlace"
                 android:textColor="@android:color/black" />
 
-            <bonch.dev.presentation.modules.driver.getpassanger.view.SlideButton
+            <bonch.dev.presentation.modules.driver.getpassenger.view.SlideButton
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

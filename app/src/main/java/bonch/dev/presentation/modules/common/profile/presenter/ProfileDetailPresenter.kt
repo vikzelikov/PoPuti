@@ -108,10 +108,10 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
             profileData.phone = startDataProfile?.phone
 
             //local save
-            profileInteractor.saveProfileData(profileData)
+            profileInteractor.localSaveProfile(profileData)
 
             //remote save
-            profileInteractor.sendProfileData(profileData)
+            profileInteractor.remoteSaveProfile(profileData)
 
             //update start data
             startDataProfile = profileData

@@ -11,10 +11,10 @@ import bonch.dev.domain.interactor.common.rate.IRateRideInteractor
 import bonch.dev.domain.interactor.common.rate.RateRideInteractor
 import bonch.dev.presentation.modules.common.chat.presenter.ChatPresenter
 import bonch.dev.presentation.modules.common.chat.presenter.IChatPresenter
-import bonch.dev.presentation.modules.common.orfferprice.presenter.IOfferPricePresenter
-import bonch.dev.presentation.modules.common.orfferprice.presenter.OfferPricePresenter
-import bonch.dev.presentation.modules.common.rate.presenter.IRateRidePresenter
-import bonch.dev.presentation.modules.common.rate.presenter.RateRidePresenter
+import bonch.dev.presentation.modules.common.ride.orfferprice.presenter.IOfferPricePresenter
+import bonch.dev.presentation.modules.common.ride.orfferprice.presenter.OfferPricePresenter
+import bonch.dev.presentation.modules.common.ride.rate.presenter.IRateRidePresenter
+import bonch.dev.presentation.modules.common.ride.rate.presenter.RateRidePresenter
 import dagger.Module
 import dagger.Provides
 

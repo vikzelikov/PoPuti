@@ -1,0 +1,96 @@
+package bonch.dev.presentation.modules.passenger.signup.presenter
+
+import androidx.fragment.app.FragmentActivity
+import bonch.dev.R
+import bonch.dev.domain.entities.passenger.signup.DataSignup
+import bonch.dev.domain.interactor.passenger.signup.ISignupInteractor
+import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.modules.passenger.signup.SignupComponent
+import bonch.dev.presentation.modules.passenger.signup.view.ContractView
+import bonch.dev.route.MainRouter
+import javax.inject.Inject
+
+class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
+    ContractPresenter.IFullNamePresenter {
+
+    @Inject
+    lateinit var signupInteractor: ISignupInteractor
+
+
+    init {
+        SignupComponent.passengerSignupComponent?.inject(this)
+    }
+
+
+    override fun doneSignup() {
+        signupInteractor.initRealm()
+        //save Data:
+        //save token
+        saveToken()
+        //save and send profile data to server
+        sendProfileData()
+
+        //clear data
+        SignupComponent.passengerSignupComponent = null
+        DataSignup.phone = null
+        DataSignup.token = null
+
+        //next transition
+        MainRouter.showView(R.id.show_main_passenger_fragment, getView()?.getNavHost(), null)
+    }
+
+
+    override fun isNameEntered(): Boolean {
+        var result = false
+
+        if (getView() != null) {
+            val firstName = getView()?.getFirstName()
+            val lastName = getView()?.getLastName()
+
+            if (!firstName.isNullOrEmpty() && firstName.length < 20 && !lastName.isNullOrEmpty() && lastName.length < 20) {
+                getView()?.changeBtnEnable(true)
+                result = true
+            } else {
+                getView()?.changeBtnEnable(false)
+            }
+        }
+
+        return result
+    }
+
+
+    override fun sendProfileData() {
+        val profileData = getView()?.getProfileData()
+        val token = DataSignup.token
+        profileData?.phone = DataSignup.phone
+
+        if (token != null && profileData != null) {
+            //local save
+            signupInteractor.saveProfileData(profileData)
+
+            //remote save
+            signupInteractor.sendProfileData(token, profileData)
+        }
+    }
+
+
+    override fun saveToken() {
+        val token = DataSignup.token
+
+        if (token != null) {
+            signupInteractor.saveToken(token)
+        }
+    }
+
+
+    override fun back(activity: FragmentActivity) {
+        Keyboard.hideKeyboard(activity, activity.currentFocus)
+        getView()?.getNavHost()?.popBackStack()
+    }
+
+
+    override fun instance(): FullNamePresenter {
+        return this
+    }
+}

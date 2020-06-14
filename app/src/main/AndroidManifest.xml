@@ -35,7 +35,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.modules.common.orfferprice.view.OfferPriceView"
+            android:name="bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView"
             android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.modules.common.chat.view.ChatView"
@@ -44,11 +44,11 @@
             android:name=".presentation.modules.driver.signup.suggest.view.SuggestView"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".presentation.modules.driver.getpassanger.view.MapOrderView"
+            android:name=".presentation.modules.driver.getpassenger.view.MapOrderView"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".presentation.modules.passanger.regulardrive.view.MapCreateRegularDrive"
+            android:name=".presentation.modules.passenger.regulardrive.view.MapCreateRegularDrive"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"/>
 

@@ -53,11 +53,6 @@ open class Profile(
     var imgUser: String? = null,
 
     @Ignore
-    @SerializedName("photo")
-    @Expose
-    var imgId: IntArray? = intArrayOf(),
-
-    @Ignore
     @SerializedName("photos")
     @Expose
     var photos: Array<Photo>? = null,
@@ -77,10 +72,8 @@ open class Profile(
         parcel.readValue(Float::class.java.classLoader) as? Float,
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
-        parcel.readString(),
-        parcel.createIntArray()
+        parcel.readString()
     )
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
         parcel.writeString(firstName)
@@ -91,7 +84,6 @@ open class Profile(
         parcel.writeByte(if (isNotificationsEnable) 1 else 0)
         parcel.writeByte(if (isCallsEnable) 1 else 0)
         parcel.writeString(imgUser)
-        parcel.writeIntArray(imgId)
     }
 
     override fun describeContents(): Int {
@@ -108,3 +100,11 @@ open class Profile(
         }
     }
 }
+
+
+open class ProfilePhoto(
+    @Ignore
+    @SerializedName("photo")
+    @Expose
+    var imgId: IntArray? = intArrayOf()
+)

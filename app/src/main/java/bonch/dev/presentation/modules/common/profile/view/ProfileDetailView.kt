@@ -104,25 +104,20 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
 
 
     override fun setProfile(profileData: Profile) {
-        try {
-            val img = when {
-                profileData.photos?.last()?.imgUrl != null -> {
-                    profileData.photos?.last()?.imgUrl
-                }
-                profileData.imgUser != null -> {
-                    Uri.parse(profileData.imgUser)
-                }
-                else -> null
+        val img = when {
+            profileData.photos?.lastOrNull()?.imgUrl != null -> {
+                profileData.photos?.lastOrNull()?.imgUrl
             }
-
-            if (img != null)
-                Glide.with(img_user.context).load(img)
-                    .apply(RequestOptions().centerCrop().circleCrop())
-                    .into(img_user)
-        } catch (ex: NoSuchElementException) {
-
-        } catch (ex: Exception) {
+            profileData.imgUser != null -> {
+                Uri.parse(profileData.imgUser)
+            }
+            else -> null
         }
+
+        if (img != null)
+            Glide.with(img_user.context).load(img)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .into(img_user)
 
         phone_number.text = profileData.phone
         first_name.setText(profileData.firstName)

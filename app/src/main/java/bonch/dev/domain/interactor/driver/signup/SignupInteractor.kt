@@ -7,6 +7,7 @@ import bonch.dev.data.repository.driver.signup.ISignupRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.driver.signup.ISignupStorage
 import bonch.dev.domain.entities.common.profile.Profile
+import bonch.dev.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.domain.entities.driver.signup.DriverData
 import bonch.dev.domain.entities.driver.signup.NewPhoto
 import bonch.dev.domain.entities.driver.signup.SignupMainData
@@ -95,29 +96,12 @@ class SignupInteractor : ISignupInteractor {
     private fun loadProfilePhoto(imageId: Int) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
+        val profilePhoto = ProfilePhoto(intArrayOf(imageId))
 
         if (token != null && userId != -1) {
-            profileRepository.getProfile(userId, token) { profile, error ->
-                if (error != null) {
-                    profileRepository.getProfile(userId, token) { profileData, _ ->
-                        profileData?.let {
-                            profileData.imgId = intArrayOf(imageId)
-
-                            profileRepository.saveProfile(userId, token, it) { err ->
-                                if (err != null) {
-                                    profileRepository.saveProfile(userId, token, it) {}
-                                }
-                            }
-                        }
-                    }
-                } else if (profile != null) {
-                    profile.imgId = intArrayOf(imageId)
-
-                    profileRepository.saveProfile(userId, token, profile) { err ->
-                        if (err != null) {
-                            profileRepository.saveProfile(userId, token, profile) {}
-                        }
-                    }
+            profileRepository.savePhoto(userId, token, profilePhoto) { err ->
+                if (err != null) {
+                    profileRepository.savePhoto(userId, token, profilePhoto) {}
                 }
             }
         }

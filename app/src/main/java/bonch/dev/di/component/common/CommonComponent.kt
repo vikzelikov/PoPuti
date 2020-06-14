@@ -8,10 +8,10 @@ import bonch.dev.domain.interactor.common.offerprice.OfferPriceInteractor
 import bonch.dev.domain.interactor.common.rate.RateRideInteractor
 import bonch.dev.presentation.modules.common.chat.presenter.ChatPresenter
 import bonch.dev.presentation.modules.common.chat.view.ChatView
-import bonch.dev.presentation.modules.common.orfferprice.presenter.OfferPricePresenter
-import bonch.dev.presentation.modules.common.orfferprice.view.OfferPriceView
-import bonch.dev.presentation.modules.common.rate.presenter.RateRidePresenter
-import bonch.dev.presentation.modules.common.rate.view.RateRideView
+import bonch.dev.presentation.modules.common.ride.orfferprice.presenter.OfferPricePresenter
+import bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView
+import bonch.dev.presentation.modules.common.ride.rate.presenter.RateRidePresenter
+import bonch.dev.presentation.modules.common.ride.rate.view.RateRideView
 import dagger.Component
 
 
