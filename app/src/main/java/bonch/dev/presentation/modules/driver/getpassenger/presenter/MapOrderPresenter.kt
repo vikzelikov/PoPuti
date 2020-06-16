@@ -72,7 +72,7 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
         childFragment.finishActivity = { getView()?.finishMapActivity(it) }
 
         //set type UI
-        childFragment.isForPassanger = false
+        childFragment.isForPassenger = false
 
         this.childRateRide = childFragment
         fm.beginTransaction()

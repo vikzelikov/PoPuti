@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.Bundle
 import android.os.Handler
@@ -8,12 +8,11 @@ import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.*
 import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
-import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.ContractView
+import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -56,29 +55,9 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
-    //create ride with SERVER
-    override fun createRide(rideInfo: RideInfo) {
-        val ride = RideInfo()
-        ride.position = rideInfo.fromAdr?.address
-        ride.fromLat = rideInfo.fromAdr?.point?.latitude
-        ride.fromLng = rideInfo.fromAdr?.point?.longitude
-        ride.destination = rideInfo.toAdr?.address
-        ride.toLat = rideInfo.toAdr?.point?.latitude
-        ride.toLng = rideInfo.toAdr?.point?.longitude
-        ride.comment = "Temp comment"
-        ride.price = rideInfo.price
-
-
-        getDriverInteractor.createRide(ride) { isSuccess ->
-            if (!isSuccess) {
-                val res = App.appComponent.getContext().resources
-                getView()?.showNotification(res.getString(R.string.errorSystem))
-            }
-        }
-    }
-
-
     private fun selectDriverDone() {
+        val res = App.appComponent.getContext().resources
+
         getView()?.removeBackground()
 
         //stop getting new driver
@@ -88,14 +67,21 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         RideStatus.status = StatusRide.WAIT_FOR_DRIVER
 
         //remote new status
-        getDriverInteractor.updateRideStatus(StatusRide.WAIT_FOR_DRIVER)
+        getDriverInteractor.updateRideStatus(StatusRide.WAIT_FOR_DRIVER) { isSuccess ->
+            if (isSuccess) {
+                //remote linking driver to ride
+                //TODO get actual driver id
+                getDriverInteractor.linkDriverToRide(1) {
+                    if (it) {
+                        //next step
+                        getView()?.nextFragment()
+                    } else getView()?.showNotification(res.getString(R.string.errorSystem))
+                }
 
-        //remote linking driver to ride
-        //TODO get actual driver id
-        getDriverInteractor.linkDriverToRide(9)
+            } else getView()?.showNotification(res.getString(R.string.errorSystem))
+        }
 
-        //next step
-        getView()?.nextFragment()
+
     }
 
 
@@ -144,7 +130,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
     override fun cancelDone(reasonID: ReasonCancel) {
         //cancel ride remote
-        getDriverInteractor.updateRideStatus(StatusRide.CANCEL)
+        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
 
         //stop getting new driver
         clearData()
@@ -160,7 +146,6 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         val bundle = Bundle()
         bundle.putInt(REASON, reasonID.reason)
         MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), bundle)
-
     }
 
 
@@ -179,12 +164,10 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
-    override fun timeExpiredOk() {
-        //clear data and redirect
-        clearData()
-        DriverObject.driver = null
+    override fun timeExpired() {
+        getView()?.hideKeyboard()
 
-        MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
+        cancelDone(ReasonCancel.MISTAKE)
     }
 
 

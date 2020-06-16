@@ -92,7 +92,7 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
                     setResult(RESULT_OK, intent)
                     finish()
                 }
-            }catch (ex: NumberFormatException){
+            } catch (ex: NumberFormatException) {
             }
         }
 
@@ -175,6 +175,15 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
     override fun hideKeyboard() {
         hideKeyboard(this, this.rootLinearLayout)
     }
+
+
+    override fun showNotification(text: String) {}
+
+
+    override fun showLoading() {}
+
+
+    override fun hideLoading() {}
 
 
     override fun getNavHost(): NavController? {

@@ -168,6 +168,21 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
     }
 
 
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
+    }
+
+
     override fun showError(text: String) {
         (activity as? MainActivity)?.showNotification(text)
     }

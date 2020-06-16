@@ -36,12 +36,12 @@ class ProfileInteractor : IProfileInteractor {
 
 
     override fun localSaveProfile(profile: Profile) {
-        profileStorage.saveProfileData(profile)
+        profileStorage.saveProfile(profile)
     }
 
 
     override fun removeProfileData() {
-        profileStorage.removeProfileData()
+        profileStorage.removeProfile()
     }
 
 
@@ -140,8 +140,8 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun getProfileLocate(): Profile? {
-        return profileStorage.getProfileData()
+    override fun getProfileLocal(): Profile? {
+        return profileStorage.getProfile()
     }
 
 
@@ -157,11 +157,6 @@ class ProfileInteractor : IProfileInteractor {
 
     override fun isCheckoutDriver(): Boolean {
         return profileStorage.isCheckoutDriver()
-    }
-
-
-    override fun removeToken() {
-        profileStorage.removeToken()
     }
 
 

@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.ride.Address
-import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.passenger.getdriver.*
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
@@ -54,6 +53,7 @@ interface ContractPresenter {
     interface IDetailRidePresenter {
         fun submitRoute()
         fun removeRoute()
+        fun createRide()
         fun getMap(): MapView?
         fun removeTickSelected()
         fun offerPriceDone(data: Intent?)
@@ -64,7 +64,6 @@ interface ContractPresenter {
         fun offerPrice(context: Context, fragment: Fragment)
         fun addBankCardDone(data: Intent?)
         fun showRoute()
-        fun getDriver()
     }
 
 
@@ -84,10 +83,9 @@ interface ContractPresenter {
         fun instance(): GetDriverPresenter
         fun moveCamera(zoom: Float, point: Point)
         fun cancelDoneOtherReason(comment: String)
-        fun createRide(rideInfo: RideInfo)
         fun onUserLocationAttach()
         fun startSearchDrivers()
-        fun timeExpiredOk()
+        fun timeExpired()
         fun confirmAccept()
     }
 

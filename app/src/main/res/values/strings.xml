@@ -198,6 +198,7 @@
     <string name="passangerWithChild">Пассажир не указал, что он будет с ребенком</string>
     <string name="rideCreated">Поездка создана</string>
     <string name="ordersEmpty">Заказов нет</string>
+    <string name="searchOrders">Поиск заказов…</string>
     <string name="userCancelledRide">Пассажир отменил поездку</string>
     <string name="userCancellPrice">Пассажир отклонил предложение</string>
     <string name="saveC">Сохранить</string>

@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.view
+package bonch.dev.presentation.modules.passenger.getdriver.view
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -28,8 +28,8 @@ import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.ride.adapters.PaymentsListAdapter
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.ContractPresenter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.PaymentsListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
@@ -103,7 +103,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
     override fun setListeners() {
         get_driver_btn.setOnClickListener {
-            detailRidePresenter.getDriver()
+            detailRidePresenter.createRide()
         }
 
         offer_price.setOnClickListener {
@@ -467,6 +467,21 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         activity?.let {
             Keyboard.hideKeyboard(activity, view)
         }
+    }
+
+
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
     }
 
 

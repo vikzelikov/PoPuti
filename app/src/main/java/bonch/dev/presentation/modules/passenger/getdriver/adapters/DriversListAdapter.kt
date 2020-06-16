@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.adapters
+package bonch.dev.presentation.modules.passenger.getdriver.adapters
 
 
 import android.view.LayoutInflater
@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.domain.entities.passenger.getdriver.Driver
 import bonch.dev.domain.entities.passenger.getdriver.DriverObject
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.ContractPresenter
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.DriverItemTimer
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.DriverMainTimer
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverItemTimer
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.driver_item.view.*
@@ -96,11 +96,11 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
 
             try {
                 if (!isUserAction) {
-                    if (DriverObject.driver == list[list.size - 1]) {
+                    if (DriverObject.driver == list[list.lastIndex]) {
                         getDriverPresenter.instance().getView()?.hideConfirmAccept()
                     }
 
-                    list.removeAt(list.size - 1)
+                    list.removeAt(list.lastIndex)
                     notifyItemRemoved(list.size)
                 }
             } catch (ex: IndexOutOfBoundsException) {

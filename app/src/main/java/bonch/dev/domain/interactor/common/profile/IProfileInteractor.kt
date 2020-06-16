@@ -20,15 +20,13 @@ interface IProfileInteractor {
 
     fun loadPhoto(image: File, profile: Profile, callback: SuccessHandler)
 
-    fun getProfileLocate(): Profile?
+    fun getProfileLocal(): Profile?
 
     fun getDriverAccess(): Boolean
 
     fun saveCheckoutDriver(isDriver: Boolean)
 
     fun isCheckoutDriver(): Boolean
-
-    fun removeToken()
 
     fun closeRealm()
 

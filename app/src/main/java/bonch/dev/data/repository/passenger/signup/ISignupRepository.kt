@@ -1,14 +1,14 @@
 package bonch.dev.data.repository.passenger.signup
 
-typealias SignupHandler = (error: String?) -> Unit
-typealias SignupCheckHandler<T> = (T, data: String?) -> Unit
+import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 
 interface ISignupRepository {
 
-    fun sendSms(phone: String, callback: SignupHandler)
+    fun sendSms(phone: String, callback: SuccessHandler)
 
-    fun checkCode(phone: String, code: String, callback: SignupCheckHandler<Boolean>)
+    fun checkCode(phone: String, code: String, callback: DataHandler<String?>)
 
-    fun getUserId(token: String, callback: SignupCheckHandler<Int?>)
+    fun getUserId(token: String, callback: DataHandler<Int?>)
 
 }

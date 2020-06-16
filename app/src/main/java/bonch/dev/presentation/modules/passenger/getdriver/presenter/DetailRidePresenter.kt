@@ -1,9 +1,10 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.data.repository.common.ride.SearchPlace
 import bonch.dev.domain.entities.common.ride.Address
@@ -11,12 +12,14 @@ import bonch.dev.domain.entities.common.ride.AddressPoint
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
+import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.presentation.modules.common.ride.routing.Routing
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.ContractView
+import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
@@ -27,6 +30,9 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
     @Inject
     lateinit var routing: Routing
+
+    @Inject
+    lateinit var getDriverInteractor: IGetDriverInteractor
 
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
@@ -177,7 +183,8 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     }
 
 
-    override fun getDriver() {
+    //create ride with SERVER
+    override fun createRide() {
         val view = getView()
 
         if (view != null && view.isDataComplete()) {
@@ -187,11 +194,38 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
             rideInfo?.fromAdr = fromAdr
             rideInfo?.toAdr = toAdr
 
-            bundle.putParcelable(RIDE_DETAIL_INFO, rideInfo)
+            if (rideInfo != null) {
+                bundle.putParcelable(RIDE_DETAIL_INFO, rideInfo)
 
-            MainRouter.showView(R.id.show_get_driver_fragment, getView()?.getNavHost(), bundle)
+                val ride = RideInfo()
+                ride.position = rideInfo.fromAdr?.address
+                ride.fromLat = rideInfo.fromAdr?.point?.latitude
+                ride.fromLng = rideInfo.fromAdr?.point?.longitude
+                ride.destination = rideInfo.toAdr?.address
+                ride.toLat = rideInfo.toAdr?.point?.latitude
+                ride.toLng = rideInfo.toAdr?.point?.longitude
+                ride.price = rideInfo.price
+                ride.comment = rideInfo.comment
+
+
+                //todo поставить loading view?
+                //create ride with SERVER
+                getDriverInteractor.createRide(ride) { isSuccess ->
+                    if (isSuccess) {
+                        MainRouter.showView(
+                            R.id.show_get_driver_fragment,
+                            getView()?.getNavHost(),
+                            bundle
+                        )
+                    } else {
+                        val res = App.appComponent.getContext().resources
+                        getView()?.showNotification(res.getString(R.string.errorSystem))
+                    }
+                }
+            }
         }
     }
+
 
     override fun removeTickSelected() {
         getView()?.removeTickSelected()

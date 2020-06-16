@@ -8,7 +8,7 @@ import bonch.dev.presentation.interfaces.IMainActivity
 import bonch.dev.presentation.interfaces.IMainPresenter
 import bonch.dev.presentation.modules.common.ride.rate.view.RateRideView
 import bonch.dev.presentation.modules.driver.getpassenger.view.OrdersView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.*
+import bonch.dev.presentation.modules.passenger.getdriver.view.*
 import javax.inject.Inject
 
 
@@ -26,9 +26,9 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
     override fun navigate() {
         //check user login
         val accessToken = baseInteractor.getToken()
+        val userId = baseInteractor.getUserId()
 
-
-        if (accessToken != null) {
+        if (accessToken != null && userId != -1) {
             //TODO check with server if created ride already (redirect to TrackRideView)
             //redirect to full app
 

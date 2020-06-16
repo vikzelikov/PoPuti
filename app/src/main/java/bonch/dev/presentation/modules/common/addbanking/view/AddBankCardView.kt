@@ -226,6 +226,12 @@ class AddBankCardView : AppCompatActivity(),
     }
 
 
+    override fun showLoading() {}
+
+
+    override fun hideLoading() {}
+
+
     override fun getNavHost(): NavController? {
         return null
     }

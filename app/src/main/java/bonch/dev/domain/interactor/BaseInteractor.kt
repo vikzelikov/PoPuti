@@ -21,6 +21,11 @@ class BaseInteractor : IBaseInteractor {
     }
 
 
+    override fun getUserId(): Int {
+        return profileStorage.getUserId()
+    }
+
+
     //for access to driver UI
     override fun isCheckoutDriver(): Boolean {
         return profileStorage.isCheckoutDriver()

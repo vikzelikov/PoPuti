@@ -129,6 +129,16 @@ class SignupStepView : Fragment(), ISignupStepView {
     }
 
 
+    override fun showLoading() {
+        (activity as? DriverSignupActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? DriverSignupActivity)?.hideLoading()
+    }
+
+
     override fun hideKeyboard() {}
 
 

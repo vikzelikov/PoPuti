@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.view
+package bonch.dev.presentation.modules.passenger.getdriver.view
 
 import android.content.Intent
 import android.os.Build
@@ -24,7 +24,7 @@ import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.ContractPresenter
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -361,6 +361,16 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     override fun showNotification(text: String) {
         (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
     }
 
 

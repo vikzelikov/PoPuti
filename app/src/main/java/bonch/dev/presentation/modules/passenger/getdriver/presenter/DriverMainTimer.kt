@@ -1,7 +1,7 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.CountDownTimer
-import bonch.dev.presentation.modules.passenger.getdriver.ride.adapters.DriversListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
 
 
 object DriverMainTimer {

@@ -23,13 +23,12 @@ import bonch.dev.route.MainRouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.profile_fragment.*
-import java.lang.Exception
 import javax.inject.Inject
 
 
 /**
  * Common class for profile
- * (default UI set for driver, call setViewForPassanger() for checkout view)
+ * (default UI set for driver, call setViewForPassenger() for checkout view)
  * */
 
 
@@ -42,7 +41,7 @@ class ProfileView : Fragment(), IProfileView {
     private val EXIT = -2
     private val CHECKOUT = -3
 
-    var isForPassanger = true
+    var isForPassenger = true
 
 
     init {
@@ -82,8 +81,8 @@ class ProfileView : Fragment(), IProfileView {
 
         setListeners()
 
-        if (isForPassanger)
-            setViewForPassanger()
+        if (isForPassenger)
+            setViewForPassenger()
     }
 
 
@@ -105,7 +104,7 @@ class ProfileView : Fragment(), IProfileView {
     }
 
 
-    private fun setViewForPassanger() {
+    private fun setViewForPassenger() {
         help_for_driver.visibility = View.GONE
         about_car.visibility = View.GONE
 
@@ -163,7 +162,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         checkout_account.setOnClickListener {
-            profilePresenter.checkoutAccount(isForPassanger, this)
+            profilePresenter.checkoutAccount(isForPassenger, this)
         }
     }
 
@@ -176,11 +175,22 @@ class ProfileView : Fragment(), IProfileView {
     }
 
 
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
+    }
+
+
     override fun setProfile(profileData: Profile) {
         name_user.text = profileData.firstName.plus(" ").plus(profileData.lastName)
 
         val img = when {
             profileData.photos?.lastOrNull()?.imgUrl != null -> {
+                profileData.photos?.sortBy { it.id }
                 profileData.photos?.lastOrNull()?.imgUrl
             }
             profileData.imgUser != null -> {
@@ -217,7 +227,7 @@ class ProfileView : Fragment(), IProfileView {
 
 
     override fun isPassanger(): Boolean {
-        return isForPassanger
+        return isForPassenger
     }
 
 

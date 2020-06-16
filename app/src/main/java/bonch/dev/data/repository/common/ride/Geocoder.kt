@@ -1,6 +1,6 @@
 package bonch.dev.data.repository.common.ride
 
-import bonch.dev.domain.interactor.passenger.getdriver.GeocoderHandler
+import bonch.dev.presentation.interfaces.GeocoderHandler
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error

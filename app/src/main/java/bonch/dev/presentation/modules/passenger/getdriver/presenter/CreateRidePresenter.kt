@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.Handler
 import android.view.View
@@ -9,7 +9,7 @@ import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.ContractView
+import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import com.yandex.mapkit.geometry.Point
 import javax.inject.Inject
 

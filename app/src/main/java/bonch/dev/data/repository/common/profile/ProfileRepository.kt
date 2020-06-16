@@ -5,8 +5,10 @@ import bonch.dev.App
 import bonch.dev.data.network.common.ProfileService
 import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.profile.ProfilePhoto
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.ErrorHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,15 +27,14 @@ class ProfileRepository : IProfileRepository {
         userId: Int,
         token: String,
         profileData: Profile,
-        callback: ErrorHandler
+        callback: SuccessHandler
     ) {
         var response: Response<*>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 if (profileData.email == null) profileData.email = ""
 
@@ -42,21 +43,21 @@ class ProfileRepository : IProfileRepository {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
-                        callback(null)
+                        callback(true)
                     } else {
                         //Error
                         Log.e(
                             "SEND_NAMES",
                             "Send names to server failed with code: ${response.code()}"
                         )
-                        callback(response.code().toString())
+                        callback(false)
                     }
                 }
 
             } catch (err: Exception) {
                 //Error
                 Log.e("SEND_NAMES", "${err.printStackTrace()}")
-                callback(err.message)
+                callback(false)
             }
         }
     }
@@ -66,36 +67,35 @@ class ProfileRepository : IProfileRepository {
         userId: Int,
         token: String,
         photo: ProfilePhoto,
-        callback: ErrorHandler
+        callback: SuccessHandler
     ) {
         var response: Response<*>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 response = service.savePhoto(headers, userId, photo)
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
-                        callback(null)
+                        callback(true)
                     } else {
                         //Error
                         Log.e(
                             "LOAD_PHOTO",
                             "Load photo to server failed with code: ${response.code()}"
                         )
-                        callback(response.code().toString())
+                        callback(false)
                     }
                 }
 
             } catch (err: Exception) {
                 //Error
                 Log.e("LOAD_PHOTO", "${err.printStackTrace()}")
-                callback(err.message)
+                callback(false)
             }
         }
     }
@@ -111,8 +111,7 @@ class ProfileRepository : IProfileRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 response = service.getProfile(headers, userId)
 

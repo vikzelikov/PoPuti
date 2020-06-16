@@ -37,7 +37,7 @@ class MainFragment : Fragment() {
         navView.selectedItemId = R.id.get_driver
 
         //set type UI
-        profile?.isForPassanger = false
+        profile?.isForPassenger = false
 
         addToBackStack()
 

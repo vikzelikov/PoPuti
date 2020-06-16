@@ -5,7 +5,7 @@
     android:id="@+id/order_get_passanger_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.modules.passenger.getdriver.ride.view.MapGetDriverView">
+    tools:context=".presentation.modules.passenger.getdriver.view.MapGetDriverView">
 
 
     <LinearLayout

@@ -32,7 +32,7 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
     override fun checkCode(phone: String?, code: String) {
         if (isCodeEnter() && phone != null) {
 
-            getView()?.startAnimLoading()
+            getView()?.showLoading()
 
             signupInteractor.checkCode(phone, code, callback = {
                 onResponseCheckCode(it)
@@ -49,13 +49,14 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
             val mainHandler = Handler(Looper.getMainLooper())
             val myRunnable = Runnable {
                 kotlin.run {
-                    getView()?.hideLoading()
                     getView()?.showError()
                 }
             }
 
             mainHandler.post(myRunnable)
         }
+
+        getView()?.hideLoading()
     }
 
 

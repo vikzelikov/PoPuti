@@ -10,10 +10,12 @@ import bonch.dev.domain.entities.common.ride.Ride
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.*
-import bonch.dev.domain.interactor.passenger.getdriver.GeocoderHandler
 import bonch.dev.domain.interactor.passenger.getdriver.NewDriver
-import bonch.dev.domain.interactor.passenger.getdriver.SuggestHandler
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.GeocoderHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
+import bonch.dev.presentation.interfaces.SuggestHandler
 import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,9 +74,9 @@ class GetDriverRepository : IGetDriverRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
+                if (rideInfo.comment == null) rideInfo.comment = ""
                 response = service.createRide(
                     headers,
                     rideInfo
@@ -114,36 +116,35 @@ class GetDriverRepository : IGetDriverRepository {
         status: StatusRide,
         rideId: Int,
         token: String,
-        callback: DataHandler<String?>
+        callback: SuccessHandler
     ) {
         var response: Response<*>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 response = service.updateRideStatus(headers, rideId, status.status)
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
-                        callback(null, null)
+                        callback(true)
                     } else {
                         //Error
                         Log.e(
                             "UPDATE_RIDE",
                             "Update ride on server failed with code: ${response.code()}"
                         )
-                        callback(null, response.message())
+                        callback(false)
                     }
                 }
 
             } catch (err: Exception) {
                 //Error
                 Log.e("UPDATE_RIDE", "${err.printStackTrace()}")
-                callback(null, err.message)
+                callback(false)
             }
         }
     }
@@ -153,7 +154,7 @@ class GetDriverRepository : IGetDriverRepository {
         driverId: Int,
         rideId: Int,
         token: String,
-        callback: DataHandler<String?>
+        callback: SuccessHandler
     ) {
         var response: Response<*>
 
@@ -168,21 +169,21 @@ class GetDriverRepository : IGetDriverRepository {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
-                        callback(null, null)
+                        callback(true)
                     } else {
                         //Error
                         Log.e(
                             "LINK_DRIVER_TO_RIDE",
                             "Link driver to ride on server failed with code: ${response.code()}"
                         )
-                        callback(null, response.message())
+                        callback(false)
                     }
                 }
 
             } catch (err: Exception) {
                 //Error
                 Log.e("LINK_DRIVER_TO_RIDE", "${err.printStackTrace()}")
-                callback(null, err.message)
+                callback(false)
             }
         }
     }

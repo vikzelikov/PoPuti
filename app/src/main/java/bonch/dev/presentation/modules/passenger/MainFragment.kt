@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.presentation.modules.common.profile.view.ProfileView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.MapCreateRideView
+import bonch.dev.presentation.modules.passenger.getdriver.view.MapCreateRideView
 import bonch.dev.presentation.modules.passenger.regulardrive.view.RegularDriveView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -42,7 +42,7 @@ class MainFragment : Fragment() {
         mapCreateRide?.bottomNavView = navView
 
         //set type UI
-        profile?.isForPassanger = true
+        profile?.isForPassenger = true
 
         addToBackStack()
 

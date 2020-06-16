@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
 import android.content.Intent
@@ -16,7 +16,7 @@ import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.chat.view.ChatView
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.ContractView
+import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
 import javax.inject.Inject
 
@@ -69,9 +69,9 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     override fun cancelDone(reasonID: ReasonCancel) {
         //cancel ride remote
-        getDriverInteractor.updateRideStatus(StatusRide.CANCEL)
+        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
 
-        if(reasonID == ReasonCancel.MISTAKE || reasonID == ReasonCancel.OTHER){
+        if (reasonID == ReasonCancel.MISTAKE || reasonID == ReasonCancel.OTHER) {
             Coordinate.toAdr = null
         }
 

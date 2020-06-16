@@ -101,4 +101,19 @@ class RegularDriveView : Fragment(), ContractView.IRegularDriveView {
     override fun hideKeyboard() {}
 
 
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
+    }
+
+
 }

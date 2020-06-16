@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -9,11 +9,11 @@ import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.ride.rate.view.IRateRideView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.ContractView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.GetDriverView
+import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
+import bonch.dev.presentation.modules.passenger.getdriver.view.GetDriverView
 import bonch.dev.presentation.modules.common.ride.rate.view.RateRideView
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.TrackRideView
+import bonch.dev.presentation.modules.passenger.getdriver.view.TrackRideView
 
 class MapGetDriverPresenter : BasePresenter<ContractView.IMapGetDriverView>(),
     ContractPresenter.IMapGetDriverPresenter {
@@ -73,7 +73,7 @@ class MapGetDriverPresenter : BasePresenter<ContractView.IMapGetDriverView>(),
         childFragment.mapView = { getView()?.getMap() }
 
         //set type UI
-        childFragment.isForPassanger = true
+        childFragment.isForPassenger = true
 
         this.childRateRideView = childFragment
         fm.beginTransaction()

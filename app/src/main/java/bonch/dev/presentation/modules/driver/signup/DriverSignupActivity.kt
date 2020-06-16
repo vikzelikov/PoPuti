@@ -58,7 +58,7 @@ class DriverSignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.driver_signup_activity)
 
-        startAnimLoading()
+        showLoading()
 
         navigateOnSignup()
     }
@@ -71,38 +71,39 @@ class DriverSignupActivity : AppCompatActivity() {
 
     private fun navigateOnSignup() {
         //try to get info about driver and docs
-        signupInteractor.getDriver { driver, _ ->
+        if (true) showDriverUI()
+        else
+            signupInteractor.getDriver { driver, _ ->
+                if (driver != null) {
+                    hideLoading()
 
-            if (driver != null) {
-                hideLoading()
+                    getDriverResponse(driver)
+                } else {
+                    //try to get driver with userId
+                    signupInteractor.getUser { profile, _ ->
+                        val driverData = profile?.driver
 
-                getDriverResponse(driver)
-            } else {
-                //try to get driver with userId
-                signupInteractor.getUser { profile, _ ->
-                    val driverData = profile?.driver
-
-                    if (driverData == null) {
-                        hideLoading()
-                    } else {
-                        if (driverData.isVerify) {
+                        if (driverData == null) {
                             hideLoading()
-                            showDriverUI()
-
                         } else {
-                            val driverId = driverData.driverId
-                            if (driverId != null) {
-                                signupInteractor.saveDriverID(driverId)
+                            if (driverData.isVerify) {
+                                hideLoading()
+                                showDriverUI()
 
-                                signupInteractor.getDriver { driver, _ ->
-                                    driver?.let { getDriverResponse(it) }
+                            } else {
+                                val driverId = driverData.driverId
+                                if (driverId != null) {
+                                    signupInteractor.saveDriverID(driverId)
+
+                                    signupInteractor.getDriver { driver, _ ->
+                                        driver?.let { getDriverResponse(it) }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
     }
 
 
@@ -112,8 +113,7 @@ class DriverSignupActivity : AppCompatActivity() {
         if (driver.isVerify) {
             showDriverUI()
         } else {
-//            showTableDocsView(driver)
-            showDriverUI()
+            showTableDocsView(driver)
         }
     }
 
@@ -135,12 +135,6 @@ class DriverSignupActivity : AppCompatActivity() {
 
         //show table docs
         MainRouter.showView(R.id.show_start_table_docs_view, navController, bundle)
-    }
-
-
-    private fun startAnimLoading() {
-        progress_bar.visibility = View.VISIBLE
-        on_view.visibility = View.VISIBLE
     }
 
 
@@ -203,18 +197,39 @@ class DriverSignupActivity : AppCompatActivity() {
     }
 
 
-    private fun hideLoading() {
-        progress_bar.visibility = View.GONE
-        on_view.alpha = 1.0f
-        on_view.animate()
-            .alpha(0f)
-            .setDuration(500)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    //go to the next screen
-                    on_view.visibility = View.GONE
-                }
-            })
+    fun showLoading() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                on_view.alpha = 0.7f
+                progress_bar.visibility = View.VISIBLE
+                on_view.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    fun hideLoading() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                progress_bar.visibility = View.GONE
+                on_view.alpha = 1.0f
+                on_view.animate()
+                    .alpha(0f)
+                    .setDuration(500)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            //go to the next screen
+                            on_view.visibility = View.GONE
+                        }
+                    })
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 

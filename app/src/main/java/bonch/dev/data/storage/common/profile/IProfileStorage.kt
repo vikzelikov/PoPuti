@@ -6,17 +6,15 @@ interface IProfileStorage {
 
     fun initRealm()
 
-    fun saveProfileData(profile: Profile)
+    fun saveProfile(profile: Profile)
 
-    fun getProfileData(): Profile?
+    fun getProfile(): Profile?
 
-    fun removeProfileData()
+    fun removeProfile()
 
     fun saveToken(token: String)
 
     fun getToken(): String?
-
-    fun removeToken()
 
     fun getUserId(): Int
 

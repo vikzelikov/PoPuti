@@ -1,11 +1,13 @@
 package bonch.dev.presentation.modules.passenger.signup.presenter
 
 import androidx.fragment.app.FragmentActivity
+import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.passenger.signup.DataSignup
 import bonch.dev.domain.interactor.passenger.signup.ISignupInteractor
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.passenger.signup.SignupComponent
 import bonch.dev.presentation.modules.passenger.signup.view.ContractView
 import bonch.dev.route.MainRouter
@@ -24,20 +26,33 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
 
 
     override fun doneSignup() {
+        getView()?.showLoading()
+
         signupInteractor.initRealm()
         //save Data:
         //save token
         saveToken()
         //save and send profile data to server
-        sendProfileData()
+        saveProfileData { isSuccess ->
+            if (isSuccess) {
+                //clear data
+                SignupComponent.passengerSignupComponent = null
+                DataSignup.phone = null
+                DataSignup.token = null
 
-        //clear data
-        SignupComponent.passengerSignupComponent = null
-        DataSignup.phone = null
-        DataSignup.token = null
+                //next transition
+                MainRouter.showView(
+                    R.id.show_main_passenger_fragment,
+                    getView()?.getNavHost(),
+                    null
+                )
 
-        //next transition
-        MainRouter.showView(R.id.show_main_passenger_fragment, getView()?.getNavHost(), null)
+                getView()?.hideLoading()
+
+            } else {
+                getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+            }
+        }
     }
 
 
@@ -60,17 +75,16 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
     }
 
 
-    override fun sendProfileData() {
+    private fun saveProfileData(callback: SuccessHandler) {
         val profileData = getView()?.getProfileData()
         val token = DataSignup.token
         profileData?.phone = DataSignup.phone
 
         if (token != null && profileData != null) {
-            //local save
-            signupInteractor.saveProfileData(profileData)
-
             //remote save
-            signupInteractor.sendProfileData(token, profileData)
+            signupInteractor.saveProfile(token, profileData) {
+                callback(it)
+            }
         }
     }
 

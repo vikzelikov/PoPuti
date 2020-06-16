@@ -7,6 +7,7 @@ import android.graphics.PointF
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.Permissions
@@ -193,7 +194,7 @@ class MapCreateRegularDrive : AppCompatActivity(), UserLocationObjectListener, C
     }
 
 
-    fun showNotification(text: String) {
+    override fun showNotification(text: String) {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
@@ -213,6 +214,41 @@ class MapCreateRegularDrive : AppCompatActivity(), UserLocationObjectListener, C
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
                             handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
+                        }
+                    })
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+    override fun showLoading() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                on_view.alpha = 0.7f
+                progress_bar.visibility = View.VISIBLE
+                on_view.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    override fun hideLoading() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                progress_bar.visibility = View.GONE
+                on_view.alpha = 0.7f
+                on_view.animate()
+                    .alpha(0f)
+                    .setDuration(500)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            //go to the next screen
+                            on_view.visibility = View.GONE
                         }
                     })
             }

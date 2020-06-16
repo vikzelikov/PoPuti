@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.profile_detail_activity.*
-import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -106,6 +105,9 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     override fun setProfile(profileData: Profile) {
         val img = when {
             profileData.photos?.lastOrNull()?.imgUrl != null -> {
+                profileData.photos?.sortBy {
+                    it.id
+                }
                 profileData.photos?.lastOrNull()?.imgUrl
             }
             profileData.imgUser != null -> {
@@ -298,33 +300,41 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     }
 
 
-    override fun showNotifications(text: String, isPositive: Boolean) {
+    override fun showNotification(text: String) {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
                 val view = notification
 
-                if (isPositive) {
-                    view.text = text
-                    handlerAnimation?.removeCallbacksAndMessages(null)
-                    handlerAnimation = Handler()
-                    view.translationY = 0.0f
-                    view.alpha = 0.0f
+                view.text = text
+                handlerAnimation?.removeCallbacksAndMessages(null)
+                handlerAnimation = Handler()
+                view.translationY = 0.0f
+                view.alpha = 0.0f
 
-                    view.animate()
-                        .setDuration(500L)
-                        .translationY(100f)
-                        .alpha(1.0f)
-                        .setListener(object : AnimatorListenerAdapter() {
-                            override fun onAnimationEnd(animation: Animator?) {
-                                super.onAnimationEnd(animation)
-                                handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
-                            }
-                        })
-                } else {
-                    //error popup
-                    getBottomSheet(errorBottomSheet)
-                }
+                view.animate()
+                    .setDuration(500L)
+                    .translationY(100f)
+                    .alpha(1.0f)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            super.onAnimationEnd(animation)
+                            handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
+                        }
+                    })
+
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    override fun showErrorNotification() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                getBottomSheet(errorBottomSheet)
             }
         }
 
@@ -366,7 +376,7 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
     }
 
 
-    override fun startAnimLoading() {
+    override fun showLoading() {
         progress_bar.visibility = View.VISIBLE
         on_view.visibility = View.VISIBLE
     }

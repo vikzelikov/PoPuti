@@ -325,6 +325,16 @@ class TableDocsView : Fragment(), ITableDocsView {
     }
 
 
+    override fun showLoading() {
+        (activity as? DriverSignupActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? DriverSignupActivity)?.hideLoading()
+    }
+
+
     fun onBackPressed(): Boolean {
         return if (tableDocsPresenter.onBackPressed()) {
             true

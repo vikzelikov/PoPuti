@@ -1,5 +1,6 @@
 package bonch.dev.domain.entities.common.ride
 
+import android.os.Handler
 import android.os.Parcel
 import android.os.Parcelable
 import bonch.dev.domain.entities.common.profile.Profile
@@ -73,9 +74,12 @@ data class RideInfo(
 
     @SerializedName("passenger")
     @Expose
-    val passenger: Profile? = null
+    val passenger: Profile? = null,
+
+    var handel: Handler? = null
 
 ) : Parcelable {
+
 
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
@@ -95,31 +99,10 @@ data class RideInfo(
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readByte() != 0.toByte(),
         parcel.readParcelable(Profile::class.java.classLoader)
-    ) {
-    }
+    )
 
     override fun equals(other: Any?): Boolean {
         return rideId == (other as RideInfo).rideId
-    }
-
-    override fun hashCode(): Int {
-        var result = rideId ?: 0
-        result = 31 * result + (position?.hashCode() ?: 0)
-        result = 31 * result + (fromAdr?.hashCode() ?: 0)
-        result = 31 * result + (fromLat?.hashCode() ?: 0)
-        result = 31 * result + (fromLng?.hashCode() ?: 0)
-        result = 31 * result + (destination?.hashCode() ?: 0)
-        result = 31 * result + (toAdr?.hashCode() ?: 0)
-        result = 31 * result + (toLat?.hashCode() ?: 0)
-        result = 31 * result + (toLng?.hashCode() ?: 0)
-        result = 31 * result + (comment?.hashCode() ?: 0)
-        result = 31 * result + (price ?: 0)
-        result = 31 * result + (userId ?: 0)
-        result = 31 * result + paymentMethod
-        result = 31 * result + time
-        result = 31 * result + (distance ?: 0)
-        result = 31 * result + (passenger?.hashCode() ?: 0)
-        return result
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -146,6 +129,28 @@ data class RideInfo(
         return 0
     }
 
+    override fun hashCode(): Int {
+        var result = rideId ?: 0
+        result = 31 * result + (position?.hashCode() ?: 0)
+        result = 31 * result + (fromAdr?.hashCode() ?: 0)
+        result = 31 * result + (fromLat?.hashCode() ?: 0)
+        result = 31 * result + (fromLng?.hashCode() ?: 0)
+        result = 31 * result + (destination?.hashCode() ?: 0)
+        result = 31 * result + (toAdr?.hashCode() ?: 0)
+        result = 31 * result + (toLat?.hashCode() ?: 0)
+        result = 31 * result + (toLng?.hashCode() ?: 0)
+        result = 31 * result + (comment?.hashCode() ?: 0)
+        result = 31 * result + (price ?: 0)
+        result = 31 * result + (userId ?: 0)
+        result = 31 * result + paymentMethod
+        result = 31 * result + time
+        result = 31 * result + (distance ?: 0)
+        result = 31 * result + isNewOrder.hashCode()
+        result = 31 * result + (handel?.hashCode() ?: 0)
+        result = 31 * result + (passenger?.hashCode() ?: 0)
+        return result
+    }
+
     companion object CREATOR : Parcelable.Creator<RideInfo> {
         override fun createFromParcel(parcel: Parcel): RideInfo {
             return RideInfo(parcel)
@@ -155,5 +160,7 @@ data class RideInfo(
             return arrayOfNulls(size)
         }
     }
+
+
 }
 

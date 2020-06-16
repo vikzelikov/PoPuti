@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.view
+package bonch.dev.presentation.modules.passenger.getdriver.view
 
 import android.os.Bundle
 import android.view.View
@@ -9,9 +9,9 @@ import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.passenger.getdriver.Driver
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.presentation.interfaces.IBaseView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.adapters.AddressesListAdapter
-import bonch.dev.presentation.modules.passenger.getdriver.ride.adapters.DriversListAdapter
-import bonch.dev.presentation.modules.passenger.getdriver.ride.adapters.PaymentsListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.AddressesListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.PaymentsListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
@@ -89,7 +89,6 @@ interface ContractView {
         fun getUserLocationLayer(): UserLocationLayer?
         fun checkoutBackground(isShow: Boolean)
         fun getRecyclerView(): RecyclerView
-        fun showNotification(text: String)
         fun startAnimSearch(point: Point)
         fun hideConfirmAccept()
         fun onObjectUpdated()
@@ -99,7 +98,6 @@ interface ContractView {
     interface ITrackRideView : IBaseView {
         fun setInfoDriver(driver: Driver)
         fun onBackPressed(): Boolean
-        fun showNotification(text: String)
         fun checkoutStatusView()
         fun getMap(): MapView?
         fun nextFragment()

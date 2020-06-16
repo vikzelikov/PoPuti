@@ -13,6 +13,7 @@ interface ContractView {
     interface IOrdersView : IBaseView {
         fun getAdapter(): OrdersAdapter
         fun getFragment(): Fragment
+        fun showOrdersLoading()
         fun showRecycler()
     }
 
@@ -29,16 +30,15 @@ interface ContractView {
     interface IDetailOrderView : IBaseView {
         fun setOrder(order: RideInfo)
         fun getMap(): MapView?
+        fun nextFragment()
         fun onObjectUpdate()
         fun getUserLocationLayer(): UserLocationLayer?
         fun onBackPressed(): Boolean
-        fun showNotification(text: String)
     }
 
     interface ITrackRideView : IBaseView {
         fun setOrder(order: RideInfo)
         fun getPassangerCancelled()
-        fun showNotification(text: String)
         fun tickTimerWaitPassanger(sec: Int, isPaidWaiting: Boolean)
         fun onBackPressed(): Boolean
         fun stepWaitPassanger()

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.modules.passenger.getdriver.ride.view.MapGetDriverView">
+    tools:context=".presentation.modules.passenger.getdriver.view.MapGetDriverView">
 
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/map"

@@ -51,7 +51,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
                     //try to get from locate storage
                     if (profile == null) {
-                        profile = profileInteractor.getProfileLocate()
+                        profile = profileInteractor.getProfileLocal()
                     }
 
                     profile?.let {

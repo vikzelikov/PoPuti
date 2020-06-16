@@ -10,6 +10,4 @@ interface IAddBankCardView : IBaseView {
 
     fun setHintListener()
 
-    fun showNotification(text: String)
-
 }

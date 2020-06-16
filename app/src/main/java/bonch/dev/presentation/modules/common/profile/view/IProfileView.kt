@@ -7,8 +7,6 @@ interface IProfileView : IBaseView {
 
     fun setProfile(profileData: Profile)
 
-    fun showNotification(text: String)
-
     fun isPassanger(): Boolean
 
 }

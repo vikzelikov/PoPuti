@@ -84,6 +84,8 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         if (rating != null) passanger_rating.text = rating
         else passanger_rating.text = "0.0"
 
+        //todo TEST
+        order.passenger?.photos?.sortBy { it.id }
         var photo: Any? = order.passenger?.photos?.lastOrNull()?.imgUrl
         if (photo == null) {
             photo = R.drawable.ic_default_ava
@@ -132,6 +134,12 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     }
 
 
+    override fun nextFragment() {
+        val activity = activity as? MapOrderView
+        activity?.let { nextFragment(it.supportFragmentManager) }
+    }
+
+
     override fun setListeners() {
         offer_price.setOnClickListener {
             context?.let {
@@ -152,8 +160,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         }
 
         confirm_with_price.setOnClickListener {
-            val activity = activity as? MapOrderView
-            activity?.let { nextFragment(it.supportFragmentManager) }
+            detailOrderPresenter.nextFragment()
         }
 
         cancel_ride.setOnClickListener {
@@ -253,6 +260,16 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
     override fun showNotification(text: String) {
         (activity as? MapOrderView)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? MapOrderView)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MapOrderView)?.hideLoading()
     }
 
 

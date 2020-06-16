@@ -84,7 +84,7 @@
 
     <fragment
         android:id="@+id/get_driver_fragment"
-        android:name="bonch.dev.presentation.modules.passenger.getdriver.ride.view.MapGetDriverView"
+        android:name="bonch.dev.presentation.modules.passenger.getdriver.view.MapGetDriverView"
         android:label="get_driver_fragment"
         tools:layout="@layout/map_get_driver_fragment">
 

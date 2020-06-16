@@ -15,8 +15,6 @@ interface ContractView {
     interface IConfirmView : IBaseView {
         fun changeBtnEnable(enable: Boolean)
         fun getCode(): String
-        fun hideLoading()
-        fun startAnimLoading()
         fun showError()
         fun hideError()
         fun setViewTimer()
@@ -25,8 +23,8 @@ interface ContractView {
 
 
     interface IFullNameView : IBaseView {
-        fun changeBtnEnable(enable: Boolean)
         fun setHintListener()
+        fun changeBtnEnable(enable: Boolean)
         fun getProfileData(): Profile
         fun getFirstName(): String
         fun getLastName(): String

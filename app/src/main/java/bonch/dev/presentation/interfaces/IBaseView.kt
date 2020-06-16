@@ -10,4 +10,10 @@ interface IBaseView {
 
     fun hideKeyboard()
 
+    fun showNotification(text: String)
+
+    fun showLoading()
+
+    fun hideLoading()
+
 }

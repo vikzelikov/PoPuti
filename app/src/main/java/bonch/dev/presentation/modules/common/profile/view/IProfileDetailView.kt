@@ -13,12 +13,8 @@ interface IProfileDetailView : IBaseView {
 
     fun isDataNamesComplete(): Boolean
 
+    fun showErrorNotification()
+
     fun setDataIntent(isShowPopup: Boolean, profileData: Profile?)
-
-    fun showNotifications(text: String, isPositive: Boolean)
-
-    fun startAnimLoading()
-
-    fun hideLoading()
 
 }

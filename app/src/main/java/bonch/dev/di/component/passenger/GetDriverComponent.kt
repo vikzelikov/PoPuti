@@ -6,8 +6,8 @@ import bonch.dev.di.scope.CompScope
 import bonch.dev.domain.interactor.passenger.getdriver.GetDriverInteractor
 import bonch.dev.presentation.modules.common.addbanking.presenter.AddBankCardPresenter
 import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.*
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.*
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.*
+import bonch.dev.presentation.modules.passenger.getdriver.view.*
 import dagger.Component
 
 @CompScope

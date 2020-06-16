@@ -1,39 +1,30 @@
 package bonch.dev.domain.interactor.passenger.signup
 
 import bonch.dev.domain.entities.common.profile.Profile
+import bonch.dev.presentation.interfaces.SuccessHandler
 
-typealias SignupHandler<T> = (success: T) -> Unit
 
 interface ISignupInteractor {
 
     fun sendSms(
         phone: String,
-        callback: SignupHandler<String?>
+        callback: SuccessHandler
     )
 
     fun checkCode(
         phone: String,
         code: String,
-        callback: SignupHandler<Boolean>
+        callback: SuccessHandler
     )
 
 
     fun initRealm()
 
 
-    fun sendProfileData(token: String, profileData: Profile)
-
-
-    fun retryGetUserId(token: String, profileData: Profile)
-
-
-    fun retrySendProfileData(id: Int, token: String, profileData: Profile)
+    fun saveProfile(token: String, profileData: Profile, callback: SuccessHandler)
 
 
     fun saveToken(token: String)
-
-
-    fun saveProfileData(profileData: Profile)
 
 
     fun closeRealm()

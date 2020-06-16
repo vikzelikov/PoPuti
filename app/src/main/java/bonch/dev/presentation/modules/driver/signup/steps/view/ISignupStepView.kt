@@ -7,6 +7,4 @@ interface ISignupStepView : IBaseView {
 
     fun setDataStep(stepData: SignupStep)
 
-    fun showNotification(text: String)
-
 }

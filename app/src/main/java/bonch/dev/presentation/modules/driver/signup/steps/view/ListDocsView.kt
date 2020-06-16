@@ -45,6 +45,21 @@ class ListDocsView : Fragment(), IBaseView {
     override fun hideKeyboard() {}
 
 
+    override fun showNotification(text: String) {
+        (activity as? DriverSignupActivity)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? DriverSignupActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? DriverSignupActivity)?.hideLoading()
+    }
+
+
     override fun getNavHost(): NavController? {
         return (activity as? DriverSignupActivity)?.navController
     }

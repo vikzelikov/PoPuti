@@ -59,11 +59,11 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
 
         val context = App.appComponent.getContext()
         if (!NetworkUtil.isNetworkConnected(context)) {
-            getView()?.showNotifications(context.resources.getString(R.string.checkInternet), true)
+            getView()?.showNotification(context.resources.getString(R.string.checkInternet))
         }
 
         profileInteractor.initRealm()
-        getView()?.startAnimLoading()
+        getView()?.showLoading()
 
         profileInteractor.getProfileRemote { profileData, _ ->
             val mainHandler = Handler(Looper.getMainLooper())
@@ -73,10 +73,10 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
 
                     //try to get from locate storage
                     if (profile == null) {
-                        profile = profileInteractor.getProfileLocate()
+                        profile = profileInteractor.getProfileLocal()
                     }
                     //todo remove it ******** пока не свяжем это с сервером
-                    val x = profileInteractor.getProfileLocate()
+                    val x = profileInteractor.getProfileLocal()
                     x?.let {
                         profile?.isCallsEnable = x.isCallsEnable
                         profile?.isNotificationsEnable = x.isNotificationsEnable
@@ -158,6 +158,7 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     override fun back(): Boolean {
         getView()?.hideKeyboard()
 
+        //if Net off, let go to back
         if (!NetworkUtil.isNetworkConnected(App.appComponent.getContext())) return true
 
         val isDataComplete = getView()?.isDataNamesComplete()
@@ -177,11 +178,11 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                 if (isPhotoUploaded) {
                     true
                 } else {
-                    getView()?.showNotifications(res.getString(R.string.photoProfileLoading), true)
+                    getView()?.showNotification(res.getString(R.string.photoProfileLoading))
                     false
                 }
             } else {
-                getView()?.showNotifications(res.getString(R.string.dataSaved), false)
+                getView()?.showErrorNotification()
                 false
             }
         } else false
@@ -249,7 +250,9 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
 
                 isDataComplete?.let {
                     val res = App.appComponent.getContext().resources
-                    getView()?.showNotifications(res.getString(R.string.dataSaved), it)
+                    if (it)
+                        getView()?.showNotification(res.getString(R.string.dataSaved))
+                    else getView()?.showErrorNotification()
                 }
 
                 getView()?.hideKeyboard()
@@ -277,7 +280,6 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     override fun logout() {
         //clear data and close app
         profileInteractor.removeProfileData()
-        profileInteractor.removeToken()
     }
 
 

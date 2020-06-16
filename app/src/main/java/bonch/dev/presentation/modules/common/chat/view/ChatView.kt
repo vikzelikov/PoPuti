@@ -67,7 +67,7 @@ class ChatView : AppCompatActivity(), IChatView {
         if (driver != null) {
             setDriverInfo(driver)
         } else if (order != null) {
-            setPassangerInfo(order)
+            setPassengerInfo(order)
         }
 
         initChatAdapter()
@@ -85,7 +85,7 @@ class ChatView : AppCompatActivity(), IChatView {
     }
 
 
-    private fun setPassangerInfo(order: RideInfo) {
+    private fun setPassengerInfo(order: RideInfo) {
         name_driver.text = order.passenger?.firstName
     }
 
@@ -155,6 +155,12 @@ class ChatView : AppCompatActivity(), IChatView {
     override fun hideKeyboard() {
         Keyboard.hideKeyboard(this, this.chat_activity)
     }
+
+
+    override fun showLoading() {}
+
+
+    override fun hideLoading() {}
 
 
     private fun setMovingButtonListener() {

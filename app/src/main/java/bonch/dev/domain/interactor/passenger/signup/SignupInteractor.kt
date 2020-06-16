@@ -5,6 +5,7 @@ import bonch.dev.data.repository.passenger.signup.ISignupRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.passenger.signup.DataSignup
+import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.passenger.signup.SignupComponent
 import javax.inject.Inject
 
@@ -27,14 +28,14 @@ class SignupInteractor : ISignupInteractor {
     //NETWORK
     override fun sendSms(
         phone: String,
-        callback: SignupHandler<String?>
+        callback: SuccessHandler
     ) {
-        signupRepository.sendSms(phone) { error ->
-            if (error != null) {
+        signupRepository.sendSms(phone) { isSuccess ->
+            if (!isSuccess) {
                 //retry request
                 signupRepository.sendSms(phone) {}
-                callback(error)
-            }
+                callback(false)
+            } else callback(true)
         }
     }
 
@@ -42,55 +43,68 @@ class SignupInteractor : ISignupInteractor {
     override fun checkCode(
         phone: String,
         code: String,
-        callback: SignupHandler<Boolean>
+        callback: SuccessHandler
     ) {
-        signupRepository.checkCode(phone, code) { status: Boolean, token: String? ->
-            if (token != null) {
-                //save token
-                DataSignup.token = token
-            }
+        signupRepository.checkCode(phone, code) { token: String?, error: String? ->
+            when {
+                error != null -> {
+                    //retry request
+                    signupRepository.checkCode(phone, code) { accessToken: String?, _ ->
+                        if (accessToken != null) {
+                            //save token
+                            DataSignup.token = token
+                            callback(true)
 
-            callback(status)
+                        } else callback(false)
+                    }
+                }
+                token != null -> {
+                    //save token
+                    DataSignup.token = token
+                    callback(true)
+                }
+                else -> callback(false)
+            }
         }
     }
 
 
-    override fun sendProfileData(token: String, profileData: Profile) {
-        signupRepository.getUserId(token) { id: Int?, _: String? ->
-            if (id == null) {
+    override fun saveProfile(token: String, profileData: Profile, callback: SuccessHandler) {
+        signupRepository.getUserId(token) { id: Int?, error: String? ->
+            when {
+                error != null -> {
+                    //retry request
+                    signupRepository.getUserId(token) { userId: Int?, _: String? ->
+                        if (userId != null) {
+                            saveProfile(userId, token, profileData)
+                            callback(true)
+
+                        } else callback(false)
+                    }
+                }
+                id != null -> {
+                    saveProfile(id, token, profileData)
+                    callback(true)
+
+                }
+                else -> callback(false)
+            }
+        }
+    }
+
+
+    private fun saveProfile(userId: Int, token: String, profileData: Profile) {
+        profileRepository.saveProfile(userId, token, profileData) { isSuccess ->
+            if (!isSuccess) {
                 //Retry request
-                retryGetUserId(token, profileData)
-            } else {
-                retrySendProfileData(id, token, profileData)
-            }
-        }
-    }
-
-
-    override fun retryGetUserId(token: String, profileData: Profile) {
-        signupRepository.getUserId(token) { id: Int?, _: String? ->
-            if (id != null) {
-                retrySendProfileData(id, token, profileData)
-            }
-        }
-    }
-
-
-    override fun retrySendProfileData(id: Int, token: String, profileData: Profile) {
-        profileRepository.saveProfile(id, token, profileData) { error ->
-            if (error != null) {
-                //Retry request
-                profileRepository.saveProfile(id, token, profileData) {}
+                profileRepository.saveProfile(userId, token, profileData) {}
             }
         }
 
-        profileData.id = id
-
-        //remove old data
-        profileStorage.removeProfileData()
+        profileData.id = userId
 
         //local save data
-        saveProfileData(profileData)
+        profileStorage.saveProfile(profileData)
     }
 
 
@@ -101,11 +115,6 @@ class SignupInteractor : ISignupInteractor {
 
     override fun saveToken(token: String) {
         profileStorage.saveToken(token)
-    }
-
-
-    override fun saveProfileData(profileData: Profile) {
-        profileStorage.saveProfileData(profileData)
     }
 
 

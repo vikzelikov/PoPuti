@@ -294,6 +294,16 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
+    override fun showLoading() {
+        (activity as? MapOrderView)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MapOrderView)?.hideLoading()
+    }
+
+
     private fun hideAllBottomSheet() {
         if (passangerCancelledBottomSheet?.state == BottomSheetBehavior.STATE_COLLAPSED) {
             on_view_cancel?.visibility = View.GONE

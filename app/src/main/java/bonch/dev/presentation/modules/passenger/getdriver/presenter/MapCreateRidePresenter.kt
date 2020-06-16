@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -11,9 +11,9 @@ import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.presentation.base.BasePresenter
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.ContractView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.CreateRideView
-import bonch.dev.presentation.modules.passenger.getdriver.ride.view.DetailRideView
+import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
+import bonch.dev.presentation.modules.passenger.getdriver.view.CreateRideView
+import bonch.dev.presentation.modules.passenger.getdriver.view.DetailRideView
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.user_location.UserLocationLayer
 

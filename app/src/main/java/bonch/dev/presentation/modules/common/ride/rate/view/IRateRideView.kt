@@ -4,8 +4,6 @@ import bonch.dev.presentation.interfaces.IBaseView
 
 interface IRateRideView : IBaseView {
 
-    fun showNotification(text: String)
-
     fun isPassanger(): Boolean
 
     fun onBackPressed(): Boolean

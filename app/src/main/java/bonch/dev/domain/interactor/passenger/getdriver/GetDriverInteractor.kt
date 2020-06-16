@@ -9,7 +9,9 @@ import bonch.dev.domain.entities.common.ride.AddressPoint
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.*
+import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
+import bonch.dev.presentation.interfaces.SuggestHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import com.yandex.mapkit.geometry.Point
 import io.realm.RealmResults
@@ -95,42 +97,48 @@ class GetDriverInteractor : IGetDriverInteractor {
 
 
     //update ride status with server
-    override fun updateRideStatus(status: StatusRide) {
+    override fun updateRideStatus(status: StatusRide, callback: SuccessHandler) {
         val rideId = getDriverStorage.getRideId()
         val token = profileStorage.getToken()
 
         if (rideId != -1 && token != null) {
-            getDriverRepository.updateRideStatus(status, rideId, token) { _, error ->
-                if (error != null) {
+            getDriverRepository.updateRideStatus(status, rideId, token) { isSuccess ->
+                if (!isSuccess) {
                     //retry request
-                    getDriverRepository.updateRideStatus(status, rideId, token) { _, _ -> }
-                }
+                    getDriverRepository.updateRideStatus(status, rideId, token) {
+                        callback(it)
+                    }
+                } else callback(true)
             }
         } else {
             Log.d(
                 "UPDATE_RIDE",
                 "Update ride with server failed (rideId: $rideId, token: $token)"
             )
+            callback(false)
         }
     }
 
 
-    override fun linkDriverToRide(userId: Int) {
+    override fun linkDriverToRide(userId: Int, callback: SuccessHandler) {
         val rideId = getDriverStorage.getRideId()
         val token = profileStorage.getToken()
 
         if (rideId != -1 && token != null) {
-            getDriverRepository.linkDriverToRide(userId, rideId, token) { _, error ->
-                if (error != null) {
+            getDriverRepository.linkDriverToRide(userId, rideId, token) { isSuccess ->
+                if (!isSuccess) {
                     //retry request
-                    getDriverRepository.linkDriverToRide(userId, rideId, token) { _, _ -> }
-                }
+                    getDriverRepository.linkDriverToRide(userId, rideId, token) {
+                        callback(it)
+                    }
+                } else callback(true)
             }
         } else {
             Log.d(
                 "LINK_DRIVER_TO_RIDE",
                 "Link driver to ride with server failed (rideId: $rideId, token: $token)"
             )
+            callback(false)
         }
     }
 

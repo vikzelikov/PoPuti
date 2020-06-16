@@ -48,7 +48,7 @@ class RateRideView : Fragment(), IRateRideView {
     lateinit var finishActivity: ParentHandler<Int>
 
 
-    var isForPassanger = true
+    var isForPassenger = true
 
 
     init {
@@ -92,13 +92,13 @@ class RateRideView : Fragment(), IRateRideView {
 
         setBottomSheet()
 
-        if (isForPassanger)
-            setViewForPassanger()
+        if (isForPassenger)
+            setViewForPassenger()
         else setViewForDriver()
     }
 
 
-    private fun setViewForPassanger() {
+    private fun setViewForPassenger() {
         rating_title.text = resources.getString(R.string.youGetPlace)
         subtitle_rating.text = resources.getString(R.string.rateRide)
         price_ride.visibility = View.VISIBLE
@@ -222,6 +222,24 @@ class RateRideView : Fragment(), IRateRideView {
     }
 
 
+    override fun showLoading() {
+        //for passanger
+        (activity as? MainActivity)?.showLoading()
+
+        //for driver
+        (activity as? MapOrderView)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        //for passanger
+        (activity as? MainActivity)?.hideLoading()
+
+        //for driver
+        (activity as? MapOrderView)?.hideLoading()
+    }
+
+
     private fun getComment() {
         commentBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
 
@@ -294,7 +312,7 @@ class RateRideView : Fragment(), IRateRideView {
 
 
     override fun isPassanger(): Boolean {
-        return isForPassanger
+        return isForPassenger
     }
 
 

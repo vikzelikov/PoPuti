@@ -1,7 +1,5 @@
 package bonch.dev.presentation.modules.passenger.signup.view
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -27,7 +25,7 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
     @Inject
     lateinit var confirmPhonePresenter: ContractPresenter.IConfirmPhonePresenter
 
-    private var isLoading = true
+
 
     init {
         SignupComponent.passengerSignupComponent?.inject(this)
@@ -159,29 +157,23 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
     }
 
 
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
     override fun getNavHost(): NavController? {
         return (activity as? MainActivity)?.navController
     }
 
 
-    override fun startAnimLoading() {
-        progress_bar.visibility = View.VISIBLE
-        on_view.visibility = View.VISIBLE
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
     }
 
 
     override fun hideLoading() {
-        progress_bar.visibility = View.GONE
-        on_view.alpha = 0.7f
-        on_view.animate()
-            .alpha(0f)
-            .setDuration(500)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    //go to the next screen
-                    on_view.visibility = View.GONE
-                }
-            })
+        (activity as? MainActivity)?.hideLoading()
     }
 
 

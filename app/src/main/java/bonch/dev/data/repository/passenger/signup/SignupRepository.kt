@@ -5,6 +5,9 @@ import bonch.dev.App
 import bonch.dev.data.network.passenger.SignupService
 import bonch.dev.domain.entities.common.profile.ProfileData
 import bonch.dev.domain.entities.passenger.signup.Token
+import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,7 +21,7 @@ class SignupRepository : ISignupRepository {
         .create(SignupService::class.java)
 
 
-    override fun sendSms(phone: String, callback: SignupHandler) {
+    override fun sendSms(phone: String, callback: SuccessHandler) {
         var response: Response<*>
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -28,22 +31,23 @@ class SignupRepository : ISignupRepository {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
-                        callback(null)
+                        callback(true)
                     } else {
                         //Error
-                        callback(response.code().toString())
+                        Log.e("SEND_SMS", "${response.code()}")
+                        callback(false)
                     }
                 }
             } catch (error: Exception) {
                 //Error
-                callback(error.message)
-                Log.e("Retrofit", "${error.printStackTrace()}")
+                Log.e("SEND_SMS", "${error.printStackTrace()}")
+                callback(false)
             }
         }
     }
 
 
-    override fun checkCode(phone: String, code: String, callback: SignupCheckHandler<Boolean>) {
+    override fun checkCode(phone: String, code: String, callback: DataHandler<String?>) {
         var response: Response<Token>
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -56,30 +60,30 @@ class SignupRepository : ISignupRepository {
 
                         accessToken?.let {
                             //Succes
-                            callback(true, accessToken)
+                            callback(accessToken, null)
                         }
                     } else {
                         //Error
-                        callback(false, null)
+                        Log.e("CHECK_CODE", "${response.code()}")
+                        callback(null, "${response.code()}")
                     }
                 }
             } catch (err: Exception) {
                 //Error
-                Log.e("Retrofit", "${err.printStackTrace()}")
-                callback(false, null)
+                Log.e("CHECK_CODE", "${err.printStackTrace()}")
+                callback(null, err.message)
             }
         }
     }
 
 
-    override fun getUserId(token: String, callback: SignupCheckHandler<Int?>) {
+    override fun getUserId(token: String, callback: DataHandler<Int?>) {
         var response: Response<ProfileData>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 //send request
                 response = service.getUserId(headers)
@@ -91,13 +95,14 @@ class SignupRepository : ISignupRepository {
                         callback(id, null)
                     } else {
                         //Error
-                        callback(null, null)
+                        Log.e("GET_USER_ID", "${response.code()}")
+                        callback(null, "${response.code()}")
                     }
                 }
             } catch (err: Exception) {
                 //Error
-                callback(null, null)
-                Log.e("Retrofit", "${err.printStackTrace()}")
+                Log.e("GET_USER_ID", "${err.printStackTrace()}")
+                callback(null, err.message)
             }
         }
     }

@@ -5,6 +5,8 @@ import bonch.dev.App
 import bonch.dev.data.network.common.MediaService
 import bonch.dev.domain.entities.common.media.Media
 import bonch.dev.domain.entities.common.media.MediaObject
+import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,14 +25,13 @@ class MediaRepository : IMediaRepository {
         .create(MediaService::class.java)
 
 
-    override fun loadPhoto(token: String, image: File, callback: MediaHandlerData<MediaObject?>) {
+    override fun loadPhoto(token: String, image: File, callback: DataHandler<MediaObject?>) {
         var response: Response<Media>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 //set multipart data
                 val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), image)
@@ -79,8 +80,7 @@ class MediaRepository : IMediaRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 response = service.deletePhoto(headers, imageId)
 

@@ -32,15 +32,12 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun receiveOrder(order: RideInfo?) {
-
-        //set this account of driver into ride
-        getPassengerInteractor.linkDriverToRide()
+        val res = App.appComponent.getContext().resources
 
         if (order != null) {
             //set UI
             getView()?.setOrder(order)
         } else {
-            val res = App.appComponent.getContext().resources
             getView()?.showNotification(res.getString(R.string.errorSystem))
         }
     }
@@ -49,28 +46,34 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun nextStep() {
         val oldStep = RideStatus.status
         val nextStep = getByValue(oldStep.status.inc())
+        val res = App.appComponent.getContext().resources
 
         if (nextStep != null) {
             RideStatus.status = nextStep
 
             //update status with server
-            getPassengerInteractor.updateRideStatus(nextStep)
+            getPassengerInteractor.updateRideStatus(nextStep) { isSuccess ->
+                if (isSuccess) {
+                    if (nextStep == StatusRide.WAIT_FOR_PASSANGER) {
+                        getView()?.stepWaitPassanger()
+                        timer = WaitingTimer()
+                        timer?.startTimer(this)
+                    }
+
+                    if (nextStep == StatusRide.IN_WAY) {
+                        timer?.cancelTimer()
+                        getView()?.stepInWay()
+                    }
+
+                    if (nextStep == StatusRide.GET_PLACE) {
+                        getView()?.stepDoneRide()
+                    }
+
+                } else getView()?.showNotification(res.getString(R.string.errorSystem))
+            }
         }
 
-        if (nextStep == StatusRide.WAIT_FOR_PASSANGER) {
-            getView()?.stepWaitPassanger()
-            timer = WaitingTimer()
-            timer?.startTimer(this)
-        }
 
-        if (nextStep == StatusRide.IN_WAY) {
-            timer?.cancelTimer()
-            getView()?.stepInWay()
-        }
-
-        if(nextStep == StatusRide.GET_PLACE){
-            getView()?.stepDoneRide()
-        }
     }
 
 
@@ -84,7 +87,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     override fun cancelDone(reasonID: ReasonCancel) {
         //cancel ride remote
-        //getPassangerInteractor.updateRideStatus(StatusRide.CANCEL)
+        getPassengerInteractor.updateRideStatus(StatusRide.CANCEL) {}
 
         //todo отправить на сервер
 

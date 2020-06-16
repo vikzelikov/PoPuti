@@ -1,7 +1,7 @@
 package bonch.dev.di.module.driver
 
-import bonch.dev.data.repository.driver.getpassenger.GetPassangerRepository
-import bonch.dev.data.repository.driver.getpassenger.IGetPassangerRepository
+import bonch.dev.data.repository.driver.getpassenger.GetPassengerRepository
+import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.common.profile.ProfileStorage
 import bonch.dev.di.scope.CompScope
@@ -36,7 +36,7 @@ class GetPassengerModule {
 
     @Provides
     @CompScope
-    fun provideGetPassangerRepository(): IGetPassangerRepository = GetPassangerRepository()
+    fun provideGetPassangerRepository(): IGetPassengerRepository = GetPassengerRepository()
 
     @Provides
     @CompScope

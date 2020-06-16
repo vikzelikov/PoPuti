@@ -5,19 +5,20 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
-import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import bonch.dev.App
 import bonch.dev.Permissions
+import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
-import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.view.ContractView
 import bonch.dev.presentation.modules.driver.getpassenger.view.MapOrderView
 import com.yandex.mapkit.geometry.Point
+import java.lang.IndexOutOfBoundsException
 import javax.inject.Inject
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -37,8 +38,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     private var isBlock = false
     private var isGettingLocation = false
 
-    private var userPosition: Point? = null
-
+    var userPosition: Point? = null
     var isUserGeoAccess = false
 
     init {
@@ -62,94 +62,123 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     }
 
 
-    override fun startSearchOrders() {
-        //send request every 15 sec
-        mainHandler = Handler()
-        mainHandler?.postDelayed(object : Runnable {
-            override fun run() {
-                getPassengerInteractor.getNewOrder { orders, _ ->
-                    //get new orders
-                    val newOrders = arrayListOf<RideInfo>()
-                    newOrders.addAll(orders)
+    override fun initOrders() {
+        getView()?.showOrdersLoading()
 
-                    //get old orders
-                    val oldOrders = getView()?.getAdapter()?.list
+        getMyPosition()
 
-                    if (!oldOrders.isNullOrEmpty()) {
-                        val oldIter = oldOrders.listIterator()
-
-                        //remove duplicates
-                        while (oldIter.hasNext()) {
-                            val oldOrder = oldIter.next()
-
-                            if (newOrders.contains(oldOrder)) {
-                                val newIter = newOrders.listIterator()
-
-                                while (newIter.hasNext()) {
-                                    val newOrder = newIter.next()
-                                    newOrder.isNewOrder = true
-
-                                    if (oldOrder == newOrder) {
-                                        newIter.remove()
-                                    }
-                                }
-                            } else {
-                                //delete orders if it is too old
-                                //-1 so RecyclerView indexing another
-                                getView()?.getAdapter()?.notifyItemRemoved(oldIter.nextIndex() - 1)
-                                oldIter.remove()
-                            }
+        Thread(Runnable {
+            while (true) {
+                val userPoint = userPosition
+                if (userPoint != null || !isUserGeoAccess) {
+                    val mainHandler = Handler(Looper.getMainLooper())
+                    val myRunnable = Runnable {
+                        kotlin.run {
+                            startSearchOrders()
                         }
                     }
+                    mainHandler.post(myRunnable)
 
-                    //after delete duplicates and old orders, do sorting
-                    getDistance(newOrders)
-                    mainHandler?.postDelayed(this, 6000)
+                    break
+                }
+            }
+        }).start()
+    }
 
+
+    override fun startSearchOrders() {
+        //send request every 15 sec
+        val adapter = getView()?.getAdapter()
+        mainHandler = Handler()
+
+        mainHandler?.postDelayed(object : Runnable {
+            override fun run() {
+                //get new orders
+                getPassengerInteractor.getNewOrder { newOrders, _ ->
+                    if (newOrders != null) {
+                        //get old orders
+                        val oldOrders = adapter?.list
+
+                        if (!oldOrders.isNullOrEmpty()) {
+                            val oldIter = oldOrders.listIterator()
+
+                            //remove duplicates
+                            while (oldIter.hasNext()) {
+                                val oldOrder = oldIter.next()
+
+                                if (newOrders.contains(oldOrder)) {
+                                    val newIter = newOrders.listIterator()
+
+                                    while (newIter.hasNext()) {
+                                        val newOrder = newIter.next()
+                                        newOrder.isNewOrder = true
+
+                                        if (oldOrder == newOrder) {
+                                            newIter.remove()
+                                        }
+                                    }
+                                } else {
+                                    //delete orders if it is too old
+                                    //-1 so RecyclerView indexing another
+                                    try {
+                                        adapter.notifyItemRemoved(oldIter.nextIndex() - 1)
+                                        oldOrder.handel?.removeCallbacksAndMessages(null)
+                                        oldIter.remove()
+                                    } catch (ex: IndexOutOfBoundsException) {
+                                    }
+
+                                    if (adapter.list.isNullOrEmpty()) getView()?.showOrdersLoading()
+                                }
+                            }
+                        }
+
+                        //after delete duplicates and old orders, do sorting
+                        calcDistance(newOrders)
+
+                    } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem)) //show error
+
+                    mainHandler?.postDelayed(this, 5000)
                 }
             }
         }, 0)
     }
 
 
-    private fun getDistance(newOrders: ArrayList<RideInfo>) {
-        println("EEE")
+    private fun calcDistance(orders: ArrayList<RideInfo>) {
+        println("EEE ${orders.size}")
         //calculate distance
-        if (!newOrders.isNullOrEmpty() && !isGettingLocation) {
+        if (!orders.isNullOrEmpty() && !isGettingLocation) {
             isGettingLocation = true
-            val list = getView()?.getAdapter()?.list
-            if (list != null) {
-                val copyList = arrayListOf<RideInfo>()
-                copyList.addAll(list)
 
-                newOrders.forEachIndexed { i, order ->
-                    if (isUserGeoAccess) {
+            userPosition?.let { userPoint ->
+                getView()?.getAdapter()?.list?.let { recyclerList ->
+                    val copyList = arrayListOf<RideInfo>()
+                    copyList.addAll(recyclerList)
+
+                    orders.forEachIndexed { i, order ->
                         val fromLat = order.fromLat
                         val fromLng = order.fromLng
                         if (fromLat != null && fromLng != null) {
                             val point = Point(fromLat, fromLng)
-                            //get my position (point)
-                            getMyPosition {
-                                //save distance
-                                val distance = calcDistance(it, point)
-                                order.distance = distance
+                            //save distance
+                            val distance = calcDistance(userPoint, point)
+                            order.distance = distance
 
-                                //if last item, then show in view
-                                if (i == newOrders.size - 1) {
-                                    if (copyList.isNotEmpty()) {
-                                        //we already have some orders in view
-                                        copyList.addAll(newOrders)
-                                        showOrder(copyList, false)
+                            //if last item, then show in view
+                            if (i == orders.lastIndex) {
+                                if (copyList.isNotEmpty()) {
+                                    //we already have some orders in view
+                                    copyList.addAll(orders)
+                                    showOrder(copyList, false)
 
-                                    } else {
-                                        //the first showing
-                                        showOrder(newOrders, true)
-                                    }
+                                } else {
+                                    //the first showing
+                                    showOrder(orders, true)
                                 }
-
-                                //end searching user position
-                                isGettingLocation = false
                             }
+
+                            //end searching user position
+                            isGettingLocation = false
                         }
                     }
                 }
@@ -160,19 +189,15 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
     private fun showOrder(orders: ArrayList<RideInfo>, isFirst: Boolean) {
         var delay = 500L
-        orders.sortBy {
-            it.distance
-        }
+        orders.sortBy { it.distance }
 
         orders.forEachIndexed { i, order ->
-            order.isNewOrder = false
-
             if (!isFirst) {
                 if (order.isNewOrder) {
                     //+1 so indexing in RecyclerView start from 1
                     //add delay for animation showing
                     Handler().postDelayed({
-                        getView()?.getAdapter()?.setNewOrder(i + 1, order)
+                        getView()?.getAdapter()?.setNewOrder(i, order)
                     }, delay)
 
                     delay += 500
@@ -182,10 +207,9 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
         //first showing
         if (isFirst) {
-            getView()?.getAdapter()?.list?.addAll(orders)
+            getView()?.showRecycler()
+            getView()?.getAdapter()?.setNewOrders(orders)
         }
-
-        getView()?.showRecycler()
     }
 
 
@@ -208,7 +232,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
         //every minute update geo of driver
         userPositionHandler?.postDelayed(object : Runnable {
             override fun run() {
-                userPosition = null
+                //userPosition = null
                 userPositionHandler?.postDelayed(this, 1000 * 60)
             }
         }, 0)
@@ -217,45 +241,25 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
     //we already checked geo permission in onCreate in view fragment
     @SuppressLint("MissingPermission")
-    override fun getMyPosition(callback: ParentHandler<Point>) {
+    private fun getMyPosition() {
         val app = App.appComponent.getApp()
         val locationManager = app.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         if (Permissions.isAccess(Permissions.GEO_PERMISSION, app.applicationContext)) {
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                1000,
+                0f,
+                object : ContractPresenter.UserLocationListener {
+                    override fun onLocationChanged(location: Location?) {
+                        val lat = location?.latitude
+                        val lng = location?.longitude
 
-            val userPoint = userPosition
-            if (userPoint != null) {
-                callback(userPoint)
-            } else {
-                locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER,
-                    1000,
-                    0f,
-                    object : android.location.LocationListener {
-                        override fun onLocationChanged(location: Location?) {
-                            val lat = location?.latitude
-                            val lng = location?.longitude
-
-                            if (lat != null && lng != null) {
-                                userPosition = Point(lat, lng)
-                                userPosition?.let {
-                                    callback(it)
-                                }
-                            }
+                        if (lat != null && lng != null) {
+                            userPosition = Point(lat, lng)
                         }
-
-                        override fun onStatusChanged(
-                            provider: String?,
-                            status: Int,
-                            extras: Bundle?
-                        ) {
-                        }
-
-                        override fun onProviderEnabled(provider: String?) {}
-
-                        override fun onProviderDisabled(provider: String?) {}
-                    })
-            }
+                    }
+                })
         }
     }
 

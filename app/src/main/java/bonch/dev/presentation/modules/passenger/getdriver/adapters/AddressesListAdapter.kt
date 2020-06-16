@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.adapters
+package bonch.dev.presentation.modules.passenger.getdriver.adapters
 
 
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.Address
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.ContractPresenter
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import kotlinx.android.synthetic.main.ride_item.view.*
 import javax.inject.Inject
 

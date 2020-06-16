@@ -1,6 +1,6 @@
 package bonch.dev.domain.entities.passenger.getdriver
 
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.DriverMainTimer
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
 
 open class Driver(
     var nameDriver: String? = null,

@@ -11,7 +11,7 @@ import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.presentation.modules.common.addbanking.presenter.AddBankCardPresenter
 import bonch.dev.presentation.modules.common.addbanking.presenter.IAddBankCardPresenter
 import bonch.dev.di.scope.CompScope
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.*
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.*
 import dagger.Module
 import dagger.Provides
 

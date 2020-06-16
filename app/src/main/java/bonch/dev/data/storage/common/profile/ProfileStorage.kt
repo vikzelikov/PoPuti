@@ -8,7 +8,7 @@ import io.realm.RealmConfiguration
 class ProfileStorage : IProfileStorage {
 
     private val PROFILE_REALM_NAME = "profile.realm"
-    private val ID = "ID"
+    private val USER_ID = "USER_ID"
     private val DRIVER_ID = "DRIVER_ID"
     private val ACCESS_TOKEN = "ACCESS_TOKEN"
     private val DRIVER_ACCESS = "DRIVER_ACCESS"
@@ -46,23 +46,16 @@ class ProfileStorage : IProfileStorage {
     }
 
 
-    override fun removeToken() {
-        val editor = App.appComponent.getSharedPref().edit()
-        editor.remove(ACCESS_TOKEN)
-        editor.apply()
-    }
-
-
     private fun saveUserId(id: Int) {
         val editor = App.appComponent.getSharedPref().edit()
-        editor.putInt(ID, id)
+        editor.putInt(USER_ID, id)
         editor.apply()
     }
 
 
     override fun getUserId(): Int {
         val pref = App.appComponent.getSharedPref()
-        return pref.getInt(ID, -1)
+        return pref.getInt(USER_ID, -1)
     }
 
 
@@ -79,7 +72,7 @@ class ProfileStorage : IProfileStorage {
     }
 
 
-    override fun getProfileData(): Profile? {
+    override fun getProfile(): Profile? {
         var profile: Profile? = null
 
         val realmResult = realm?.where(Profile::class.java)?.findAll()
@@ -106,7 +99,7 @@ class ProfileStorage : IProfileStorage {
     }
 
 
-    override fun saveProfileData(profile: Profile) {
+    override fun saveProfile(profile: Profile) {
         //save User Id
         if (profile.id != 0) {
             saveUserId(profile.id)
@@ -119,10 +112,15 @@ class ProfileStorage : IProfileStorage {
     }
 
 
-    override fun removeProfileData() {
+    override fun removeProfile() {
         realm?.executeTransaction {
             it.where(Profile::class.java).findAll().deleteAllFromRealm()
         }
+
+        val editor = App.appComponent.getSharedPref().edit()
+        editor.remove(ACCESS_TOKEN)
+        editor.remove(USER_ID)
+        editor.apply()
     }
 
 

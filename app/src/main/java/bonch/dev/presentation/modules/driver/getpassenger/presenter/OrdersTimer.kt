@@ -37,7 +37,8 @@ object OrdersTimer {
 
                         //if timeLine too small, remove item
                         if (it < 1) {
-                            adapter.cancel()
+                            //todo ???
+                            //adapter.cancel()
                         }
                     }
                 }

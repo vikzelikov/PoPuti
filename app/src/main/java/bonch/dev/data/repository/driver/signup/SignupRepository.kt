@@ -6,6 +6,7 @@ import bonch.dev.data.network.driver.SignupService
 import bonch.dev.domain.entities.driver.signup.DriverData
 import bonch.dev.domain.entities.driver.signup.DriverDataDTO
 import bonch.dev.domain.entities.driver.signup.NewPhoto
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
@@ -32,8 +33,7 @@ class SignupRepository : ISignupRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 driverData.userId = userId
 
@@ -47,22 +47,22 @@ class SignupRepository : ISignupRepository {
                             callback(response.body(), null)
                         } else {
                             //Error
-                            callback(null, response.message())
+                            callback(null, "${response.code()}")
                         }
                     } else {
                         //Error
-                        callback(null, response.message())
                         Log.e(
                             "CREATE_DRIVER",
                             "Create driver with server failed with code: ${response.code()}"
                         )
+                        callback(null, response.message())
                     }
                 }
 
             } catch (err: Exception) {
                 //Error
-                callback(null, "Error")
                 Log.e("CREATE_DRIVER", "${err.printStackTrace()}")
+                callback(null, "Error")
             }
         }
     }
@@ -78,8 +78,7 @@ class SignupRepository : ISignupRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 response = service.getDriver(headers, driverId)
 
@@ -91,22 +90,22 @@ class SignupRepository : ISignupRepository {
                             callback(response.body(), null)
                         } else {
                             //Error
-                            callback(null, response.message())
+                            callback(null, "${response.code()}")
                         }
                     } else {
                         ///Error
-                        callback(null, response.message())
                         Log.e(
                             "GET_DRIVER",
                             "Get driver from server failed with code: ${response.code()}"
                         )
+                        callback(null, "${response.code()}")
                     }
                 }
 
             } catch (err: Exception) {
                 //Error
-                callback(null, "Error")
                 Log.e("GET_DRIVER", "${err.printStackTrace()}")
+                callback(null, "Error")
             }
         }
     }
@@ -123,8 +122,7 @@ class SignupRepository : ISignupRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 response = service.putNewPhoto(headers, driverId, photo)
 

@@ -14,6 +14,4 @@ interface ITableDocsView : IBaseView {
 
     fun getTicsDocs(): Array<ImageView>
 
-    fun showNotification(text: String)
-
 }

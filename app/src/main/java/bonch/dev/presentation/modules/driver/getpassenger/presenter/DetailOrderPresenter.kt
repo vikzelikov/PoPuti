@@ -6,7 +6,10 @@ import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.RideStatus
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.presentation.modules.common.ride.routing.Routing
@@ -21,11 +24,34 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     @Inject
     lateinit var routing: Routing
 
-    val OFFER_PRICE = 1
+    @Inject
+    lateinit var getPassengerInteractor: IGetPassengerInteractor
 
+    val OFFER_PRICE = 1
 
     init {
         GetPassengerComponent.getPassengerComponent?.inject(this)
+    }
+
+
+    override fun nextFragment() {
+        val res = App.appComponent.getContext().resources
+
+        RideStatus.status = StatusRide.WAIT_FOR_DRIVER
+        getPassengerInteractor.updateRideStatus(RideStatus.status) { isSuccess ->
+            if (!isSuccess) {
+                getView()?.showNotification(res.getString(R.string.errorSystem))
+            }
+        }
+
+        //set this account of driver into ride
+        getPassengerInteractor.linkDriverToRide { isSuccess ->
+            if (isSuccess) {
+                getView()?.nextFragment()
+            } else {
+                getView()?.showNotification(res.getString(R.string.errorSystem))
+            }
+        }
     }
 
 

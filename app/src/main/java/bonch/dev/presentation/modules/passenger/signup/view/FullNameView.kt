@@ -91,7 +91,7 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
         }
 
         back_btn.setOnClickListener {
-            activity?.let{
+            activity?.let {
                 fullNamePresenter.back(it)
             }
         }
@@ -143,6 +143,21 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
         activity?.let {
             Keyboard.hideKeyboard(activity, view)
         }
+    }
+
+
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
     }
 
 

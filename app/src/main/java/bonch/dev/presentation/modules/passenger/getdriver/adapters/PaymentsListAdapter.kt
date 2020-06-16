@@ -1,4 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.adapters
+package bonch.dev.presentation.modules.passenger.getdriver.adapters
 
 
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.domain.entities.common.banking.BankCard
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.ContractPresenter
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import javax.inject.Inject
 
 

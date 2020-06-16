@@ -1,9 +1,9 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.presenter
+package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.CountDownTimer
 import android.view.View
 import android.view.ViewGroup
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.DriverMainTimer.DEFAULT_WIDTH
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer.DEFAULT_WIDTH
 
 class DriverItemTimer(
     startTime: Long,

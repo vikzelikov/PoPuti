@@ -1,14 +1,14 @@
 package bonch.dev.domain.interactor.passenger.getdriver
 
 import bonch.dev.domain.entities.common.ride.Address
-import bonch.dev.domain.entities.passenger.getdriver.Driver
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
+import bonch.dev.domain.entities.passenger.getdriver.Driver
+import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
+import bonch.dev.presentation.interfaces.SuggestHandler
 import com.yandex.mapkit.geometry.Point
 
-typealias GeocoderHandler = (address: String?, point: Point) -> Unit
-typealias SuggestHandler = (suggest: ArrayList<Address>) -> Unit
 typealias NewDriver = (driver: Driver) -> Unit
 
 interface IGetDriverInteractor {
@@ -24,9 +24,9 @@ interface IGetDriverInteractor {
     //Ride
     fun createRide(rideInfo: RideInfo, callback: SuccessHandler)
 
-    fun updateRideStatus(status: StatusRide)
+    fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
-    fun linkDriverToRide(userId: Int)
+    fun linkDriverToRide(userId: Int, callback: SuccessHandler)
 
     fun getNewDriver(callback: NewDriver)
 

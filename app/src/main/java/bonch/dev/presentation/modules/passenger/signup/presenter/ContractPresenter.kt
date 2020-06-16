@@ -3,6 +3,7 @@ package bonch.dev.presentation.modules.passenger.signup.presenter
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.MainActivity
+import bonch.dev.presentation.interfaces.SuccessHandler
 
 interface ContractPresenter {
 
@@ -29,7 +30,6 @@ interface ContractPresenter {
     interface IFullNamePresenter {
         fun instance(): FullNamePresenter
         fun isNameEntered(): Boolean
-        fun sendProfileData()
         fun saveToken()
         fun doneSignup()
         fun back(activity: FragmentActivity)

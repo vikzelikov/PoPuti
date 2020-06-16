@@ -715,4 +715,19 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     }
 
 
+    override fun showNotification(text: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
+    override fun showLoading() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
+    override fun hideLoading() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
 }

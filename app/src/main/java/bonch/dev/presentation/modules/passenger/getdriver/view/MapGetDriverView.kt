@@ -1,5 +1,4 @@
-package bonch.dev.presentation.modules.passenger.getdriver.ride.view
-
+package bonch.dev.presentation.modules.passenger.getdriver.view
 
 import android.graphics.Color
 import android.graphics.PointF
@@ -7,10 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import bonch.dev.App
 import bonch.dev.MainActivity
@@ -18,13 +14,11 @@ import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.di.module.passenger.GetDriverModule
-import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
-import bonch.dev.domain.utils.Constants.API_KEY
+import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.ride.presenter.ContractPresenter
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.yandex.mapkit.Animation
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.geometry.Point
@@ -40,26 +34,24 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
-import kotlinx.android.synthetic.main.map_create_ride_fragment.*
 import javax.inject.Inject
 
-
-class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener,
-    ContractView.IMapCreateRideView {
+class MapGetDriverView : Fragment(), UserLocationObjectListener, CameraListener,
+    ContractView.IMapGetDriverView {
 
     @Inject
-    lateinit var mapPresenter: ContractPresenter.IMapCreateRidePresenter
+    lateinit var mapGetDriverPresenter: ContractPresenter.IMapGetDriverPresenter
 
     private lateinit var mapView: MapView
-    var bottomNavView: BottomNavigationView? = null
     private var userLocationLayer: UserLocationLayer? = null
+
 
     init {
         initDI()
 
         GetDriverComponent.getDriverComponent?.inject(this)
 
-        mapPresenter.instance().attachView(this)
+        mapGetDriverPresenter.instance().attachView(this)
     }
 
 
@@ -81,12 +73,12 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         savedInstanceState: Bundle?
     ): View? {
         //init map
-        MapKitFactory.setApiKey(API_KEY)
+        MapKitFactory.setApiKey(Constants.API_KEY)
         MapKitFactory.initialize(context)
         SearchFactory.initialize(context)
         DirectionsFactory.initialize(context)
 
-        val root = inflater.inflate(R.layout.map_create_ride_fragment, container, false)
+        val root = inflater.inflate(R.layout.map_get_driver_fragment, container, false)
         mapView = root.findViewById(R.id.map) as MapView
 
         mapView.map?.addCameraListener(this)
@@ -111,7 +103,16 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
                 Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
             }
 
-            mapPresenter.isUserCoordinate(arguments)
+            val fm = it.supportFragmentManager
+            val driver = DriverObject.driver
+
+            if (driver != null) {
+                //ride already created
+                //TODO update driver status net
+                mapGetDriverPresenter.attachTrackRide(fm)
+            } else {
+                mapGetDriverPresenter.attachGetDriver(fm)
+            }
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -123,32 +124,10 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        val activity = activity as? MainActivity
-
-        activity?.let {
-            if (Permissions.isAccess(Permissions.GEO_PERMISSION, activity)) {
-                setUserLocation()
-            }
+        if (Permissions.isAccess(Permissions.GEO_PERMISSION, activity as MainActivity)) {
+            setUserLocation()
         }
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-
-    //center screen position
-    override fun onCameraPositionChanged(
-        p0: Map,
-        p1: CameraPosition,
-        p2: CameraUpdateSource,
-        p3: Boolean
-    ) {
-        if (p3) {
-            userLocationLayer?.resetAnchor()
-        }
-
-        if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
-            mapPresenter.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
-        }
     }
 
 
@@ -159,7 +138,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         val pinIcon = userLocationView.pin.useCompositeIcon()
 
         //for moving
-        val userMark = mapPresenter.getBitmap(R.drawable.ic_user_mark)
+        val userMark = mapGetDriverPresenter.getBitmap(R.drawable.ic_user_mark)
         userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
 
         userLocationLayer?.setAnchor(
@@ -187,14 +166,16 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
 
     override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
-        mapPresenter.onObjectUpdate()
+        mapGetDriverPresenter.onObjectUpdated()
     }
+
+
+    override fun setListeners() {}
 
 
     private fun setUserLocation() {
         val mapKit = MapKitFactory.getInstance()
-        //set correct zoom
-        mapView.map?.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
+        mapView.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
 
         //init user location service
         userLocationLayer = mapKit.createUserLocationLayer(mapView.mapWindow)
@@ -206,21 +187,16 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     }
 
 
-    override fun getUserLocation(): UserLocationLayer? {
-        return userLocationLayer
+    override fun onCameraPositionChanged(
+        p0: Map,
+        p1: CameraPosition,
+        p2: CameraUpdateSource,
+        p3: Boolean
+    ) {
+        if (p3) {
+            userLocationLayer?.resetAnchor()
+        }
     }
-
-
-    override fun correctMapView() {
-        val layoutParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
-        )
-        map.layoutParams = layoutParams
-    }
-
-
-    override fun setListeners() {}
 
 
     override fun getMap(): MapView {
@@ -228,12 +204,8 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     }
 
 
-    override fun moveCamera(point: Point) {
-        mapView.map?.move(
-            CameraPosition(point, 35.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
+    override fun getUserLocation(): UserLocationLayer? {
+        return userLocationLayer
     }
 
 
@@ -254,28 +226,44 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     override fun hideKeyboard() {
         val activity = activity as? MainActivity
         activity?.let {
-            Keyboard.hideKeyboard(activity, view)
+            Keyboard.hideKeyboard(it, view)
         }
     }
 
 
-    override fun getFM(): FragmentManager? {
-        return (activity as? MainActivity)?.supportFragmentManager
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
     }
 
 
-    override fun getNavView(): BottomNavigationView? {
-        return bottomNavView
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
     }
 
 
-    override fun onDestroy() {
-        mapPresenter.instance().detachView()
-        super.onDestroy()
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
     }
 
 
     override fun getNavHost(): NavController? {
         return (activity as? MainActivity)?.navController
     }
+
+
+    override fun getArgs(): Bundle? {
+        return arguments
+    }
+
+
+    fun onBackPressed(): Boolean {
+        return mapGetDriverPresenter.onBackPressed()
+    }
+
+
+    override fun onDestroy() {
+        mapGetDriverPresenter.instance().detachView()
+        super.onDestroy()
+    }
+
 }

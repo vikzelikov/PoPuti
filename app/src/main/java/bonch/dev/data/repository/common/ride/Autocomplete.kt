@@ -1,7 +1,7 @@
 package bonch.dev.data.repository.common.ride
 
 import bonch.dev.domain.entities.common.ride.Address
-import bonch.dev.domain.interactor.passenger.getdriver.SuggestHandler
+import bonch.dev.presentation.interfaces.SuggestHandler
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*

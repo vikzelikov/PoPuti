@@ -10,6 +10,6 @@ interface GetPassangerService : RideService {
     @GET("/api/rides")
     suspend fun getOrders(
         @Query("status") status: Int
-    ): Response<List<RideInfo>>
+    ): Response<ArrayList<RideInfo>>
 
 }

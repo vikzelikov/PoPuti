@@ -102,6 +102,15 @@ class SuggestView : AppCompatActivity(), ISuggestView {
     }
 
 
+    override fun showNotification(text: String) {}
+
+
+    override fun showLoading() {}
+
+
+    override fun hideLoading() {}
+
+
     override fun getNavHost(): NavController? {
         return null
     }

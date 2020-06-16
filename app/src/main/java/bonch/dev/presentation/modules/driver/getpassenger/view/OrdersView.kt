@@ -94,7 +94,7 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
                 }
         }
 
-        ordersPresenter.startSearchOrders()
+        ordersPresenter.initOrders()
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -117,8 +117,9 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
 
     override fun showRecycler() {
+        progress_bar.visibility = View.GONE
+        text_search_orders.visibility = View.GONE
         orders_recycler.visibility = View.VISIBLE
-        text_orders_empty.visibility = View.GONE
     }
 
 
@@ -148,6 +149,27 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
     override fun getFragment(): Fragment {
         return this
+    }
+
+
+    override fun showOrdersLoading() {
+        progress_bar.visibility = View.VISIBLE
+        text_search_orders.visibility = View.VISIBLE
+    }
+
+
+    override fun showNotification(text: String) {
+        (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    override fun showLoading() {
+        (activity as? MainActivity)?.showLoading()
+    }
+
+
+    override fun hideLoading() {
+        (activity as? MainActivity)?.hideLoading()
     }
 
 

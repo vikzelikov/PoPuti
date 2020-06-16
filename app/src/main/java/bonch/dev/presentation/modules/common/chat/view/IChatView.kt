@@ -11,8 +11,6 @@ interface IChatView : IBaseView {
 
     fun checkoutBackground(isShow: Boolean)
 
-    fun showNotification(text: String)
-
     fun scrollBottom()
 
 }
