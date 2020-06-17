@@ -59,7 +59,7 @@ class GetPassengerRepository : IGetPassengerRepository {
     }
 
 
-    override fun linkDriverToRide(
+    override fun setDriverInRide(
         userId: Int,
         rideId: Int,
         token: String,
@@ -72,7 +72,12 @@ class GetPassengerRepository : IGetPassengerRepository {
                 //set headers
                 val headers = NetworkUtil.getHeaders(token)
 
-                response = service.linkDriverToRide(headers, rideId, userId)
+                response = service.setDriverInRide(
+                    headers,
+                    rideId,
+                    userId,
+                    StatusRide.WAIT_FOR_DRIVER.status
+                )
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
@@ -130,5 +135,4 @@ class GetPassengerRepository : IGetPassengerRepository {
             }
         }
     }
-
 }

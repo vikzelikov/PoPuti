@@ -9,6 +9,7 @@ import bonch.dev.domain.entities.common.ride.AddressPoint
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.*
+import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.interfaces.SuggestHandler
@@ -96,6 +97,11 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
+    override fun listenerOnChangeRideStatus(callback: DataHandler<RideInfo>) {
+        getDriverRepository.listenerOnChangeRideStatus(callback)
+    }
+
+
     //update ride status with server
     override fun updateRideStatus(status: StatusRide, callback: SuccessHandler) {
         val rideId = getDriverStorage.getRideId()
@@ -120,15 +126,15 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
-    override fun linkDriverToRide(userId: Int, callback: SuccessHandler) {
+    override fun setDriverInRide(userId: Int, callback: SuccessHandler) {
         val rideId = getDriverStorage.getRideId()
         val token = profileStorage.getToken()
 
         if (rideId != -1 && token != null) {
-            getDriverRepository.linkDriverToRide(userId, rideId, token) { isSuccess ->
+            getDriverRepository.setDriverInRide(userId, rideId, token) { isSuccess ->
                 if (!isSuccess) {
                     //retry request
-                    getDriverRepository.linkDriverToRide(userId, rideId, token) {
+                    getDriverRepository.setDriverInRide(userId, rideId, token) {
                         callback(it)
                     }
                 } else callback(true)

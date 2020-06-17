@@ -17,8 +17,7 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
-import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
@@ -92,34 +91,26 @@ class RateRideView : Fragment(), IRateRideView {
 
         setBottomSheet()
 
+        setPriceForRide()
+
         if (isForPassenger)
             setViewForPassenger()
-        else setViewForDriver()
     }
 
 
     private fun setViewForPassenger() {
         rating_title.text = resources.getString(R.string.youGetPlace)
         subtitle_rating.text = resources.getString(R.string.rateRide)
-        price_ride.visibility = View.VISIBLE
         wating_fee.visibility = View.GONE
         plus_wating_fee.visibility = View.GONE
-        price_for_ride.visibility = View.GONE
-        val driver = DriverObject.driver
-        if (driver != null) {
-            try {
-                price_ride.text = driver.price.toString().plus(" ₽")
-            } catch (ex: NumberFormatException) {
-            }
-        }
     }
 
 
-    private fun setViewForDriver() {
-        val order = SelectOrder.order
-        if (order != null) {
+    private fun setPriceForRide() {
+        val activeRide = ActiveRide.activeRide
+        if (activeRide != null) {
             try {
-                price_for_ride.text = order.price.toString().plus(" ₽")
+                price_for_ride.text = activeRide.price.toString().plus(" ₽")
                 plus_wating_fee.visibility = View.VISIBLE
                 wating_fee.visibility = View.VISIBLE
 
@@ -138,7 +129,7 @@ class RateRideView : Fragment(), IRateRideView {
 
             } catch (ex: NumberFormatException) {
             }
-        }
+        } else showNotification(getString(R.string.errorSystem))
     }
 
 

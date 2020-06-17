@@ -20,7 +20,7 @@ import androidx.navigation.NavController
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.MBottomSheet
@@ -81,7 +81,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         correctMapView()
 
-        trackRidePresenter.receiveOrder(SelectOrder.order)
+        trackRidePresenter.receiveOrder(ActiveRide.activeRide)
 
         setListeners()
 

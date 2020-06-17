@@ -15,7 +15,7 @@ import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
 import bonch.dev.domain.entities.common.chat.Message
 import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.passenger.getdriver.Driver
 import bonch.dev.domain.entities.passenger.getdriver.DriverObject
 import bonch.dev.domain.utils.Keyboard
@@ -63,7 +63,7 @@ class ChatView : AppCompatActivity(), IChatView {
         setContentView(R.layout.chat_activity)
 
         val driver = DriverObject.driver
-        val order = SelectOrder.order
+        val order = ActiveRide.activeRide
         if (driver != null) {
             setDriverInfo(driver)
         } else if (order != null) {

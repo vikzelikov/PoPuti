@@ -84,4 +84,7 @@ dependencies {
     //Date Time picker as ios
     implementation 'com.github.florent37:singledateandtimepicker:2.2.5'
 
+    //Socket
+    implementation 'com.pusher:pusher-java-client:2.2.1'
+
 }

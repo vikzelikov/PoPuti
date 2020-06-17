@@ -8,6 +8,7 @@ import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.passenger.getdriver.Driver
 import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.presentation.interfaces.IBaseView
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.AddressesListAdapter
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
@@ -98,7 +99,7 @@ interface ContractView {
     interface ITrackRideView : IBaseView {
         fun setInfoDriver(driver: Driver)
         fun onBackPressed(): Boolean
-        fun checkoutStatusView()
+        fun checkoutStatusView(idStep: StatusRide)
         fun getMap(): MapView?
         fun nextFragment()
     }

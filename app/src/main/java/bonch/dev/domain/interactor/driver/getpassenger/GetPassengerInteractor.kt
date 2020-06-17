@@ -5,7 +5,7 @@ import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
@@ -27,7 +27,7 @@ class GetPassengerInteractor : IGetPassengerInteractor {
 
     //update ride status with server
     override fun updateRideStatus(status: StatusRide, callback: SuccessHandler) {
-        val rideId = SelectOrder.order?.rideId
+        val rideId = ActiveRide.activeRide?.rideId
         val token = profileStorage.getToken()
 
         if (rideId != null && token != null) {
@@ -49,16 +49,16 @@ class GetPassengerInteractor : IGetPassengerInteractor {
     }
 
 
-    override fun linkDriverToRide(callback: SuccessHandler) {
+    override fun setDriverInRide(callback: SuccessHandler) {
         val userId = profileStorage.getUserId()
-        val rideId = SelectOrder.order?.rideId
+        val rideId = ActiveRide.activeRide?.rideId
         val token = profileStorage.getToken()
 
         if (userId != -1 && rideId != null && token != null) {
-            getPassengerRepository.linkDriverToRide(userId, rideId, token) { isSuccess ->
+            getPassengerRepository.setDriverInRide(userId, rideId, token) { isSuccess ->
                 if (!isSuccess) {
                     //retry request
-                    getPassengerRepository.linkDriverToRide(userId, rideId, token) {
+                    getPassengerRepository.setDriverInRide(userId, rideId, token) {
                         callback(it)
                     }
                 } else callback(true)

@@ -11,7 +11,7 @@ import bonch.dev.App
 import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
@@ -49,7 +49,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     override fun onClickItem(order: RideInfo) {
         if (!isBlock) {
             getView()?.getFragment()?.context?.let {
-                SelectOrder.order = order
+                ActiveRide.activeRide = order
 
                 //show detail order
                 val intent = Intent(it, MapOrderView::class.java)
@@ -63,6 +63,8 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
 
     override fun initOrders() {
+        mainHandler?.removeCallbacksAndMessages(null)
+
         getView()?.showOrdersLoading()
 
         getMyPosition()

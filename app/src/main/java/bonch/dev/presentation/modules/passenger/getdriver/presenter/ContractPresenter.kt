@@ -91,12 +91,14 @@ interface ContractPresenter {
 
 
     interface ITrackRidePresenter {
-        fun instance(): TrackRidePresenter
+        fun initTracking()
+        fun nextStep(idStep: Int)
         fun setInfoDriver(driver: Driver)
         fun cancelDone(reasonID: ReasonCancel)
+        fun backFragment(reasonID: ReasonCancel)
         fun showChat(context: Context, fragment: Fragment)
         fun cancelDoneOtherReason(comment: String)
-        fun startTrackingDriver()
+        fun instance(): TrackRidePresenter
         fun getTaxMoney(): Int
     }
 

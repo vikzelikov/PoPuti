@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
@@ -64,7 +64,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        detailOrderPresenter.receiveOrder(SelectOrder.order)
+        detailOrderPresenter.receiveOrder(ActiveRide.activeRide)
 
         setListeners()
 
@@ -120,7 +120,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
             //todo replace to work with server
             Handler().postDelayed({
-                if (SelectOrder.order!!.rideId!! % 2 == 0) {
+                if (ActiveRide.activeRide!!.rideId!! % 2 == 0) {
                     val activity = activity as? MapOrderView
                     activity?.let { nextFragment(it.supportFragmentManager) }
                 } else {
@@ -164,12 +164,12 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         }
 
         cancel_ride.setOnClickListener {
-            SelectOrder.order = null
+            ActiveRide.activeRide = null
             finish(RESULT_OK)
         }
 
         back_btn.setOnClickListener {
-            SelectOrder.order = null
+            ActiveRide.activeRide = null
             finish(RESULT_OK)
         }
     }
@@ -292,7 +292,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             isBackPressed = false
         } else {
             //finish
-            SelectOrder.order = null
+            ActiveRide.activeRide = null
         }
 
         return isBackPressed
@@ -302,7 +302,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     inner class TimerToClose(start: Long) : CountDownTimer(start * 1000, 1000) {
         override fun onFinish() {
             //close activity
-            SelectOrder.order = null
+            ActiveRide.activeRide = null
             finish(TIME_EXPIRED)
         }
 

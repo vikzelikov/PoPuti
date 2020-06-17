@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.os.Handler
 import bonch.dev.App
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.*
-import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
+import bonch.dev.domain.entities.passenger.getdriver.Driver
+import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.BasePresenter
@@ -41,6 +43,12 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         //set new status ride
         RideStatus.status = StatusRide.SEARCH
 
+        getDriverInteractor.listenerOnChangeRideStatus { data, error ->
+            //driver accept this ride
+            //parsing driver object
+            //DriverObject.driver = drive
+            //selectDriverDone(false)
+        }
 
         //TODO replace to searching with server
         mainHandler = Handler()
@@ -55,7 +63,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
-    private fun selectDriverDone() {
+    private fun selectDriverDone(isAcceptPassenger: Boolean) {
         val res = App.appComponent.getContext().resources
 
         getView()?.removeBackground()
@@ -66,22 +74,16 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         //locale new status
         RideStatus.status = StatusRide.WAIT_FOR_DRIVER
 
-        //remote new status
-        getDriverInteractor.updateRideStatus(StatusRide.WAIT_FOR_DRIVER) { isSuccess ->
-            if (isSuccess) {
-                //remote linking driver to ride
-                //TODO get actual driver id
-                getDriverInteractor.linkDriverToRide(1) {
-                    if (it) {
-                        //next step
-                        getView()?.nextFragment()
-                    } else getView()?.showNotification(res.getString(R.string.errorSystem))
-                }
-
-            } else getView()?.showNotification(res.getString(R.string.errorSystem))
-        }
-
-
+        if (isAcceptPassenger) {
+            //remote new status
+            //TODO get actual driver id
+            getDriverInteractor.setDriverInRide(1) { isSuccess ->
+                if (isSuccess) {
+                    //next step
+                    getView()?.nextFragment()
+                } else getView()?.showNotification(res.getString(R.string.errorSystem))
+            }
+        } else getView()?.nextFragment()
     }
 
 
@@ -114,7 +116,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
         if (driver != null) {
             DriverMainTimer.getInstance()?.cancel()
-            selectDriverDone()
+            selectDriverDone(true)
         }
     }
 

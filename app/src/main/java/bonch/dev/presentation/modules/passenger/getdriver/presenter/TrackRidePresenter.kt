@@ -1,20 +1,18 @@
 package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.Coordinate
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.*
+import bonch.dev.domain.entities.passenger.getdriver.Driver
+import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
-import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.BasePresenter
-import bonch.dev.presentation.modules.common.chat.view.ChatView
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
@@ -44,21 +42,30 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun startTrackingDriver() {
-        //TODO
-        //update icon driver on map
-        //send request to server every 5 seconds
-        val context = App.appComponent.getContext()
-
-        //TODO ***************************
-        Handler().postDelayed({
-            RideStatus.status = StatusRide.WAIT_FOR_PASSANGER
-            Vibration.start(context)
-            getView()?.checkoutStatusView()
-        }, 4000)
-
-        //TODO ***************************
+    override fun initTracking() {
+        getDriverInteractor.listenerOnChangeRideStatus { data, error ->
+            //driver accept this ride
+            //parsing driver object
+            //parsing ride
+            //nextStep()
+        }
     }
+
+
+    override fun nextStep(idStep: Int) {
+        val step = getByValue(idStep)
+        val res = App.appComponent.getContext().resources
+
+        if (step != null) {
+            RideStatus.status = step
+
+            getView()?.checkoutStatusView(step)
+
+        } else getView()?.showNotification(res.getString(R.string.errorSystem))
+    }
+
+
+    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
     override fun getTaxMoney(): Int {
@@ -80,6 +87,11 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
             //вычесть бабки
         }
 
+        backFragment(reasonID)
+    }
+
+
+    override fun backFragment(reasonID: ReasonCancel) {
         //clear data
         clearData()
 
@@ -115,10 +127,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun showChat(context: Context, fragment: Fragment) {
-        //MainRouter.showView(R.id.show_chat, getView()?.getNavHost(), null)
-        //TODO remove it
-        val intent = Intent(context, ChatView::class.java)
-        fragment.startActivityForResult(intent, 1)
+        MainRouter.showView(R.id.show_chat, getView()?.getNavHost(), null)
     }
 
 

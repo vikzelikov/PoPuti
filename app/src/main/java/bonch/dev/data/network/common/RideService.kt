@@ -16,11 +16,11 @@ interface RideService {
 
     @FormUrlEncoded
     @PUT("/api/rides/{id}")
-    suspend fun linkDriverToRide(
+    suspend fun setDriverInRide(
         @HeaderMap headers: Map<String, String>,
         @Path("id") rideId: Int,
-        @Field("driver_id") driverId: Int
+        @Field("driver_id") driverId: Int,
+        @Field("status_id") statusId: Int
     ): Response<*>
-
 
 }

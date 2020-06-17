@@ -8,7 +8,7 @@ import bonch.dev.presentation.interfaces.SuccessHandler
 
 interface IGetPassengerInteractor {
 
-    fun linkDriverToRide(callback: SuccessHandler)
+    fun setDriverInRide(callback: SuccessHandler)
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 

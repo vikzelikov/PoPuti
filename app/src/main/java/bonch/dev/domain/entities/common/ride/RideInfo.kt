@@ -21,6 +21,10 @@ data class RideInfo(
     @Expose
     var rideId: Int? = null,
 
+    @SerializedName("status_id")
+    @Expose
+    var statusId: Int? = null,
+
     @SerializedName("position")
     @Expose
     var position: String? = null,
@@ -83,6 +87,7 @@ data class RideInfo(
 
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readString(),
         parcel.readParcelable(Address::class.java.classLoader),
         parcel.readValue(Double::class.java.classLoader) as? Double,
@@ -107,6 +112,7 @@ data class RideInfo(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(rideId)
+        parcel.writeValue(statusId)
         parcel.writeString(position)
         parcel.writeParcelable(fromAdr, flags)
         parcel.writeValue(fromLat)
@@ -131,6 +137,7 @@ data class RideInfo(
 
     override fun hashCode(): Int {
         var result = rideId ?: 0
+        result = 31 * result + (statusId ?: 0)
         result = 31 * result + (position?.hashCode() ?: 0)
         result = 31 * result + (fromAdr?.hashCode() ?: 0)
         result = 31 * result + (fromLat?.hashCode() ?: 0)
@@ -146,8 +153,8 @@ data class RideInfo(
         result = 31 * result + time
         result = 31 * result + (distance ?: 0)
         result = 31 * result + isNewOrder.hashCode()
-        result = 31 * result + (handel?.hashCode() ?: 0)
         result = 31 * result + (passenger?.hashCode() ?: 0)
+        result = 31 * result + (handel?.hashCode() ?: 0)
         return result
     }
 

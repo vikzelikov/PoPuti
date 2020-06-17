@@ -19,6 +19,8 @@ interface IGetDriverRepository {
 
     fun createRide(rideInfo: RideInfo, token: String, callback: DataHandler<RideInfo?>)
 
+    fun listenerOnChangeRideStatus(callback: DataHandler<RideInfo>)
+
     fun updateRideStatus(
         status: StatusRide,
         rideId: Int,
@@ -26,7 +28,7 @@ interface IGetDriverRepository {
         callback: SuccessHandler
     )
 
-    fun linkDriverToRide(
+    fun setDriverInRide(
         driverId: Int,
         rideId: Int,
         token: String,

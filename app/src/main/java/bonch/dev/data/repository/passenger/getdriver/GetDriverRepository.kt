@@ -16,6 +16,11 @@ import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.interfaces.SuggestHandler
+import com.pusher.client.Pusher
+import com.pusher.client.PusherOptions
+import com.pusher.client.connection.ConnectionEventListener
+import com.pusher.client.connection.ConnectionState
+import com.pusher.client.connection.ConnectionStateChange
 import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -112,6 +117,36 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
+    override fun listenerOnChangeRideStatus(callback: DataHandler<RideInfo>) {
+        val options = PusherOptions()
+        options.setCluster("mt1")
+
+        val pusher = Pusher("4f8625f09b5081d92386", options)
+
+        pusher.connect(object : ConnectionEventListener {
+            override fun onConnectionStateChange(change: ConnectionStateChange) {
+                Log.i(
+                    "SOCKET_CHANGE_STATUS/P",
+                    "${change.currentState}"
+                )
+            }
+
+            override fun onError(message: String, code: String, e: Exception) {
+                Log.e(
+                    "SOCKET_CHANGE_STATUS/P",
+                    "Socket failed with code ($code), message ($message)"
+                )
+            }
+        }, ConnectionState.ALL)
+
+        val channel = pusher.subscribe("ride")
+        channel.bind("App\\Events\\RideChange") { event ->
+            //callback()
+            Log.e("SOCKET", "Received event with data: $event")
+        }
+    }
+
+
     override fun updateRideStatus(
         status: StatusRide,
         rideId: Int,
@@ -150,7 +185,7 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
-    override fun linkDriverToRide(
+    override fun setDriverInRide(
         driverId: Int,
         rideId: Int,
         token: String,
@@ -164,7 +199,12 @@ class GetDriverRepository : IGetDriverRepository {
                 val headers = hashMapOf<String, String>()
                 headers["Authorization"] = "Bearer $token"
 
-                response = service.linkDriverToRide(headers, rideId, driverId)
+                response = service.setDriverInRide(
+                    headers,
+                    rideId,
+                    driverId,
+                    StatusRide.WAIT_FOR_DRIVER.status
+                )
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {

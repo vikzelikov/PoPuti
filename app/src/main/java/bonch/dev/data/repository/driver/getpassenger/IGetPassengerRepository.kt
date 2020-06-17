@@ -14,7 +14,7 @@ interface IGetPassengerRepository {
         callback: SuccessHandler
     )
 
-    fun linkDriverToRide(
+    fun setDriverInRide(
         userId: Int,
         rideId: Int,
         token: String,

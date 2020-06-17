@@ -1,6 +1,5 @@
 package bonch.dev.presentation.modules.passenger.getdriver.view
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -19,8 +18,11 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.*
+import bonch.dev.domain.entities.passenger.getdriver.Driver
+import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
@@ -72,10 +74,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         val driver = DriverObject.driver
         if (driver != null) {
+            trackRidePresenter.initTracking()
+
             trackRidePresenter.setInfoDriver(driver)
         }
-
-        trackRidePresenter.startTrackingDriver()
     }
 
 
@@ -88,17 +90,41 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             .apply(RequestOptions().centerCrop().circleCrop())
             .into(img_driver)
 
-        checkoutStatusView()
+        //set default status
+        checkoutStatusView(StatusRide.WAIT_FOR_DRIVER)
     }
 
 
-    override fun checkoutStatusView() {
-        if (RideStatus.status == StatusRide.WAIT_FOR_PASSANGER) {
-            status_driver.text = resources.getString(R.string.driverArrived)
-        } else if (RideStatus.status == StatusRide.WAIT_FOR_DRIVER) {
-            status_driver.text = resources.getString(R.string.driverInWay)
-        }
+    override fun checkoutStatusView(idStep: StatusRide) {
+        context?.let { Vibration.start(it) }
 
+        when (idStep) {
+            StatusRide.WAIT_FOR_DRIVER -> {
+                status_driver.text = resources.getString(R.string.driverInWay)
+            }
+
+            StatusRide.WAIT_FOR_PASSANGER -> {
+                status_driver.text = resources.getString(R.string.driverArrived)
+            }
+
+            StatusRide.IN_WAY -> {
+                status_driver.text = resources.getString(R.string.inWay)
+            }
+
+            StatusRide.GET_PLACE -> {
+                nextFragment()
+            }
+
+            StatusRide.CANCEL -> {
+                //driver has cancelled this ride
+                driverCancelRide()
+            }
+
+            else -> {
+                status_driver.text = resources.getString(R.string.driverInWay)
+                showNotification(getString(R.string.errorSystem))
+            }
+        }
     }
 
 
@@ -161,7 +187,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         //set default reason
         var reasonID = ReasonCancel.MISTAKE
 
-
         cancel_ride.setOnClickListener {
             getCancelReason()
         }
@@ -208,6 +233,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             hideKeyboard()
         }
 
+        ok_btn.setOnClickListener {
+            trackRidePresenter.backFragment(ReasonCancel.DRIVER_CANCEL)
+        }
+
         message_driver.setOnClickListener {
             context?.let {
                 trackRidePresenter.showChat(it, this)
@@ -218,13 +247,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         phone_call_driver.setOnClickListener {
             Toast.makeText(context, "Call driver", Toast.LENGTH_SHORT).show()
         }
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        //TODO remove it
-        nextFragment()
     }
 
 
@@ -273,8 +295,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    fun getDriverCancelled() {
-        //TODO
+    fun driverCancelRide() {
         driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 

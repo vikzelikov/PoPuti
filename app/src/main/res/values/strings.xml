@@ -46,6 +46,7 @@
     <string name="offerYourPrice">Предлагаем вашу цену водителям, ожидайте</string>
     <string name="driverInWay">Водитель уже в пути</string>
     <string name="driverArrived">Водитель приехал</string>
+    <string name="inWay">Вы в пути</string>
     <string name="cancelRideQuestion">Отменить поездку?</string>
     <string name="notCancel">Не отменять</string>
     <string name="cancel">Отменить</string>

@@ -9,7 +9,7 @@ import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.chat.view.ChatView
@@ -71,9 +71,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
                 } else getView()?.showNotification(res.getString(R.string.errorSystem))
             }
-        }
-
-
+        } else getView()?.showNotification(res.getString(R.string.errorSystem))
     }
 
 
@@ -92,7 +90,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         //todo отправить на сервер
 
         //clear data
-        SelectOrder.order = null
+        ActiveRide.activeRide = null
 
         //redirect
         getView()?.finish()

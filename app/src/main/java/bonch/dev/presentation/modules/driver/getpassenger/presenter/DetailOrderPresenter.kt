@@ -8,7 +8,7 @@ import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.driver.getpassenger.SelectOrder
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView
@@ -38,14 +38,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         val res = App.appComponent.getContext().resources
 
         RideStatus.status = StatusRide.WAIT_FOR_DRIVER
-        getPassengerInteractor.updateRideStatus(RideStatus.status) { isSuccess ->
-            if (!isSuccess) {
-                getView()?.showNotification(res.getString(R.string.errorSystem))
-            }
-        }
-
         //set this account of driver into ride
-        getPassengerInteractor.linkDriverToRide { isSuccess ->
+        getPassengerInteractor.setDriverInRide { isSuccess ->
             if (isSuccess) {
                 getView()?.nextFragment()
             } else {
@@ -108,8 +102,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         //app accessed user geo
         val userPoint = getUserPoint()
         val map = getView()?.getMap()
-        val fromLat = SelectOrder.order?.fromLat
-        val fromLng = SelectOrder.order?.fromLng
+        val fromLat = ActiveRide.activeRide?.fromLat
+        val fromLng = ActiveRide.activeRide?.fromLng
         val fromPoint = if (fromLat != null && fromLng != null) {
             Point(fromLat, fromLng)
         } else {
