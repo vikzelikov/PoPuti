@@ -2,15 +2,12 @@ package bonch.dev.data.repository.passenger.getdriver
 
 import android.util.Log
 import bonch.dev.App
-import bonch.dev.R
 import bonch.dev.data.network.passenger.GetDriverService
 import bonch.dev.data.repository.common.ride.Autocomplete
 import bonch.dev.data.repository.common.ride.Geocoder
 import bonch.dev.domain.entities.common.ride.Ride
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.common.ride.Driver
-import bonch.dev.domain.interactor.passenger.getdriver.NewDriver
 import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.interfaces.DataHandler
@@ -42,6 +39,7 @@ class GetDriverRepository : IGetDriverRepository {
 
     private var autocomplete: Autocomplete? = null
     private var geocoder: Geocoder? = null
+    private var channel: PrivateChannel? = null
     private var pusher: Pusher? = null
 
 
@@ -124,17 +122,15 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
-    override fun listenerOnChangeRideStatus(
+    override fun connectSocket(
         rideId: Int,
         token: String,
-        callback: DataHandler<String?>
+        callback: SuccessHandler
     ) {
         val log = "SOCKET_PUSHER/P"
         val apiKey = "4f8625f09b5081d92386"
         val channelName = "ride"
-        val eventName = "App\\Events\\RideChange"
 
-        var channel: PrivateChannel? = null
         val options = PusherOptions()
         options.setCluster("mt1")
         val auth = HttpAuthorizer(Constants.BASE_URL.plus("/broadcasting/auth"))
@@ -148,7 +144,9 @@ class GetDriverRepository : IGetDriverRepository {
             pusher?.connect(object : ConnectionEventListener {
                 override fun onConnectionStateChange(change: ConnectionStateChange) {}
 
-                override fun onError(message: String, code: String, e: Exception) {}
+                override fun onError(message: String, code: String, e: Exception) {
+                    callback(false)
+                }
             }, ConnectionState.ALL)
 
             channel = pusher?.subscribePrivate("private-$channelName.$rideId",
@@ -157,15 +155,22 @@ class GetDriverRepository : IGetDriverRepository {
 
                     override fun onAuthenticationFailure(mess: String?, e: java.lang.Exception?) {
                         Log.e(log, String.format("SOCKET CONNECT FAIL [%s], [%s]", mess, e))
+                        callback(false)
                     }
 
                     override fun onSubscriptionSucceeded(channelName: String?) {
                         Log.i(log, "SOCKET CONNECT SUCCESS")
+                        callback(true)
                     }
                 })
         }
+    }
 
-        channel?.bind(eventName, object : PrivateChannelEventListener {
+
+    override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
+        val rideChangeEvent = "App\\Events\\RideChange"
+
+        channel?.bind(rideChangeEvent, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
                     callback(event.data, null)
@@ -178,10 +183,19 @@ class GetDriverRepository : IGetDriverRepository {
 
             override fun onSubscriptionSucceeded(channelName: String?) {}
         })
+    }
 
-        channel?.bind("App\\Events\\PriceOffer", object : PrivateChannelEventListener {
+
+    override fun subscribeOnOfferPrice(callback: DataHandler<String?>) {
+        val offerPriceEvent = "App\\Events\\PriceOffer"
+
+        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
-                println("EE ${event?.data}")
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
             }
 
             override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
@@ -276,34 +290,5 @@ class GetDriverRepository : IGetDriverRepository {
                 callback(false)
             }
         }
-    }
-
-
-    var i = 0
-    override fun getNewDriver(callback: NewDriver) {
-        val driver = if (i % 2 == 0) {
-            Driver(
-                "Костя $i",
-                "Hyundai Solaris",
-                "DF456S",
-                4.3,
-                R.drawable.ava,
-                344 + i * 9
-            )
-        } else {
-            Driver(
-                "Александр $i",
-                "Kia Rio",
-                "AR432V",
-                3.9,
-                R.drawable.ava1,
-                412 + i * 5
-            )
-        }
-
-        if (i < 17)
-            callback(driver)
-
-        i++
     }
 }

@@ -25,16 +25,17 @@ interface IGetDriverInteractor {
     //Ride
     fun createRide(rideInfo: RideInfo, callback: SuccessHandler)
 
-    fun listenerOnChangeRideStatus(callback: DataHandler<String?>)
+    fun connectSocket(callback: SuccessHandler)
+
+    fun subscribeOnChangeRide(callback: DataHandler<String?>)
+
+    fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 
     fun disconnectSocket()
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
     fun setDriverInRide(userId: Int, callback: SuccessHandler)
-
-    fun getNewDriver(callback: NewDriver)
-
 
     //Cash
     fun getCashRequest(query: String): ArrayList<Address>?

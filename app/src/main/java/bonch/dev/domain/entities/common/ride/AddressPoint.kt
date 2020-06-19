@@ -2,13 +2,21 @@ package bonch.dev.domain.entities.common.ride
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import io.realm.RealmObject
 import io.realm.annotations.RealmClass
 
 @RealmClass(name = "address_point")
 open class AddressPoint(
+    @SerializedName("latitude")
+    @Expose
     var latitude: Double = 0.0,
+
+    @SerializedName("longitude")
+    @Expose
     var longitude: Double = 0.0
+
 ) : RealmObject(), Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readDouble(),

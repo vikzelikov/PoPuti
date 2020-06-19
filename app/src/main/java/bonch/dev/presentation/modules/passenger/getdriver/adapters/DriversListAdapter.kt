@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.Driver
-import bonch.dev.domain.entities.common.ride.DriverObject
+import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverItemTimer
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
@@ -20,7 +19,7 @@ import javax.inject.Inject
 class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPresenter.IGetDriverPresenter) :
     RecyclerView.Adapter<DriversListAdapter.ItemPostHolder>() {
 
-    var list: ArrayList<Driver> = arrayListOf()
+    var list: ArrayList<Offer> = arrayListOf()
 
     init {
         DriverMainTimer.getInstance(this)?.start()
@@ -38,11 +37,11 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-        val driver = list[position]
+        val offer = list[position]
         val timeLine = holder.itemView.timer_driver_offer
-        val startTime = driver.timeLine
+        val startTime = offer.timeLine
 
-        holder.bind(driver)
+        holder.bind(offer)
 
         timeLine.post({
             if (DriverMainTimer.DEFAULT_WIDTH == 0) {
@@ -64,14 +63,14 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
 
 
         holder.itemView.accept_driver.setOnClickListener {
-            DriverObject.driver = driver
-            getDriverPresenter.instance().getView()?.getConfirmAccept()
+            getDriverPresenter.instance().offer = offer
+            getDriverPresenter.instance().getView()?.getConfirmAccept(offer)
         }
     }
 
 
-    fun setNewDriver(driver: Driver) {
-        list.add(0, driver)
+    fun setNewDriver(offer: Offer) {
+        list.add(0, offer)
         notifyItemInserted(0)
         notifyItemChanged(0)
 
@@ -90,13 +89,13 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
                     list.removeAt(position)
                     notifyItemRemoved(position)
                 }
-            } catch (ex: java.lang.IndexOutOfBoundsException) {
-                println(ex.message)
+            } catch (ex: IndexOutOfBoundsException) {
             }
 
             try {
                 if (!isUserAction) {
-                    if (DriverObject.driver == list[list.lastIndex]) {
+                    val offer = getDriverPresenter.instance().offer
+                    if (offer?.offerId == list[list.lastIndex].offerId) {
                         getDriverPresenter.instance().getView()?.hideConfirmAccept()
                     }
 
@@ -104,7 +103,6 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
                     notifyItemRemoved(list.size)
                 }
             } catch (ex: IndexOutOfBoundsException) {
-                println(ex.message)
             }
 
             if (list.isEmpty()) {
@@ -117,13 +115,18 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
     inner class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var driverItemTimer: DriverItemTimer? = null
 
-        fun bind(driver: Driver) {
-            itemView.driver_name.text = driver.nameDriver
-            itemView.car_name.text = driver.carName
-            itemView.driver_rating.text = driver.rating.toString()
-            itemView.price.text = driver.price.toString().plus(" ₽")
+        fun bind(offer: Offer) {
+            itemView.driver_name.text = offer.driver?.firstName
+            itemView.car_name.text = offer.driver?.car?.name
+            itemView.driver_rating.text = offer.driver?.rating.toString()
+            itemView.price.text = offer.price.toString().plus(" ₽")
 
-            Glide.with(itemView.context).load(driver.imgDriver)
+            offer.driver?.photos?.sortBy { it.id }
+            var photo: Any? = offer.driver?.photos?.lastOrNull()?.imgUrl
+            if (photo == null) {
+                photo = R.drawable.ic_default_ava
+            }
+            Glide.with(itemView.context).load(photo)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .into(itemView.img_driver)
 

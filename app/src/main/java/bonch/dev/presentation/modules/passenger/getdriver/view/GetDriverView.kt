@@ -15,10 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.Driver
-import bonch.dev.domain.entities.common.ride.DriverObject
-import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
+import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.MBottomSheet
 import bonch.dev.presentation.interfaces.ParentHandler
@@ -239,16 +238,20 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    private fun setConfirmAcceptData(driver: Driver?) {
+    private fun setConfirmAcceptData(offerPrice: Offer?) {
         //set data in BottomSheet for confirm or cancel
+        offerPrice?.let { offer ->
+            bs_driver_name.text = offer.driver?.firstName
+            bs_car_name.text = offer.driver?.car?.name
+            bs_driver_rating.text = offer.driver?.rating.toString()
+            bs_price.text = offer.toString().plus(" ₽")
 
-        driver?.let {
-            bs_driver_name.text = it.nameDriver
-            bs_car_name.text = it.carName
-            bs_driver_rating.text = it.rating.toString()
-            bs_price.text = it.price.toString().plus(" ₽")
-
-            Glide.with(bs_img_driver.context).load(it.imgDriver)
+            offer.driver?.photos?.sortBy { it.id }
+            var photo: Any? =  offer.driver?.photos?.lastOrNull()?.imgUrl
+            if (photo == null) {
+                photo = R.drawable.ic_default_ava
+            }
+            Glide.with(bs_img_driver.context).load(photo)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .into(bs_img_driver)
         }
@@ -310,8 +313,8 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    override fun getConfirmAccept() {
-        setConfirmAcceptData(DriverObject.driver)
+    override fun getConfirmAccept(offer: Offer) {
+        setConfirmAcceptData(offer)
         confirmGetBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -390,6 +393,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     private fun correctMapView() {
+        //todo выглядит это хреново
         Thread(Runnable {
             while (true) {
                 try {

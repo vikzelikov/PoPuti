@@ -91,6 +91,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     override fun startSearchOrders() {
         //send request every 15 sec
         val adapter = getView()?.getAdapter()
+        mainHandler?.removeCallbacksAndMessages(null)
         mainHandler = Handler()
 
         mainHandler?.postDelayed(object : Runnable {

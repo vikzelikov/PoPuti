@@ -92,12 +92,30 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
-    override fun listenerOnChangeRideStatus(callback: DataHandler<String?>) {
+    override fun connectSocket(callback: SuccessHandler) {
         val rideId = getDriverStorage.getRideId()
         val token = profileStorage.getToken()
 
-        if (token != null)
-            getDriverRepository.listenerOnChangeRideStatus(rideId, token, callback)
+        if (token != null) {
+            getDriverRepository.connectSocket(rideId, token) { isSuccess ->
+                if (isSuccess) {
+                    callback(true)
+                } else {
+                    //retry connect
+                    getDriverRepository.connectSocket(rideId, token, callback)
+                }
+            }
+        }
+    }
+
+
+    override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
+        getDriverRepository.subscribeOnChangeRide(callback)
+    }
+
+
+    override fun subscribeOnOfferPrice(callback: DataHandler<String?>) {
+        getDriverRepository.subscribeOnOfferPrice(callback)
     }
 
 
@@ -149,13 +167,6 @@ class GetDriverInteractor : IGetDriverInteractor {
                 "Link driver to ride with server failed (rideId: $rideId, token: $token)"
             )
             callback(false)
-        }
-    }
-
-
-    override fun getNewDriver(callback: NewDriver) {
-        getDriverRepository.getNewDriver {
-            callback(it)
         }
     }
 

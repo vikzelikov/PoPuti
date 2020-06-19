@@ -17,7 +17,6 @@ import bonch.dev.domain.entities.common.chat.Message
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.Driver
-import bonch.dev.domain.entities.common.ride.DriverObject
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.chat.adapters.ChatAdapter
@@ -62,13 +61,8 @@ class ChatView : AppCompatActivity(), IChatView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
 
-        val driver = DriverObject.driver
-        val order = ActiveRide.activeRide
-        if (driver != null) {
-            setDriverInfo(driver)
-        } else if (order != null) {
-            setPassengerInfo(order)
-        }
+        val ride = ActiveRide.activeRide
+        name_driver.text = ride?.driver?.firstName
 
         initChatAdapter()
 
@@ -77,16 +71,6 @@ class ChatView : AppCompatActivity(), IChatView {
         setListeners()
 
         setMovingButtonListener()
-    }
-
-
-    private fun setDriverInfo(driver: Driver) {
-        name_driver.text = driver.nameDriver
-    }
-
-
-    private fun setPassengerInfo(order: RideInfo) {
-        name_driver.text = order.passenger?.firstName
     }
 
 

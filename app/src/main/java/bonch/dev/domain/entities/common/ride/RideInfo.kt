@@ -23,7 +23,7 @@ data class RideInfo(
 
     @SerializedName("status_id")
     @Expose
-    var statusId: Int? = null,
+    var statusId: Int? = StatusRide.SEARCH.status,
 
     @SerializedName("position")
     @Expose

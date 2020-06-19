@@ -1,36 +1,33 @@
 package bonch.dev.domain.entities.common.ride
 
-import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
+import bonch.dev.domain.entities.common.profile.Profile
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+import io.realm.annotations.Ignore
 
 open class Driver(
-    var nameDriver: String? = null,
-    var carName: String? = null,
-    var carNumber: String? = null,
-    var rating: Double? = null,
-    var imgDriver: Int? = null,
-    var price: Int? = null,
-    var timeLine: Double = DriverMainTimer.TIME_EXPIRED_ITEM
-) {
-    override fun equals(other: Any?): Boolean {
-        return nameDriver == (other as Driver).nameDriver
-                && carName == other.carName
-                && carNumber == other.carNumber
-                && rating == other.rating
-                && imgDriver == other.imgDriver
-    }
+    @SerializedName("car")
+    @Expose
+    @Ignore
+    var car: Car? = null,
 
-    override fun hashCode(): Int {
-        var result = nameDriver?.hashCode() ?: 0
-        result = 31 * result + (carName?.hashCode() ?: 0)
-        result = 31 * result + (carNumber?.hashCode() ?: 0)
-        result = 31 * result + (rating?.hashCode() ?: 0)
-        result = 31 * result + (imgDriver ?: 0)
-        result = 31 * result + (price ?: 0)
-        result = 31 * result + timeLine.hashCode()
-        return result
-    }
-}
+    @SerializedName("driver_location")
+    @Expose
+    @Ignore
+    var driver_location: AddressPoint? = null
+) : Profile()
 
-object DriverObject {
-    var driver: Driver? = null
-}
+
+open class Car(
+    @SerializedName("car_brand")
+    @Expose
+    var name: String? = null,
+
+    @SerializedName("car_model")
+    @Expose
+    var model: String? = null,
+
+    @SerializedName("car_number")
+    @Expose
+    var number: String? = null
+)

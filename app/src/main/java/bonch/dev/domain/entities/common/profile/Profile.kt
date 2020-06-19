@@ -6,10 +6,6 @@ import bonch.dev.domain.entities.common.media.Photo
 import bonch.dev.domain.entities.driver.signup.DriverData
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import io.realm.RealmObject
-import io.realm.annotations.Ignore
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmClass
 
 
 open class ProfileData(
@@ -19,9 +15,7 @@ open class ProfileData(
 )
 
 
-@RealmClass
 open class Profile(
-    @PrimaryKey
     @SerializedName("id")
     @Expose
     var id: Int = 0,
@@ -52,17 +46,15 @@ open class Profile(
 
     var imgUser: String? = null,
 
-    @Ignore
     @SerializedName("photos")
     @Expose
     var photos: Array<Photo>? = null,
 
-    @Ignore
     @SerializedName("driver")
     @Expose
     var driver: DriverData? = null
 
-) : RealmObject(), Parcelable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString(),
@@ -74,6 +66,7 @@ open class Profile(
         parcel.readByte() != 0.toByte(),
         parcel.readString()
     )
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
         parcel.writeString(firstName)
@@ -103,7 +96,6 @@ open class Profile(
 
 
 open class ProfilePhoto(
-    @Ignore
     @SerializedName("photo")
     @Expose
     var imgId: IntArray? = intArrayOf()

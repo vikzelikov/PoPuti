@@ -35,20 +35,25 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun initTracking() {
         val res = App.appComponent.getContext().resources
 
-        getDriverInteractor.listenerOnChangeRideStatus { data, error ->
-            if (error != null || data == null) {
-                getView()?.showNotification(res.getString(R.string.errorSystem))
-            } else {
-                val ride = Gson().fromJson(data, Ride::class.java)?.ride
-                if (ride == null) {
-                    getView()?.showNotification(res.getString(R.string.errorSystem))
-                } else {
-                    ride.statusId?.let { idStep ->
-                        ActiveRide.activeRide = ride
-                        nextStep(idStep)
+        getDriverInteractor.connectSocket { isSuccess ->
+            if (isSuccess) {
+                //change ride status
+                getDriverInteractor.subscribeOnChangeRide { data, error ->
+                    if (error != null || data == null) {
+                        getView()?.showNotification(res.getString(R.string.errorSystem))
+                    } else {
+                        val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                        if (ride == null) {
+                            getView()?.showNotification(res.getString(R.string.errorSystem))
+                        } else {
+                            ride.statusId?.let { idStep ->
+                                ActiveRide.activeRide = ride
+                                nextStep(idStep)
+                            }
+                        }
                     }
                 }
-            }
+            } else getView()?.showNotification(res.getString(R.string.errorSystem))
         }
     }
 
@@ -130,7 +135,6 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     private fun clearData() {
         ActiveRide.activeRide = null
-        DriverObject.driver = null
     }
 
 

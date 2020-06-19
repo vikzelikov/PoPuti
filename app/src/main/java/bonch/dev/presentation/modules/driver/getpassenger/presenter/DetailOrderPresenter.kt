@@ -30,7 +30,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
     var handlerHotification: Handler? = null
 
-    private val OFFER_PRICE_TIMEOUT = 10000L
+    private val OFFER_PRICE_TIMEOUT = 30000L
     val OFFER_PRICE = 1
 
     init {

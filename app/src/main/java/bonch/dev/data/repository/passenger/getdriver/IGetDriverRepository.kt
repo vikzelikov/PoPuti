@@ -15,11 +15,13 @@ interface IGetDriverRepository {
 
     fun requestSuggest(query: String, userLocationPoint: Point?, callback: SuggestHandler)
 
-    fun getNewDriver(callback: NewDriver)
-
     fun createRide(rideInfo: RideInfo, token: String, callback: DataHandler<RideInfo?>)
 
-    fun listenerOnChangeRideStatus(rideId: Int, token: String, callback: DataHandler<String?>)
+    fun connectSocket(rideId: Int, token: String, callback: SuccessHandler)
+
+    fun subscribeOnChangeRide(callback: DataHandler<String?>)
+
+    fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 
     fun disconnectSocket()
 

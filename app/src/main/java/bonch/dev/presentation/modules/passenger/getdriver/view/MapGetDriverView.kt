@@ -14,7 +14,7 @@ import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.di.module.passenger.GetDriverModule
-import bonch.dev.domain.entities.common.ride.DriverObject
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
@@ -104,11 +104,11 @@ class MapGetDriverView : Fragment(), UserLocationObjectListener, CameraListener,
             }
 
             val fm = it.supportFragmentManager
-            val driver = DriverObject.driver
+            val ride = ActiveRide.activeRide
 
-            if (driver != null) {
+            if (ride != null) {
                 //ride already created
-                //TODO update driver status net
+                //TODO короче тут случай когда чел вышел из приложеения и потом зашел при активной поездке
                 mapGetDriverPresenter.attachTrackRide(fm)
             } else {
                 mapGetDriverPresenter.attachGetDriver(fm)

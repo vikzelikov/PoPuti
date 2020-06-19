@@ -4,12 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.profile.Profile
-import bonch.dev.domain.entities.common.ride.Driver
-import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.common.ride.StatusRide
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.presentation.interfaces.IBaseView
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.AddressesListAdapter
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
@@ -84,7 +81,7 @@ interface ContractView {
         fun nextFragment()
         fun getMap(): MapView?
         fun removeBackground()
-        fun getConfirmAccept()
+        fun getConfirmAccept(offer: Offer)
         fun getExpiredTimeConfirm()
         fun onBackPressed(): Boolean
         fun getAdapter(): DriversListAdapter

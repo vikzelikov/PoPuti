@@ -2,6 +2,7 @@ package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.*
@@ -32,6 +33,8 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
     private val REASON = "REASON"
 
+    var offer: Offer? = null
+
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
     }
@@ -42,30 +45,41 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         //set new status ride
         RideStatus.status = StatusRide.SEARCH
 
-        getDriverInteractor.listenerOnChangeRideStatus { data, error ->
-            if (error != null || data == null) {
-                getView()?.showNotification(res.getString(R.string.errorSystem))
-            } else {
-                val ride = Gson().fromJson(data, Ride::class.java)?.ride
-                if (ride == null) {
-                    getView()?.showNotification(res.getString(R.string.errorSystem))
-                } else {
-                    ActiveRide.activeRide = ride
-                    getDriverDone(false)
+        getDriverInteractor.connectSocket { isSuccess ->
+            if (isSuccess) {
+                //change ride status
+                getDriverInteractor.subscribeOnChangeRide { data, error ->
+                    if (error != null || data == null) {
+                        getView()?.showNotification(res.getString(R.string.errorSystem))
+                    } else {
+                        val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                        if (ride == null) {
+                            getView()?.showNotification(res.getString(R.string.errorSystem))
+                        } else {
+                            ActiveRide.activeRide = ride
+                            getDriverDone(false)
+                        }
+                    }
                 }
-            }
-        }
 
-        //TODO replace to searching with server
-        mainHandler = Handler()
-        mainHandler?.postDelayed(object : Runnable {
-            override fun run() {
-                getDriverInteractor.getNewDriver {
-                    setNewDriverOffer(it)
+                //offer price from driver
+                getDriverInteractor.subscribeOnOfferPrice { data, _ ->
+                    if (data != null) {
+                        val offer = Gson().fromJson(data, OfferPrice::class.java)?.offerPrice
+                        if (offer != null) {
+                            val mainHandler = Handler(Looper.getMainLooper())
+                            val myRunnable = Runnable {
+                                kotlin.run {
+                                    setNewOffer(offer)
+                                }
+                            }
+
+                            mainHandler.post(myRunnable)
+                        }
+                    }
                 }
-                mainHandler?.postDelayed(this, 3000)
-            }
-        }, 10000)
+            } else getView()?.showNotification(res.getString(R.string.errorSystem))
+        }
     }
 
 
@@ -82,7 +96,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         status?.let {
             getByValue(it)?.let { status ->
 
-                if(status == StatusRide.WAIT_FOR_DRIVER){
+                if (status == StatusRide.WAIT_FOR_DRIVER) {
                     RideStatus.status = status
 
                     if (isAcceptByPassenger) {
@@ -104,8 +118,8 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
-    private fun setNewDriverOffer(driver: Driver) {
-        getView()?.getAdapter()?.setNewDriver(driver)
+    private fun setNewOffer(offer: Offer) {
+        getView()?.getAdapter()?.setNewDriver(offer)
 
         if (isAnimaionSearching) {
             //animation off
@@ -128,11 +142,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     override fun confirmAccept() {
-        //stop main timer
-        val driver = DriverObject.driver
-
-        if (driver != null) {
-            DriverMainTimer.getInstance()?.cancel()
+        offer?.let {
             getDriverDone(true)
         }
     }
@@ -153,7 +163,6 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
         //stop getting new driver
         clearData()
-        DriverObject.driver = null
         ActiveRide.activeRide = null
 
         if (reasonID == ReasonCancel.MISTAKE || reasonID == ReasonCancel.OTHER) {

@@ -74,26 +74,26 @@ class ProfileStorage : IProfileStorage {
 
     override fun getProfile(): Profile? {
         var profile: Profile? = null
-
-        val realmResult = realm?.where(Profile::class.java)?.findAll()
-
-        if (realmResult != null && realmResult.isNotEmpty()) {
-            profile = Profile()
-
-            for (i in realmResult.indices) {
-                val realmData = realmResult[i]
-                realmData?.let {
-                    profile.id = it.id
-                    profile.firstName = it.firstName
-                    profile.lastName = it.lastName
-                    profile.phone = it.phone
-                    profile.email = it.email
-                    profile.imgUser = it.imgUser
-                    profile.isNotificationsEnable = it.isNotificationsEnable
-                    profile.isCallsEnable = it.isCallsEnable
-                }
-            }
-        }
+        //todo remove comment code
+//        val realmResult = realm?.where(Profile::class.java)?.findAll()
+//
+//        if (realmResult != null && realmResult.isNotEmpty()) {
+//            profile = Profile()
+//
+//            for (i in realmResult.indices) {
+//                val realmData = realmResult[i]
+//                realmData?.let {
+//                    profile.id = it.id
+//                    profile.firstName = it.firstName
+//                    profile.lastName = it.lastName
+//                    profile.phone = it.phone
+//                    profile.email = it.email
+//                    profile.imgUser = it.imgUser
+//                    profile.isNotificationsEnable = it.isNotificationsEnable
+//                    profile.isCallsEnable = it.isCallsEnable
+//                }
+//            }
+//        }
 
         return profile
     }
@@ -106,16 +106,16 @@ class ProfileStorage : IProfileStorage {
         }
 
         //save full profile
-        realm?.executeTransaction {
-            it.insertOrUpdate(profile)
-        }
+//        realm?.executeTransaction {
+//            it.insertOrUpdate(profile)
+//        }
     }
 
 
     override fun removeProfile() {
-        realm?.executeTransaction {
-            it.where(Profile::class.java).findAll().deleteAllFromRealm()
-        }
+//        realm?.executeTransaction {
+//            it.where(Profile::class.java).findAll().deleteAllFromRealm()
+//        }
 
         val editor = App.appComponent.getSharedPref().edit()
         editor.remove(ACCESS_TOKEN)

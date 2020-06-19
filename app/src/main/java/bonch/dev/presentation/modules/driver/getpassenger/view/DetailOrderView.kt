@@ -143,14 +143,14 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         val anim2 = getAnimConf()
         val anim3 = getAnimConf()
 
-        circle1.startAnimation(anim3)
+        circle1?.startAnimation(anim3)
 
         Handler().postDelayed({
-            circle2.startAnimation(anim1)
+            circle2?.startAnimation(anim1)
         }, 250)
 
         Handler().postDelayed({
-            circle3.startAnimation(anim2)
+            circle3?.startAnimation(anim2)
         }, 500)
     }
 
