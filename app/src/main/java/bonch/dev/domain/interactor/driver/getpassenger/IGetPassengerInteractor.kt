@@ -12,6 +12,8 @@ interface IGetPassengerInteractor {
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
+    fun offerPrice(price: Int, rideId: Int, callback: SuccessHandler)
+
     fun getNewOrder(callback: DataHandler<ArrayList<RideInfo>?>)
 
 }

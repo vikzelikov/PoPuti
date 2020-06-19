@@ -16,10 +16,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.domain.entities.common.profile.Profile
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.Driver
-import bonch.dev.domain.entities.passenger.getdriver.DriverObject
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.domain.utils.Vibration
@@ -72,21 +72,23 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         setBottomSheet()
 
-        val driver = DriverObject.driver
+        val driver = ActiveRide.activeRide?.driver
         if (driver != null) {
             trackRidePresenter.initTracking()
 
-            trackRidePresenter.setInfoDriver(driver)
+            setInfoDriver(driver)
         }
     }
 
 
-    override fun setInfoDriver(driver: Driver) {
-        driver_name.text = driver.nameDriver
-        car_number.text = driver.carNumber
-        car_name.text = driver.carName
+    override fun setInfoDriver(driver: Profile) {
+        driver_name.text = driver.firstName
+//        car_number.text = driver.carNumber
+//        car_name.text = driver.carName
 
-        Glide.with(img_driver.context).load(driver.imgDriver)
+        var photo: Any? = driver.photos?.lastOrNull()?.imgUrl
+        if (photo == null) photo = R.drawable.ic_default_ava
+        Glide.with(img_driver.context).load(photo)
             .apply(RequestOptions().centerCrop().circleCrop())
             .into(img_driver)
 

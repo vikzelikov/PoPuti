@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.os.Handler
 import bonch.dev.App
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
-import bonch.dev.domain.entities.common.ride.RideStatus
-import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.Driver
-import bonch.dev.domain.entities.passenger.getdriver.DriverObject
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.domain.utils.Vibration
@@ -16,6 +13,7 @@ import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
+import com.google.gson.Gson
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -40,14 +38,22 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     override fun startSearchDrivers() {
+        val res = App.appComponent.getContext().resources
         //set new status ride
         RideStatus.status = StatusRide.SEARCH
 
         getDriverInteractor.listenerOnChangeRideStatus { data, error ->
-            //driver accept this ride
-            //parsing driver object
-            //DriverObject.driver = drive
-            //selectDriverDone(false)
+            if (error != null || data == null) {
+                getView()?.showNotification(res.getString(R.string.errorSystem))
+            } else {
+                val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                if (ride == null) {
+                    getView()?.showNotification(res.getString(R.string.errorSystem))
+                } else {
+                    ActiveRide.activeRide = ride
+                    getDriverDone(false)
+                }
+            }
         }
 
         //TODO replace to searching with server
@@ -63,7 +69,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
-    private fun selectDriverDone(isAcceptPassenger: Boolean) {
+    private fun getDriverDone(isAcceptByPassenger: Boolean) {
         val res = App.appComponent.getContext().resources
 
         getView()?.removeBackground()
@@ -72,19 +78,30 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         clearData()
 
         //locale new status
-        RideStatus.status = StatusRide.WAIT_FOR_DRIVER
+        val status = ActiveRide.activeRide?.statusId
+        status?.let {
+            getByValue(it)?.let { status ->
 
-        if (isAcceptPassenger) {
-            //remote new status
-            //TODO get actual driver id
-            getDriverInteractor.setDriverInRide(1) { isSuccess ->
-                if (isSuccess) {
-                    //next step
-                    getView()?.nextFragment()
-                } else getView()?.showNotification(res.getString(R.string.errorSystem))
+                if(status == StatusRide.WAIT_FOR_DRIVER){
+                    RideStatus.status = status
+
+                    if (isAcceptByPassenger) {
+                        //remote new status
+                        //TODO get actual driver id
+                        getDriverInteractor.setDriverInRide(1) { isSuccess ->
+                            if (isSuccess) {
+                                //next step
+                                getView()?.nextFragment()
+                            } else getView()?.showNotification(res.getString(R.string.errorSystem))
+                        }
+                    } else getView()?.nextFragment()
+                }
             }
-        } else getView()?.nextFragment()
+        }
     }
+
+
+    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
     private fun setNewDriverOffer(driver: Driver) {
@@ -116,7 +133,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
         if (driver != null) {
             DriverMainTimer.getInstance()?.cancel()
-            selectDriverDone(true)
+            getDriverDone(true)
         }
     }
 
@@ -137,6 +154,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         //stop getting new driver
         clearData()
         DriverObject.driver = null
+        ActiveRide.activeRide = null
 
         if (reasonID == ReasonCancel.MISTAKE || reasonID == ReasonCancel.OTHER) {
             toAdr = null
@@ -174,6 +192,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     private fun clearData() {
+        getDriverInteractor.disconnectSocket()
         mainHandler?.removeCallbacksAndMessages(null)
         DriverMainTimer.getInstance()?.cancel()
         DriverMainTimer.deleteInstance()

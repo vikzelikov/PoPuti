@@ -71,7 +71,6 @@
                     android:layout_marginBottom="15dp"
                     android:maxWidth="120dp"
                     android:singleLine="true"
-                    android:text="Александр"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -97,7 +96,6 @@
                     android:paddingTop="2dp"
                     android:paddingEnd="13dp"
                     android:paddingBottom="2dp"
-                    android:text="HS456K"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -109,7 +107,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="15dp"
-                    android:text="Hyundai Solaris"
                     android:textColor="#70000000"
                     android:textSize="18sp" />
 

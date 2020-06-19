@@ -80,6 +80,10 @@ data class RideInfo(
     @Expose
     val passenger: Profile? = null,
 
+    @SerializedName("driver")
+    @Expose
+    val driver: Profile? = null,
+
     var handel: Handler? = null
 
 ) : Parcelable {
@@ -103,6 +107,7 @@ data class RideInfo(
         parcel.readInt(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readByte() != 0.toByte(),
+        parcel.readParcelable(Profile::class.java.classLoader),
         parcel.readParcelable(Profile::class.java.classLoader)
     )
 
@@ -129,6 +134,7 @@ data class RideInfo(
         parcel.writeValue(distance)
         parcel.writeByte(if (isNewOrder) 1 else 0)
         parcel.writeParcelable(passenger, flags)
+        parcel.writeParcelable(driver, flags)
     }
 
     override fun describeContents(): Int {
@@ -154,6 +160,7 @@ data class RideInfo(
         result = 31 * result + (distance ?: 0)
         result = 31 * result + isNewOrder.hashCode()
         result = 31 * result + (passenger?.hashCode() ?: 0)
+        result = 31 * result + (driver?.hashCode() ?: 0)
         result = 31 * result + (handel?.hashCode() ?: 0)
         return result
     }
@@ -167,7 +174,6 @@ data class RideInfo(
             return arrayOfNulls(size)
         }
     }
-
 
 }
 

@@ -9,8 +9,9 @@ import bonch.dev.data.repository.common.ride.Geocoder
 import bonch.dev.domain.entities.common.ride.Ride
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.*
+import bonch.dev.domain.entities.common.ride.Driver
 import bonch.dev.domain.interactor.passenger.getdriver.NewDriver
+import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
@@ -18,15 +19,20 @@ import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.interfaces.SuggestHandler
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
+import com.pusher.client.channel.PrivateChannel
+import com.pusher.client.channel.PrivateChannelEventListener
+import com.pusher.client.channel.PusherEvent
 import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.connection.ConnectionStateChange
+import com.pusher.client.util.HttpAuthorizer
 import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+
 
 class GetDriverRepository : IGetDriverRepository {
 
@@ -36,6 +42,7 @@ class GetDriverRepository : IGetDriverRepository {
 
     private var autocomplete: Autocomplete? = null
     private var geocoder: Geocoder? = null
+    private var pusher: Pusher? = null
 
 
     init {
@@ -117,33 +124,75 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
-    override fun listenerOnChangeRideStatus(callback: DataHandler<RideInfo>) {
+    override fun listenerOnChangeRideStatus(
+        rideId: Int,
+        token: String,
+        callback: DataHandler<String?>
+    ) {
+        val log = "SOCKET_PUSHER/P"
+        val apiKey = "4f8625f09b5081d92386"
+        val channelName = "ride"
+        val eventName = "App\\Events\\RideChange"
+
+        var channel: PrivateChannel? = null
         val options = PusherOptions()
         options.setCluster("mt1")
+        val auth = HttpAuthorizer(Constants.BASE_URL.plus("/broadcasting/auth"))
+        auth.setHeaders(NetworkUtil.getHeaders(token))
+        options.authorizer = auth
 
-        val pusher = Pusher("4f8625f09b5081d92386", options)
+        if (pusher?.connection?.state != ConnectionState.CONNECTED) {
 
-        pusher.connect(object : ConnectionEventListener {
-            override fun onConnectionStateChange(change: ConnectionStateChange) {
-                Log.i(
-                    "SOCKET_CHANGE_STATUS/P",
-                    "${change.currentState}"
-                )
-            }
+            pusher = Pusher(apiKey, options)
 
-            override fun onError(message: String, code: String, e: Exception) {
-                Log.e(
-                    "SOCKET_CHANGE_STATUS/P",
-                    "Socket failed with code ($code), message ($message)"
-                )
-            }
-        }, ConnectionState.ALL)
+            pusher?.connect(object : ConnectionEventListener {
+                override fun onConnectionStateChange(change: ConnectionStateChange) {}
 
-        val channel = pusher.subscribe("ride")
-        channel.bind("App\\Events\\RideChange") { event ->
-            //callback()
-            Log.e("SOCKET", "Received event with data: $event")
+                override fun onError(message: String, code: String, e: Exception) {}
+            }, ConnectionState.ALL)
+
+            channel = pusher?.subscribePrivate("private-$channelName.$rideId",
+                object : PrivateChannelEventListener {
+                    override fun onEvent(event: PusherEvent?) {}
+
+                    override fun onAuthenticationFailure(mess: String?, e: java.lang.Exception?) {
+                        Log.e(log, String.format("SOCKET CONNECT FAIL [%s], [%s]", mess, e))
+                    }
+
+                    override fun onSubscriptionSucceeded(channelName: String?) {
+                        Log.i(log, "SOCKET CONNECT SUCCESS")
+                    }
+                })
         }
+
+        channel?.bind(eventName, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
+
+        channel?.bind("App\\Events\\PriceOffer", object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                println("EE ${event?.data}")
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
+    }
+
+
+    override fun disconnectSocket() {
+        pusher?.disconnect()
     }
 
 
@@ -161,6 +210,7 @@ class GetDriverRepository : IGetDriverRepository {
                 val headers = NetworkUtil.getHeaders(token)
 
                 response = service.updateRideStatus(headers, rideId, status.status)
+
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
@@ -232,9 +282,23 @@ class GetDriverRepository : IGetDriverRepository {
     var i = 0
     override fun getNewDriver(callback: NewDriver) {
         val driver = if (i % 2 == 0) {
-            Driver("Костя $i", "Hyundai Solaris", "DF456S", 4.3, R.drawable.ava, 344 + i * 9)
+            Driver(
+                "Костя $i",
+                "Hyundai Solaris",
+                "DF456S",
+                4.3,
+                R.drawable.ava,
+                344 + i * 9
+            )
         } else {
-            Driver("Александр $i", "Kia Rio", "AR432V", 3.9, R.drawable.ava1, 412 + i * 5)
+            Driver(
+                "Александр $i",
+                "Kia Rio",
+                "AR432V",
+                3.9,
+                R.drawable.ava1,
+                412 + i * 5
+            )
         }
 
         if (i < 17)

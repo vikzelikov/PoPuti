@@ -31,6 +31,7 @@ interface ContractView {
         fun setOrder(order: RideInfo)
         fun getMap(): MapView?
         fun nextFragment()
+        fun hideOfferPrice()
         fun onObjectUpdate()
         fun getUserLocationLayer(): UserLocationLayer?
         fun onBackPressed(): Boolean

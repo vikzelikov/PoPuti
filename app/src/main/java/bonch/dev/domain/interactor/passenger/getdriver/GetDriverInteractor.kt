@@ -4,11 +4,7 @@ import android.util.Log
 import bonch.dev.data.repository.passenger.getdriver.IGetDriverRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.passenger.getdriver.IGetDriverStorage
-import bonch.dev.domain.entities.common.ride.Address
-import bonch.dev.domain.entities.common.ride.AddressPoint
-import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.*
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
@@ -58,7 +54,6 @@ class GetDriverInteractor : IGetDriverInteractor {
         val userId = profileStorage.getUserId()
         val token = profileStorage.getToken()
 
-
         if (token != null && userId != -1) {
             //set userId
             rideInfo.userId = userId
@@ -97,8 +92,17 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
-    override fun listenerOnChangeRideStatus(callback: DataHandler<RideInfo>) {
-        getDriverRepository.listenerOnChangeRideStatus(callback)
+    override fun listenerOnChangeRideStatus(callback: DataHandler<String?>) {
+        val rideId = getDriverStorage.getRideId()
+        val token = profileStorage.getToken()
+
+        if (token != null)
+            getDriverRepository.listenerOnChangeRideStatus(rideId, token, callback)
+    }
+
+
+    override fun disconnectSocket() {
+        getDriverRepository.disconnectSocket()
     }
 
 
@@ -184,16 +188,6 @@ class GetDriverInteractor : IGetDriverInteractor {
 
     override fun deleteCashSuggest(address: Address) {
         getDriverStorage.deleteCashSuggest(address)
-    }
-
-
-    override fun saveDriver(driver: Driver) {
-        //TODO send driver to server
-    }
-
-
-    override fun removeDriver() {
-        //TODO cancel ride
     }
 
 

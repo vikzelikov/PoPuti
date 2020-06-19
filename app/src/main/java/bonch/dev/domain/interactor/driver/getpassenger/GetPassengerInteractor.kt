@@ -32,12 +32,15 @@ class GetPassengerInteractor : IGetPassengerInteractor {
 
         if (rideId != null && token != null) {
             getPassengerRepository.updateRideStatus(status, rideId, token) { isSuccess ->
-                if (!isSuccess) {
+                if (isSuccess) {
+                    //success
+                    callback(true)
+                } else {
                     //retry request
                     getPassengerRepository.updateRideStatus(status, rideId, token) {
                         callback(it)
                     }
-                } else callback(true)
+                }
             }
         } else {
             Log.d(
@@ -56,18 +59,44 @@ class GetPassengerInteractor : IGetPassengerInteractor {
 
         if (userId != -1 && rideId != null && token != null) {
             getPassengerRepository.setDriverInRide(userId, rideId, token) { isSuccess ->
-                if (!isSuccess) {
+                if (isSuccess) {
+                    //success
+                    callback(true)
+                } else {
                     //retry request
                     getPassengerRepository.setDriverInRide(userId, rideId, token) {
                         callback(it)
                     }
-                } else callback(true)
+                }
             }
         } else {
             Log.d(
                 "LINK_DRIVER_TO_RIDE",
                 "Link driver to ride with server failed (rideId: $rideId, token: $token)"
             )
+            callback(false)
+        }
+    }
+
+
+    override fun offerPrice(price: Int, rideId: Int, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+        val userId = profileStorage.getUserId()
+
+        if (token != null && userId != -1) {
+            getPassengerRepository.offerPrice(price, rideId, userId, token) { isSuccess ->
+                if (isSuccess) {
+                    //success
+                    callback(true)
+                } else {
+                    //retry request
+                    getPassengerRepository.offerPrice(price, rideId, userId, token) {
+                        callback(it)
+                    }
+                }
+            }
+        } else {
+            //error
             callback(false)
         }
     }

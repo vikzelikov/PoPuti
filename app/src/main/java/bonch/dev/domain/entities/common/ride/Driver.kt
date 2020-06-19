@@ -1,4 +1,4 @@
-package bonch.dev.domain.entities.passenger.getdriver
+package bonch.dev.domain.entities.common.ride
 
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
 

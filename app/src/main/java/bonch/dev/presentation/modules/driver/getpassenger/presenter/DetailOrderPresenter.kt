@@ -2,6 +2,7 @@ package bonch.dev.presentation.modules.driver.getpassenger.presenter
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
@@ -27,6 +28,9 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     @Inject
     lateinit var getPassengerInteractor: IGetPassengerInteractor
 
+    var handlerHotification: Handler? = null
+
+    private val OFFER_PRICE_TIMEOUT = 10000L
     val OFFER_PRICE = 1
 
     init {
@@ -95,6 +99,24 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     override fun offerPrice(context: Context, fragment: Fragment) {
         val intent = Intent(context, OfferPriceView::class.java)
         fragment.startActivityForResult(intent, OFFER_PRICE)
+    }
+
+
+    override fun offerPriceDone(price: Int) {
+        val rideId = ActiveRide.activeRide?.rideId
+
+        if (rideId != null) {
+            getPassengerInteractor.offerPrice(price, rideId) { isSuccess ->
+                if (isSuccess) {
+                    handlerHotification = Handler()
+                    handlerHotification?.postDelayed({
+                        getView()?.hideOfferPrice()
+                    }, OFFER_PRICE_TIMEOUT)
+                } else {
+                    getView()?.hideOfferPrice()
+                }
+            }
+        } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
     }
 
 

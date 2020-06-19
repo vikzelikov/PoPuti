@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.passenger.getdriver.Driver
-import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.common.ride.Driver
+import bonch.dev.domain.entities.common.ride.DriverObject
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.utils.Keyboard

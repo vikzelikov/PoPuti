@@ -21,6 +21,8 @@ interface IGetPassengerRepository {
         callback: SuccessHandler
     )
 
+    fun offerPrice(price: Int, rideId: Int, userId: Int, token: String, callback: SuccessHandler)
+
     fun getNewOrders(callback: DataHandler<ArrayList<RideInfo>?>)
 
 }

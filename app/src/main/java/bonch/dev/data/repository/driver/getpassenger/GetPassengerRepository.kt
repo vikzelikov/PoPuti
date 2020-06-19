@@ -102,6 +102,50 @@ class GetPassengerRepository : IGetPassengerRepository {
     }
 
 
+    override fun offerPrice(
+        price: Int,
+        rideId: Int,
+        userId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.offerPrice(
+                    headers,
+                    price,
+                    rideId,
+                    userId
+                )
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e(
+                            "OFFER_PRICE",
+                            "Offer price for ride on server failed with code: ${response.code()}"
+                        )
+                        callback(false)
+                    }
+                }
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("OFFER_PRICE", "${err.printStackTrace()}")
+                callback(false)
+            }
+        }
+    }
+
+
     override fun getNewOrders(callback: DataHandler<ArrayList<RideInfo>?>) {
         var response: Response<ArrayList<RideInfo>>
 

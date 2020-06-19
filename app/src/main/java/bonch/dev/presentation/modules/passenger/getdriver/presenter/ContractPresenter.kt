@@ -8,8 +8,9 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.domain.entities.common.banking.BankCard
+import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.ride.Address
-import bonch.dev.domain.entities.passenger.getdriver.*
+import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
@@ -93,7 +94,6 @@ interface ContractPresenter {
     interface ITrackRidePresenter {
         fun initTracking()
         fun nextStep(idStep: Int)
-        fun setInfoDriver(driver: Driver)
         fun cancelDone(reasonID: ReasonCancel)
         fun backFragment(reasonID: ReasonCancel)
         fun showChat(context: Context, fragment: Fragment)

@@ -139,7 +139,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
                     } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem)) //show error
 
-                    mainHandler?.postDelayed(this, 5000)
+                    mainHandler?.postDelayed(this, 10000)
                 }
             }
         }, 0)
@@ -152,11 +152,13 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
         if (!orders.isNullOrEmpty() && !isGettingLocation) {
             isGettingLocation = true
 
-            userPosition?.let { userPoint ->
-                getView()?.getAdapter()?.list?.let { recyclerList ->
-                    val copyList = arrayListOf<RideInfo>()
-                    copyList.addAll(recyclerList)
+            getView()?.getAdapter()?.list?.let { recyclerList ->
+                val copyList = arrayListOf<RideInfo>()
+                copyList.addAll(recyclerList)
 
+                val userPoint = userPosition
+                if (userPoint != null) {
+                    //geo accessed
                     orders.forEachIndexed { i, order ->
                         val fromLat = order.fromLat
                         val fromLng = order.fromLng
@@ -168,24 +170,32 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
                             //if last item, then show in view
                             if (i == orders.lastIndex) {
-                                if (copyList.isNotEmpty()) {
-                                    //we already have some orders in view
-                                    copyList.addAll(orders)
-                                    showOrder(copyList, false)
-
-                                } else {
-                                    //the first showing
-                                    showOrder(orders, true)
-                                }
+                                mergeOrders(orders, copyList)
                             }
-
-                            //end searching user position
-                            isGettingLocation = false
                         }
                     }
+                } else {
+                    //geo not accessed
+                    mergeOrders(orders, copyList)
                 }
             }
         }
+    }
+
+
+    private fun mergeOrders(orders: ArrayList<RideInfo>, copyList: ArrayList<RideInfo>) {
+        if (copyList.isNotEmpty()) {
+            //we already have some orders in view
+            copyList.addAll(orders)
+            showOrder(copyList, false)
+
+        } else {
+            //the first showing
+            showOrder(orders, true)
+        }
+
+        //end searching user position
+        isGettingLocation = false
     }
 
 

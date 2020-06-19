@@ -2,20 +2,20 @@ package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.Coordinate
-import bonch.dev.domain.entities.common.ride.RideStatus
-import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.Driver
-import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
+import com.google.gson.Gson
 import javax.inject.Inject
 
 class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
@@ -32,22 +32,23 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun setInfoDriver(driver: Driver) {
-        getView()?.setInfoDriver(driver)
-
-        //save driver in case close app
-        if (driver.nameDriver != null) {
-            getDriverInteractor.saveDriver(driver)
-        }
-    }
-
-
     override fun initTracking() {
+        val res = App.appComponent.getContext().resources
+
         getDriverInteractor.listenerOnChangeRideStatus { data, error ->
-            //driver accept this ride
-            //parsing driver object
-            //parsing ride
-            //nextStep()
+            if (error != null || data == null) {
+                getView()?.showNotification(res.getString(R.string.errorSystem))
+            } else {
+                val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                if (ride == null) {
+                    getView()?.showNotification(res.getString(R.string.errorSystem))
+                } else {
+                    ride.statusId?.let { idStep ->
+                        ActiveRide.activeRide = ride
+                        nextStep(idStep)
+                    }
+                }
+            }
         }
     }
 
@@ -59,7 +60,14 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         if (step != null) {
             RideStatus.status = step
 
-            getView()?.checkoutStatusView(step)
+            val mainHandler = Handler(Looper.getMainLooper())
+            val myRunnable = Runnable {
+                kotlin.run {
+                    getView()?.checkoutStatusView(step)
+                }
+            }
+
+            mainHandler.post(myRunnable)
 
         } else getView()?.showNotification(res.getString(R.string.errorSystem))
     }
@@ -121,8 +129,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     private fun clearData() {
+        ActiveRide.activeRide = null
         DriverObject.driver = null
-        getDriverInteractor.removeDriver()
     }
 
 

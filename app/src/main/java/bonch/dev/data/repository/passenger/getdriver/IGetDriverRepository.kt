@@ -19,7 +19,9 @@ interface IGetDriverRepository {
 
     fun createRide(rideInfo: RideInfo, token: String, callback: DataHandler<RideInfo?>)
 
-    fun listenerOnChangeRideStatus(callback: DataHandler<RideInfo>)
+    fun listenerOnChangeRideStatus(rideId: Int, token: String, callback: DataHandler<String?>)
+
+    fun disconnectSocket()
 
     fun updateRideStatus(
         status: StatusRide,

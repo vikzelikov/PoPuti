@@ -6,7 +6,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.common.banking.BankCard
-import bonch.dev.domain.entities.passenger.getdriver.Driver
+import bonch.dev.domain.entities.common.profile.Profile
+import bonch.dev.domain.entities.common.ride.Driver
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.presentation.interfaces.IBaseView
@@ -97,7 +98,7 @@ interface ContractView {
 
 
     interface ITrackRideView : IBaseView {
-        fun setInfoDriver(driver: Driver)
+        fun setInfoDriver(driver: Profile)
         fun onBackPressed(): Boolean
         fun checkoutStatusView(idStep: StatusRide)
         fun getMap(): MapView?

@@ -3,7 +3,7 @@ package bonch.dev.domain.interactor.passenger.getdriver
 import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.passenger.getdriver.Driver
+import bonch.dev.domain.entities.common.ride.Driver
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
@@ -25,17 +25,15 @@ interface IGetDriverInteractor {
     //Ride
     fun createRide(rideInfo: RideInfo, callback: SuccessHandler)
 
-    fun listenerOnChangeRideStatus(callback: DataHandler<RideInfo>)
+    fun listenerOnChangeRideStatus(callback: DataHandler<String?>)
+
+    fun disconnectSocket()
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
     fun setDriverInRide(userId: Int, callback: SuccessHandler)
 
     fun getNewDriver(callback: NewDriver)
-
-    fun saveDriver(driver: Driver)
-
-    fun removeDriver()
 
 
     //Cash

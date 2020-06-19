@@ -14,7 +14,7 @@ import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.di.module.passenger.GetDriverModule
-import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.common.ride.DriverObject
 import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent

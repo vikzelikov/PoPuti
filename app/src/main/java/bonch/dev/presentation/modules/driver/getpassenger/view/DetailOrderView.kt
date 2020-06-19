@@ -9,14 +9,17 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.ScaleAnimation
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
@@ -29,8 +32,8 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.detail_order_layout.*
 import javax.inject.Inject
 
-class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
+class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
     @Inject
     lateinit var detailOrderPresenter: ContractPresenter.IDetailOrderPresenter
@@ -43,6 +46,13 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     lateinit var nextFragment: ParentHandler<FragmentManager>
 
     private val TIME_EXPIRED = 2
+
+    private var animation = ScaleAnimation(
+        0.1f, 2f,
+        0.1f, 2f,
+        Animation.RELATIVE_TO_SELF, 0.5f,
+        Animation.RELATIVE_TO_SELF, 0.5f
+    )
 
 
     init {
@@ -71,6 +81,8 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         setBottomSheet()
 
         correctMapView()
+
+        showOfferPriceLoading()
     }
 
 
@@ -115,22 +127,53 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == detailOrderPresenter.instance().OFFER_PRICE && resultCode == RESULT_OK) {
             val price = data?.getIntExtra(1.toString(), 0)
-            //todo send price
-            show_animation.visibility = View.VISIBLE
-
-            //todo replace to work with server
-            Handler().postDelayed({
-                if (ActiveRide.activeRide!!.rideId!! % 2 == 0) {
-                    val activity = activity as? MapOrderView
-                    activity?.let { nextFragment(it.supportFragmentManager) }
-                } else {
-                    showNotification(getString(R.string.userCancellPrice))
-                }
-
-                show_animation.visibility = View.GONE
-
-            }, 3000)
+            if (price != null) {
+                detailOrderPresenter.offerPriceDone(price)
+                show_animation.visibility = View.VISIBLE
+                showOfferPriceLoading()
+            } else {
+                hideOfferPrice()
+            }
         }
+    }
+
+
+    private fun showOfferPriceLoading() {
+        val anim1 = getAnimConf()
+        val anim2 = getAnimConf()
+        val anim3 = getAnimConf()
+
+        circle1.startAnimation(anim3)
+
+        Handler().postDelayed({
+            circle2.startAnimation(anim1)
+        }, 250)
+
+        Handler().postDelayed({
+            circle3.startAnimation(anim2)
+        }, 500)
+    }
+
+
+    private fun getAnimConf(): ScaleAnimation {
+        val anim = ScaleAnimation(
+            1f, 1.8f,
+            1f, 1.8f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        )
+
+        anim.duration = 500
+        anim.repeatMode = AnimationSet.REVERSE
+        anim.repeatCount = Animation.INFINITE
+
+        return anim
+    }
+
+
+    override fun hideOfferPrice() {
+        show_animation.visibility = View.GONE
+        showNotification(getString(R.string.userCancellPrice))
     }
 
 
@@ -312,6 +355,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
     override fun onDestroy() {
         timer = null
+        detailOrderPresenter.instance().handlerHotification?.removeCallbacksAndMessages(null)
         detailOrderPresenter.instance().detachView()
         super.onDestroy()
     }

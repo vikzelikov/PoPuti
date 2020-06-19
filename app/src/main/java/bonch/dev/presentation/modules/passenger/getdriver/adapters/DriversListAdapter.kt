@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
-import bonch.dev.domain.entities.passenger.getdriver.Driver
-import bonch.dev.domain.entities.passenger.getdriver.DriverObject
+import bonch.dev.domain.entities.common.ride.Driver
+import bonch.dev.domain.entities.common.ride.DriverObject
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverItemTimer
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
