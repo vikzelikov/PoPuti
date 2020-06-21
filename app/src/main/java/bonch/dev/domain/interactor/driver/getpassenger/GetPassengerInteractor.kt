@@ -25,6 +25,33 @@ class GetPassengerInteractor : IGetPassengerInteractor {
     }
 
 
+    override fun connectSocket(callback: SuccessHandler) {
+        val rideId = ActiveRide.activeRide?.rideId
+        val token = profileStorage.getToken()
+
+        if (token != null && rideId != null) {
+            getPassengerRepository.connectSocket(rideId, token) { isSuccess ->
+                if (isSuccess) {
+                    callback(true)
+                } else {
+                    //retry connect
+                    getPassengerRepository.connectSocket(rideId, token, callback)
+                }
+            }
+        } else callback(false)
+    }
+
+
+    override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
+        getPassengerRepository.subscribeOnChangeRide(callback)
+    }
+
+
+    override fun disconnectSocket() {
+        getPassengerRepository.disconnectSocket()
+    }
+
+
     //update ride status with server
     override fun updateRideStatus(status: StatusRide, callback: SuccessHandler) {
         val rideId = ActiveRide.activeRide?.rideId
@@ -99,6 +126,11 @@ class GetPassengerInteractor : IGetPassengerInteractor {
             //error
             callback(false)
         }
+    }
+
+
+    override fun getUserId(): Int {
+        return profileStorage.getUserId()
     }
 
 

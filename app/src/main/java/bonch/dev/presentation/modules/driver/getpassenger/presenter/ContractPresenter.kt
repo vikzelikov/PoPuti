@@ -35,12 +35,14 @@ interface ContractPresenter {
 
 
     interface IDetailOrderPresenter {
+        fun subscribeOnChangeRide()
         fun instance(): DetailOrderPresenter
         fun receiveOrder(order: RideInfo?)
         fun offerPrice(context: Context, fragment: Fragment)
         fun offerPriceDone(price: Int)
         fun onObjectUpdate()
         fun nextFragment()
+        fun onDestroy()
         fun showRoute()
     }
 
@@ -52,6 +54,8 @@ interface ContractPresenter {
         fun tickTimerWaitPassanger(sec: Int, isPaidWating: Boolean)
         fun cancelDoneOtherReason(comment: String)
         fun cancelDone(reasonID: ReasonCancel)
+        fun subscribeOnChangeRide()
+        fun onDestroy()
         fun nextStep()
     }
 

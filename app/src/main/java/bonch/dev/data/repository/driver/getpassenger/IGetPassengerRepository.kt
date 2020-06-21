@@ -7,6 +7,12 @@ import bonch.dev.presentation.interfaces.SuccessHandler
 
 interface IGetPassengerRepository {
 
+    fun connectSocket(rideId: Int, token: String, callback: SuccessHandler)
+
+    fun subscribeOnChangeRide(callback: DataHandler<String?>)
+
+    fun disconnectSocket()
+
     fun updateRideStatus(
         status: StatusRide,
         rideId: Int,

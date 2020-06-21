@@ -327,6 +327,7 @@ class RateRideView : Fragment(), IRateRideView {
 
     override fun onDestroy() {
         rateRidePresenter.instance().detachView()
+        ActiveRide.activeRide = null
         CommonComponent.commonComponent = null
         super.onDestroy()
     }

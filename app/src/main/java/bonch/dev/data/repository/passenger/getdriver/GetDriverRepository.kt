@@ -260,8 +260,7 @@ class GetDriverRepository : IGetDriverRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
-                val headers = hashMapOf<String, String>()
-                headers["Authorization"] = "Bearer $token"
+                val headers = NetworkUtil.getHeaders(token)
 
                 response = service.setDriverInRide(
                     headers,

@@ -24,6 +24,8 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
 
 
     override fun attachDetailOrder(fm: FragmentManager) {
+        childTrackRide = null
+
         val childFragment = DetailOrderView()
 
         //pass callback

@@ -54,6 +54,7 @@ class MapGetDriverPresenter : BasePresenter<ContractView.IMapGetDriverView>(),
         childFragment.nextFragment = { attachRateRide(it) }
 
         this.childTrackRideView = childFragment
+
         fm.beginTransaction()
             .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
             .replace(R.id.frame_container, childFragment, TrackRideView::class.java.simpleName)

@@ -88,6 +88,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun cancelDone(reasonID: ReasonCancel) {
+        clearData()
+
         //cancel ride remote
         getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
 
@@ -105,9 +107,6 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun backFragment(reasonID: ReasonCancel) {
-        //clear data
-        clearData()
-
         val res = App.appComponent.getContext().resources
         getView()?.showNotification(res.getString(R.string.rideCancel))
 
@@ -134,12 +133,19 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     private fun clearData() {
+        getDriverInteractor.disconnectSocket()
         ActiveRide.activeRide = null
     }
 
 
     override fun showChat(context: Context, fragment: Fragment) {
         MainRouter.showView(R.id.show_chat, getView()?.getNavHost(), null)
+    }
+
+
+    override fun onDestroy() {
+        getDriverInteractor.disconnectSocket()
+        ActiveRide.activeRide = null
     }
 
 

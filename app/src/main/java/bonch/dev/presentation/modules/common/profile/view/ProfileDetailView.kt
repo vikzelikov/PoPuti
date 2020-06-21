@@ -119,6 +119,7 @@ class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
         if (img != null)
             Glide.with(img_user.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
                 .into(img_user)
 
         phone_number.text = profileData.phone

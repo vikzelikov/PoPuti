@@ -92,6 +92,7 @@ interface ContractPresenter {
 
 
     interface ITrackRidePresenter {
+        fun onDestroy()
         fun initTracking()
         fun nextStep(idStep: Int)
         fun cancelDone(reasonID: ReasonCancel)

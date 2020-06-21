@@ -243,19 +243,26 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         offerPrice?.let { offer ->
             bs_driver_name.text = offer.driver?.firstName
             bs_car_name.text = offer.driver?.car?.name
-            bs_driver_rating.text = offer.driver?.rating.toString()
-            bs_price.text = offer.toString().plus(" ₽")
+            bs_price.text = offer.price.toString().plus(" ₽")
+
+            bs_driver_rating.text = if (offer.driver?.rating == null) {
+                "0.0"
+            } else {
+                offer.driver?.rating.toString()
+            }
 
             offer.driver?.photos?.sortBy { it.id }
-            var photo: Any? =  offer.driver?.photos?.lastOrNull()?.imgUrl
+            var photo: Any? = offer.driver?.photos?.lastOrNull()?.imgUrl
             if (photo == null) {
                 photo = R.drawable.ic_default_ava
             }
             Glide.with(bs_img_driver.context).load(photo)
                 .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
                 .into(bs_img_driver)
         }
     }
+
 
     private fun onSlideCancelReason(slideOffset: Float) {
         if (slideOffset > 0) {
@@ -451,13 +458,8 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     override fun removeBackground() {
-        try {
-            if (on_view_main != null) {
-                get_driver_center_text?.visibility = View.GONE
-                on_view_main?.visibility = View.GONE
-            }
-        } catch (ex: Exception) {
-        }
+        get_driver_center_text?.visibility = View.GONE
+        on_view_main?.visibility = View.GONE
     }
 
 

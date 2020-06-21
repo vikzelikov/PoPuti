@@ -86,32 +86,54 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     private fun getDriverDone(isAcceptByPassenger: Boolean) {
         val res = App.appComponent.getContext().resources
 
+        if (isAcceptByPassenger) {
+            val driverId = offer?.driver?.id
+            if (driverId != null) {
+                getDriverInteractor.setDriverInRide(driverId) { isSuccess ->
+                    if (!isSuccess) getView()?.showNotification(res.getString(R.string.errorSystem))
+                }
+            } else getView()?.showNotification(res.getString(R.string.errorSystem))
+        } else {
+            //driver has confirmed with a price
+            val status = ActiveRide.activeRide?.statusId
+            status?.let {
+                getByValue(it)?.let { status ->
+                    if (status == StatusRide.WAIT_FOR_DRIVER) {
+                        //next step
+                        val mainHandler = Handler(Looper.getMainLooper())
+                        val myRunnable = Runnable {
+                            kotlin.run {
+                                nextFragment()
+                            }
+                        }
+
+                        mainHandler.post(myRunnable)
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun nextFragment() {
+        if (isAnimaionSearching) {
+            //animation off
+            val zoom = getView()?.getMap()?.map?.cameraPosition?.zoom
+            val userPoint = getUserPoint()
+
+            if (zoom != null && userPoint != null) {
+                moveCamera(zoom, userPoint)
+            }
+        }
+
+        RideStatus.status = StatusRide.WAIT_FOR_DRIVER
+
         getView()?.removeBackground()
 
         //stop getting new driver
         clearData()
 
-        //locale new status
-        val status = ActiveRide.activeRide?.statusId
-        status?.let {
-            getByValue(it)?.let { status ->
-
-                if (status == StatusRide.WAIT_FOR_DRIVER) {
-                    RideStatus.status = status
-
-                    if (isAcceptByPassenger) {
-                        //remote new status
-                        //TODO get actual driver id
-                        getDriverInteractor.setDriverInRide(1) { isSuccess ->
-                            if (isSuccess) {
-                                //next step
-                                getView()?.nextFragment()
-                            } else getView()?.showNotification(res.getString(R.string.errorSystem))
-                        }
-                    } else getView()?.nextFragment()
-                }
-            }
-        }
+        getView()?.nextFragment()
     }
 
 

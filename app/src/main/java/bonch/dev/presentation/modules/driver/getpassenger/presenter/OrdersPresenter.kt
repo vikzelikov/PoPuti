@@ -54,7 +54,6 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                 //show detail order
                 val intent = Intent(it, MapOrderView::class.java)
                 getView()?.getFragment()?.startActivityForResult(intent, 1)
-                startSearchOrders()
             }
 
             isBlock = true
@@ -140,7 +139,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
                     } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem)) //show error
 
-                    mainHandler?.postDelayed(this, 10000)
+                    mainHandler?.postDelayed(this, 5000)
                 }
             }
         }, 0)

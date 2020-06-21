@@ -6,16 +6,14 @@ import android.os.Handler
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.common.ride.RideStatus
-import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.presentation.modules.common.ride.routing.Routing
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.view.ContractView
+import com.google.gson.Gson
 import com.yandex.mapkit.geometry.Point
 import javax.inject.Inject
 
@@ -90,6 +88,35 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     }
 
 
+    override fun subscribeOnChangeRide() {
+        getPassengerInteractor.connectSocket { isSuccess ->
+            if (isSuccess) {
+                getPassengerInteractor.subscribeOnChangeRide { data, _ ->
+                    if (data != null) {
+                        val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                        if (ride != null) {
+                            val userIdLocal = getPassengerInteractor.getUserId()
+                            val userIdRemote = ride.driver?.id
+                            val status = ride.statusId
+
+                            //ride has got another driver
+                            if (status != StatusRide.SEARCH.status && userIdLocal != userIdRemote) {
+                                getView()?.passengerCancelRide()
+                            }
+
+                            //ride change for this driver
+                            if (status == StatusRide.WAIT_FOR_DRIVER.status && userIdLocal == userIdRemote) {
+                                getPassengerInteractor.disconnectSocket()
+                                nextFragment()
+                            }
+                        }
+                    }
+                }
+            } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+        }
+    }
+
+
     private fun getUserPoint(): Point? {
         val userLocation = getView()?.getUserLocationLayer()
         return userLocation?.cameraPosition()?.target
@@ -110,10 +137,10 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                 if (isSuccess) {
                     handlerHotification = Handler()
                     handlerHotification?.postDelayed({
-                        getView()?.hideOfferPrice()
+                        getView()?.hideOfferPrice(true)
                     }, OFFER_PRICE_TIMEOUT)
                 } else {
-                    getView()?.hideOfferPrice()
+                    getView()?.hideOfferPrice(true)
                 }
             }
         } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
@@ -136,6 +163,11 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
             Routing()
                 .submitRequest(userPoint, fromPoint, false, map)
         }
+    }
+
+
+    override fun onDestroy() {
+        getPassengerInteractor.disconnectSocket()
     }
 
 

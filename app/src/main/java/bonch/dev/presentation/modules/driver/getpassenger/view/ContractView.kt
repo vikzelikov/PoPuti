@@ -28,18 +28,19 @@ interface ContractView {
 
 
     interface IDetailOrderView : IBaseView {
-        fun setOrder(order: RideInfo)
-        fun getMap(): MapView?
         fun nextFragment()
-        fun hideOfferPrice()
-        fun onObjectUpdate()
+        fun getMap(): MapView?
+        fun setOrder(order: RideInfo)
+        fun hideOfferPrice(isShowNotification: Boolean)
         fun getUserLocationLayer(): UserLocationLayer?
         fun onBackPressed(): Boolean
+        fun passengerCancelRide()
+        fun onObjectUpdate()
     }
 
     interface ITrackRideView : IBaseView {
         fun setOrder(order: RideInfo)
-        fun getPassangerCancelled()
+        fun passengerCancelRide(payment: Int)
         fun tickTimerWaitPassanger(sec: Int, isPaidWaiting: Boolean)
         fun onBackPressed(): Boolean
         fun stepWaitPassanger()

@@ -8,6 +8,14 @@ import bonch.dev.presentation.interfaces.SuccessHandler
 
 interface IGetPassengerInteractor {
 
+    fun connectSocket(callback: SuccessHandler)
+
+    fun subscribeOnChangeRide(callback: DataHandler<String?>)
+
+    fun disconnectSocket()
+
+    fun getUserId(): Int
+
     fun setDriverInRide(callback: SuccessHandler)
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)

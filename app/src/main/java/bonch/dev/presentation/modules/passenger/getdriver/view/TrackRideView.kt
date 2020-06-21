@@ -1,16 +1,14 @@
 package bonch.dev.presentation.modules.passenger.getdriver.view
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
@@ -23,6 +21,7 @@ import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.domain.utils.Vibration
+import bonch.dev.presentation.base.MBottomSheet
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
@@ -33,6 +32,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.track_ride_layout.*
 import javax.inject.Inject
+
 
 class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
@@ -90,6 +90,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         if (photo == null) photo = R.drawable.ic_default_ava
         Glide.with(img_driver.context).load(photo)
             .apply(RequestOptions().centerCrop().circleCrop())
+            .error(R.drawable.ic_default_ava)
             .into(img_driver)
 
         //set default status
@@ -245,9 +246,13 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             }
         }
 
-        //TODO
+
         phone_call_driver.setOnClickListener {
-            Toast.makeText(context, "Call driver", Toast.LENGTH_SHORT).show()
+            ActiveRide.activeRide?.driver?.phone?.let { phone ->
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:$phone")
+                startActivity(intent)
+            }
         }
     }
 
@@ -297,7 +302,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    fun driverCancelRide() {
+    private fun driverCancelRide() {
+        hideAllBottomSheet()
+
+        (driverCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
+        main_info_layout.elevation = 0f
+        on_map_view.visibility = View.VISIBLE
+        on_map_view.alpha = 0.8f
+        on_map_view.isClickable = false
+
         driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -348,37 +361,37 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun correctMapView() {
-        Thread(Runnable {
-            while (true) {
-                try {
-                    val height = main_info_layout?.height
-                    if (height in 100..1000) {
-                        val mainHandler = Handler(Looper.getMainLooper())
-                        val myRunnable = Runnable {
-                            kotlin.run {
-                                val layoutParams: RelativeLayout.LayoutParams =
-                                    RelativeLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT
-                                    )
-                                //"-10" for correct view radius corners
-                                if (height != null) {
-                                    layoutParams.setMargins(0, 0, 0, height - 10)
-                                }
-                                getMap()?.layoutParams = layoutParams
-                            }
-                        }
-
-                        mainHandler.post(myRunnable)
-
-                        break
-                    }
-                } catch (ex: Exception) {
-                    break
-                }
-
-            }
-        }).start()
+//        Thread(Runnable {
+//            while (true) {
+//                try {
+//                    val height = main_info_layout?.height
+//                    if (height in 100..1000) {
+//                        val mainHandler = Handler(Looper.getMainLooper())
+//                        val myRunnable = Runnable {
+//                            kotlin.run {
+//                                val layoutParams: RelativeLayout.LayoutParams =
+//                                    RelativeLayout.LayoutParams(
+//                                        LinearLayout.LayoutParams.MATCH_PARENT,
+//                                        LinearLayout.LayoutParams.MATCH_PARENT
+//                                    )
+//                                //"-10" for correct view radius corners
+//                                if (height != null) {
+//                                    layoutParams.setMargins(0, 0, 0, height - 10)
+//                                }
+//                                getMap()?.layoutParams = layoutParams
+//                            }
+//                        }
+//
+//                        mainHandler.post(myRunnable)
+//
+//                        break
+//                    }
+//                } catch (ex: Exception) {
+//                    break
+//                }
+//
+//            }
+//        }).start()
     }
 
 
@@ -447,6 +460,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         }
 
         return isBackPressed
+    }
+
+
+    override fun onDestroy() {
+        trackRidePresenter.onDestroy()
+        super.onDestroy()
     }
 
 

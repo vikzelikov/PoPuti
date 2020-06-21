@@ -118,8 +118,13 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
         fun bind(offer: Offer) {
             itemView.driver_name.text = offer.driver?.firstName
             itemView.car_name.text = offer.driver?.car?.name
-            itemView.driver_rating.text = offer.driver?.rating.toString()
             itemView.price.text = offer.price.toString().plus(" ₽")
+
+            itemView.driver_rating.text = if (offer.driver?.rating == null) {
+                "0.0"
+            } else {
+                offer.driver?.rating.toString()
+            }
 
             offer.driver?.photos?.sortBy { it.id }
             var photo: Any? = offer.driver?.photos?.lastOrNull()?.imgUrl
@@ -128,6 +133,7 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
             }
             Glide.with(itemView.context).load(photo)
                 .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
                 .into(itemView.img_driver)
 
             itemView.reject_driver.setOnClickListener {

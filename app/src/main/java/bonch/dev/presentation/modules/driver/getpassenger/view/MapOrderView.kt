@@ -12,8 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.RideStatus
-import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.presenter.ContractPresenter
@@ -305,7 +303,6 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
 
 
     override fun onDestroy() {
-        RideStatus.status = StatusRide.WAIT_FOR_DRIVER
         mapOrderPresenter.instance().detachView()
         super.onDestroy()
     }

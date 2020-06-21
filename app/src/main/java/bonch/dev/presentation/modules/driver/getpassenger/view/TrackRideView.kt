@@ -1,6 +1,8 @@
 package bonch.dev.presentation.modules.driver.getpassenger.view
 
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -13,14 +15,15 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.RideStatus
+import bonch.dev.domain.entities.common.ride.StatusRide
+import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.MBottomSheet
@@ -34,6 +37,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.order_track_ride_layout.*
+import java.util.*
 import javax.inject.Inject
 
 
@@ -79,9 +83,11 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        correctMapView()
+        trackRidePresenter.subscribeOnChangeRide()
 
         trackRidePresenter.receiveOrder(ActiveRide.activeRide)
+
+        correctMapView()
 
         setListeners()
 
@@ -93,15 +99,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     override fun setOrder(order: RideInfo) {
         passanger_name.text = order.passenger?.firstName
-            ?.plus(" ")
-            ?.plus(order.passenger.firstName)
         from_address.text = order.position
         to_address.text = order.destination
 
-        //todo replace ava
-        val img = R.drawable.ic_default_ava
-        Glide.with(img_passanger.context).load(img)
+        order.passenger?.photos?.sortBy { it.id }
+        var photo: Any? = order.passenger?.photos?.lastOrNull()?.imgUrl
+        if (photo == null) photo = R.drawable.ic_default_ava
+        Glide.with(img_passanger.context).load(photo)
             .apply(RequestOptions().centerCrop().circleCrop())
+            .error(R.drawable.ic_default_ava)
             .into(img_passanger)
     }
 
@@ -260,6 +266,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             hideKeyboard()
         }
 
+        ok_btn.setOnClickListener {
+            finishActivity()
+        }
+
         message.setOnClickListener {
             context?.let {
                 trackRidePresenter.showChat(it, this)
@@ -267,11 +277,19 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         }
 
         phone_call.setOnClickListener {
-            Toast.makeText(context, "Call passanger", Toast.LENGTH_SHORT).show()
+            ActiveRide.activeRide?.passenger?.phone?.let { phone ->
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:$phone")
+                startActivity(intent)
+            }
         }
 
         navigator.setOnClickListener {
-            Toast.makeText(context, "To navigator", Toast.LENGTH_SHORT).show()
+            val lat = ActiveRide.activeRide?.toLat
+            val lng = ActiveRide.activeRide?.toLng
+
+            if (lat != null && lng != null)
+                openNavigator(lat, lng)
         }
     }
 
@@ -313,7 +331,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
-        comment_text.clearFocus()
+        comment_text?.clearFocus()
         hideKeyboard()
     }
 
@@ -346,13 +364,20 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     //passanger cancel this ride
-    override fun getPassangerCancelled() {
+    override fun passengerCancelRide(payment: Int) {
         hideAllBottomSheet()
 
         (passangerCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
         main_info_layout.elevation = 0f
         on_view_cancel.visibility = View.VISIBLE
+        on_view_cancel.isClickable = false
         on_view_cancel.alpha = 0.8f
+
+        if (RideStatus.status.status > StatusRide.WAIT_FOR_DRIVER.status) {
+            payment_sum.text = payment.toString().plus(" ₽")
+            payment_sum.visibility = View.VISIBLE
+            text_payment_for_cancel.visibility = View.VISIBLE
+        }
 
         passangerCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
@@ -414,8 +439,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             comment_text.clearFocus()
         } else {
             confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-            on_view_cancel.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            on_view_cancel?.visibility = View.VISIBLE
+            main_info_layout?.elevation = 0f
         }
     }
 
@@ -445,6 +470,30 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             on_view_cancel.visibility = View.VISIBLE
             main_info_layout.elevation = 0f
         }
+    }
+
+
+    private fun openNavigator(latitude: Double, longitude: Double) {
+//        val uri = Uri.parse("yandexnavi://")
+//        val intent = Intent(Intent.ACTION_VIEW, uri)
+//        intent.setPackage("ru.yandex.yandexnavi")
+//
+//// Проверяет, установлено ли приложение.
+//        val packageManager = App.appComponent.getContext().packageManager
+//        val activities = packageManager.queryIntentActivities(intent, 0)
+//        val isIntentSafe = activities.size > 0
+//        if (isIntentSafe) {
+//
+////Запускает Яндекс.Навигатор.
+//            startActivity(intent)
+//        }
+//todo переделать тут все
+        val gmmIntentUri = String.format(
+            Locale.ENGLISH, "geo:%f,%f?q=%f,%f",
+            latitude, longitude, latitude, longitude
+        )
+        val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(gmmIntentUri))
+        startActivity(mapIntent)
     }
 
 
@@ -513,8 +562,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onDestroy() {
-        trackRidePresenter.instance().timer?.cancelTimer()
-        trackRidePresenter.instance().timer = null
+        trackRidePresenter.onDestroy()
         trackRidePresenter.instance().detachView()
         super.onDestroy()
     }

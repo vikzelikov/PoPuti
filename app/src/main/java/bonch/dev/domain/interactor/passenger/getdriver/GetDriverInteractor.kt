@@ -96,7 +96,7 @@ class GetDriverInteractor : IGetDriverInteractor {
         val rideId = getDriverStorage.getRideId()
         val token = profileStorage.getToken()
 
-        if (token != null) {
+        if (token != null && rideId != -1) {
             getDriverRepository.connectSocket(rideId, token) { isSuccess ->
                 if (isSuccess) {
                     callback(true)
@@ -105,7 +105,7 @@ class GetDriverInteractor : IGetDriverInteractor {
                     getDriverRepository.connectSocket(rideId, token, callback)
                 }
             }
-        }
+        } else callback(false)
     }
 
 

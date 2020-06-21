@@ -202,12 +202,13 @@ class ProfileView : Fragment(), IProfileView {
         if (img != null)
             Glide.with(img_user.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
                 .into(img_user)
 
-        if (profileData.rating == null) {
-            user_rating.text = "0.0"
+        user_rating.text = if (profileData.rating == null) {
+            "0.0"
         } else {
-            user_rating.text = profileData.rating.toString()
+            profileData.rating.toString()
         }
 
     }

@@ -226,7 +226,7 @@
     <string name="ACTIVE">АКТИВНЫЕ</string>
     <string name="ARCHIVE">АРХИВИРОВАННЫЕ</string>
     <string name="forWatingPassanger">за простой</string>
-
+    <string name="paymentForCancel">Вам был зачислен платеж на сумму</string>
 
 
 </resources>

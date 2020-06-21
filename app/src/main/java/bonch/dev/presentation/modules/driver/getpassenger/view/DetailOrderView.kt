@@ -3,7 +3,6 @@ package bonch.dev.presentation.modules.driver.getpassenger.view
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
@@ -39,20 +38,12 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     lateinit var detailOrderPresenter: ContractPresenter.IDetailOrderPresenter
 
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
-    private var timer: TimerToClose? = null
     lateinit var finish: ParentHandler<Int>
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var nextFragment: ParentHandler<FragmentManager>
 
     private val TIME_EXPIRED = 2
-
-    private var animation = ScaleAnimation(
-        0.1f, 2f,
-        0.1f, 2f,
-        Animation.RELATIVE_TO_SELF, 0.5f,
-        Animation.RELATIVE_TO_SELF, 0.5f
-    )
 
 
     init {
@@ -73,6 +64,9 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //in case passenger cancel the ride
+        detailOrderPresenter.subscribeOnChangeRide()
 
         detailOrderPresenter.receiveOrder(ActiveRide.activeRide)
 
@@ -99,11 +93,10 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         //todo TEST
         order.passenger?.photos?.sortBy { it.id }
         var photo: Any? = order.passenger?.photos?.lastOrNull()?.imgUrl
-        if (photo == null) {
-            photo = R.drawable.ic_default_ava
-        }
+        if (photo == null) photo = R.drawable.ic_default_ava
         Glide.with(img_passanger.context).load(photo)
             .apply(RequestOptions().centerCrop().circleCrop())
+            .error(R.drawable.ic_default_ava)
             .into(img_passanger)
 
         if (order.comment == null) {
@@ -118,9 +111,6 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             comment.text = order.comment
             comment_detail.text = order.comment
         }
-
-        timer = TimerToClose(order.time.toLong())
-        timer?.start()
     }
 
 
@@ -132,7 +122,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
                 show_animation.visibility = View.VISIBLE
                 showOfferPriceLoading()
             } else {
-                hideOfferPrice()
+                hideOfferPrice(true)
             }
         }
     }
@@ -171,9 +161,12 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     }
 
 
-    override fun hideOfferPrice() {
-        show_animation.visibility = View.GONE
-        showNotification(getString(R.string.userCancellPrice))
+    override fun hideOfferPrice(isShowNotification: Boolean) {
+        show_animation?.visibility = View.GONE
+        detailOrderPresenter.instance().handlerHotification?.removeCallbacksAndMessages(null)
+
+        if (isShowNotification)
+            showNotification(getString(R.string.userCancellPrice))
     }
 
 
@@ -206,9 +199,8 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             detailOrderPresenter.nextFragment()
         }
 
-        cancel_ride.setOnClickListener {
-            ActiveRide.activeRide = null
-            finish(RESULT_OK)
+        cancel_offer.setOnClickListener {
+            hideOfferPrice(false)
         }
 
         back_btn.setOnClickListener {
@@ -342,20 +334,15 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     }
 
 
-    inner class TimerToClose(start: Long) : CountDownTimer(start * 1000, 1000) {
-        override fun onFinish() {
-            //close activity
-            ActiveRide.activeRide = null
-            finish(TIME_EXPIRED)
-        }
-
-        override fun onTick(millisUntilFinished: Long) {}
+    override fun passengerCancelRide() {
+        ActiveRide.activeRide = null
+        finish(TIME_EXPIRED)
     }
 
 
     override fun onDestroy() {
-        timer = null
-        detailOrderPresenter.instance().handlerHotification?.removeCallbacksAndMessages(null)
+        detailOrderPresenter.onDestroy()
+        hideOfferPrice(false)
         detailOrderPresenter.instance().detachView()
         super.onDestroy()
     }

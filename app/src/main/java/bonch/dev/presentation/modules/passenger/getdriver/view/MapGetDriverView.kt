@@ -3,6 +3,7 @@ package bonch.dev.presentation.modules.passenger.getdriver.view
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
+import kotlinx.android.synthetic.main.map_get_driver_fragment.*
 import javax.inject.Inject
 
 class MapGetDriverView : Fragment(), UserLocationObjectListener, CameraListener,

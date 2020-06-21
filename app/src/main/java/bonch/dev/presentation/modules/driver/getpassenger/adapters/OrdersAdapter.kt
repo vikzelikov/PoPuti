@@ -11,6 +11,9 @@ import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.presentation.modules.driver.getpassenger.presenter.ContractPresenter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.order_item.view.*
@@ -93,6 +96,7 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
             if (photo == null) photo = R.drawable.ic_default_ava
             Glide.with(itemView.context).load(photo)
                 .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
                 .into(itemView.img_passanger)
 
             showDistance(post)

@@ -93,7 +93,7 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
                     false
                 }
         }
-
+        ordersPresenter.instance().isUserGeoAccess = false //todo remove
         ordersPresenter.initOrders()
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -153,8 +153,8 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
 
     override fun showOrdersLoading() {
-        progress_bar.visibility = View.VISIBLE
-        text_search_orders.visibility = View.VISIBLE
+        progress_bar?.visibility = View.VISIBLE
+        text_search_orders?.visibility = View.VISIBLE
     }
 
 

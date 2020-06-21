@@ -2,19 +2,19 @@ package bonch.dev.presentation.modules.driver.getpassenger.presenter
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.common.ride.RideStatus
-import bonch.dev.domain.entities.common.ride.StatusRide
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
-import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.chat.view.ChatView
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.view.ContractView
+import com.google.gson.Gson
 import javax.inject.Inject
 
 class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
@@ -23,7 +23,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     @Inject
     lateinit var getPassengerInteractor: IGetPassengerInteractor
 
-    var timer: WaitingTimer? = null
+    private var timer: WaitingTimer? = null
 
 
     init {
@@ -51,27 +51,77 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         if (nextStep != null) {
             RideStatus.status = nextStep
 
+            changeView(nextStep)
+
             //update status with server
             getPassengerInteractor.updateRideStatus(nextStep) { isSuccess ->
-                if (isSuccess) {
-                    if (nextStep == StatusRide.WAIT_FOR_PASSANGER) {
-                        getView()?.stepWaitPassanger()
-                        timer = WaitingTimer()
-                        timer?.startTimer(this)
-                    }
+                if (!isSuccess) {
+                    backStep()
 
-                    if (nextStep == StatusRide.IN_WAY) {
-                        timer?.cancelTimer()
-                        getView()?.stepInWay()
-                    }
-
-                    if (nextStep == StatusRide.GET_PLACE) {
-                        getView()?.stepDoneRide()
-                    }
-
-                } else getView()?.showNotification(res.getString(R.string.errorSystem))
+                    getView()?.showNotification(res.getString(R.string.errorSystem))
+                }
             }
         } else getView()?.showNotification(res.getString(R.string.errorSystem))
+    }
+
+
+    private fun backStep() {
+        val oldStep = RideStatus.status
+        val backStep = getByValue(oldStep.status.dec())
+
+        if (backStep != null) {
+            changeView(backStep)
+        }
+    }
+
+
+    private fun changeView(step: StatusRide) {
+        if (step == StatusRide.WAIT_FOR_PASSANGER) {
+            getView()?.stepWaitPassanger()
+            timer?.cancelTimer()
+            timer = WaitingTimer()
+            timer?.startTimer(this)
+        }
+
+        if (step == StatusRide.IN_WAY) {
+            timer?.cancelTimer()
+            getView()?.stepInWay()
+        }
+
+        if (step == StatusRide.GET_PLACE) {
+            getView()?.stepDoneRide()
+        }
+    }
+
+
+    override fun subscribeOnChangeRide() {
+        getPassengerInteractor.connectSocket { isSuccess ->
+            if (isSuccess) {
+                getPassengerInteractor.subscribeOnChangeRide { data, _ ->
+                    if (data != null) {
+                        val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                        if (ride != null) {
+                            val userIdLocal = getPassengerInteractor.getUserId()
+                            val userIdRemote = ride.driver?.id
+                            val status = ride.statusId
+
+                            //passenger cancel ride
+                            if (status == StatusRide.CANCEL.status && userIdLocal == userIdRemote) {
+                                val mainHandler = Handler(Looper.getMainLooper())
+                                val myRunnable = Runnable {
+                                    kotlin.run {
+                                        //todo получить рельную компенсацию за отмену
+                                        getView()?.passengerCancelRide(43)
+                                    }
+                                }
+
+                                mainHandler.post(myRunnable)
+                            }
+                        }
+                    }
+                }
+            } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+        }
     }
 
 
@@ -115,6 +165,13 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun showChat(context: Context, fragment: Fragment) {
         val intent = Intent(context, ChatView::class.java)
         fragment.startActivityForResult(intent, 1)
+    }
+
+
+    override fun onDestroy() {
+        getPassengerInteractor.disconnectSocket()
+        timer?.cancelTimer()
+        timer = null
     }
 
 
