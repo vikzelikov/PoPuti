@@ -139,6 +139,33 @@ class MainActivity : AppCompatActivity(), IMainActivity {
     }
 
 
+    override fun showFullLoading() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                on_view.alpha = 1f
+                progress_bar.visibility = View.VISIBLE
+                on_view.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    override fun hideFullLoading() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                progress_bar.visibility = View.GONE
+                on_view.visibility = View.GONE
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
     override fun finishActivity() {
         finish()
     }

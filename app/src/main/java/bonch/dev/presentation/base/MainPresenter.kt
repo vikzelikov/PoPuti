@@ -24,19 +24,29 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
 
     override fun navigate() {
+        getView()?.showFullLoading()
+
         //check user login
         val accessToken = baseInteractor.getToken()
         val userId = baseInteractor.getUserId()
 
-        if (accessToken != null && userId != -1) {
-            //TODO check with server if created ride already (redirect to TrackRideView)
-            //redirect to full app
+        baseInteractor.validateAccount { isSuccess ->
+            if (isSuccess) {
+                if (accessToken != null && userId != -1) {
+                    //TODO check with server if created ride already (redirect to TrackRideView)
+                    //redirect to full app
 
-            if (baseInteractor.isCheckoutDriver()) {
-                getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
-            } else {
-                getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
-            }
+                    if (baseInteractor.isCheckoutDriver()) {
+                        getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
+                    } else {
+                        getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
+                    }
+
+                    getView()?.hideFullLoading()
+
+                } else getView()?.hideFullLoading()
+            } else getView()?.hideFullLoading()
+
         }
     }
 

@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import bonch.dev.App
+import bonch.dev.data.repository.passenger.signup.ISignupRepository
+import bonch.dev.data.repository.passenger.signup.SignupRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.common.profile.ProfileStorage
 import bonch.dev.di.scope.ApplicationContext
@@ -54,4 +56,8 @@ class AppModule(private val application: App) {
     @Provides
     @Singleton
     fun provideProfileStorage(): IProfileStorage = ProfileStorage()
+
+    @Provides
+    @Singleton
+    fun provideSignupRepository(): ISignupRepository = SignupRepository()
 }

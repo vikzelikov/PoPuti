@@ -10,4 +10,7 @@ interface IMainActivity : IBaseView {
 
     fun finishActivity()
 
+    fun showFullLoading()
+
+    fun hideFullLoading()
 }

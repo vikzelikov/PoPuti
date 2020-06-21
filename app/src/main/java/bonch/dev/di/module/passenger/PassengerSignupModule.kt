@@ -20,8 +20,7 @@ import dagger.Provides
 class PassengerSignupModule {
 
     @Provides
-    fun providePhonePresenter(): ContractPresenter.IPhonePresenter =
-        PhonePresenter()
+    fun providePhonePresenter(): ContractPresenter.IPhonePresenter = PhonePresenter()
 
 
     @Provides
@@ -30,26 +29,21 @@ class PassengerSignupModule {
 
 
     @Provides
-    fun provideFullNamePresenter(): ContractPresenter.IFullNamePresenter =
-        FullNamePresenter()
+    fun provideFullNamePresenter(): ContractPresenter.IFullNamePresenter = FullNamePresenter()
 
 
     @Provides
-    fun provideSignupInteractor(): ISignupInteractor =
-        SignupInteractor()
+    fun provideSignupInteractor(): ISignupInteractor = SignupInteractor()
 
 
     @Provides
-    fun provideSignupRepository(): ISignupRepository =
-        SignupRepository()
+    fun provideSignupRepository(): ISignupRepository = SignupRepository()
 
 
     @Provides
-    fun provideProfileRepository(): IProfileRepository =
-        ProfileRepository()
+    fun provideProfileRepository(): IProfileRepository = ProfileRepository()
 
 
     @Provides
-    fun provideProfileStorage(): IProfileStorage =
-        ProfileStorage()
+    fun provideProfileStorage(): IProfileStorage = ProfileStorage()
 }
