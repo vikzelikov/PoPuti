@@ -8,7 +8,6 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.domain.entities.common.banking.BankCard
-import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import com.yandex.mapkit.geometry.Point
@@ -56,6 +55,7 @@ interface ContractPresenter {
         fun removeRoute()
         fun createRide()
         fun getMap(): MapView?
+        fun startProcessBlock()
         fun removeTickSelected()
         fun offerPriceDone(data: Intent?)
         fun instance(): DetailRidePresenter
@@ -64,6 +64,7 @@ interface ContractPresenter {
         fun addBankCard(context: Context, fragment: Fragment)
         fun offerPrice(context: Context, fragment: Fragment)
         fun addBankCardDone(data: Intent?)
+        fun onDestroy()
         fun showRoute()
     }
 

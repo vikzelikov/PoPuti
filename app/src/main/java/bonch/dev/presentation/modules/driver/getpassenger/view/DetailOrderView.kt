@@ -43,6 +43,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var nextFragment: ParentHandler<FragmentManager>
 
+    private var isBlock = false
     private val TIME_EXPIRED = 2
 
 
@@ -69,6 +70,8 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         detailOrderPresenter.subscribeOnChangeRide()
 
         detailOrderPresenter.receiveOrder(ActiveRide.activeRide)
+
+        detailOrderPresenter.startProcessBlock()
 
         setListeners()
 
@@ -204,8 +207,11 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         }
 
         back_btn.setOnClickListener {
-            ActiveRide.activeRide = null
-            finish(RESULT_OK)
+            if (isBlock) showNotification(getString(R.string.waitPlease))
+            else {
+                ActiveRide.activeRide = null
+                finish(RESULT_OK)
+            }
         }
     }
 
@@ -299,12 +305,30 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun showLoading() {
-        (activity as? MapOrderView)?.showLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                isBlock = true
+                confirm_with_price.text = ""
+                progress_bar.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
     override fun hideLoading() {
-        (activity as? MapOrderView)?.hideLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                confirm_with_price.text = getString(R.string.agreeWithPrice)
+                isBlock = false
+                progress_bar.visibility = View.GONE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
@@ -326,8 +350,8 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             isBackPressed = false
         } else {
-            //finish
-            ActiveRide.activeRide = null
+            if (isBlock) showNotification(getString(R.string.waitPlease))
+            else ActiveRide.activeRide = null
         }
 
         return isBackPressed

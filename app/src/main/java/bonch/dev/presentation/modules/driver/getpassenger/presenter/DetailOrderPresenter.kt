@@ -26,7 +26,10 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     @Inject
     lateinit var getPassengerInteractor: IGetPassengerInteractor
 
+    var blockHandler: Handler? = null
     var handlerHotification: Handler? = null
+
+    private var isBlock = false
 
     private val OFFER_PRICE_TIMEOUT = 30000L
     val OFFER_PRICE = 1
@@ -37,15 +40,25 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
 
     override fun nextFragment() {
+        getView()?.showLoading()
+
         val res = App.appComponent.getContext().resources
 
         RideStatus.status = StatusRide.WAIT_FOR_DRIVER
         //set this account of driver into ride
-        getPassengerInteractor.setDriverInRide { isSuccess ->
-            if (isSuccess) {
-                getView()?.nextFragment()
-            } else {
-                getView()?.showNotification(res.getString(R.string.errorSystem))
+
+        if (!isBlock) {
+            isBlock = true
+
+            getPassengerInteractor.setDriverInRide { isSuccess ->
+
+                getView()?.hideLoading()
+
+                if (isSuccess) {
+                    getView()?.nextFragment()
+                } else {
+                    getView()?.showNotification(res.getString(R.string.errorSystem))
+                }
             }
         }
     }
@@ -160,13 +173,28 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         }
 
         if (userPoint != null && fromPoint != null && map != null) {
-            Routing()
-                .submitRequest(userPoint, fromPoint, false, map)
+            Routing().submitRequest(userPoint, fromPoint, false, map)
         }
     }
 
 
+    override fun startProcessBlock() {
+        if (blockHandler == null) {
+            blockHandler = Handler()
+        }
+
+        blockHandler?.postDelayed(object : Runnable {
+            override fun run() {
+                isBlock = false
+                blockHandler?.postDelayed(this, 3500)
+            }
+        }, 0)
+    }
+
+
     override fun onDestroy() {
+        handlerHotification?.removeCallbacksAndMessages(null)
+        blockHandler?.removeCallbacksAndMessages(null)
         getPassengerInteractor.disconnectSocket()
     }
 

@@ -3,6 +3,7 @@ package bonch.dev.presentation.modules.passenger.getdriver.presenter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
@@ -40,6 +41,10 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     private val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
 
     private var searchPlace: SearchPlace? = null
+    private var blockHandler: Handler? = null
+
+    private var isBlock = false
+
     var fromPoint: Point? = null
     var toPoint: Point? = null
 
@@ -187,9 +192,13 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     override fun createRide() {
         val view = getView()
 
-        if (view != null && view.isDataComplete()) {
+        if (view != null && view.isDataComplete() && !isBlock) {
             val rideInfo = getView()?.getRideInfo()
             val bundle = Bundle()
+
+            getView()?.showLoading()
+
+            isBlock = true
 
             rideInfo?.fromAdr = fromAdr
             rideInfo?.toAdr = toAdr
@@ -207,10 +216,11 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                 ride.price = rideInfo.price
                 ride.comment = rideInfo.comment
 
-
-                //todo поставить loading view?
                 //create ride with SERVER
                 getDriverInteractor.createRide(ride) { isSuccess ->
+
+                    getView()?.hideLoading()
+
                     if (isSuccess) {
                         MainRouter.showView(
                             R.id.show_get_driver_fragment,
@@ -227,6 +237,20 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     }
 
 
+    override fun startProcessBlock() {
+        if (blockHandler == null) {
+            blockHandler = Handler()
+        }
+
+        blockHandler?.postDelayed(object : Runnable {
+            override fun run() {
+                isBlock = false
+                blockHandler?.postDelayed(this, 3500)
+            }
+        }, 0)
+    }
+
+
     override fun removeTickSelected() {
         getView()?.removeTickSelected()
     }
@@ -239,6 +263,11 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
     override fun getMap(): MapView? {
         return getView()?.getMap()
+    }
+
+
+    override fun onDestroy() {
+        blockHandler?.removeCallbacksAndMessages(null)
     }
 
 

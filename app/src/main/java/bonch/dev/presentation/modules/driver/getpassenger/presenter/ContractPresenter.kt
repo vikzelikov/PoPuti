@@ -40,6 +40,7 @@ interface ContractPresenter {
         fun receiveOrder(order: RideInfo?)
         fun offerPrice(context: Context, fragment: Fragment)
         fun offerPriceDone(price: Int)
+        fun startProcessBlock()
         fun onObjectUpdate()
         fun nextFragment()
         fun onDestroy()

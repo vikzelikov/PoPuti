@@ -74,6 +74,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        detailRidePresenter.startProcessBlock()
+
         val from = fromAdr
         val to = toAdr
         if (from != null && to != null) {
@@ -476,12 +478,28 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
 
     override fun showLoading() {
-        (activity as? MainActivity)?.showLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                get_driver_btn.text = ""
+                progress_bar.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
     override fun hideLoading() {
-        (activity as? MainActivity)?.hideLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                get_driver_btn.text = getString(R.string.getDriver)
+                progress_bar.visibility = View.GONE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
@@ -492,6 +510,12 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
     override fun getNavHost(): NavController? {
         return (activity as? MainActivity)?.navController
+    }
+
+
+    override fun onDestroy() {
+        detailRidePresenter.onDestroy()
+        super.onDestroy()
     }
 
 }
