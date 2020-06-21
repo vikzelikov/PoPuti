@@ -3,6 +3,7 @@ package bonch.dev.presentation.base
 import androidx.navigation.get
 import bonch.dev.App
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.interactor.IBaseInteractor
 import bonch.dev.presentation.interfaces.IMainActivity
 import bonch.dev.presentation.interfaces.IMainPresenter
@@ -33,9 +34,24 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         baseInteractor.validateAccount { isSuccess ->
             if (isSuccess) {
                 if (accessToken != null && userId != -1) {
-                    //TODO check with server if created ride already (redirect to TrackRideView)
-                    //redirect to full app
 
+//                    val rideId = baseInteractor.getRideId()
+//                    if (rideId == -1) {
+//
+//                    } else {
+//                        baseInteractor.getRide(rideId) { ride, _ ->
+//                            if (ride != null) {
+//                                ActiveRide.activeRide = ride
+//
+//
+//                            }
+//                        }
+//                    }
+
+                    //TODO check with server if created ride already (redirect to TrackRideView) сервисы?????
+                    getView()?.changeInputMode()
+
+                    //redirect to full app
                     if (baseInteractor.isCheckoutDriver()) {
                         getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
                     } else {

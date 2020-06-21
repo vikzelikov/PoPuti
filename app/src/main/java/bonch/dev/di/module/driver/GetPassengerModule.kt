@@ -4,6 +4,8 @@ import bonch.dev.data.repository.driver.getpassenger.GetPassengerRepository
 import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.common.profile.ProfileStorage
+import bonch.dev.data.storage.driver.getpassenger.GetPassengerStorage
+import bonch.dev.data.storage.driver.getpassenger.IGetPassengerStorage
 import bonch.dev.di.scope.CompScope
 import bonch.dev.domain.interactor.driver.getpassenger.GetPassengerInteractor
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
@@ -41,6 +43,10 @@ class GetPassengerModule {
     @Provides
     @CompScope
     fun provideProfileStorage(): IProfileStorage = ProfileStorage()
+
+    @Provides
+    @CompScope
+    fun provideGetPassengerStorage(): IGetPassengerStorage = GetPassengerStorage()
 
 
 }

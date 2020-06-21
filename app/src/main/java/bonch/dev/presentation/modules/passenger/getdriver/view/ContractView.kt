@@ -95,7 +95,7 @@ interface ContractView {
 
 
     interface ITrackRideView : IBaseView {
-        fun setInfoDriver(driver: Profile)
+        fun setInfoDriver(driver: Driver)
         fun onBackPressed(): Boolean
         fun checkoutStatusView(idStep: StatusRide)
         fun getMap(): MapView?

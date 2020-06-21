@@ -1,6 +1,5 @@
 package bonch.dev.domain.entities.common.ride
 
-import android.os.Handler
 import android.os.Parcel
 import android.os.Parcelable
 import bonch.dev.domain.entities.common.profile.Profile
@@ -82,12 +81,8 @@ data class RideInfo(
 
     @SerializedName("driver")
     @Expose
-    val driver: Profile? = null,
-
-    var handel: Handler? = null
-
+    val driver: Driver? = null
 ) : Parcelable {
-
 
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
@@ -161,7 +156,6 @@ data class RideInfo(
         result = 31 * result + isNewOrder.hashCode()
         result = 31 * result + (passenger?.hashCode() ?: 0)
         result = 31 * result + (driver?.hashCode() ?: 0)
-        result = 31 * result + (handel?.hashCode() ?: 0)
         return result
     }
 

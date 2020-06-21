@@ -18,6 +18,8 @@ interface IGetPassengerInteractor {
 
     fun setDriverInRide(callback: SuccessHandler)
 
+    fun saveRideId()
+
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
     fun offerPrice(price: Int, rideId: Int, callback: SuccessHandler)

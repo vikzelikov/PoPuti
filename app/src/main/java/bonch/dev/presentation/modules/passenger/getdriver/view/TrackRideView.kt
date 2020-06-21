@@ -16,6 +16,7 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.Driver
 import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
@@ -81,10 +82,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    override fun setInfoDriver(driver: Profile) {
+    override fun setInfoDriver(driver: Driver) {
         driver_name.text = driver.firstName
-//        car_number.text = driver.carNumber
-//        car_name.text = driver.carName
+        car_number.text = driver.car?.number
+        car_name.text = driver.car?.name?.plus(" ")?.plus(driver.car?.model)
 
         var photo: Any? = driver.photos?.lastOrNull()?.imgUrl
         if (photo == null) photo = R.drawable.ic_default_ava

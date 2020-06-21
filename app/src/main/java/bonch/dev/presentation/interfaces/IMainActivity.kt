@@ -13,4 +13,6 @@ interface IMainActivity : IBaseView {
     fun showFullLoading()
 
     fun hideFullLoading()
+
+    fun changeInputMode()
 }

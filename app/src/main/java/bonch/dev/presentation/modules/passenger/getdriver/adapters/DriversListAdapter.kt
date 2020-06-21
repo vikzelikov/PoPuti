@@ -117,7 +117,8 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
 
         fun bind(offer: Offer) {
             itemView.driver_name.text = offer.driver?.firstName
-            itemView.car_name.text = offer.driver?.car?.name
+            itemView.car_name.text =
+                offer.driver?.car?.name?.plus(" ")?.plus(offer.driver?.car?.model)
             itemView.price.text = offer.price.toString().plus(" ₽")
 
             itemView.driver_rating.text = if (offer.driver?.rating == null) {

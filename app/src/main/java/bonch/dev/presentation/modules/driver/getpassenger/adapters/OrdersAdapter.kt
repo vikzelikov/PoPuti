@@ -11,9 +11,6 @@ import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.presentation.modules.driver.getpassenger.presenter.ContractPresenter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.order_item.view.*
@@ -101,7 +98,7 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
 
             showDistance(post)
 
-            setListenerOnDistance(post)
+            updateDistance(post)
 
             itemView.setOnClickListener {
                 ordersPresenter.onClickItem(list[adapterPosition])
@@ -109,28 +106,19 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
         }
 
 
-        private fun setListenerOnDistance(post: RideInfo) {
-            post.handel?.removeCallbacksAndMessages(null)
+        private fun updateDistance(post: RideInfo) {
+            ordersPresenter.instance().userPosition?.let {
+                val fromLat = post.fromLat
+                val fromLng = post.fromLng
+                if (fromLat != null && fromLng != null) {
+                    val point = Point(fromLat, fromLng)
+                    //save distance
+                    val distance = ordersPresenter.calcDistance(it, point)
+                    post.distance = distance
 
-            //every 5 sec updated calculating distance
-            post.handel = Handler()
-            post.handel?.postDelayed(object : Runnable {
-                override fun run() {
-                    ordersPresenter.instance().userPosition?.let {
-                        val fromLat = post.fromLat
-                        val fromLng = post.fromLng
-                        if (fromLat != null && fromLng != null) {
-                            val point = Point(fromLat, fromLng)
-                            //save distance
-                            val distance = ordersPresenter.calcDistance(it, point)
-                            post.distance = distance
-
-                            showDistance(post)
-                        }
-                    }
-                    post.handel?.postDelayed(this, 5000)
+                    showDistance(post)
                 }
-            }, 0)
+            }
         }
 
 

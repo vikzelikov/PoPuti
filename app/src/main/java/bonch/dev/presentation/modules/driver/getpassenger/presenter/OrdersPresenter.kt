@@ -124,7 +124,6 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                                     //-1 so RecyclerView indexing another
                                     try {
                                         adapter.notifyItemRemoved(oldIter.nextIndex() - 1)
-                                        oldOrder.handel?.removeCallbacksAndMessages(null)
                                         oldIter.remove()
                                     } catch (ex: IndexOutOfBoundsException) {
                                     }

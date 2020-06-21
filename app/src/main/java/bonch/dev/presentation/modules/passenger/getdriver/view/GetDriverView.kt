@@ -242,7 +242,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         //set data in BottomSheet for confirm or cancel
         offerPrice?.let { offer ->
             bs_driver_name.text = offer.driver?.firstName
-            bs_car_name.text = offer.driver?.car?.name
+            bs_car_name.text = offer.driver?.car?.name?.plus(" ")?.plus(offer.driver?.car?.model)
             bs_price.text = offer.price.toString().plus(" ₽")
 
             bs_driver_rating.text = if (offer.driver?.rating == null) {

@@ -4,10 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import bonch.dev.App
+import bonch.dev.data.repository.IMainRepository
+import bonch.dev.data.repository.MainRepository
 import bonch.dev.data.repository.passenger.signup.ISignupRepository
 import bonch.dev.data.repository.passenger.signup.SignupRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.common.profile.ProfileStorage
+import bonch.dev.data.storage.passenger.getdriver.GetDriverStorage
+import bonch.dev.data.storage.passenger.getdriver.IGetDriverStorage
 import bonch.dev.di.scope.ApplicationContext
 import bonch.dev.domain.interactor.BaseInteractor
 import bonch.dev.domain.interactor.IBaseInteractor
@@ -56,6 +60,14 @@ class AppModule(private val application: App) {
     @Provides
     @Singleton
     fun provideProfileStorage(): IProfileStorage = ProfileStorage()
+
+    @Provides
+    @Singleton
+    fun provideGetDriverStorage(): IGetDriverStorage = GetDriverStorage()
+
+    @Provides
+    @Singleton
+    fun provideMainRepository(): IMainRepository = MainRepository()
 
     @Provides
     @Singleton

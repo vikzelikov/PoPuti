@@ -93,7 +93,7 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
                     false
                 }
         }
-        ordersPresenter.instance().isUserGeoAccess = false //todo remove
+
         ordersPresenter.initOrders()
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

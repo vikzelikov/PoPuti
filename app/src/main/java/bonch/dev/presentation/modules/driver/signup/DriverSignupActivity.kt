@@ -71,39 +71,37 @@ class DriverSignupActivity : AppCompatActivity() {
 
     private fun navigateOnSignup() {
         //try to get info about driver and docs
-        if (true) showDriverUI()
-        else
-            signupInteractor.getDriver { driver, _ ->
-                if (driver != null) {
-                    hideLoading()
+        signupInteractor.getDriver { driver, _ ->
+            if (driver != null) {
+                hideLoading()
 
-                    getDriverResponse(driver)
-                } else {
-                    //try to get driver with userId
-                    signupInteractor.getUser { profile, _ ->
-                        val driverData = profile?.driver
+                getDriverResponse(driver)
+            } else {
+                //try to get driver with userId
+                signupInteractor.getUser { profile, _ ->
+                    val driverData = profile?.driver
 
-                        if (driverData == null) {
+                    if (driverData == null) {
+                        hideLoading()
+                    } else {
+                        if (driverData.isVerify) {
                             hideLoading()
+                            showDriverUI()
+
                         } else {
-                            if (driverData.isVerify) {
-                                hideLoading()
-                                showDriverUI()
+                            val driverId = driverData.driverId
+                            if (driverId != null) {
+                                signupInteractor.saveDriverID(driverId)
 
-                            } else {
-                                val driverId = driverData.driverId
-                                if (driverId != null) {
-                                    signupInteractor.saveDriverID(driverId)
-
-                                    signupInteractor.getDriver { driver, _ ->
-                                        driver?.let { getDriverResponse(it) }
-                                    }
+                                signupInteractor.getDriver { driver, _ ->
+                                    driver?.let { getDriverResponse(it) }
                                 }
                             }
                         }
                     }
                 }
             }
+        }
     }
 
 

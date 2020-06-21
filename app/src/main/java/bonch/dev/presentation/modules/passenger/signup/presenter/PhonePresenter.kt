@@ -30,17 +30,17 @@ class PhonePresenter : BasePresenter<ContractView.IPhoneView>(), ContractPresent
             val res = root?.resources
 
             if (RetrySendTimer.seconds == null || RetrySendTimer.seconds == 0L) {
-//                signupInteractor.sendSms(phone,
-//                    callback = {
-//                        val mainHandler = Handler(Looper.getMainLooper())
-//                        val myRunnable = Runnable {
-//                            kotlin.run {
-//                                val error = res?.getString(R.string.errorSystem).plus("")
-//                                getView()?.showError(error)
-//                            }
-//                        }
-//                        mainHandler.post(myRunnable)
-//                    })
+                signupInteractor.sendSms(phone,
+                    callback = {
+                        val mainHandler = Handler(Looper.getMainLooper())
+                        val myRunnable = Runnable {
+                            kotlin.run {
+                                val error = res?.getString(R.string.errorSystem).plus("")
+                                getView()?.showError(error)
+                            }
+                        }
+                        mainHandler.post(myRunnable)
+                    })
 
                 MainRouter.showView(R.id.show_confirm_phone_view, getView()?.getNavHost(), null)
             } else {

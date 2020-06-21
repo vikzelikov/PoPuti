@@ -3,6 +3,7 @@ package bonch.dev.domain.interactor.driver.getpassenger
 import android.util.Log
 import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
+import bonch.dev.data.storage.driver.getpassenger.IGetPassengerStorage
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.common.ride.ActiveRide
@@ -15,6 +16,9 @@ class GetPassengerInteractor : IGetPassengerInteractor {
 
     @Inject
     lateinit var getPassengerRepository: IGetPassengerRepository
+
+    @Inject
+    lateinit var getPassengerStorage: IGetPassengerStorage
 
     @Inject
     lateinit var profileStorage: IProfileStorage
@@ -102,6 +106,13 @@ class GetPassengerInteractor : IGetPassengerInteractor {
                 "Link driver to ride with server failed (rideId: $rideId, token: $token)"
             )
             callback(false)
+        }
+    }
+
+
+    override fun saveRideId() {
+        ActiveRide.activeRide?.rideId?.let { rideId ->
+            getPassengerStorage.saveRideId(rideId)
         }
     }
 

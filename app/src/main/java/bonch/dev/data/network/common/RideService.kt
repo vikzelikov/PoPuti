@@ -1,5 +1,6 @@
 package bonch.dev.data.network.common
 
+import bonch.dev.domain.entities.common.ride.RideInfo
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -22,5 +23,11 @@ interface RideService {
         @Field("driver_id") driverId: Int,
         @Field("status_id") statusId: Int
     ): Response<*>
+
+
+    @GET("/api/rides/{id}")
+    suspend fun getRide(
+        @Path("id") rideId: Int
+    ): Response<RideInfo>
 
 }

@@ -45,16 +45,18 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         val res = App.appComponent.getContext().resources
 
         RideStatus.status = StatusRide.WAIT_FOR_DRIVER
-        //set this account of driver into ride
 
         if (!isBlock) {
             isBlock = true
 
+            //set this account of driver into ride
             getPassengerInteractor.setDriverInRide { isSuccess ->
 
                 getView()?.hideLoading()
 
                 if (isSuccess) {
+                    getPassengerInteractor.saveRideId()
+
                     getView()?.nextFragment()
                 } else {
                     getView()?.showNotification(res.getString(R.string.errorSystem))
