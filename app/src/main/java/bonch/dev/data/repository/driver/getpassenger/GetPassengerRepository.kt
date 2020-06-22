@@ -162,6 +162,8 @@ class GetPassengerRepository : IGetPassengerRepository {
                 )
 
                 withContext(Dispatchers.Main) {
+
+                    print(response.errorBody()?.string())
                     if (response.isSuccessful) {
                         //Success
                         callback(true)

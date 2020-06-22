@@ -29,6 +29,9 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
         getView()?.showLoading()
 
         signupInteractor.initRealm()
+
+        //if there is data from old app version
+        signupInteractor.resetDriverData()
         //save Data:
         //save token
         saveToken()

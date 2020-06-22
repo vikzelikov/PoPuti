@@ -131,6 +131,13 @@ class ProfileStorage : IProfileStorage {
     }
 
 
+    override fun removeDriverAccess() {
+        val editor = App.appComponent.getSharedPref().edit()
+        editor.remove(DRIVER_ACCESS)
+        editor.apply()
+    }
+
+
     override fun getDriverAccess(): Boolean {
         val pref = App.appComponent.getSharedPref()
         return pref.getBoolean(DRIVER_ACCESS, false)

@@ -1,15 +1,13 @@
 package bonch.dev.presentation.modules.passenger.signup.presenter
 
-import android.view.View
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.MainActivity
-import bonch.dev.presentation.interfaces.SuccessHandler
 
 interface ContractPresenter {
 
     interface IPhonePresenter {
         fun instance(): PhonePresenter
-        fun getCode(phone: String, root: View?)
+        fun getCode(phone: String)
         fun isPhoneEntered(phone: String): Boolean
         fun hideKeyboard(activity: FragmentActivity)
     }

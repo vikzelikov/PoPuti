@@ -322,7 +322,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                confirm_with_price.text = getString(R.string.agreeWithPrice)
+                confirm_with_price?.text = getString(R.string.agreeWithPrice)
                 isBlock = false
                 progress_bar.visibility = View.GONE
             }

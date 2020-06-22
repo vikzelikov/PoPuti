@@ -50,8 +50,8 @@ class ProfileInteractor : IProfileInteractor {
         val userId = profileStorage.getUserId()
 
         if (token != null && userId != -1) {
-            profileRepository.saveProfile(userId, token, profile) { error ->
-                if (error != null) {
+            profileRepository.saveProfile(userId, token, profile) { isSuccess ->
+                if (!isSuccess) {
                     //Retry request
                     profileRepository.saveProfile(userId, token, profile) {}
                 }
@@ -129,8 +129,8 @@ class ProfileInteractor : IProfileInteractor {
         photo.apply {
             imgId = intArrayOf(media.id)
         }
-        profileRepository.savePhoto(userId, token, photo) { err ->
-            if (err != null) {
+        profileRepository.savePhoto(userId, token, photo) { isSuccess ->
+            if (!isSuccess) {
                 //Retry request
                 profileRepository.savePhoto(userId, token, photo) {
                     callback(true)

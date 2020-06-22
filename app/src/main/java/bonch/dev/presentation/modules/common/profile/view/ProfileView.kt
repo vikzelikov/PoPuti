@@ -186,7 +186,7 @@ class ProfileView : Fragment(), IProfileView {
 
 
     override fun setProfile(profileData: Profile) {
-        name_user.text = profileData.firstName.plus(" ").plus(profileData.lastName)
+        name_user?.text = profileData.firstName.plus(" ").plus(profileData.lastName)
 
         val img = when {
             profileData.photos?.lastOrNull()?.imgUrl != null -> {

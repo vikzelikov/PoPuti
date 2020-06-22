@@ -25,6 +25,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     private var timer: WaitingTimer? = null
 
+    private val IS_DRIVER = "IS_DRIVER"
+
 
     init {
         GetPassengerComponent.getPassengerComponent?.inject(this)
@@ -164,7 +166,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     override fun showChat(context: Context, fragment: Fragment) {
         val intent = Intent(context, ChatView::class.java)
-        fragment.startActivityForResult(intent, 1)
+        intent.putExtra(IS_DRIVER, true)
+        fragment.startActivity(intent)
     }
 
 

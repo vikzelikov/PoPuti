@@ -2,6 +2,8 @@ package bonch.dev.di.module.common
 
 import bonch.dev.data.repository.common.chat.ChatRepository
 import bonch.dev.data.repository.common.chat.IChatRepository
+import bonch.dev.data.storage.common.profile.IProfileStorage
+import bonch.dev.data.storage.common.profile.ProfileStorage
 import bonch.dev.di.scope.CompScope
 import bonch.dev.domain.interactor.common.chat.ChatInteractor
 import bonch.dev.domain.interactor.common.chat.IChatInteractor
@@ -54,5 +56,11 @@ class CommonModule {
     @Provides
     @CompScope
     fun provideOfferPriceInteractor(): IOfferPriceInteractor = OfferPriceInteractor()
+
+
+    //COMMON
+    @Provides
+    @CompScope
+    fun provideProfileStorage(): IProfileStorage = ProfileStorage()
 
 }

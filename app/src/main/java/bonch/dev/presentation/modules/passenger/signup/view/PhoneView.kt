@@ -80,6 +80,8 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
 
         setPhoneMask()
 
+
+
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -110,7 +112,7 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
 
             Handler().postDelayed({
                 //wait for keyboard hide
-                phonePresenter.getCode(phone, view)
+                phonePresenter.getCode(phone)
             }, 300)
         }
 
@@ -180,11 +182,6 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
 
     override fun hideLoading() {
         (activity as? MainActivity)?.hideLoading()
-    }
-
-
-    override fun showError(text: String) {
-        (activity as? MainActivity)?.showNotification(text)
     }
 
 

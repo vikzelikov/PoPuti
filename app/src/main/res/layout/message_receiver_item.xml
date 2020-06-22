@@ -34,7 +34,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:fontFamily="@font/roboto"
-        android:text="12:12"
         android:textColor="#30000000"
         android:textSize="12sp" />
 

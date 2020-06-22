@@ -31,11 +31,14 @@ class SignupInteractor : ISignupInteractor {
         callback: SuccessHandler
     ) {
         signupRepository.sendSms(phone) { isSuccess ->
-            if (!isSuccess) {
+            if (isSuccess) {
+                callback(true)
+            } else {
                 //retry request
-                signupRepository.sendSms(phone) {}
-                callback(false)
-            } else callback(true)
+                signupRepository.sendSms(phone) { isSucc ->
+                    callback(isSuccess)
+                }
+            }
         }
     }
 
@@ -115,6 +118,12 @@ class SignupInteractor : ISignupInteractor {
 
     override fun saveToken(token: String) {
         profileStorage.saveToken(token)
+    }
+
+
+    override fun resetDriverData() {
+        profileStorage.removeDriverAccess()
+        profileStorage.saveCheckoutDriver(false)
     }
 
 

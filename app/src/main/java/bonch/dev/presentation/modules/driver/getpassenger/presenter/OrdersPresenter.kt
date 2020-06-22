@@ -1,24 +1,20 @@
 package bonch.dev.presentation.modules.driver.getpassenger.presenter
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.location.Location
-import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
 import bonch.dev.App
-import bonch.dev.Permissions
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.view.ContractView
 import bonch.dev.presentation.modules.driver.getpassenger.view.MapOrderView
+import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import com.yandex.mapkit.geometry.Point
-import java.lang.IndexOutOfBoundsException
 import javax.inject.Inject
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -38,7 +34,11 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     private var isBlock = false
     private var isGettingLocation = false
 
+    private val UPDATE_INTERVAL = 10 * 1000.toLong()
+    private val FASTEST_INTERVAL: Long = 2000
+
     var userPosition: Point? = null
+    private var mLocationRequest: LocationRequest? = null
     var isUserGeoAccess = false
 
     init {
@@ -66,7 +66,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
         getView()?.showOrdersLoading()
 
-        getMyPosition()
+        startLocationUpdates()
 
         Thread(Runnable {
             while (true) {
@@ -250,19 +250,25 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     }
 
 
-    //we already checked geo permission in onCreate in view fragment
-    @SuppressLint("MissingPermission")
-    private fun getMyPosition() {
-        val app = App.appComponent.getApp()
-        val locationManager = app.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private fun startLocationUpdates() {
+        mLocationRequest = LocationRequest()
+        mLocationRequest?.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest?.interval = UPDATE_INTERVAL
+        mLocationRequest?.fastestInterval = FASTEST_INTERVAL
 
-        if (Permissions.isAccess(Permissions.GEO_PERMISSION, app.applicationContext)) {
-            locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                1000,
-                0f,
-                object : ContractPresenter.UserLocationListener {
-                    override fun onLocationChanged(location: Location?) {
+        val builder = LocationSettingsRequest.Builder()
+
+        mLocationRequest?.let {
+            builder.addLocationRequest(it)
+            val locationSettingsRequest = builder.build()
+
+            val settingsClient = LocationServices.getSettingsClient(App.appComponent.getContext())
+            settingsClient.checkLocationSettings(locationSettingsRequest)
+
+            getFusedLocationProviderClient(App.appComponent.getContext()).requestLocationUpdates(
+                mLocationRequest, object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult) {
+                        val location = locationResult.lastLocation
                         val lat = location?.latitude
                         val lng = location?.longitude
 
@@ -270,7 +276,9 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                             userPosition = Point(lat, lng)
                         }
                     }
-                })
+                },
+                Looper.myLooper()
+            )
         }
     }
 

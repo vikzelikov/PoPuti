@@ -6,13 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.domain.entities.common.chat.Message
-import bonch.dev.presentation.modules.common.chat.presenter.IChatPresenter
 import kotlinx.android.synthetic.main.message_receiver_item.view.*
 import kotlinx.android.synthetic.main.message_sender_item.view.*
 import javax.inject.Inject
 
-class ChatAdapter @Inject constructor(private val chatPresenter: IChatPresenter) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter @Inject constructor() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var list: ArrayList<Message> = arrayListOf()
 
@@ -40,35 +38,47 @@ class ChatAdapter @Inject constructor(private val chatPresenter: IChatPresenter)
     }
 
 
+    fun setMessage(message: Message) {
+        list.add(message)
+        notifyItemInserted(list.lastIndex)
+        notifyItemChanged(list.lastIndex)
+    }
+
+
     override fun getItemCount(): Int = list.size
 
 
     override fun getItemViewType(position: Int): Int {
-        return if (list[position].isSender!!) {
+        return if (list[position].isSender) {
             SENDER
         } else RECEIVER
     }
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val message = list[position]
+
         return if (getItemViewType(position) == SENDER) {
-            (holder as SenderViewHolder).bind(position)
+            (holder as SenderViewHolder).bind(message)
         } else {
-            (holder as ReceiverViewHolder).bind(position)
+            (holder as ReceiverViewHolder).bind(message)
         }
     }
+
 
     inner class SenderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(position: Int) {
-            itemView.message_text_sender.text = list[position].textMessage
-            itemView.date_sender.text = list[position].date
+        fun bind(message: Message) {
+            if (!message.isSuccess) itemView.error.visibility = View.VISIBLE
+            itemView.message_text_sender.text = message.text
+            itemView.date_sender.text = message.date
         }
     }
 
+
     inner class ReceiverViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(position: Int) {
-            itemView.message_text_receiver.text = list[position].textMessage
-            itemView.date_receiver.text = list[position].date
+        fun bind(message: Message) {
+            itemView.message_text_receiver.text = message.text
+            itemView.date_receiver.text = message.date
         }
     }
 

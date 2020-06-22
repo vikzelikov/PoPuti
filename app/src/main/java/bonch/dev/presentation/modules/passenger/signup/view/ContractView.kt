@@ -7,7 +7,6 @@ interface ContractView {
 
     interface IPhoneView : IBaseView {
         fun changeBtnEnable(enable: Boolean)
-        fun showError(text: String)
         fun setPhoneMask()
     }
 

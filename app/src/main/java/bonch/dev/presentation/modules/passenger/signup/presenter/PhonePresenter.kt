@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.fragment.app.FragmentActivity
+import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.passenger.signup.DataSignup
 import bonch.dev.domain.interactor.passenger.signup.ISignupInteractor
@@ -24,30 +25,29 @@ class PhonePresenter : BasePresenter<ContractView.IPhoneView>(), ContractPresent
     }
 
 
-    override fun getCode(phone: String, root: View?) {
+    override fun getCode(phone: String) {
         if (phone.length > 17) {
-
-            val res = root?.resources
+            val res = App.appComponent.getContext().resources
 
             if (RetrySendTimer.seconds == null || RetrySendTimer.seconds == 0L) {
-                signupInteractor.sendSms(phone,
-                    callback = {
-                        val mainHandler = Handler(Looper.getMainLooper())
-                        val myRunnable = Runnable {
-                            kotlin.run {
-                                val error = res?.getString(R.string.errorSystem).plus("")
-                                getView()?.showError(error)
-                            }
-                        }
-                        mainHandler.post(myRunnable)
-                    })
+//                signupInteractor.sendSms(phone) { isSuccess ->
+//                    if (!isSuccess) {
+//                        val mainHandler = Handler(Looper.getMainLooper())
+//                        val myRunnable = Runnable {
+//                            kotlin.run {
+//                                getView()?.showNotification(res.getString(R.string.errorSystem))
+//                            }
+//                        }
+//                        mainHandler.post(myRunnable)
+//                    }
+//                }
 
                 MainRouter.showView(R.id.show_confirm_phone_view, getView()?.getNavHost(), null)
             } else {
                 val error = "${res?.getString(R.string.waitFor)}" +
                         " ${RetrySendTimer.seconds}" +
                         " ${res?.getString(R.string.sec)}"
-                getView()?.showError(error)
+                getView()?.showNotification(error)
             }
 
         }

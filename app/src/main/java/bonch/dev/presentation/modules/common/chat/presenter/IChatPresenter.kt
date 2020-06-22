@@ -4,8 +4,8 @@ interface IChatPresenter {
 
     fun instance(): ChatPresenter
 
-    fun sendMessage()
+    fun sendMessage(text: String)
 
-    fun loadMessages()
+    fun getMessages()
 
 }

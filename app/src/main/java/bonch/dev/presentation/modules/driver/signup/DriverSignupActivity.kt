@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import bonch.dev.App
@@ -70,6 +71,8 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun navigateOnSignup() {
+        if(true) showDriverUI()
+        else
         //try to get info about driver and docs
         signupInteractor.getDriver { driver, _ ->
             if (driver != null) {

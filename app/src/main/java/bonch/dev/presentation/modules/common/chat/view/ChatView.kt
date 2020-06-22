@@ -14,14 +14,16 @@ import bonch.dev.R
 import bonch.dev.di.component.common.DaggerCommonComponent
 import bonch.dev.di.module.common.CommonModule
 import bonch.dev.domain.entities.common.chat.Message
-import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.ActiveRide
-import bonch.dev.domain.entities.common.ride.Driver
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.chat.adapters.ChatAdapter
 import bonch.dev.presentation.modules.common.chat.presenter.IChatPresenter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.chat_activity.*
+import java.text.DateFormat
+import java.util.*
 import javax.inject.Inject
 
 class ChatView : AppCompatActivity(), IChatView {
@@ -34,6 +36,9 @@ class ChatView : AppCompatActivity(), IChatView {
 
 
     private var handlerAnimation: Handler? = null
+
+
+    private val IS_DRIVER = "IS_DRIVER"
 
 
     init {
@@ -61,12 +66,15 @@ class ChatView : AppCompatActivity(), IChatView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
 
-        val ride = ActiveRide.activeRide
-        name_driver.text = ride?.driver?.firstName
+        val isDriver = intent.getBooleanExtra(IS_DRIVER, false)
+        name.text = if (isDriver) ActiveRide.activeRide?.passenger?.firstName
+        else ActiveRide.activeRide?.driver?.firstName
+
+        setPhoto(isDriver)
 
         initChatAdapter()
 
-        chatPresenter.loadMessages()
+        chatPresenter.getMessages()
 
         setListeners()
 
@@ -74,9 +82,25 @@ class ChatView : AppCompatActivity(), IChatView {
     }
 
 
+    private fun setPhoto(isDriver: Boolean) {
+        val photos = if (isDriver) ActiveRide.activeRide?.driver?.photos
+        else ActiveRide.activeRide?.driver?.photos
+
+        photos?.sortBy { it.id }
+        var photo: Any? = photos?.lastOrNull()?.imgUrl
+        if (photo == null) photo = R.drawable.ic_default_ava
+        Glide.with(img.context).load(photo)
+            .apply(RequestOptions().centerCrop().circleCrop())
+            .error(R.drawable.ic_default_ava)
+            .into(img)
+
+    }
+
+
     override fun setListeners() {
         send_message.setOnClickListener {
-            chatPresenter.sendMessage()
+            val message = message_text_edit.text.toString().trim()
+            chatPresenter.sendMessage(message)
         }
 
         back_btn.setOnClickListener {
@@ -85,31 +109,11 @@ class ChatView : AppCompatActivity(), IChatView {
     }
 
 
-    override fun setMessageView() {
-        val textMessage = message_text_edit.text.toString().trim()
+    override fun setMessageView(message: Message) {
+        getAdapter().setMessage(message)
 
-        if (textMessage.isNotEmpty()) {
-            val message = Message(
-                textMessage,
-                "12:12",
-                true
-            )
-            getAdapter().list.add(message)
-            message_text_edit.setText("")
-            scrollBottom()
-        }
-
-        //******* TODO remove it
-        val message = Message(
-            "Добрый день! Где вы находитесь?",
-            "12:12",
-            false
-        )
-        Handler().postDelayed({
-            getAdapter().list.add(message)
-            scrollBottom()
-        }, 1000)
-        //******
+        message_text_edit.setText("")
+        scrollBottom()
     }
 
 
@@ -141,10 +145,26 @@ class ChatView : AppCompatActivity(), IChatView {
     }
 
 
-    override fun showLoading() {}
+    override fun showLoading() {
+        progress_bar.visibility = View.VISIBLE
+    }
 
 
-    override fun hideLoading() {}
+    override fun hideLoading() {
+        progress_bar.visibility = View.GONE
+    }
+
+
+    override fun showEmptyIcon() {
+        chat_empty_icon.visibility = View.VISIBLE
+        chat_empty_text.visibility = View.VISIBLE
+    }
+
+
+    override fun hideEmptyIcon() {
+        chat_empty_icon.visibility = View.GONE
+        chat_empty_text.visibility = View.GONE
+    }
 
 
     private fun setMovingButtonListener() {
@@ -214,17 +234,6 @@ class ChatView : AppCompatActivity(), IChatView {
             .setDuration(500L)
             .translationY(-100f)
             .alpha(0.0f)
-    }
-
-
-    override fun checkoutBackground(isShow: Boolean) {
-        if (isShow) {
-            chat_empty_icon.visibility = View.VISIBLE
-            chat_empty_text.visibility = View.VISIBLE
-        } else {
-            chat_empty_icon.visibility = View.GONE
-            chat_empty_text.visibility = View.GONE
-        }
     }
 
 
