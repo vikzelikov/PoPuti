@@ -135,11 +135,12 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
-    override fun cancelDone(reasonID: ReasonCancel) {
+    override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
         //cancel ride remote
         getPassengerInteractor.updateRideStatus(StatusRide.CANCEL) {}
 
-        //todo отправить на сервер
+        //send cancel reason
+        getPassengerInteractor.sendReason(textReason) {}
 
         //clear data
         ActiveRide.activeRide = null
@@ -155,11 +156,11 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         if (comment.trim().isEmpty()) {
             getView()?.showNotification(res.getString(R.string.writeYourProblemComment))
         } else {
-            //TODO send reason to server
+            val textReason = "OTHER_REASON: ".plus(comment)
 
             getView()?.hideKeyboard()
 
-            cancelDone(ReasonCancel.OTHER)
+            cancelDone(ReasonCancel.OTHER_REASON, textReason)
         }
     }
 

@@ -37,6 +37,8 @@ interface IGetDriverInteractor {
 
     fun setDriverInRide(userId: Int, callback: SuccessHandler)
 
+    fun sendReason(textReason: String, callback: SuccessHandler)
+
     //Cash
     fun getCashRequest(query: String): ArrayList<Address>?
 

@@ -162,8 +162,6 @@ class GetPassengerRepository : IGetPassengerRepository {
                 )
 
                 withContext(Dispatchers.Main) {
-
-                    print(response.errorBody()?.string())
                     if (response.isSuccessful) {
                         //Success
                         callback(true)
@@ -263,4 +261,49 @@ class GetPassengerRepository : IGetPassengerRepository {
             }
         }
     }
+
+
+    override fun sendCancelReason(
+        rideId: Int,
+        textReason: String,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        var response: Response<*>
+
+        Log.e("EEE", "EEEEEEE")
+        println(textReason)
+        println(rideId)
+        println(token)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.sendReason(headers, rideId, false, textReason)
+
+                withContext(Dispatchers.Main) {
+                    println(response.code())
+                    println(response.body())
+                    if (response.isSuccessful) {
+                        //Success
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e("SEND_REASON", " ${response.code()}")
+                        callback(false)
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("SEND_REASON", "${err.printStackTrace()}")
+                callback(false)
+            }
+        }
+    }
+
+
+    override fun getRide(rideId: Int, callback: DataHandler<RideInfo?>) {}
+
 }

@@ -30,4 +30,14 @@ interface RideService {
         @Path("id") rideId: Int
     ): Response<RideInfo>
 
+
+    @FormUrlEncoded
+    @POST("/api/reasons")
+    suspend fun sendReason(
+        @HeaderMap headers: Map<String, String>,
+        @Field("ride_id") rideId: Int,
+        @Field("by_passenger") byPassenger: Boolean,
+        @Field("text") text: String
+    ): Response<*>
+
 }

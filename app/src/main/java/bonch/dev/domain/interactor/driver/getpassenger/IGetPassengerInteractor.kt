@@ -26,4 +26,6 @@ interface IGetPassengerInteractor {
 
     fun getNewOrder(callback: DataHandler<ArrayList<RideInfo>?>)
 
+    fun sendReason(textReason: String, callback: SuccessHandler)
+
 }

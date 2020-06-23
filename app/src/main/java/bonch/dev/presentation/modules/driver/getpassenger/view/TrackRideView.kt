@@ -213,35 +213,46 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     override fun setListeners() {
         //set deafult reason
-        var reasonID = ReasonCancel.PROBLEM_WITH_CAR
+        var reasonID = ReasonCancel.CHANGE_MIND
+        var textReason: String? = null
 
         cancel_order.setOnClickListener {
             getCancelReason()
         }
 
-        case1.setOnClickListener {
-            reasonID = ReasonCancel.PROBLEM_WITH_CAR
-            getConfirmCancel()
+        change_mind.setOnClickListener {
+            reasonID = ReasonCancel.CHANGE_MIND
+            textReason = change_mind.text.toString()
+            getConfirmCancel(reasonID)
         }
 
-        case2.setOnClickListener {
-            reasonID = ReasonCancel.PASSANGER_WITH_CHILD
-            getConfirmCancel()
+        force_majeure.setOnClickListener {
+            reasonID = ReasonCancel.FORCE_MAJEURE
+            textReason = force_majeure.text.toString()
+            getConfirmCancel(reasonID)
         }
 
-        case3.setOnClickListener {
-            reasonID = ReasonCancel.PASSANGER_ERROR
-            getConfirmCancel()
+        passenger_with_child.setOnClickListener {
+            reasonID = ReasonCancel.PASSENGER_WITH_CHILD
+            textReason = passenger_with_child.text.toString()
+            getConfirmCancel(reasonID)
         }
 
-        case4.setOnClickListener {
-            reasonID = ReasonCancel.PASSANGER_GO_OUT
-            getConfirmCancel()
+        passenger_error.setOnClickListener {
+            reasonID = ReasonCancel.PASSENGER_ERROR
+            textReason = passenger_error.text.toString()
+            getConfirmCancel(reasonID)
         }
 
-        case5.setOnClickListener {
-            reasonID = ReasonCancel.OTHER
-            getOtherReasonComment()
+        passenger_go_out.setOnClickListener {
+            reasonID = ReasonCancel.PASSENGER_GO_OUT
+            textReason = passenger_go_out.text.toString()
+            getConfirmCancel(reasonID)
+        }
+
+        other_reason.setOnClickListener {
+            reasonID = ReasonCancel.OTHER_REASON
+            getConfirmCancel(reasonID)
         }
 
         comment_done.setOnClickListener {
@@ -249,7 +260,9 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         }
 
         cancel.setOnClickListener {
-            trackRidePresenter.cancelDone(reasonID)
+            textReason?.let {
+                trackRidePresenter.cancelDone(reasonID, it)
+            }
         }
 
         not_cancel.setOnClickListener {
@@ -341,7 +354,48 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    private fun getConfirmCancel() {
+    private fun getConfirmCancel(reasonId: ReasonCancel) {
+        when (reasonId) {
+            ReasonCancel.CHANGE_MIND -> {
+                title_confirm_cancel.visibility = View.GONE
+                subtitle_cancel.visibility = View.GONE
+                subtitle_confirm_cancel.visibility = View.VISIBLE
+                subtitle_confirm_cancel.text = getString(R.string.change_mind_text)
+                cancel.text = getString(R.string.cancel)
+            }
+
+            ReasonCancel.FORCE_MAJEURE -> {
+                title_confirm_cancel.visibility = View.GONE
+                subtitle_cancel.visibility = View.GONE
+                subtitle_confirm_cancel.visibility = View.VISIBLE
+                subtitle_confirm_cancel.text = getString(R.string.force_majeure_text)
+                cancel.text = getString(R.string.YesCancel)
+            }
+
+            ReasonCancel.PASSENGER_WITH_CHILD -> {
+                title_confirm_cancel.visibility = View.VISIBLE
+                subtitle_cancel.visibility = View.GONE
+                subtitle_confirm_cancel.visibility = View.GONE
+                cancel.text = getString(R.string.cancel)
+            }
+
+            ReasonCancel.PASSENGER_ERROR -> {
+                //todo
+            }
+
+            ReasonCancel.PASSENGER_GO_OUT -> {
+                title_confirm_cancel.visibility = View.GONE
+                subtitle_cancel.visibility = View.VISIBLE
+                subtitle_confirm_cancel.visibility = View.VISIBLE
+                subtitle_confirm_cancel.text = getString(R.string.passenger_go_out_text)
+                cancel.text = getString(R.string.cancel)
+            }
+
+            ReasonCancel.OTHER_REASON -> {
+                getOtherReasonComment()
+            }
+        }
+
         confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
         main_coordinator.elevation = 0f
     }

@@ -50,12 +50,16 @@
     <string name="cancelRideQuestion">Отменить поездку?</string>
     <string name="notCancel">Не отменять</string>
     <string name="cancel">Отменить</string>
+    <string name="YesCancel">Да, отменить</string>
     <string name="tooLowPrice">Вы установили слишком \nнизкую цену</string>
     <string name="recommendRisePrice">Рекомендуем повысить цену, чтобы\n заинтересовать водителей</string>
     <string name="reasonCancel1">Водитель попросил отменить</string>
-    <string name="reasonCancel2">Долго ждать</string>
-    <string name="reasonCancel3">Заказал по ошибке</string>
-    <string name="reasonCancel4">Другая причина</string>
+    <string name="passenger_go_out">Пассажир не вышел</string>
+    <string name="passenger_error">Некорректное поведение пассажира</string>
+    <string name="force_majeure">Форс-мажор</string>
+    <string name="change_mind">Передумал</string>
+    <string name="passanger_with_child">Пассажир не указал, что он будет с ребенком</string>
+    <string name="otherReason">Другая причина</string>
     <string name="messageWarningDriverIs">Водитель уже нашелся! Вы уверены, что хотите отменить поездку?</string>
     <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас</string>
     <string name="timeExpired">Время ожидания истекло</string>
@@ -193,10 +197,6 @@
     <string name="stsFront">frontsideSTS</string>
     <string name="stsBack">backsideSTS</string>
     <string name="offerYourPriceWait">Предлагаем вашу цену, ожидайте</string>
-    <string name="problemWithCar">Проблемы с машиной</string>
-    <string name="passangerError">Некорректное поведение пассажира</string>
-    <string name="passangerNotGoOut">Пассажир не вышел</string>
-    <string name="passangerWithChild">Пассажир не указал, что он будет с ребенком</string>
     <string name="rideCreated">Поездка создана</string>
     <string name="ordersEmpty">Заказов нет</string>
     <string name="searchOrders">Поиск заказов…</string>
@@ -228,6 +228,10 @@
     <string name="forWatingPassanger">за простой</string>
     <string name="paymentForCancel">Вам был зачислен платеж на сумму</string>
     <string name="waitPlease">Пожалуйста, подождите</string>
+    <string name="tryToConnectWithPassenger">Пробовали связаться с\n пасажиром?</string>
+    <string name="passenger_go_out_text">Если вы уедете, не выждав 10 минут с начала прибытия в пункт назначения, мы будем вынуждены снизить рейтинг.</string>
+    <string name="change_mind_text">Пассажир уже ожидает вас! В случае отмены заказа мы будем вынуждены снизить вам рейтинг.</string>
+    <string name="force_majeure_text">Сломалась машина? Попали в ДТП? Остановили сотрудники ГИБДД? Сложная дорожная ситуация?</string>
 
 
 </resources>

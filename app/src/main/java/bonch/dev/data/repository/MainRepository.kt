@@ -4,7 +4,9 @@ import android.util.Log
 import bonch.dev.App
 import bonch.dev.data.network.common.RideService
 import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.presentation.interfaces.DataHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,5 +52,33 @@ class MainRepository : IMainRepository {
                 callback(null, "${err.printStackTrace()}")
             }
         }
+    }
+
+    override fun connectSocket(rideId: Int, token: String, callback: SuccessHandler) {}
+
+    override fun disconnectSocket() {}
+
+    override fun updateRideStatus(
+        status: StatusRide,
+        rideId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+    }
+
+    override fun setDriverInRide(
+        userId: Int,
+        rideId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+    }
+
+    override fun sendCancelReason(
+        rideId: Int,
+        textReason: String,
+        token: String,
+        callback: SuccessHandler
+    ) {
     }
 }

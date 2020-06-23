@@ -1,5 +1,6 @@
 package bonch.dev.data.repository.passenger.getdriver
 
+import bonch.dev.data.repository.IMainRepository
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.passenger.getdriver.NewDriver
@@ -9,7 +10,7 @@ import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.interfaces.SuggestHandler
 import com.yandex.mapkit.geometry.Point
 
-interface IGetDriverRepository {
+interface IGetDriverRepository : IMainRepository {
 
     fun requestGeocoder(point: Point, callback: GeocoderHandler)
 
@@ -17,26 +18,8 @@ interface IGetDriverRepository {
 
     fun createRide(rideInfo: RideInfo, token: String, callback: DataHandler<RideInfo?>)
 
-    fun connectSocket(rideId: Int, token: String, callback: SuccessHandler)
-
     fun subscribeOnChangeRide(callback: DataHandler<String?>)
 
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
-
-    fun disconnectSocket()
-
-    fun updateRideStatus(
-        status: StatusRide,
-        rideId: Int,
-        token: String,
-        callback: SuccessHandler
-    )
-
-    fun setDriverInRide(
-        driverId: Int,
-        rideId: Int,
-        token: String,
-        callback: SuccessHandler
-    )
 
 }

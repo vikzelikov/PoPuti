@@ -4,9 +4,9 @@ import android.util.Log
 import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.driver.getpassenger.IGetPassengerStorage
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
@@ -155,6 +155,19 @@ class GetPassengerInteractor : IGetPassengerInteractor {
                 }
             } else if (orders != null) callback(orders, null)
         }
+    }
+
+
+    override fun sendReason(textReason: String, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+        val rideId = ActiveRide.activeRide?.rideId
+
+        if (token != null && rideId != null) {
+            getPassengerRepository.sendCancelReason(rideId, textReason, token) { isSuccess ->
+                if (isSuccess) callback(true)
+                else getPassengerRepository.sendCancelReason(rideId, textReason, token, callback)
+            }
+        } else callback(false)
     }
 
 }

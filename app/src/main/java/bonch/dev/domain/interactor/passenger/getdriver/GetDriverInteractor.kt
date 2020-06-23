@@ -171,6 +171,19 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
+    override fun sendReason(textReason: String, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+        val rideId = ActiveRide.activeRide?.rideId
+
+        if (token != null && rideId != null) {
+            getDriverRepository.sendCancelReason(rideId, textReason, token) { isSuccess ->
+                if (isSuccess) callback(true)
+                else getDriverRepository.sendCancelReason(rideId, textReason, token, callback)
+            }
+        } else callback(false)
+    }
+
+
     //STORAGE
     override fun initRealm() {
         getDriverStorage.initRealm()

@@ -250,7 +250,7 @@ class GetDriverRepository : IGetDriverRepository {
 
 
     override fun setDriverInRide(
-        driverId: Int,
+        userId: Int,
         rideId: Int,
         token: String,
         callback: SuccessHandler
@@ -265,7 +265,7 @@ class GetDriverRepository : IGetDriverRepository {
                 response = service.setDriverInRide(
                     headers,
                     rideId,
-                    driverId,
+                    userId,
                     StatusRide.WAIT_FOR_DRIVER.status
                 )
 
@@ -290,4 +290,42 @@ class GetDriverRepository : IGetDriverRepository {
             }
         }
     }
+
+
+    override fun sendCancelReason(
+        rideId: Int,
+        textReason: String,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.sendReason(headers, rideId, true, textReason)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e("SEND_REASON", " ${response.code()}")
+                        callback(false)
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("SEND_REASON", "${err.printStackTrace()}")
+                callback(false)
+            }
+        }
+    }
+
+
+    override fun getRide(rideId: Int, callback: DataHandler<RideInfo?>) {}
+
 }

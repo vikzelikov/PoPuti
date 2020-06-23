@@ -394,64 +394,76 @@
                 android:textSize="28sp" />
 
             <TextView
-                android:id="@+id/case1"
+                android:id="@+id/change_mind"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="@string/problemWithCar"
+                android:text="@string/change_mind"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/case2"
+                android:id="@+id/force_majeure"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="@string/passangerWithChild"
+                android:text="@string/force_majeure"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/case3"
+                android:id="@+id/passenger_with_child"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="@string/passangerError"
+                android:text="@string/passanger_with_child"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
 
             <TextView
-                android:id="@+id/case4"
+                android:id="@+id/passenger_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="@string/passangerNotGoOut"
+                android:text="@string/passenger_error"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
 
             <TextView
-                android:id="@+id/case5"
+                android:id="@+id/passenger_go_out"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="27dp"
-                android:text="@string/reasonCancel4"
+                android:text="@string/passenger_go_out"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/other_reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                android:fontFamily="@font/roboto"
+                android:paddingTop="17dp"
+                android:paddingBottom="27dp"
+                android:text="@string/otherReason"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
@@ -612,18 +624,43 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/ic_bottom_sheet_arrow" />
 
             <TextView
+                android:id="@+id/title_confirm_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="20dp"
                 android:fontFamily="@font/roboto"
                 android:text="@string/cancelRideQuestion"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/subtitle_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/tryToConnectWithPassenger"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/subtitle_confirm_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:fontFamily="@font/roboto"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:visibility="gone" />
 
 
             <LinearLayout
@@ -661,9 +698,7 @@
                     android:layout_weight="0.5"
                     android:background="@drawable/bg_cancel_btn"
                     android:fontFamily="@font/roboto"
-                    android:paddingStart="33dp"
                     android:paddingTop="17dp"
-                    android:paddingEnd="33dp"
                     android:paddingBottom="17dp"
                     android:text="@string/cancel"
                     android:textAlignment="center"

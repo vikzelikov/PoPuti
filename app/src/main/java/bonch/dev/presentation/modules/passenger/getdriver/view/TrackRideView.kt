@@ -412,12 +412,13 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun getConfirmCancel() {
-        val status = RideStatus.status
-        if (status == StatusRide.WAIT_FOR_PASSANGER) {
+        if (RideStatus.status == StatusRide.WAIT_FOR_PASSANGER) {
+            //get payment for cancel
             val tax = trackRidePresenter.getTaxMoney()
-            val message: String = resources.getString(R.string.messageWarningTakeMoney)
 
-            val rub = resources.getString(R.string.offer_price_average_price)
+            val message: String = resources.getString(R.string.messageWarningTakeMoney)
+            val rub = resources.getString(R.string.rub)
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 message.plus(Html.fromHtml(" <b>$tax $rub</b>", Html.FROM_HTML_MODE_COMPACT))
             } else {
@@ -426,7 +427,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
             text_message.text = message
 
-        } else if (status == StatusRide.WAIT_FOR_DRIVER) {
+        } else if (RideStatus.status == StatusRide.WAIT_FOR_DRIVER) {
             text_message.text = resources.getString(R.string.messageWarningDriverIs)
         }
 

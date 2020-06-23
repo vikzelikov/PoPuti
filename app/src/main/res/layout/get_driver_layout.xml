@@ -267,7 +267,6 @@
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="@string/reasonCancel2"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
@@ -280,7 +279,6 @@
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="@string/reasonCancel3"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
@@ -293,7 +291,6 @@
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="27dp"
-                android:text="@string/reasonCancel4"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
