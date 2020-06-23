@@ -354,9 +354,12 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         (expiredTimeBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
         main_info_layout.elevation = 0f
         on_view_cancel.visibility = View.VISIBLE
+        on_view_cancel.isClickable = false
         on_view_cancel.alpha = 0.8f
 
-        expiredTimeBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+        Handler().postDelayed({
+            expiredTimeBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+        }, 500)
     }
 
 

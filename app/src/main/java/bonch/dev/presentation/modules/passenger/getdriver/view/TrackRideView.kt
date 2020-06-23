@@ -315,10 +315,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         (driverCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
         main_info_layout.elevation = 0f
         on_map_view.visibility = View.VISIBLE
-        on_map_view.alpha = 0.8f
         on_map_view.isClickable = false
+        on_map_view.alpha = 0.8f
 
-        driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+        Handler().postDelayed({
+            driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+        }, 500)
     }
 
 

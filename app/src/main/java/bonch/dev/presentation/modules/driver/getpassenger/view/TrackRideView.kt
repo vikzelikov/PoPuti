@@ -463,19 +463,21 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     override fun passengerCancelRide(payment: Int) {
         hideAllBottomSheet()
 
-        (passangerCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
-        main_info_layout.elevation = 0f
-        on_view_cancel.visibility = View.VISIBLE
-        on_view_cancel.isClickable = false
-        on_view_cancel.alpha = 0.8f
+        Handler().postDelayed({
+            (passangerCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
+            main_info_layout.elevation = 0f
+            on_view_cancel.visibility = View.VISIBLE
+            on_view_cancel.isClickable = false
+            on_view_cancel.alpha = 0.8f
 
-        if (RideStatus.status.status > StatusRide.WAIT_FOR_DRIVER.status) {
-            payment_sum.text = payment.toString().plus(" ₽")
-            payment_sum.visibility = View.VISIBLE
-            text_payment_for_cancel.visibility = View.VISIBLE
-        }
+            if (RideStatus.status.status > StatusRide.WAIT_FOR_DRIVER.status) {
+                payment_sum.text = payment.toString().plus(" ₽")
+                payment_sum.visibility = View.VISIBLE
+                text_payment_for_cancel.visibility = View.VISIBLE
+            }
 
-        passangerCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+            passangerCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+        }, 500)
     }
 
 
