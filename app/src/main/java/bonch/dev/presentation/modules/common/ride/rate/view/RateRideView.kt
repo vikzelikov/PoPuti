@@ -156,7 +156,8 @@ class RateRideView : Fragment(), IRateRideView {
 
     override fun setListeners() {
         send.setOnClickListener {
-            rateRidePresenter.rateDone(rating_bar.rating, comment_text.text.toString())
+            val rating = rating_bar.rating.toInt()
+            rateRidePresenter.rateDone(rating, comment_text.text.toString())
         }
 
         close.setOnClickListener {

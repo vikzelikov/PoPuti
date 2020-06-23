@@ -1,13 +1,13 @@
-package bonch.dev.domain.interactor.common.rate
+package bonch.dev.data.repository.common.rate
 
 import bonch.dev.domain.entities.common.rate.Review
 import bonch.dev.presentation.interfaces.SuccessHandler
 
-interface IRateRideInteractor {
+interface IRateRideRepository {
 
     fun sendReview(
         review: Review,
-        byPassenger: Boolean,
+        token: String,
         callback: SuccessHandler
     )
 

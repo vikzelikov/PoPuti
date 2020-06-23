@@ -1,5 +1,6 @@
 package bonch.dev.data.network.common
 
+import bonch.dev.domain.entities.common.rate.Review
 import bonch.dev.domain.entities.common.ride.RideInfo
 import retrofit2.Response
 import retrofit2.http.*
@@ -38,6 +39,13 @@ interface RideService {
         @Field("ride_id") rideId: Int,
         @Field("by_passenger") byPassenger: Boolean,
         @Field("text") text: String
+    ): Response<*>
+
+
+    @POST("/api/reviews")
+    suspend fun sendReview(
+        @HeaderMap headers: Map<String, String>,
+        @Body review: Review
     ): Response<*>
 
 }

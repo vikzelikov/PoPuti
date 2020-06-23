@@ -4,7 +4,7 @@ interface IRateRidePresenter {
 
     fun instance(): RateRidePresenter
 
-    fun rateDone(rating: Float, comment: String?)
+    fun rateDone(rating: Int, comment: String?)
 
     fun closeRate()
 
