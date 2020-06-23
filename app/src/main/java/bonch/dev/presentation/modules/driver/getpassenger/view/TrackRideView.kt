@@ -350,11 +350,47 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun getCancelReason() {
+        when (RideStatus.status) {
+            StatusRide.WAIT_FOR_DRIVER -> {
+                change_mind.visibility = View.VISIBLE
+                force_majeure.visibility = View.VISIBLE
+                passenger_with_child.visibility = View.GONE
+                passenger_error.visibility = View.GONE
+                passenger_go_out.visibility = View.GONE
+            }
+
+            StatusRide.WAIT_FOR_PASSANGER -> {
+                change_mind.visibility = View.VISIBLE
+                force_majeure.visibility = View.VISIBLE
+                passenger_with_child.visibility = View.VISIBLE
+                passenger_error.visibility = View.VISIBLE
+                passenger_go_out.visibility = View.VISIBLE
+            }
+
+            StatusRide.IN_WAY -> {
+                change_mind.visibility = View.GONE
+                force_majeure.visibility = View.VISIBLE
+                passenger_with_child.visibility = View.VISIBLE
+                passenger_error.visibility = View.VISIBLE
+                passenger_go_out.visibility = View.GONE
+            }
+
+            else -> {
+                change_mind.visibility = View.VISIBLE
+                force_majeure.visibility = View.VISIBLE
+                passenger_with_child.visibility = View.VISIBLE
+                passenger_error.visibility = View.VISIBLE
+                passenger_go_out.visibility = View.VISIBLE
+            }
+        }
+
         cancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
     private fun getConfirmCancel(reasonId: ReasonCancel) {
+        var isShowConfirm = false
+
         when (reasonId) {
             ReasonCancel.CHANGE_MIND -> {
                 title_confirm_cancel.visibility = View.GONE
@@ -380,7 +416,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             }
 
             ReasonCancel.PASSENGER_ERROR -> {
-                //todo
+                title_confirm_cancel.visibility = View.VISIBLE
+                subtitle_cancel.visibility = View.GONE
+                subtitle_confirm_cancel.visibility = View.GONE
+                cancel.text = getString(R.string.cancel)
             }
 
             ReasonCancel.PASSENGER_GO_OUT -> {
@@ -392,12 +431,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             }
 
             ReasonCancel.OTHER_REASON -> {
+                isShowConfirm = false
                 getOtherReasonComment()
             }
         }
 
-        confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
-        main_coordinator.elevation = 0f
+        if (isShowConfirm) {
+            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+            main_coordinator.elevation = 0f
+        }
     }
 
 

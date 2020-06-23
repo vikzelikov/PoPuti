@@ -60,6 +60,9 @@
     <string name="change_mind">Передумал</string>
     <string name="passanger_with_child">Пассажир не указал, что он будет с ребенком</string>
     <string name="otherReason">Другая причина</string>
+    <string name="wait_long">Слишком долго ждать</string>
+    <string name="mistake_order">Заказал по ошибке</string>
+    <string name="driver_say_to_cancel">Водитель попросил отменить</string>
     <string name="messageWarningDriverIs">Водитель уже нашелся! Вы уверены, что хотите отменить поездку?</string>
     <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас</string>
     <string name="timeExpired">Время ожидания истекло</string>

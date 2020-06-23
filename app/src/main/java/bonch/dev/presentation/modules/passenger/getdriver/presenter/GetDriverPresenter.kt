@@ -6,7 +6,6 @@ import android.os.Looper
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.*
-import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.domain.utils.Vibration
@@ -179,21 +178,30 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
-    override fun cancelDone(reasonID: ReasonCancel) {
-        //cancel ride remote
-        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
-
-        //stop getting new driver
+    override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
+        //stop getting new offers
         clearData()
         ActiveRide.activeRide = null
 
-        if (reasonID == ReasonCancel.MISTAKE || reasonID == ReasonCancel.OTHER) {
-            toAdr = null
+        //cancel ride remote
+        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
+
+        //send cancel reason
+        getDriverInteractor.sendReason(textReason) {}
+
+        if (reasonID == ReasonCancel.MISTAKE_ORDER || reasonID == ReasonCancel.OTHER_REASON) {
+            Coordinate.toAdr = null
         }
 
+        backFragment(reasonID)
+    }
+
+
+    override fun backFragment(reasonID: ReasonCancel) {
         val res = App.appComponent.getContext().resources
         getView()?.showNotification(res.getString(R.string.rideCancel))
 
+        //redirect
         val bundle = Bundle()
         bundle.putInt(REASON, reasonID.reason)
         MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), bundle)
@@ -206,19 +214,19 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         if (comment.trim().isEmpty()) {
             getView()?.showNotification(res.getString(R.string.writeYourProblemComment))
         } else {
-            //TODO send reason to server
+            val textReason = "OTHER_REASON: ".plus(comment)
 
             getView()?.hideKeyboard()
 
-            cancelDone(ReasonCancel.OTHER)
+            cancelDone(ReasonCancel.OTHER_REASON, textReason)
         }
     }
 
 
-    override fun timeExpired() {
+    override fun timeExpired(textReason: String) {
         getView()?.hideKeyboard()
 
-        cancelDone(ReasonCancel.MISTAKE)
+        cancelDone(ReasonCancel.MISTAKE_ORDER, textReason)
     }
 
 

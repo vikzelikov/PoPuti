@@ -39,8 +39,8 @@ class MainRepository : IMainRepository {
                     } else {
                         //Error
                         Log.e(
-                            "CREATE_DRIVER",
-                            "Create driver with server failed with code: ${response.code()}"
+                            "GET_RIDE",
+                            "Get ride from server failed with code: ${response.code()}"
                         )
                         callback(null, response.message())
                     }
@@ -48,7 +48,7 @@ class MainRepository : IMainRepository {
 
             } catch (err: Exception) {
                 //Error
-                Log.e("CREATE_DRIVER", "${err.printStackTrace()}")
+                Log.e("GET_RIDE", "${err.printStackTrace()}")
                 callback(null, "${err.printStackTrace()}")
             }
         }

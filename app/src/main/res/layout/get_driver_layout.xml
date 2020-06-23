@@ -248,49 +248,52 @@
                 android:textSize="28sp" />
 
             <TextView
-                android:id="@+id/case1"
+                android:id="@+id/change_mind"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="@string/reasonCancel1"
+                android:text="@string/change_mind"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/case2"
+                android:id="@+id/wait_long"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
+                android:text="@string/wait_long"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
 
             <TextView
-                android:id="@+id/case3"
+                android:id="@+id/mistake_order"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
+                android:text="@string/mistake_order"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
 
             <TextView
-                android:id="@+id/case4"
+                android:id="@+id/other_reason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="27dp"
+                android:text="@string/otherReason"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 

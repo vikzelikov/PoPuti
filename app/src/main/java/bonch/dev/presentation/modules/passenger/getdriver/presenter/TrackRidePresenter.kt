@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
@@ -87,19 +86,17 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun cancelDone(reasonID: ReasonCancel) {
+    override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
         clearData()
 
         //cancel ride remote
         getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
 
-        if (reasonID == ReasonCancel.MISTAKE || reasonID == ReasonCancel.OTHER) {
-            Coordinate.toAdr = null
-        }
+        //send cancel reason
+        getDriverInteractor.sendReason(textReason) {}
 
-        if (RideStatus.status == StatusRide.WAIT_FOR_PASSANGER) {
-            //TODO
-            //вычесть бабки
+        if (reasonID == ReasonCancel.MISTAKE_ORDER || reasonID == ReasonCancel.OTHER_REASON) {
+            Coordinate.toAdr = null
         }
 
         backFragment(reasonID)
@@ -123,11 +120,11 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         if (comment.trim().isEmpty()) {
             getView()?.showNotification(res.getString(R.string.writeYourProblemComment))
         } else {
-            //TODO send reason to server
+            val textReason = "OTHER_REASON: ".plus(comment)
 
             getView()?.hideKeyboard()
 
-            cancelDone(ReasonCancel.OTHER)
+            cancelDone(ReasonCancel.OTHER_REASON, textReason)
         }
     }
 

@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/driver_info_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/driver_info_layout"
     tools:context=".presentation.modules.passenger.getdriver.view.MapGetDriverView">
 
 
@@ -113,8 +113,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="15dp">
+                    android:layout_marginBottom="15dp"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -241,49 +241,52 @@
                 android:textSize="28sp" />
 
             <TextView
-                android:id="@+id/case1"
+                android:id="@+id/driver_say_to_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
+                android:text="@string/driver_say_to_cancel"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/case2"
+                android:id="@+id/wait_long"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
-                android:text="Я передумал"
+                android:text="@string/wait_long"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
 
             <TextView
-                android:id="@+id/case3"
+                android:id="@+id/mistake_order"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="17dp"
+                android:text="@string/mistake_order"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
 
             <TextView
-                android:id="@+id/case4"
+                android:id="@+id/other_reason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
                 android:paddingBottom="27dp"
+                android:text="@string/otherReason"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 

@@ -116,29 +116,33 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
     override fun setListeners() {
         //set deafult reason
-        var reasonID = ReasonCancel.MISTAKE
+        var reasonID = ReasonCancel.MISTAKE_ORDER
+        var textReason: String? = null
 
         cancel_ride.setOnClickListener {
             getCancelReason()
         }
 
-        case1.setOnClickListener {
-            reasonID = ReasonCancel.DRIVER_CANCEL
+        change_mind.setOnClickListener {
+            reasonID = ReasonCancel.CHANGE_MIND
+            textReason = change_mind.text.toString()
             getConfirmCancel()
         }
 
-        case2.setOnClickListener {
+        wait_long.setOnClickListener {
             reasonID = ReasonCancel.WAIT_LONG
+            textReason = wait_long.text.toString()
             getConfirmCancel()
         }
 
-        case3.setOnClickListener {
-            reasonID = ReasonCancel.MISTAKE
+        mistake_order.setOnClickListener {
+            reasonID = ReasonCancel.MISTAKE_ORDER
+            textReason = mistake_order.text.toString()
             getConfirmCancel()
         }
 
-        case4.setOnClickListener {
-            reasonID = ReasonCancel.OTHER
+        other_reason.setOnClickListener {
+            reasonID = ReasonCancel.OTHER_REASON
             getOtherReasonComment()
         }
 
@@ -147,11 +151,13 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         }
 
         cancel.setOnClickListener {
-            getDriverPresenter.cancelDone(reasonID)
+            textReason?.let {
+                getDriverPresenter.cancelDone(reasonID, it)
+            }
         }
 
         expired_time_ok_btn.setOnClickListener {
-            getDriverPresenter.timeExpired()
+            getDriverPresenter.timeExpired(mistake_order.text.toString())
         }
 
         confirm_accept_driver.setOnClickListener {

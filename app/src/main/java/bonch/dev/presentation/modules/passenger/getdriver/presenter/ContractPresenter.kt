@@ -81,13 +81,14 @@ interface ContractPresenter {
 
 
     interface IGetDriverPresenter {
-        fun cancelDone(reasonID: ReasonCancel)
         fun instance(): GetDriverPresenter
+        fun backFragment(reasonID: ReasonCancel)
         fun moveCamera(zoom: Float, point: Point)
+        fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun cancelDoneOtherReason(comment: String)
+        fun timeExpired(textReason: String)
         fun onUserLocationAttach()
         fun startSearchDrivers()
-        fun timeExpired()
         fun confirmAccept()
     }
 
@@ -96,7 +97,7 @@ interface ContractPresenter {
         fun onDestroy()
         fun initTracking()
         fun nextStep(idStep: Int)
-        fun cancelDone(reasonID: ReasonCancel)
+        fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun backFragment(reasonID: ReasonCancel)
         fun showChat(context: Context, fragment: Fragment)
         fun cancelDoneOtherReason(comment: String)
