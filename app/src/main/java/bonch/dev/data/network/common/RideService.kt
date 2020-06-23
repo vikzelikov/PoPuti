@@ -37,7 +37,7 @@ interface RideService {
     suspend fun sendReason(
         @HeaderMap headers: Map<String, String>,
         @Field("ride_id") rideId: Int,
-        @Field("by_passenger") byPassenger: Boolean,
+        @Field("by_passenger") byPassenger: Int,
         @Field("text") text: String
     ): Response<*>
 

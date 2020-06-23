@@ -271,21 +271,14 @@ class GetPassengerRepository : IGetPassengerRepository {
     ) {
         var response: Response<*>
 
-        Log.e("EEE", "EEEEEEE")
-        println(textReason)
-        println(rideId)
-        println(token)
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 //set headers
                 val headers = NetworkUtil.getHeaders(token)
 
-                response = service.sendReason(headers, rideId, false, textReason)
+                response = service.sendReason(headers, rideId, 0, textReason)
 
                 withContext(Dispatchers.Main) {
-                    println(response.code())
-                    println(response.body())
                     if (response.isSuccessful) {
                         //Success
                         callback(true)

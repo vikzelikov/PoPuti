@@ -305,7 +305,7 @@ class GetDriverRepository : IGetDriverRepository {
                 //set headers
                 val headers = NetworkUtil.getHeaders(token)
 
-                response = service.sendReason(headers, rideId, true, textReason)
+                response = service.sendReason(headers, rideId, 1, textReason)
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {

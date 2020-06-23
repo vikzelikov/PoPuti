@@ -389,7 +389,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun getConfirmCancel(reasonId: ReasonCancel) {
-        var isShowConfirm = false
+        var isShowConfirm = true
 
         when (reasonId) {
             ReasonCancel.CHANGE_MIND -> {
