@@ -3,7 +3,6 @@ package bonch.dev.presentation.modules.passenger.getdriver.view
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import bonch.dev.R
 import bonch.dev.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.di.module.passenger.GetDriverModule
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
@@ -35,7 +35,6 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
-import kotlinx.android.synthetic.main.map_get_driver_fragment.*
 import javax.inject.Inject
 
 class MapGetDriverView : Fragment(), UserLocationObjectListener, CameraListener,
@@ -107,13 +106,15 @@ class MapGetDriverView : Fragment(), UserLocationObjectListener, CameraListener,
 
             val fm = it.supportFragmentManager
             val ride = ActiveRide.activeRide
+            //TODO короче тут случай когда чел вышел из приложеения и потом зашел при активной поездке
 
             if (ride != null) {
-                //ride already created
-                //TODO короче тут случай когда чел вышел из приложеения и потом зашел при активной поездке
-                mapGetDriverPresenter.attachTrackRide(fm)
-            } else {
-                mapGetDriverPresenter.attachGetDriver(fm)
+                if (ride.statusId == StatusRide.SEARCH.status) {
+                    mapGetDriverPresenter.attachGetDriver(fm)
+                } else {
+                    //ride already created
+                    mapGetDriverPresenter.attachTrackRide(fm)
+                }
             }
         }
 

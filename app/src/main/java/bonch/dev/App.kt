@@ -1,6 +1,9 @@
 package bonch.dev
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import bonch.dev.di.component.AppComponent
 import bonch.dev.di.component.DaggerAppComponent
 import bonch.dev.di.module.AppModule
@@ -24,5 +27,4 @@ class App : Application() {
             .appModule(AppModule(this))
             .build()
     }
-
 }

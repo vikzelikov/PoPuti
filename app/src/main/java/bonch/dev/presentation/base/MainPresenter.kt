@@ -4,12 +4,14 @@ import androidx.navigation.get
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.IBaseInteractor
 import bonch.dev.presentation.interfaces.IMainActivity
 import bonch.dev.presentation.interfaces.IMainPresenter
 import bonch.dev.presentation.modules.common.ride.rate.view.RateRideView
 import bonch.dev.presentation.modules.driver.getpassenger.view.OrdersView
 import bonch.dev.presentation.modules.passenger.getdriver.view.*
+import bonch.dev.route.MainRouter
 import javax.inject.Inject
 
 
@@ -55,7 +57,24 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                     if (baseInteractor.isCheckoutDriver()) {
                         getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
                     } else {
-                        getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
+
+                        val ride = ActiveRide.activeRide
+                        if (ride != null) {
+                            if (ride.statusId == StatusRide.SEARCH.status) {
+                                //next step
+                                MainRouter.showView(
+                                    R.id.get_driver_fragment,
+                                    getView()?.getNavHost(),
+                                    null
+                                )
+                            } else {
+                                //ride already created
+
+                            }
+                        } else {
+                            getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
+
+                        }
                     }
 
                     getView()?.hideFullLoading()

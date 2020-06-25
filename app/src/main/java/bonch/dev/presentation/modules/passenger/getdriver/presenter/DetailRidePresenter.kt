@@ -11,6 +11,7 @@ import bonch.dev.data.repository.common.ride.SearchPlace
 import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.common.ride.AddressPoint
 import bonch.dev.domain.entities.common.banking.BankCard
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.domain.entities.common.ride.RideInfo
@@ -222,6 +223,10 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                     getView()?.hideLoading()
 
                     if (isSuccess) {
+                        //save ride
+                        ActiveRide.activeRide = ride
+
+                        //next step
                         MainRouter.showView(
                             R.id.show_get_driver_fragment,
                             getView()?.getNavHost(),

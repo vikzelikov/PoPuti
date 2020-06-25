@@ -1,5 +1,6 @@
 package bonch.dev.presentation.modules.passenger.getdriver.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.Offer
@@ -25,6 +27,7 @@ import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
+import bonch.dev.service.ride.RideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -68,6 +71,13 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //start foreground service
+        App.appComponent
+            .getApp()
+            .startService(
+                Intent(App.appComponent.getContext(), RideService::class.java)
+            )
+
         return inflater.inflate(R.layout.get_driver_layout, container, false)
     }
 
