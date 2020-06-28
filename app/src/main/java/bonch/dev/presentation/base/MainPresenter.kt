@@ -50,7 +50,6 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 //                        }
 //                    }
 
-                    //TODO check with server if created ride already (redirect to TrackRideView) сервисы?????
                     getView()?.changeInputMode()
 
                     val ride = ActiveRide.activeRide

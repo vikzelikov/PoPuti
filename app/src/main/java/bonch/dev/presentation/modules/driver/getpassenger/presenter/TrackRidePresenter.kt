@@ -1,7 +1,9 @@
 package bonch.dev.presentation.modules.driver.getpassenger.presenter
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
@@ -14,7 +16,9 @@ import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.chat.view.ChatView
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.view.ContractView
+import bonch.dev.service.ride.driver.RideService
 import com.google.gson.Gson
+import java.lang.Exception
 import javax.inject.Inject
 
 class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
@@ -27,9 +31,71 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     private val IS_DRIVER = "IS_DRIVER"
 
+    private var isRegistered = false
+
 
     init {
         GetPassengerComponent.getPassengerComponent?.inject(this)
+    }
+
+
+    private val changeRideReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            onChangeRide(intent)
+        }
+    }
+
+
+    override fun registerReceivers() {
+        val app = App.appComponent.getApp()
+
+        //check regestered receivers before
+        if (!isRegistered) {
+            app.registerReceiver(
+                changeRideReceiver,
+                IntentFilter(RideService.CHANGE_RIDE_TAG)
+            )
+
+            isRegistered = true
+        }
+    }
+
+
+    private fun unregisterReceivers() {
+        try {
+            App.appComponent.getApp().unregisterReceiver(changeRideReceiver)
+        } catch (ex: IllegalArgumentException) {
+
+        }
+    }
+
+
+    private fun onChangeRide(intent: Intent?) {
+        val res = App.appComponent.getContext().resources
+
+        val data = intent?.getStringExtra(RideService.CHANGE_RIDE_TAG)
+
+        if (data != null) {
+            val ride = Gson().fromJson(data, Ride::class.java)?.ride
+            if (ride != null) {
+                val userIdLocal = getPassengerInteractor.getUserId()
+                val userIdRemote = ride.driver?.id
+                val status = ride.statusId
+
+                //passenger cancel ride
+                if (status == StatusRide.CANCEL.status && userIdLocal == userIdRemote) {
+                    val mainHandler = Handler(Looper.getMainLooper())
+                    val myRunnable = Runnable {
+                        kotlin.run {
+                            //todo получить рельную компенсацию за отмену
+                            getView()?.passengerCancelRide(43)
+                        }
+                    }
+
+                    mainHandler.post(myRunnable)
+                }
+            } else getView()?.showNotification(res.getString(R.string.errorSystem))
+        } else getView()?.showNotification(res.getString(R.string.errorSystem))
     }
 
 
@@ -96,37 +162,6 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun subscribeOnChangeRide() {
-        getPassengerInteractor.connectSocket { isSuccess ->
-            if (isSuccess) {
-                getPassengerInteractor.subscribeOnChangeRide { data, _ ->
-                    if (data != null) {
-                        val ride = Gson().fromJson(data, Ride::class.java)?.ride
-                        if (ride != null) {
-                            val userIdLocal = getPassengerInteractor.getUserId()
-                            val userIdRemote = ride.driver?.id
-                            val status = ride.statusId
-
-                            //passenger cancel ride
-                            if (status == StatusRide.CANCEL.status && userIdLocal == userIdRemote) {
-                                val mainHandler = Handler(Looper.getMainLooper())
-                                val myRunnable = Runnable {
-                                    kotlin.run {
-                                        //todo получить рельную компенсацию за отмену
-                                        getView()?.passengerCancelRide(43)
-                                    }
-                                }
-
-                                mainHandler.post(myRunnable)
-                            }
-                        }
-                    }
-                }
-            } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
-        }
-    }
-
-
     override fun tickTimerWaitPassanger(sec: Int, isPaidWating: Boolean) {
         getView()?.tickTimerWaitPassanger(sec, isPaidWating)
     }
@@ -142,8 +177,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         //send cancel reason
         getPassengerInteractor.sendReason(textReason) {}
 
-        //clear data
-        ActiveRide.activeRide = null
+        stopService()
+        clearRide()
 
         //redirect
         getView()?.finish()
@@ -165,17 +200,22 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
+    override fun stopService(){
+        val app = App.appComponent
+        app.getApp().stopService(Intent(app.getContext(), RideService::class.java))
+    }
+
+
+    override fun clearRide() {
+        ActiveRide.activeRide = null
+        RideStatus.status = StatusRide.SEARCH
+    }
+
+
     override fun showChat(context: Context, fragment: Fragment) {
         val intent = Intent(context, ChatView::class.java)
         intent.putExtra(IS_DRIVER, true)
         fragment.startActivity(intent)
-    }
-
-
-    override fun onDestroy() {
-        getPassengerInteractor.disconnectSocket()
-        timer?.cancelTimer()
-        timer = null
     }
 
 

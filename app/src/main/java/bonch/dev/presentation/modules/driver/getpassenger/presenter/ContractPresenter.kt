@@ -48,23 +48,16 @@ interface ContractPresenter {
 
 
     interface ITrackRidePresenter {
+        fun registerReceivers()
         fun instance(): TrackRidePresenter
         fun receiveOrder(order: RideInfo?)
         fun showChat(context: Context, fragment: Fragment)
         fun tickTimerWaitPassanger(sec: Int, isPaidWating: Boolean)
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun cancelDoneOtherReason(comment: String)
-        fun subscribeOnChangeRide()
-        fun onDestroy()
+        fun stopService()
+        fun clearRide()
         fun nextStep()
-    }
-
-
-    interface UserLocationListener : android.location.LocationListener {
-        override fun onLocationChanged(location: Location?)
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-        override fun onProviderEnabled(provider: String?) {}
-        override fun onProviderDisabled(provider: String?) {}
     }
 
 }

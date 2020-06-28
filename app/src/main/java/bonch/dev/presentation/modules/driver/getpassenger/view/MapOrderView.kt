@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.Permissions
 import bonch.dev.R
+import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.RideStatus
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.presenter.ContractPresenter
@@ -73,7 +76,14 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
 
         onPermission()
 
-        mapOrderPresenter.attachDetailOrder(supportFragmentManager)
+        val ride = ActiveRide.activeRide
+        if (ride != null) {
+            if (RideStatus.status > StatusRide.SEARCH) {
+                mapOrderPresenter.attachTrackRide(supportFragmentManager)
+            } else {
+                mapOrderPresenter.attachDetailOrder(supportFragmentManager)
+            }
+        }
     }
 
 

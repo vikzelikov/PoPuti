@@ -60,7 +60,11 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     private fun unregisterReceivers() {
-        App.appComponent.getApp().unregisterReceiver(changeRideReceiver)
+        try {
+            App.appComponent.getApp().unregisterReceiver(changeRideReceiver)
+        } catch (ex: IllegalArgumentException) {
+
+        }
     }
 
 
@@ -158,7 +162,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun clearData() {
         val app = App.appComponent
 
-        unregisterReceivers()
+        //unregisterReceivers() todo
         app.getApp().stopService(Intent(app.getContext(), RideService::class.java))
         getDriverInteractor.disconnectSocket()
     }

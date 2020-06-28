@@ -45,6 +45,7 @@
     <string name="accept">Принять</string>
     <string name="offerYourPrice">Предлагаем вашу цену водителям, ожидайте</string>
     <string name="driverInWay">Водитель уже в пути</string>
+    <string name="toPassenger">В пути к пассжиру</string>
     <string name="driverArrived">Водитель приехал</string>
     <string name="inWay">Вы в пути</string>
     <string name="cancelRideQuestion">Отменить поездку?</string>
@@ -64,7 +65,7 @@
     <string name="mistake_order">Заказал по ошибке</string>
     <string name="driver_say_to_cancel">Водитель попросил отменить</string>
     <string name="messageWarningDriverIs">Водитель уже нашелся! Вы уверены, что хотите отменить поездку?</string>
-    <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас</string>
+    <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас </string>
     <string name="timeExpired">Время ожидания истекло</string>
     <string name="ok">Понятно</string>
     <string name="becomeDriver">Стать водителем</string>

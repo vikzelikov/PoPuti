@@ -80,6 +80,11 @@
             android:enabled="true"
             android:exported="true" />
 
+        <service
+            android:name=".service.ride.driver.RideService"
+            android:enabled="true"
+            android:exported="true" />
+
     </application>
 
 

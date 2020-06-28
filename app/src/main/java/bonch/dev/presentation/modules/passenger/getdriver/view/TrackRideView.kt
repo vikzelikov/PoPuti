@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +49,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private var driverCancelledBottomSheet: BottomSheetBehavior<*>? = null
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
-    private val app = App.appComponent.getApp()
 
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var nextFragment: ParentHandler<FragmentManager>
@@ -66,6 +66,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         savedInstanceState: Bundle?
     ): View? {
         //start background service
+        val app = App.appComponent.getApp()
         app.startService(Intent(app.applicationContext, RideService::class.java))
 
         //regestered receivers for listener data from service
@@ -421,13 +422,13 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             //get payment for cancel
             val tax = trackRidePresenter.getTaxMoney()
 
-            val message: String = resources.getString(R.string.messageWarningTakeMoney)
+            var message = resources.getString(R.string.messageWarningTakeMoney)
             val rub = resources.getString(R.string.rub)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                message.plus(Html.fromHtml(" <b>$tax $rub</b>", Html.FROM_HTML_MODE_COMPACT))
+            message = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                message.plus(" ").plus(Html.fromHtml("<b>$tax $rub</b>", Html.FROM_HTML_MODE_COMPACT))
             } else {
-                message.plus(Html.fromHtml(" <b>$tax $rub</b>"))
+                message.plus(" ").plus(Html.fromHtml("<b>$tax $rub</b>"))
             }
 
             text_message.text = message

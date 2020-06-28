@@ -2,6 +2,8 @@ package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.CountDownTimer
 import android.util.Log
+import bonch.dev.App
+import bonch.dev.R
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
 
 
@@ -47,6 +49,12 @@ object DriverMainTimer {
 
         override fun onFinish() {
             adapter.getDriverPresenter.instance().getView()?.getExpiredTimeConfirm()
+
+            adapter.getDriverPresenter.timeExpired(
+                App.appComponent.getContext().getString(
+                    R.string.mistake_order
+                )
+            )
         }
 
         override fun onTick(millisUntilFinished: Long) {

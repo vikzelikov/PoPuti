@@ -355,8 +355,6 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     override fun getExpiredTimeConfirm() {
-        getDriverPresenter.timeExpired(mistake_order.text.toString())
-
         hideAllBottomSheet()
 
         (expiredTimeBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
@@ -527,23 +525,12 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     override fun onResume() {
         super.onResume()
         RideService.isAppClose = false
-
-//        app.registerReceiver(
-//            getDriverPresenter.instance().offerPriceReceiver,
-//            IntentFilter(RideService.OFFER_PRICE_TAG)
-//        )
-//        app.registerReceiver(
-//            getDriverPresenter.instance().changeRideReceiver,
-//            IntentFilter(RideService.CHANGE_RIDE_TAG)
-//        )
     }
 
 
     override fun onPause() {
         super.onPause()
         RideService.isAppClose = true
-        //app.unregisterReceiver(getDriverPresenter.instance().offerPriceReceiver)
-        //app.unregisterReceiver(getDriverPresenter.instance().changeRideReceiver)
     }
 
 

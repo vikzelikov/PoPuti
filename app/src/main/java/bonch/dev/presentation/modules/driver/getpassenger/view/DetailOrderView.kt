@@ -254,35 +254,23 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     private fun correctMapView() {
-        Thread(Runnable {
-            while (true) {
-                try {
-                    val height = main_info_layout?.height
-                    if (height in 100..1000) {
-                        val mainHandler = Handler(Looper.getMainLooper())
-                        val myRunnable = Runnable {
-                            kotlin.run {
-                                val layoutParams: RelativeLayout.LayoutParams =
-                                    RelativeLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT
-                                    )
-                                if (height != null) {
-                                    layoutParams.setMargins(0, 0, 0, height)
-                                }
-                                getMap()?.layoutParams = layoutParams
-                            }
-                        }
-
-                        mainHandler.post(myRunnable)
-
-                        break
-                    }
-                } catch (ex: Exception) {
-                    break
+        try {
+            main_info_layout?.post {
+                val height = main_info_layout?.height
+                val layoutParams: RelativeLayout.LayoutParams =
+                    RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
+                //"-10" for correct view radius corners
+                if (height != null) {
+                    layoutParams.setMargins(0, 0, 0, height)
                 }
+                getMap()?.layoutParams = layoutParams
             }
-        }).start()
+        } catch (ex: java.lang.Exception) {
+
+        }
     }
 
 
@@ -324,7 +312,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             kotlin.run {
                 confirm_with_price?.text = getString(R.string.agreeWithPrice)
                 isBlock = false
-                progress_bar.visibility = View.GONE
+                progress_bar?.visibility = View.GONE
             }
         }
 

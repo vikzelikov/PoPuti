@@ -4,6 +4,9 @@ import android.app.Activity.RESULT_OK
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.rate.Review
+import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.RideStatus
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.common.rate.IRateRideInteractor
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.CommonComponent
@@ -35,6 +38,8 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
             //send review to SERVER
             rateRideInteractor.sendReview(review, isForPassanger) {}
 
+            clearData()
+
             if (isForPassanger) {
                 //passenger - this is not new Activity, show general notification
                 getView()?.showNotification(res.getString(R.string.thanksForRate))
@@ -57,6 +62,9 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
         val isForPassanger = getView()?.isPassanger()
 
         if (isForPassanger != null) {
+
+            clearData()
+
             if (isForPassanger) {
                 MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
             } else {
@@ -76,6 +84,14 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
         } catch (ex: Exception) {
             getView()?.finish(RESULT_OK)
         }
+
+        clearData()
+    }
+
+
+    private fun clearData(){
+        ActiveRide.activeRide = null
+        RideStatus.status = StatusRide.SEARCH
     }
 
 

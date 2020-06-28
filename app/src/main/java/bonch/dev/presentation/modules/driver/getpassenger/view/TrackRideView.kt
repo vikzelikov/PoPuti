@@ -18,6 +18,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
+import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.RideInfo
@@ -25,13 +26,13 @@ import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
-import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.MBottomSheet
 import bonch.dev.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.presenter.ContractPresenter
+import bonch.dev.service.ride.driver.RideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -71,8 +72,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        context?.let { Vibration.start(it) }
-        showNotification(getString(R.string.rideCreated))
+        //start background service
+        val app = App.appComponent.getApp()
+        app.startService(Intent(app.applicationContext, RideService::class.java))
+
+        //regestered receivers for listener data from service
+        trackRidePresenter.registerReceivers()
 
         startProcessBlock()
 
@@ -83,8 +88,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        trackRidePresenter.subscribeOnChangeRide()
-
         trackRidePresenter.receiveOrder(ActiveRide.activeRide)
 
         correctMapView()
@@ -94,6 +97,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         setBottomSheet()
 
         onSlideToNextStep()
+
+        checkoutView(RideStatus.status)
     }
 
 
@@ -116,12 +121,13 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
+                val context = App.appComponent.getContext()
                 var timeString = sec.toString()
-                var textStatus = getString(R.string.waitPassanger)
+                var textStatus = context.getString(R.string.waitPassanger)
 
                 if (isPaidWaiting) {
-                    status_order.setTextColor(Color.parseColor("#F73F3F"))
-                    textStatus = getString(R.string.waitingTime)
+                    status_order?.setTextColor(Color.parseColor("#F73F3F"))
+                    textStatus = context.getString(R.string.waitingTime)
 
                     if (sec > 60) {
                         val minutes = (sec % 3600) / 60
@@ -129,23 +135,23 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
                         timeString =
                             String.format(
-                                "%2d ${getString(R.string.min)} %2d",
+                                "%2d ${context.getString(R.string.min)} %2d",
                                 minutes,
                                 seconds
                             )
                     }
 
                 } else {
-                    status_order.setTextColor(Color.parseColor("#000000"))
+                    status_order?.setTextColor(Color.parseColor("#000000"))
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    status_order.text = Html.fromHtml(
+                    status_order?.text = Html.fromHtml(
                         textStatus.plus("<br>").plus("<b>$timeString ${getString(R.string.sec)}</b>"),
                         Html.FROM_HTML_MODE_COMPACT
                     )
                 } else {
-                    status_order.text = Html.fromHtml(
+                    status_order?.text = Html.fromHtml(
                         textStatus.plus("<br>").plus("<b>$timeString ${getString(R.string.sec)}</b>")
                     )
                 }
@@ -156,6 +162,27 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
+    private fun checkoutView(status: StatusRide) {
+        when (status) {
+            StatusRide.WAIT_FOR_PASSANGER -> stepWaitPassanger()
+
+            StatusRide.IN_WAY -> stepInWay()
+
+            StatusRide.GET_PLACE -> stepDoneRide()
+
+            StatusRide.CANCEL -> {
+                //todo получить рельную компенсацию за отмену
+                passengerCancelRide(43)
+            }
+
+            else -> {
+                //nothing
+            }
+        }
+    }
+
+
+    //STEP 3
     override fun stepWaitPassanger() {
         order_addresses_layout.visibility = View.GONE
         status_order_layout.visibility = View.VISIBLE
@@ -165,7 +192,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         correctMapView()
     }
 
-
+    //STEP 4
     override fun stepInWay() {
         status_order_layout.visibility = View.GONE
         phone_call_layout.visibility = View.GONE
@@ -178,10 +205,11 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         correctMapView()
     }
 
-
+    //STEP 5
     override fun stepDoneRide() {
-        val activity = activity as? MapOrderView
-        activity?.let { nextFragment(it.supportFragmentManager) }
+        trackRidePresenter.stopService()
+
+        (activity as? MapOrderView)?.let { nextFragment(it.supportFragmentManager) }
     }
 
 
@@ -280,6 +308,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         }
 
         ok_btn.setOnClickListener {
+            trackRidePresenter.stopService()
+            trackRidePresenter.clearRide()
             finishActivity()
         }
 
@@ -465,15 +495,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         Handler().postDelayed({
             (passangerCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
-            main_info_layout.elevation = 0f
-            on_view_cancel.visibility = View.VISIBLE
-            on_view_cancel.isClickable = false
-            on_view_cancel.alpha = 0.8f
+            main_info_layout?.elevation = 0f
+            on_view_cancel?.visibility = View.VISIBLE
+            on_view_cancel?.isClickable = false
+            on_view_cancel?.alpha = 0.8f
 
             if (RideStatus.status.status > StatusRide.WAIT_FOR_DRIVER.status) {
-                payment_sum.text = payment.toString().plus(" ₽")
-                payment_sum.visibility = View.VISIBLE
-                text_payment_for_cancel.visibility = View.VISIBLE
+                payment_sum?.text = payment.toString().plus(" ₽")
+                payment_sum?.visibility = View.VISIBLE
+                text_payment_for_cancel?.visibility = View.VISIBLE
             }
 
             passangerCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
@@ -525,7 +555,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     private fun onSlideCancelReason(slideOffset: Float) {
         if (slideOffset > 0) {
-            on_view_cancel.alpha = slideOffset * 0.8f
+            on_view_cancel?.alpha = slideOffset * 0.8f
         }
     }
 
@@ -601,36 +631,23 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun correctMapView() {
-        Thread(Runnable {
-            while (true) {
-                try {
-                    val height = main_info_layout?.height
-                    if (height in 100..1000) {
-                        val mainHandler = Handler(Looper.getMainLooper())
-                        val myRunnable = Runnable {
-                            kotlin.run {
-                                val layoutParams: RelativeLayout.LayoutParams =
-                                    RelativeLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT
-                                    )
-                                if (height != null) {
-                                    layoutParams.setMargins(0, 0, 0, height - 100)
-                                }
-                                getMap()?.layoutParams = layoutParams
-                            }
-                        }
-
-                        mainHandler.post(myRunnable)
-
-                        break
-                    }
-                } catch (ex: Exception) {
-                    break
+        try {
+            main_info_layout?.post {
+                val height = main_info_layout?.height
+                val layoutParams: RelativeLayout.LayoutParams =
+                    RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
+                //"-10" for correct view radius corners
+                if (height != null) {
+                    layoutParams.setMargins(0, 0, 0, height - 10)
                 }
-
+                getMap()?.layoutParams = layoutParams
             }
-        }).start()
+        } catch (ex: java.lang.Exception) {
+
+        }
     }
 
 
@@ -659,11 +676,14 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    override fun onDestroy() {
-        trackRidePresenter.onDestroy()
-        trackRidePresenter.instance().detachView()
-        super.onDestroy()
+    override fun onResume() {
+        RideService.isAppClose = false
+        super.onResume()
     }
 
 
+    override fun onPause() {
+        RideService.isAppClose = true
+        super.onPause()
+    }
 }

@@ -1,6 +1,5 @@
 package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -84,8 +83,12 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     private fun unregisterReceivers() {
         val app = App.appComponent.getApp()
 
-        app.unregisterReceiver(offerPriceReceiver)
-        app.unregisterReceiver(changeRideReceiver)
+        try {
+            app.unregisterReceiver(offerPriceReceiver)
+            app.unregisterReceiver(changeRideReceiver)
+        } catch (ex: IllegalArgumentException) {
+
+        }
     }
 
 
@@ -285,7 +288,8 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     private fun clearData() {
         val app = App.appComponent
 
-        unregisterReceivers()
+        //todo
+        //unregisterReceivers()
         app.getApp().stopService(Intent(app.getContext(), RideService::class.java))
         getDriverInteractor.disconnectSocket()
         mainHandler?.removeCallbacksAndMessages(null)

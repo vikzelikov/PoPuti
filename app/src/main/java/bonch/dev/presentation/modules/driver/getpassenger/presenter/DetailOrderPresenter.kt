@@ -8,6 +8,7 @@ import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
+import bonch.dev.domain.utils.Vibration
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.presentation.modules.common.ride.routing.Routing
@@ -42,7 +43,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     override fun nextFragment() {
         getView()?.showLoading()
 
-        val res = App.appComponent.getContext().resources
+        val context = App.appComponent.getContext()
 
         RideStatus.status = StatusRide.WAIT_FOR_DRIVER
 
@@ -57,9 +58,13 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                 if (isSuccess) {
                     getPassengerInteractor.saveRideId()
 
+
+                    context.let { Vibration.start(it) }
+                    getView()?.showNotification(context.getString(R.string.rideCreated))
+
                     getView()?.nextFragment()
                 } else {
-                    getView()?.showNotification(res.getString(R.string.errorSystem))
+                    getView()?.showNotification(context.getString(R.string.errorSystem))
                 }
             }
         }
