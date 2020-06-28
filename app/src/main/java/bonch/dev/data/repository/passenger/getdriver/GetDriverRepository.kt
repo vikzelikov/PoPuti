@@ -206,6 +206,7 @@ class GetDriverRepository : IGetDriverRepository {
 
 
     override fun disconnectSocket() {
+        Log.w("SOCKET_PUSHER/P", "SOCKET DISCONNECTED")
         pusher?.disconnect()
     }
 

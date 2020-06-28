@@ -28,7 +28,6 @@ class MapGetDriverPresenter : BasePresenter<ContractView.IMapGetDriverView>(),
         childTrackRideView = null
 
         val childFragment = GetDriverView()
-        childFragment.arguments = getView()?.getArgs()
 
         //pass callback
         childFragment.locationLayer = { getView()?.getUserLocation() }

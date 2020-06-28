@@ -31,8 +31,6 @@ class RateRideRepository : IRateRideRepository {
                 response = service.sendReview(headers, review)
 
                 withContext(Dispatchers.Main) {
-                    println(response.code())
-                    println(response.body())
                     if (response.isSuccessful) {
                         //Success
                         callback(true)

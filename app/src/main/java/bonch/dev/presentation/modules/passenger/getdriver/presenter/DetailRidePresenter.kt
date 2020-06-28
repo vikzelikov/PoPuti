@@ -2,25 +2,24 @@ package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.data.repository.common.ride.SearchPlace
-import bonch.dev.domain.entities.common.ride.Address
-import bonch.dev.domain.entities.common.ride.AddressPoint
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.AddressPoint
 import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.presentation.modules.common.ride.routing.Routing
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
 import com.yandex.mapkit.geometry.Point
@@ -39,7 +38,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
     private val AVERAGE_PRICE = "AVERAGE_PRICE"
-    private val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
 
     private var searchPlace: SearchPlace? = null
     private var blockHandler: Handler? = null
@@ -195,7 +193,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
         if (view != null && view.isDataComplete() && !isBlock) {
             val rideInfo = getView()?.getRideInfo()
-            val bundle = Bundle()
 
             getView()?.showLoading()
 
@@ -205,8 +202,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
             rideInfo?.toAdr = toAdr
 
             if (rideInfo != null) {
-                bundle.putParcelable(RIDE_DETAIL_INFO, rideInfo)
-
                 val ride = RideInfo()
                 ride.position = rideInfo.fromAdr?.address
                 ride.fromLat = rideInfo.fromAdr?.point?.latitude
@@ -230,7 +225,7 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                         MainRouter.showView(
                             R.id.show_get_driver_fragment,
                             getView()?.getNavHost(),
-                            bundle
+                            null
                         )
                     } else {
                         val res = App.appComponent.getContext().resources

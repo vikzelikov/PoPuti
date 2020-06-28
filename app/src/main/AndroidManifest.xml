@@ -76,7 +76,7 @@
         </activity>
 
         <service
-            android:name=".service.ride.RideService"
+            android:name=".service.ride.passenger.RideService"
             android:enabled="true"
             android:exported="true" />
 

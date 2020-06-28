@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
@@ -87,15 +88,16 @@ interface ContractPresenter {
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun cancelDoneOtherReason(comment: String)
         fun timeExpired(textReason: String)
+        fun getOffers(): ArrayList<Offer>
         fun onUserLocationAttach()
-        fun startSearchDrivers()
+        fun registerReceivers()
         fun confirmAccept()
     }
 
 
     interface ITrackRidePresenter {
-        fun onDestroy()
-        fun initTracking()
+        fun clearData()
+        fun registerReceivers()
         fun nextStep(idStep: Int)
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun backFragment(reasonID: ReasonCancel)

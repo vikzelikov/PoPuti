@@ -46,7 +46,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     }
 
 
-    override fun onClickItem(order: RideInfo) {
+    override fun selectOrder(order: RideInfo) {
         if (!isBlock) {
             getView()?.getFragment()?.context?.let {
                 ActiveRide.activeRide = order

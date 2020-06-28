@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
-import bonch.dev.presentation.interfaces.ParentHandler
 import com.yandex.mapkit.geometry.Point
 
 interface ContractPresenter {
@@ -17,7 +16,7 @@ interface ContractPresenter {
         fun initOrders()
         fun startSearchOrders()
         fun startProcessBlock()
-        fun onClickItem(order: RideInfo)
+        fun selectOrder(order: RideInfo)
         fun calcDistance(from: Point, to: Point): Int
         fun instance(): OrdersPresenter
     }

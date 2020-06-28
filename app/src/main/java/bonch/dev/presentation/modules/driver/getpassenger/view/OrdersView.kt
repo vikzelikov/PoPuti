@@ -14,6 +14,7 @@ import bonch.dev.Permissions
 import bonch.dev.R
 import bonch.dev.di.component.driver.DaggerGetPassengerComponent
 import bonch.dev.di.module.driver.GetPassengerModule
+import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.adapters.OrdersAdapter
@@ -59,6 +60,11 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        ActiveRide.activeRide?.let { ride ->
+            //next step
+            ordersPresenter.selectOrder(ride)
+        }
+
         return inflater.inflate(R.layout.orders_view_fragment, container, false)
     }
 

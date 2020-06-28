@@ -235,6 +235,7 @@
     <string name="passenger_go_out_text">Если вы уедете, не выждав 10 минут с начала прибытия в пункт назначения, мы будем вынуждены снизить рейтинг.</string>
     <string name="change_mind_text">Пассажир уже ожидает вас! В случае отмены заказа мы будем вынуждены снизить вам рейтинг.</string>
     <string name="force_majeure_text">Сломалась машина? Попали в ДТП? Остановили сотрудники ГИБДД? Сложная дорожная ситуация?</string>
+    <string name="searchingDriver">Поиск водителя…</string>
 
 
 </resources>

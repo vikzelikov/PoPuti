@@ -72,7 +72,6 @@ interface ContractView {
 
     interface IMapGetDriverView : IBaseView {
         fun getUserLocation(): UserLocationLayer?
-        fun getArgs(): Bundle?
         fun getMap(): MapView
     }
 
@@ -87,7 +86,7 @@ interface ContractView {
         fun getAdapter(): DriversListAdapter
         fun getUserLocationLayer(): UserLocationLayer?
         fun checkoutBackground(isShow: Boolean)
-        fun getRecyclerView(): RecyclerView
+        fun getRecyclerView(): RecyclerView?
         fun startAnimSearch(point: Point)
         fun hideConfirmAccept()
         fun onObjectUpdated()

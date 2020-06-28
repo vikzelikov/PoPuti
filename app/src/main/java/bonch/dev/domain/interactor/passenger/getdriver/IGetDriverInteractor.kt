@@ -3,14 +3,12 @@ package bonch.dev.domain.interactor.passenger.getdriver
 import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.entities.common.ride.Driver
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.interfaces.SuggestHandler
 import com.yandex.mapkit.geometry.Point
 
-typealias NewDriver = (driver: Driver) -> Unit
 
 interface IGetDriverInteractor {
 

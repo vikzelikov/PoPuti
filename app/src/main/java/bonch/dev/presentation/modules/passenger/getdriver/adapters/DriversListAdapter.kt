@@ -22,7 +22,8 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
     var list: ArrayList<Offer> = arrayListOf()
 
     init {
-        DriverMainTimer.getInstance(this)?.start()
+        if (DriverMainTimer.getInstance() == null)
+            DriverMainTimer.getInstance(this)?.start()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
@@ -45,7 +46,7 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
 
         timeLine.post({
             if (DriverMainTimer.DEFAULT_WIDTH == 0) {
-                DriverMainTimer.DEFAULT_WIDTH = timeLine.measuredWidth
+                DriverMainTimer.DEFAULT_WIDTH = timeLine.measuredWidth - 50
             }
 
             if (DriverMainTimer.ratio == 100) {

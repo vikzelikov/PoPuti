@@ -101,7 +101,7 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
             updateDistance(post)
 
             itemView.setOnClickListener {
-                ordersPresenter.onClickItem(list[adapterPosition])
+                ordersPresenter.selectOrder(list[adapterPosition])
             }
         }
 

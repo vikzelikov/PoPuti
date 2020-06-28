@@ -53,28 +53,20 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                     //TODO check with server if created ride already (redirect to TrackRideView) сервисы?????
                     getView()?.changeInputMode()
 
+                    val ride = ActiveRide.activeRide
+
                     //redirect to full app
                     if (baseInteractor.isCheckoutDriver()) {
                         getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
                     } else {
-
-                        val ride = ActiveRide.activeRide
                         if (ride != null) {
-                            if (ride.statusId == StatusRide.SEARCH.status) {
-                                //next step
-                                MainRouter.showView(
-                                    R.id.get_driver_fragment,
-                                    getView()?.getNavHost(),
-                                    null
-                                )
-                            } else {
-                                //ride already created
-
-                            }
-                        } else {
-                            getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
-
-                        }
+                            //next step
+                            MainRouter.showView(
+                                R.id.get_driver_fragment,
+                                getView()?.getNavHost(),
+                                null
+                            )
+                        } else getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
                     }
 
                     getView()?.hideFullLoading()

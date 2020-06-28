@@ -1,6 +1,7 @@
 package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.CountDownTimer
+import android.util.Log
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
 
 
@@ -16,11 +17,10 @@ object DriverMainTimer {
 
     fun getInstance(adapter: DriversListAdapter): DriverTimer? {
         if (driverTimer == null) {
-            //interval 18 ~ 30 sec
             driverTimer =
                 DriverTimer(
                     60000 * MAX_TIME_GET_DRIVER,
-                    100,
+                    1000,
                     adapter
                 )
         }
@@ -55,7 +55,7 @@ object DriverMainTimer {
 
                 for (i in 0 until list.size) {
                     list[i].timeLine.let {
-                        list[i].timeLine -= 0.1
+                        list[i].timeLine -= 1
 
                         //if timeLine too small, remove item
                         if (it < 2) {

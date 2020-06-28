@@ -44,9 +44,6 @@ class ChatRepository : IChatRepository {
                 response = service.sendMessage(headers, message)
 
                 withContext(Dispatchers.Main) {
-                    println(response.code())
-                    println(response.body())
-                    println(message.rideId)
                     if (response.isSuccessful) {
                         //Success
                         callback(true)

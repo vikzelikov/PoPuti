@@ -20,9 +20,9 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.domain.entities.common.ride.Coordinate.toAdr
-import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler
@@ -34,7 +34,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.detail_ride_layout.*
-import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -412,38 +411,24 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
 
     private fun correctMapView() {
-        Thread(Runnable {
-            while (true) {
-                try {
-                    val height = main_info_layout?.height
-                    if (height in 100..1000) {
-                        val mainHandler = Handler(Looper.getMainLooper())
-                        val myRunnable = Runnable {
-                            kotlin.run {
-                                val layoutParams: RelativeLayout.LayoutParams =
-                                    RelativeLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT
-                                    )
-                                //"-10" for correct view radius corners
-                                if (height != null) {
-                                    layoutParams.setMargins(0, 0, 0, height - 10)
-                                }
-                                getMap()?.layoutParams = layoutParams
-                                bottomNavView?.visibility = View.GONE
-                            }
-                        }
-
-                        mainHandler.post(myRunnable)
-
-                        break
-                    }
-                } catch (ex: Exception) {
-                    break
+        try {
+            main_info_layout?.post {
+                val height = main_info_layout?.height
+                val layoutParams: RelativeLayout.LayoutParams =
+                    RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
+                //"-10" for correct view radius corners
+                if (height != null) {
+                    layoutParams.setMargins(0, 0, 0, height - 10)
                 }
-
+                getMap()?.layoutParams = layoutParams
+                bottomNavView?.visibility = View.GONE
             }
-        }).start()
+        } catch (ex: Exception) {
+
+        }
     }
 
 

@@ -9,12 +9,14 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
+import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.Driver
 import bonch.dev.domain.entities.common.ride.RideStatus
@@ -27,6 +29,7 @@ import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
+import bonch.dev.service.ride.passenger.RideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -45,6 +48,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private var driverCancelledBottomSheet: BottomSheetBehavior<*>? = null
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
+    private val app = App.appComponent.getApp()
+
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var nextFragment: ParentHandler<FragmentManager>
 
@@ -60,6 +65,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //start background service
+        app.startService(Intent(app.applicationContext, RideService::class.java))
+
+        //regestered receivers for listener data from service
+        trackRidePresenter.registerReceivers()
+
         return inflater.inflate(R.layout.track_ride_layout, container, false)
     }
 
@@ -73,12 +84,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         setBottomSheet()
 
-        val driver = ActiveRide.activeRide?.driver
-        if (driver != null) {
-            trackRidePresenter.initTracking()
-
-            setInfoDriver(driver)
-        }
+        //set info about ride in view
+        ActiveRide.activeRide?.driver?.let { setInfoDriver(it) }
     }
 
 
@@ -95,7 +102,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             .into(img_driver)
 
         //set default status
-        checkoutStatusView(StatusRide.WAIT_FOR_DRIVER)
+        checkoutStatusView(RideStatus.status)
     }
 
 
@@ -104,28 +111,32 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         when (idStep) {
             StatusRide.WAIT_FOR_DRIVER -> {
-                status_driver.text = resources.getString(R.string.driverInWay)
+                status_driver?.text = resources.getString(R.string.driverInWay)
             }
 
             StatusRide.WAIT_FOR_PASSANGER -> {
-                status_driver.text = resources.getString(R.string.driverArrived)
+                status_driver?.text = resources.getString(R.string.driverArrived)
             }
 
             StatusRide.IN_WAY -> {
-                status_driver.text = resources.getString(R.string.inWay)
+                status_driver?.text = resources.getString(R.string.inWay)
             }
 
             StatusRide.GET_PLACE -> {
+                trackRidePresenter.clearData()
+
                 nextFragment()
             }
 
             StatusRide.CANCEL -> {
+                trackRidePresenter.clearData()
+
                 //driver has cancelled this ride
                 driverCancelRide()
             }
 
             else -> {
-                status_driver.text = resources.getString(R.string.driverInWay)
+                status_driver?.text = resources.getString(R.string.driverInWay)
                 showNotification(getString(R.string.errorSystem))
             }
         }
@@ -370,37 +381,23 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun correctMapView() {
-//        Thread(Runnable {
-//            while (true) {
-//                try {
-//                    val height = main_info_layout?.height
-//                    if (height in 100..1000) {
-//                        val mainHandler = Handler(Looper.getMainLooper())
-//                        val myRunnable = Runnable {
-//                            kotlin.run {
-//                                val layoutParams: RelativeLayout.LayoutParams =
-//                                    RelativeLayout.LayoutParams(
-//                                        LinearLayout.LayoutParams.MATCH_PARENT,
-//                                        LinearLayout.LayoutParams.MATCH_PARENT
-//                                    )
-//                                //"-10" for correct view radius corners
-//                                if (height != null) {
-//                                    layoutParams.setMargins(0, 0, 0, height - 10)
-//                                }
-//                                getMap()?.layoutParams = layoutParams
-//                            }
-//                        }
-//
-//                        mainHandler.post(myRunnable)
-//
-//                        break
-//                    }
-//                } catch (ex: Exception) {
-//                    break
-//                }
-//
-//            }
-//        }).start()
+        try {
+            main_info_layout?.post {
+                val height = main_info_layout?.height
+                val layoutParams: RelativeLayout.LayoutParams =
+                    RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
+                //"-10" for correct view radius corners
+                if (height != null) {
+                    layoutParams.setMargins(0, 0, 0, height - 10)
+                }
+                getMap()?.layoutParams = layoutParams
+            }
+        } catch (ex: java.lang.Exception) {
+
+        }
     }
 
 
@@ -473,10 +470,14 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    override fun onDestroy() {
-        trackRidePresenter.onDestroy()
-        super.onDestroy()
+    override fun onResume() {
+        RideService.isAppClose = false
+        super.onResume()
     }
 
 
+    override fun onPause() {
+        RideService.isAppClose = true
+        super.onPause()
+    }
 }

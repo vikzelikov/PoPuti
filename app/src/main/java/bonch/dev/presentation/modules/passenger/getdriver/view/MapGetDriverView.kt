@@ -106,7 +106,6 @@ class MapGetDriverView : Fragment(), UserLocationObjectListener, CameraListener,
 
             val fm = it.supportFragmentManager
             val ride = ActiveRide.activeRide
-            //TODO короче тут случай когда чел вышел из приложеения и потом зашел при активной поездке
 
             if (ride != null) {
                 if (ride.statusId == StatusRide.SEARCH.status) {
@@ -251,11 +250,6 @@ class MapGetDriverView : Fragment(), UserLocationObjectListener, CameraListener,
 
     override fun getNavHost(): NavController? {
         return (activity as? MainActivity)?.navController
-    }
-
-
-    override fun getArgs(): Bundle? {
-        return arguments
     }
 
 

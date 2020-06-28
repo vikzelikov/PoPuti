@@ -3,7 +3,6 @@ package bonch.dev.presentation.modules.passenger.getdriver.view
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.Offer
-import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.MBottomSheet
@@ -27,7 +25,7 @@ import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
-import bonch.dev.service.ride.RideService
+import bonch.dev.service.ride.passenger.RideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -46,13 +44,13 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     @Inject
     lateinit var driversListAdapter: DriversListAdapter
 
-    private val RIDE_DETAIL_INFO = "RIDE_DETAIL_INFO"
-
     private var cancelBottomSheet: BottomSheetBehavior<*>? = null
     private var confirmCancelBottomSheet: BottomSheetBehavior<*>? = null
     private var expiredTimeBottomSheet: BottomSheetBehavior<*>? = null
     private var confirmGetBottomSheet: BottomSheetBehavior<*>? = null
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
+
+    private val app = App.appComponent.getApp()
 
     lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var nextFragment: ParentHandler<FragmentManager>
@@ -71,12 +69,14 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //start foreground service
-        App.appComponent
-            .getApp()
-            .startService(
-                Intent(App.appComponent.getContext(), RideService::class.java)
-            )
+        //change status
+        RideStatus.status = StatusRide.SEARCH
+
+        //start background service
+        app.startService(Intent(app.applicationContext, RideService::class.java))
+
+        //regestered receivers for listener data from service
+        getDriverPresenter.registerReceivers()
 
         return inflater.inflate(R.layout.get_driver_layout, container, false)
     }
@@ -87,11 +87,9 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
         correctMapView()
 
-        receiveUserData(arguments)
+        receiveUserData(ActiveRide.activeRide)
 
         initializeAdapter()
-
-        getDriverPresenter.startSearchDrivers()
 
         setBottomSheet()
 
@@ -99,28 +97,25 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    private fun receiveUserData(bundle: Bundle?) {
-        bundle?.let {
-            val rideInfo: RideInfo? = it.getParcelable(RIDE_DETAIL_INFO)
+    private fun receiveUserData(ride: RideInfo?) {
+        ride?.let {
+            from_address.text = ride.position
+            to_address.text = ride.destination
 
-            rideInfo?.let {
-                from_address.text = rideInfo.fromAdr?.address
-                to_address.text = rideInfo.toAdr?.address
+            if (ride.price != null) {
+                offer_price.text = ride.price.toString()
+            }
 
-                if (rideInfo.price != null) {
-                    offer_price.text = rideInfo.price.toString()
-                }
-
-                val comment = rideInfo.comment
-                comment?.let {
-                    if (comment.isNotEmpty()) {
-                        comment_min_text.text = rideInfo.comment
-                    } else {
-                        comment_btn.visibility = View.GONE
-                    }
+            val comment = ride.comment
+            comment?.let {
+                if (comment.isNotEmpty()) {
+                    comment_min_text.text = ride.comment
+                } else {
+                    comment_btn.visibility = View.GONE
                 }
             }
         }
+
     }
 
 
@@ -163,11 +158,12 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         cancel.setOnClickListener {
             textReason?.let {
                 getDriverPresenter.cancelDone(reasonID, it)
+                getDriverPresenter.backFragment(reasonID)
             }
         }
 
         expired_time_ok_btn.setOnClickListener {
-            getDriverPresenter.timeExpired(mistake_order.text.toString())
+            getDriverPresenter.backFragment(ReasonCancel.MISTAKE_ORDER)
         }
 
         confirm_accept_driver.setOnClickListener {
@@ -359,13 +355,15 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     override fun getExpiredTimeConfirm() {
+        getDriverPresenter.timeExpired(mistake_order.text.toString())
+
         hideAllBottomSheet()
 
         (expiredTimeBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
-        main_info_layout.elevation = 0f
-        on_view_cancel.visibility = View.VISIBLE
-        on_view_cancel.isClickable = false
-        on_view_cancel.alpha = 0.8f
+        main_info_layout?.elevation = 0f
+        on_view_cancel?.visibility = View.VISIBLE
+        on_view_cancel?.isClickable = false
+        on_view_cancel?.alpha = 0.8f
 
         Handler().postDelayed({
             expiredTimeBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
@@ -383,7 +381,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
             commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
-        comment_text.clearFocus()
+        comment_text?.clearFocus()
         hideKeyboard()
     }
 
@@ -407,7 +405,9 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     private fun initializeAdapter() {
-        driversListAdapter.list = arrayListOf()
+        driversListAdapter.list = getDriverPresenter.getOffers()
+
+        if (!driversListAdapter.list.isNullOrEmpty()) checkoutBackground(false)
 
         driver_list.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -419,38 +419,23 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     private fun correctMapView() {
-        //todo выглядит это хреново
-        Thread(Runnable {
-            while (true) {
-                try {
-                    val height = main_info_layout?.height
-                    if (height in 100..1000) {
-                        val mainHandler = Handler(Looper.getMainLooper())
-                        val myRunnable = Runnable {
-                            kotlin.run {
-                                val layoutParams: RelativeLayout.LayoutParams =
-                                    RelativeLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT
-                                    )
-                                //"-10" for correct view radius corners
-                                if (height != null) {
-                                    layoutParams.setMargins(0, 0, 0, height - 10)
-                                }
-                                getMap()?.layoutParams = layoutParams
-                            }
-                        }
-
-                        mainHandler.post(myRunnable)
-
-                        break
-                    }
-                } catch (ex: java.lang.Exception) {
-                    break
+        try {
+            main_info_layout?.post {
+                val height = main_info_layout?.height
+                val layoutParams: RelativeLayout.LayoutParams =
+                    RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                    )
+                //"-10" for correct view radius corners
+                if (height != null) {
+                    layoutParams.setMargins(0, 0, 0, height - 10)
                 }
-
+                getMap()?.layoutParams = layoutParams
             }
-        }).start()
+        } catch (ex: java.lang.Exception) {
+
+        }
     }
 
 
@@ -534,13 +519,35 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    override fun getRecyclerView(): RecyclerView {
+    override fun getRecyclerView(): RecyclerView? {
         return driver_list
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        RideService.isAppClose = false
+
+//        app.registerReceiver(
+//            getDriverPresenter.instance().offerPriceReceiver,
+//            IntentFilter(RideService.OFFER_PRICE_TAG)
+//        )
+//        app.registerReceiver(
+//            getDriverPresenter.instance().changeRideReceiver,
+//            IntentFilter(RideService.CHANGE_RIDE_TAG)
+//        )
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        RideService.isAppClose = true
+        //app.unregisterReceiver(getDriverPresenter.instance().offerPriceReceiver)
+        //app.unregisterReceiver(getDriverPresenter.instance().changeRideReceiver)
     }
 
 
     override fun onObjectUpdated() {
         getDriverPresenter.onUserLocationAttach()
     }
-
 }
