@@ -2,6 +2,7 @@ package bonch.dev.data.storage.passenger.getdriver
 
 import bonch.dev.App
 import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.Offer
 import io.realm.Case
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -9,7 +10,7 @@ import io.realm.RealmResults
 
 
 /**
- * Realm DataBase not supported filtered data with variable `Case`, if string is not England (2020 y)
+ * Realm DataBase not supported filtered data with variable `Case`, if string is not English (2020 y)
  * */
 
 

@@ -203,6 +203,8 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         }
 
         cancel_offer.setOnClickListener {
+            detailOrderPresenter.cancelOffer()
+
             hideOfferPrice(false)
         }
 

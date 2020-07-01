@@ -212,15 +212,15 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                 ride.price = rideInfo.price
                 ride.comment = rideInfo.comment
 
+                //save ride
+                ActiveRide.activeRide = ride
+
                 //create ride with SERVER
                 getDriverInteractor.createRide(ride) { isSuccess ->
 
                     getView()?.hideLoading()
 
                     if (isSuccess) {
-                        //save ride
-                        ActiveRide.activeRide = ride
-
                         //next step
                         MainRouter.showView(
                             R.id.show_get_driver_fragment,
@@ -228,6 +228,8 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                             null
                         )
                     } else {
+                        ActiveRide.activeRide = null
+
                         val res = App.appComponent.getContext().resources
                         getView()?.showNotification(res.getString(R.string.errorSystem))
                     }

@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.text.Html
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,7 @@ import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
-import bonch.dev.service.ride.passenger.RideService
+import bonch.dev.service.passenger.PassengerRideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -60,6 +59,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         trackRidePresenter.instance().attachView(this)
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,7 +67,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     ): View? {
         //start background service
         val app = App.appComponent.getApp()
-        app.startService(Intent(app.applicationContext, RideService::class.java))
+        app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
 
         //regestered receivers for listener data from service
         trackRidePresenter.registerReceivers()
@@ -426,7 +426,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             val rub = resources.getString(R.string.rub)
 
             message = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                message.plus(" ").plus(Html.fromHtml("<b>$tax $rub</b>", Html.FROM_HTML_MODE_COMPACT))
+                message.plus(" ")
+                    .plus(Html.fromHtml("<b>$tax $rub</b>", Html.FROM_HTML_MODE_COMPACT))
             } else {
                 message.plus(" ").plus(Html.fromHtml("<b>$tax $rub</b>"))
             }
@@ -439,6 +440,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         main_coordinator.elevation = 0f
         confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    override fun checkoutIconChat(isShow: Boolean) {
+        message_notification?.visibility = if (isShow) View.VISIBLE
+        else View.GONE
     }
 
 
@@ -472,13 +479,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onResume() {
-        RideService.isAppClose = false
+        message_notification?.visibility = View.GONE
+
+        PassengerRideService.isAppClose = false
         super.onResume()
     }
 
 
     override fun onPause() {
-        RideService.isAppClose = true
+        PassengerRideService.isAppClose = true
         super.onPause()
     }
 }

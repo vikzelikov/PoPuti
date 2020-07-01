@@ -76,12 +76,12 @@
         </activity>
 
         <service
-            android:name=".service.ride.passenger.RideService"
+            android:name="bonch.dev.service.passenger.PassengerRideService"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name=".service.ride.driver.RideService"
+            android:name="bonch.dev.service.driver.DriverRideService"
             android:enabled="true"
             android:exported="true" />
 

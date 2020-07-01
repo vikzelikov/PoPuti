@@ -102,9 +102,8 @@ class ChatRepository : IChatRepository {
         token: String,
         callback: SuccessHandler
     ) {
-        val log = "SOCKET_PUSHER/P"
+        val log = "CHAT_SOCKET/P"
         val apiKey = "4f8625f09b5081d92386"
-        val channelName = "ride"
 
         val options = PusherOptions()
         options.setCluster("mt1")
@@ -124,7 +123,7 @@ class ChatRepository : IChatRepository {
                 }
             }, ConnectionState.ALL)
 
-            channel = pusher?.subscribePrivate("private-$channelName.$rideId.chat",
+            channel = pusher?.subscribePrivate("private-ride.$rideId.chat",
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {}
 
@@ -142,15 +141,15 @@ class ChatRepository : IChatRepository {
     }
 
 
-    override fun subscribeOnMessages(callback: DataHandler<String?>) {
-        val rideChangeEvent = "App\\Events\\RideChange"
+    override fun subscribeOnChat(callback: DataHandler<String?>) {
+        val rideChangeEvent = "App\\Events\\CreateMessage"
 
         channel?.bind(rideChangeEvent, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
                     callback(event.data, null)
                 } else {
-                    callback(null, "error")
+                    callback(null, "Error")
                 }
             }
 

@@ -5,7 +5,8 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import bonch.dev.App
 import bonch.dev.data.repository.IMainRepository
-import bonch.dev.data.repository.MainRepository
+import bonch.dev.data.repository.common.ride.IRideRepository
+import bonch.dev.data.repository.common.ride.RideRepository
 import bonch.dev.data.repository.passenger.signup.ISignupRepository
 import bonch.dev.data.repository.passenger.signup.SignupRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
@@ -67,9 +68,9 @@ class AppModule(private val application: App) {
 
     @Provides
     @Singleton
-    fun provideMainRepository(): IMainRepository = MainRepository()
+    fun provideSignupRepository(): ISignupRepository = SignupRepository()
 
     @Provides
     @Singleton
-    fun provideSignupRepository(): ISignupRepository = SignupRepository()
+    fun provideRideRepository(): IRideRepository = RideRepository()
 }

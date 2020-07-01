@@ -8,4 +8,6 @@ interface IChatPresenter {
 
     fun getMessages()
 
+    fun registerReceivers()
+
 }

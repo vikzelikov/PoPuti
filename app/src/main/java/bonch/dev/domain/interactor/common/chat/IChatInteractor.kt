@@ -10,10 +10,4 @@ interface IChatInteractor {
 
     fun getMessages(callback: DataHandler<ArrayList<Message>?>)
 
-    fun connectSocket(callback: SuccessHandler)
-
-    fun subscribeOnMessages(callback: DataHandler<String?>)
-
-    fun disconnectSocket()
-
 }

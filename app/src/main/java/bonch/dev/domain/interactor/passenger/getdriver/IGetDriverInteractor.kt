@@ -25,17 +25,32 @@ interface IGetDriverInteractor {
 
     fun connectSocket(callback: SuccessHandler)
 
+    fun connectChatSocket(callback: SuccessHandler)
+
     fun subscribeOnChangeRide(callback: DataHandler<String?>)
 
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 
+    fun subscribeOnDeleteOffer(callback: DataHandler<String?>)
+
+    fun subscribeOnChat(callback: DataHandler<String?>)
+
     fun disconnectSocket()
+
+    fun saveRideId(rideId: Int)
+
+    fun getRideId(): Int
+
+    fun removeRideId()
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
     fun setDriverInRide(userId: Int, callback: SuccessHandler)
 
+    fun deleteOffer(offerId: Int, callback: SuccessHandler)
+
     fun sendReason(textReason: String, callback: SuccessHandler)
+
 
     //Cash
     fun getCashRequest(query: String): ArrayList<Address>?

@@ -48,73 +48,24 @@ class ChatInteractor : IChatInteractor {
                 if (messages == null || error != null) {
                     //retry request
                     chatRepository.getMessages(rideId) { arrMessages, _ ->
-                        if (arrMessages != null) {
-                            arrMessages.forEach { message ->
-                                if (message.author?.id == userId) message.isSender = true
-
-                                try {
-                                    val del = message.date?.length?.minus(3)
-                                    del?.let {
-                                        message.date = message.date?.substring(0, del)
-                                    }
-                                } catch (ex: StringIndexOutOfBoundsException) {
-
-                                } catch (ex: Exception) {
-
-                                }
-                            }
-
-                            callback(arrMessages, null)
-
-                        } else callback(null, "error")
+                        if (arrMessages != null) eventMessages(arrMessages, userId, callback)
+                        else callback(null, "error")
                     }
-                } else {
-                    messages.forEach { message ->
-                        if (message.author?.id == userId) message.isSender = true
-
-                        try {
-                            val del = message.date?.length?.minus(3)
-                            del?.let {
-                                message.date = message.date?.substring(0, del)
-                            }
-                        } catch (ex: StringIndexOutOfBoundsException) {
-
-                        } catch (ex: Exception) {
-
-                        }
-                    }
-
-                    callback(messages, null)
-                }
+                } else eventMessages(messages, userId, callback)
             }
         } else callback(null, "error")
     }
 
 
-    override fun connectSocket(callback: SuccessHandler) {
-        val rideId = ActiveRide.activeRide?.rideId
-        val token = profileStorage.getToken()
+    private fun eventMessages(
+        messages: ArrayList<Message>,
+        userId: Int,
+        callback: DataHandler<ArrayList<Message>?>
+    ) {
+        messages.forEach { message ->
+            if (message.author?.id == userId) message.isSender = true
+        }
 
-        if (token != null && rideId != null) {
-            chatRepository.connectSocket(rideId, token) { isSuccess ->
-                if (isSuccess) {
-                    callback(true)
-                } else {
-                    //retry connect
-                    chatRepository.connectSocket(rideId, token, callback)
-                }
-            }
-        } else callback(false)
+        callback(messages, null)
     }
-
-
-    override fun subscribeOnMessages(callback: DataHandler<String?>) {
-        chatRepository.subscribeOnMessages(callback)
-    }
-
-
-    override fun disconnectSocket() {
-        chatRepository.disconnectSocket()
-    }
-
 }

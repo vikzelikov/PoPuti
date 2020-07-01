@@ -4,6 +4,13 @@ import bonch.dev.domain.entities.common.profile.Profile
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
+
+open class MessageObject(
+    @SerializedName("message")
+    @Expose
+    var message: Message? = null
+)
+
 open class Message(
     @SerializedName("author_id")
     @Expose

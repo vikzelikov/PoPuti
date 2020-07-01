@@ -1,15 +1,22 @@
 package bonch.dev.presentation.modules.common.chat.presenter
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.chat.Message
+import bonch.dev.domain.entities.common.chat.MessageObject
 import bonch.dev.domain.interactor.common.chat.IChatInteractor
 import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.chat.view.IChatView
+import bonch.dev.service.passenger.PassengerRideService
+import com.google.gson.Gson
 import java.text.DateFormat
 import java.util.*
 import javax.inject.Inject
@@ -20,10 +27,47 @@ class ChatPresenter : BasePresenter<IChatView>(), IChatPresenter {
     @Inject
     lateinit var chatInteractor: IChatInteractor
 
+    private var isRegistered = false
+
 
     init {
         CommonComponent.commonComponent?.inject(this)
     }
+
+
+    private val chatReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            onReceiveMessage(intent)
+        }
+    }
+
+
+    private fun onReceiveMessage(intent: Intent?) {
+        val data = intent?.getStringExtra(PassengerRideService.CHAT_TAG)
+
+        if (data != null) {
+            val message = Gson().fromJson(data, MessageObject::class.java)?.message
+            if (message != null) {
+                getView()?.setMessageView(message)
+            }
+        }
+    }
+
+
+    override fun registerReceivers() {
+        val app = App.appComponent.getApp()
+
+        //check regestered receivers before
+        if (!isRegistered) {
+            app.registerReceiver(
+                chatReceiver,
+                IntentFilter(PassengerRideService.CHAT_TAG)
+            )
+
+            isRegistered = true
+        }
+    }
+
 
     override fun sendMessage(text: String) {
         if (text.isNotEmpty()) {
@@ -89,6 +133,23 @@ class ChatPresenter : BasePresenter<IChatView>(), IChatPresenter {
 
 
     private fun setMessages(list: ArrayList<Message>) {
+        try {
+            list.forEach { message ->
+                message.date?.let { date ->
+                    if (date.length > 5) {
+                        val del = message.date?.length?.minus(3)
+                        del?.let {
+                            message.date = message.date?.substring(0, del)
+                        }
+                    }
+                }
+            }
+        } catch (ex: StringIndexOutOfBoundsException) {
+
+        } catch (ex: Exception) {
+
+        }
+
         getView()?.getAdapter()?.list?.addAll(list)
         getView()?.getAdapter()?.notifyDataSetChanged()
     }

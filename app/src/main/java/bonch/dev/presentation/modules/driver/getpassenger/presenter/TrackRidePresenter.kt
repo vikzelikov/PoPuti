@@ -16,9 +16,8 @@ import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.common.chat.view.ChatView
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.view.ContractView
-import bonch.dev.service.ride.driver.RideService
+import bonch.dev.service.driver.DriverRideService
 import com.google.gson.Gson
-import java.lang.Exception
 import javax.inject.Inject
 
 class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
@@ -53,7 +52,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         if (!isRegistered) {
             app.registerReceiver(
                 changeRideReceiver,
-                IntentFilter(RideService.CHANGE_RIDE_TAG)
+                IntentFilter(DriverRideService.CHANGE_RIDE_TAG)
             )
 
             isRegistered = true
@@ -73,7 +72,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     private fun onChangeRide(intent: Intent?) {
         val res = App.appComponent.getContext().resources
 
-        val data = intent?.getStringExtra(RideService.CHANGE_RIDE_TAG)
+        val data = intent?.getStringExtra(DriverRideService.CHANGE_RIDE_TAG)
 
         if (data != null) {
             val ride = Gson().fromJson(data, Ride::class.java)?.ride
@@ -202,13 +201,14 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     override fun stopService(){
         val app = App.appComponent
-        app.getApp().stopService(Intent(app.getContext(), RideService::class.java))
+        app.getApp().stopService(Intent(app.getContext(), DriverRideService::class.java))
     }
 
 
     override fun clearRide() {
         ActiveRide.activeRide = null
         RideStatus.status = StatusRide.SEARCH
+        getPassengerInteractor.removeRideId()
     }
 
 

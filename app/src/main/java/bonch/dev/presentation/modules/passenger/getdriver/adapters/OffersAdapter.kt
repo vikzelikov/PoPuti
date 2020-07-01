@@ -8,22 +8,22 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
-import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverItemTimer
-import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.OfferItemTimer
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.OffersMainTimer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.driver_item.view.*
 import javax.inject.Inject
 
 
-class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPresenter.IGetDriverPresenter) :
-    RecyclerView.Adapter<DriversListAdapter.ItemPostHolder>() {
+class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresenter.IGetDriverPresenter) :
+    RecyclerView.Adapter<OffersAdapter.ItemPostHolder>() {
 
     var list: ArrayList<Offer> = arrayListOf()
 
     init {
-        if (DriverMainTimer.getInstance() == null)
-            DriverMainTimer.getInstance(this)?.start()
+        if (OffersMainTimer.getInstance() == null)
+            OffersMainTimer.getInstance(this)?.start()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
@@ -45,32 +45,32 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
         holder.bind(offer)
 
         timeLine.post({
-            if (DriverMainTimer.DEFAULT_WIDTH == 0) {
-                DriverMainTimer.DEFAULT_WIDTH = timeLine.measuredWidth - 50
+            if (OffersMainTimer.DEFAULT_WIDTH == 0) {
+                OffersMainTimer.DEFAULT_WIDTH = timeLine.measuredWidth - 50
             }
 
-            if (DriverMainTimer.ratio == 100) {
+            if (OffersMainTimer.ratio == 100) {
                 //calc ration
-                while ((DriverMainTimer.DEFAULT_WIDTH / (DriverMainTimer.TIME_EXPIRED_ITEM.toInt() * DriverMainTimer.ratio)) == 0) {
-                    DriverMainTimer.ratio--
+                while ((OffersMainTimer.DEFAULT_WIDTH / (OffersMainTimer.TIME_EXPIRED_ITEM.toInt() * OffersMainTimer.ratio)) == 0) {
+                    OffersMainTimer.ratio--
                 }
             }
 
-            holder.driverItemTimer?.cancel()
-            holder.driverItemTimer = DriverItemTimer(startTime.toLong() * 1000, 10, timeLine)
-            holder.driverItemTimer?.start()
+            holder.offerItemTimer?.cancel()
+            holder.offerItemTimer = OfferItemTimer(startTime.toLong() * 1000, 10, timeLine)
+            holder.offerItemTimer?.start()
 
         })
 
 
         holder.itemView.accept_driver.setOnClickListener {
-            getDriverPresenter.instance().offer = offer
+            getDriverPresenter.setOffer(offer)
             getDriverPresenter.instance().getView()?.getConfirmAccept(offer)
         }
     }
 
 
-    fun setNewDriver(offer: Offer) {
+    fun setNewOffer(offer: Offer) {
         list.add(0, offer)
         notifyItemInserted(0)
         notifyItemChanged(0)
@@ -81,12 +81,32 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
     }
 
 
-    fun rejectDriver(position: Int?, isUserAction: Boolean) {
+    fun deleteOffer(offerId: Int) {
+        var offer: Offer? = null
+        list.forEach {
+            offer = if (offerId == it.offerId) it
+            else null
+        }
+
+        offer?.let {
+            val position = list.indexOf(it)
+            rejectOffer(position, false)
+        }
+    }
+
+
+    fun rejectOffer(position: Int?, isUserAction: Boolean) {
         val recyclerView = getDriverPresenter.instance().getView()?.getRecyclerView()
 
         recyclerView?.post {
             try {
                 if (isUserAction && position != null) {
+                    list[position].offerId?.let {
+                        //delete offer with SERVER
+                        getDriverPresenter.deleteOffer(it)
+                    }
+
+                    //delete offer on view
                     list.removeAt(position)
                     notifyItemRemoved(position)
                 }
@@ -95,7 +115,7 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
 
             try {
                 if (!isUserAction) {
-                    val offer = getDriverPresenter.instance().offer
+                    val offer = getDriverPresenter.getOffer()
                     if (offer?.offerId == list[list.lastIndex].offerId) {
                         getDriverPresenter.instance().getView()?.hideConfirmAccept()
                     }
@@ -114,7 +134,7 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
 
 
     inner class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var driverItemTimer: DriverItemTimer? = null
+        var offerItemTimer: OfferItemTimer? = null
 
         fun bind(offer: Offer) {
             itemView.driver_name.text = offer.driver?.firstName
@@ -139,8 +159,8 @@ class DriversListAdapter @Inject constructor(val getDriverPresenter: ContractPre
                 .into(itemView.img_driver)
 
             itemView.reject_driver.setOnClickListener {
-                driverItemTimer?.cancel()
-                rejectDriver(adapterPosition, true)
+                offerItemTimer?.cancel()
+                rejectOffer(adapterPosition, true)
             }
         }
     }

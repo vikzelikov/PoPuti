@@ -14,8 +14,8 @@ import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPres
 import javax.inject.Inject
 
 
-class PaymentsListAdapter @Inject constructor(private val detailRidePresenter: ContractPresenter.IDetailRidePresenter) :
-    RecyclerView.Adapter<PaymentsListAdapter.ItemPostHolder>() {
+class PaymentsAdapter @Inject constructor(private val detailRidePresenter: ContractPresenter.IDetailRidePresenter) :
+    RecyclerView.Adapter<PaymentsAdapter.ItemPostHolder>() {
 
     var list: ArrayList<BankCard> = arrayListOf()
 

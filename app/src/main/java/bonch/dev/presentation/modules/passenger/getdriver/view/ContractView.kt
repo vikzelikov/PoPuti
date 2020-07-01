@@ -1,16 +1,14 @@
 package bonch.dev.presentation.modules.passenger.getdriver.view
 
-import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.domain.entities.common.banking.BankCard
-import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.presentation.interfaces.IBaseView
-import bonch.dev.presentation.modules.passenger.getdriver.adapters.AddressesListAdapter
-import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
-import bonch.dev.presentation.modules.passenger.getdriver.adapters.PaymentsListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.AddressesAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.OffersAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.PaymentsAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
@@ -29,7 +27,7 @@ interface ContractView {
 
 
     interface ICreateRideView : IBaseView {
-        fun getAddressesAdapter(): AddressesListAdapter
+        fun getAddressesAdapter(): AddressesAdapter
         fun setAddressView(isFrom: Boolean, address: String)
         fun removeAddressesView(isFrom: Boolean)
         fun onSlideBottomSheet(bottomSheet: View, slideOffset: Float)
@@ -40,7 +38,7 @@ interface ContractView {
         fun requestGeocoder(point: Point?)
         fun onBackPressed(): Boolean
         fun moveCamera(point: Point)
-        fun getActualFocus(): Boolean
+        fun getActualFocus(): Boolean?
         fun addressesMapViewChanged()
         fun showDetailRide()
         fun onObjectUpdate()
@@ -57,7 +55,7 @@ interface ContractView {
         fun hideAllBottomSheet()
         fun onSlideBottomSheet(slideOffset: Float)
         fun onStateChangedBottomSheet(newState: Int)
-        fun getPaymentsAdapter(): PaymentsListAdapter
+        fun getPaymentsAdapter(): PaymentsAdapter
         fun setAddresses(fromAddress: String, toAddress: String)
         fun setSelectedBankCard(bankCard: BankCard)
         fun offerPriceDone(price: Int, averagePrice: Int)
@@ -83,7 +81,7 @@ interface ContractView {
         fun getConfirmAccept(offer: Offer)
         fun getExpiredTimeConfirm()
         fun onBackPressed(): Boolean
-        fun getAdapter(): DriversListAdapter
+        fun getAdapter(): OffersAdapter
         fun getUserLocationLayer(): UserLocationLayer?
         fun checkoutBackground(isShow: Boolean)
         fun getRecyclerView(): RecyclerView?
@@ -96,6 +94,7 @@ interface ContractView {
     interface ITrackRideView : IBaseView {
         fun setInfoDriver(driver: Driver)
         fun onBackPressed(): Boolean
+        fun checkoutIconChat(isShow: Boolean)
         fun checkoutStatusView(idStep: StatusRide)
         fun getMap(): MapView?
         fun nextFragment()

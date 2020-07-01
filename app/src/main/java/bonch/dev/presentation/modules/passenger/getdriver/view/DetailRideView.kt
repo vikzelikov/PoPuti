@@ -28,7 +28,7 @@ import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.adapters.PaymentsListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.PaymentsAdapter
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -43,7 +43,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     lateinit var detailRidePresenter: ContractPresenter.IDetailRidePresenter
 
     @Inject
-    lateinit var paymentsListAdapter: PaymentsListAdapter
+    lateinit var paymentAdapter: PaymentsAdapter
+
 
     private var cardsBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
@@ -224,12 +225,12 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
                 R.drawable.ic_google_pay
             )
         )
-        paymentsListAdapter.list = list
+        paymentAdapter.list = list
 
         payments_list.apply {
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = paymentsListAdapter
+            adapter = paymentAdapter
         }
     }
 
@@ -444,8 +445,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     }
 
 
-    override fun getPaymentsAdapter(): PaymentsListAdapter {
-        return paymentsListAdapter
+    override fun getPaymentsAdapter(): PaymentsAdapter {
+        return paymentAdapter
     }
 
 

@@ -60,7 +60,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ava" />
+                    android:src="@drawable/ic_default_ava" />
 
                 <TextView
                     android:id="@+id/driver_name"
@@ -176,7 +176,8 @@
                             android:layout_marginStart="50dp"
                             android:layout_marginTop="15dp"
                             android:elevation="7dp"
-                            android:src="@drawable/ic_notification" />
+                            android:src="@drawable/ic_notification"
+                            android:visibility="gone" />
 
                     </RelativeLayout>
 

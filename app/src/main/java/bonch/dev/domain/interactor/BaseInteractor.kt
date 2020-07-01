@@ -1,7 +1,7 @@
 package bonch.dev.domain.interactor
 
 import bonch.dev.App
-import bonch.dev.data.repository.IMainRepository
+import bonch.dev.data.repository.common.ride.IRideRepository
 import bonch.dev.data.repository.passenger.signup.ISignupRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.passenger.getdriver.IGetDriverStorage
@@ -16,7 +16,7 @@ class BaseInteractor : IBaseInteractor {
     lateinit var signupRepository: ISignupRepository
 
     @Inject
-    lateinit var mainRepository: IMainRepository
+    lateinit var rideRepository: IRideRepository
 
     @Inject
     lateinit var profileStorage: IProfileStorage
@@ -59,13 +59,13 @@ class BaseInteractor : IBaseInteractor {
 
 
     override fun getRide(rideId: Int, callback: DataHandler<RideInfo?>) {
-        mainRepository.getRide(rideId) { data, error ->
+        rideRepository.getRide(rideId) { data, error ->
             if (data == null && error != null) {
                 //retry request
-                mainRepository.getRide(rideId) { dataRide, _ ->
+                rideRepository.getRide(rideId) { dataRide, _ ->
                     if (dataRide == null) {
                         //error
-                        callback(null, "error")
+                        callback(null, "Error")
                     } else {
                         //success
                         callback(dataRide, null)

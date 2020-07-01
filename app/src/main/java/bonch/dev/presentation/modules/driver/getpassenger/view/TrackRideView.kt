@@ -32,7 +32,7 @@ import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.presentation.modules.driver.getpassenger.presenter.ContractPresenter
-import bonch.dev.service.ride.driver.RideService
+import bonch.dev.service.driver.DriverRideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -74,7 +74,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     ): View? {
         //start background service
         val app = App.appComponent.getApp()
-        app.startService(Intent(app.applicationContext, RideService::class.java))
+        app.startService(Intent(app.applicationContext, DriverRideService::class.java))
 
         //regestered receivers for listener data from service
         trackRidePresenter.registerReceivers()
@@ -677,13 +677,13 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onResume() {
-        RideService.isAppClose = false
+        DriverRideService.isAppClose = false
         super.onResume()
     }
 
 
     override fun onPause() {
-        RideService.isAppClose = true
+        DriverRideService.isAppClose = true
         super.onPause()
     }
 }

@@ -2,6 +2,7 @@ package bonch.dev.presentation.modules.common.chat.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -19,11 +20,11 @@ import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.common.CommonComponent
 import bonch.dev.presentation.modules.common.chat.adapters.ChatAdapter
 import bonch.dev.presentation.modules.common.chat.presenter.IChatPresenter
+import bonch.dev.service.driver.DriverRideService
+import bonch.dev.service.passenger.PassengerRideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.chat_activity.*
-import java.text.DateFormat
-import java.util.*
 import javax.inject.Inject
 
 class ChatView : AppCompatActivity(), IChatView {
@@ -66,9 +67,22 @@ class ChatView : AppCompatActivity(), IChatView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
 
+        val app = App.appComponent.getApp()
+
+        //regestered receivers for listener data from service
+        chatPresenter.registerReceivers()
+
         val isDriver = intent.getBooleanExtra(IS_DRIVER, false)
-        name.text = if (isDriver) ActiveRide.activeRide?.passenger?.firstName
-        else ActiveRide.activeRide?.driver?.firstName
+        name.text = if (isDriver) {
+            //start background service
+            app.startService(Intent(app.applicationContext, DriverRideService::class.java))
+            ActiveRide.activeRide?.passenger?.firstName
+
+        } else {
+            //start background service
+            app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
+            ActiveRide.activeRide?.driver?.firstName
+        }
 
         setPhoto(isDriver)
 
@@ -110,15 +124,30 @@ class ChatView : AppCompatActivity(), IChatView {
 
 
     override fun setMessageView(message: Message) {
+        try {
+            message.date?.let { date ->
+                if (date.length > 5) {
+                    val del = message.date?.length?.minus(3)
+                    del?.let {
+                        message.date = message.date?.substring(0, del)
+                    }
+                }
+            }
+        } catch (ex: StringIndexOutOfBoundsException) {
+
+        } catch (ex: Exception) {
+
+        }
+
         getAdapter().setMessage(message)
 
-        message_text_edit.setText("")
+        message_text_edit?.setText("")
         scrollBottom()
     }
 
 
     private fun initChatAdapter() {
-        chat_recycler.apply {
+        chat_recycler?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = chatAdapter
         }
@@ -126,7 +155,7 @@ class ChatView : AppCompatActivity(), IChatView {
 
 
     override fun scrollBottom() {
-        chat_recycler.scrollToPosition(getAdapter().list.count() - 1)
+        chat_recycler?.scrollToPosition(getAdapter().list.count() - 1)
     }
 
 
@@ -146,24 +175,24 @@ class ChatView : AppCompatActivity(), IChatView {
 
 
     override fun showLoading() {
-        progress_bar.visibility = View.VISIBLE
+        progress_bar?.visibility = View.VISIBLE
     }
 
 
     override fun hideLoading() {
-        progress_bar.visibility = View.GONE
+        progress_bar?.visibility = View.GONE
     }
 
 
     override fun showEmptyIcon() {
-        chat_empty_icon.visibility = View.VISIBLE
-        chat_empty_text.visibility = View.VISIBLE
+        chat_empty_icon?.visibility = View.VISIBLE
+        chat_empty_text?.visibility = View.VISIBLE
     }
 
 
     override fun hideEmptyIcon() {
-        chat_empty_icon.visibility = View.GONE
-        chat_empty_text.visibility = View.GONE
+        chat_empty_icon?.visibility = View.GONE
+        chat_empty_text?.visibility = View.GONE
     }
 
 
@@ -174,13 +203,15 @@ class ChatView : AppCompatActivity(), IChatView {
         var startHeight = 0
         var isUp = true
 
-        chat_activity.viewTreeObserver
-            .addOnGlobalLayoutListener {
+        chat_activity?.viewTreeObserver
+            ?.addOnGlobalLayoutListener {
                 chat_activity.getWindowVisibleDisplayFrame(rect)
                 heightDiff = screenHeight - (rect.bottom - rect.top)
 
                 if (screenHeight == 0) {
-                    screenHeight = chat_activity.rootView.height
+                    chat_activity?.rootView?.height?.let {
+                        screenHeight = it
+                    }
                 }
 
                 if (startHeight == 0) {
@@ -208,17 +239,17 @@ class ChatView : AppCompatActivity(), IChatView {
     override fun showNotification(text: String) {
         val view = general_notification
 
-        view.text = text
+        view?.text = text
         handlerAnimation?.removeCallbacksAndMessages(null)
         handlerAnimation = Handler()
-        view.translationY = 0.0f
-        view.alpha = 0.0f
+        view?.translationY = 0.0f
+        view?.alpha = 0.0f
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(100f)
-            .alpha(1.0f)
-            .setListener(object : AnimatorListenerAdapter() {
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(100f)
+            ?.alpha(1.0f)
+            ?.setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
                     handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
@@ -230,10 +261,22 @@ class ChatView : AppCompatActivity(), IChatView {
     private fun hideNotifications() {
         val view = general_notification
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(-100f)
-            .alpha(0.0f)
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(-100f)
+            ?.alpha(0.0f)
+    }
+
+
+    override fun onResume() {
+        PassengerRideService.isChatClose = false
+        super.onResume()
+    }
+
+
+    override fun onPause() {
+        PassengerRideService.isChatClose = true
+        super.onPause()
     }
 
 

@@ -1,5 +1,6 @@
 package bonch.dev.domain.interactor.driver.getpassenger
 
+import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.presentation.interfaces.DataHandler
@@ -18,11 +19,17 @@ interface IGetPassengerInteractor {
 
     fun setDriverInRide(callback: SuccessHandler)
 
-    fun saveRideId()
+    fun saveRideId(rideId: Int)
+
+    fun getRideId(): Int
+
+    fun removeRideId()
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
-    fun offerPrice(price: Int, rideId: Int, callback: SuccessHandler)
+    fun offerPrice(price: Int, rideId: Int, callback: DataHandler<Offer?>)
+
+    fun deleteOffer(offerId: Int, callback: SuccessHandler)
 
     fun getNewOrder(callback: DataHandler<ArrayList<RideInfo>?>)
 

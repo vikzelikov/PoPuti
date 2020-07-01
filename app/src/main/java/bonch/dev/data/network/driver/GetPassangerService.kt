@@ -1,6 +1,8 @@
 package bonch.dev.data.network.driver
 
 import bonch.dev.data.network.common.RideService
+import bonch.dev.domain.entities.common.ride.Offer
+import bonch.dev.domain.entities.common.ride.OfferPrice
 import bonch.dev.domain.entities.common.ride.RideInfo
 import retrofit2.Response
 import retrofit2.http.*
@@ -20,6 +22,6 @@ interface GetPassangerService : RideService {
         @Field("price") price: Int,
         @Field("ride_id") rideId: Int,
         @Field("driver_id") userId: Int
-    ): Response<*>
+    ): Response<OfferPrice>
 
 }

@@ -23,9 +23,9 @@ import bonch.dev.presentation.base.MBottomSheet
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.adapters.DriversListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.OffersAdapter
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
-import bonch.dev.service.ride.passenger.RideService
+import bonch.dev.service.passenger.PassengerRideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -42,7 +42,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     lateinit var getDriverPresenter: ContractPresenter.IGetDriverPresenter
 
     @Inject
-    lateinit var driversListAdapter: DriversListAdapter
+    lateinit var offersAdapter: OffersAdapter
 
     private var cancelBottomSheet: BottomSheetBehavior<*>? = null
     private var confirmCancelBottomSheet: BottomSheetBehavior<*>? = null
@@ -73,7 +73,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         RideStatus.status = StatusRide.SEARCH
 
         //start background service
-        app.startService(Intent(app.applicationContext, RideService::class.java))
+        app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
 
         //regestered receivers for listener data from service
         getDriverPresenter.registerReceivers()
@@ -403,13 +403,13 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     private fun initializeAdapter() {
-        driversListAdapter.list = getDriverPresenter.getOffers()
+        offersAdapter.list = getDriverPresenter.getOffers()
 
-        if (!driversListAdapter.list.isNullOrEmpty()) checkoutBackground(false)
+        if (!offersAdapter.list.isNullOrEmpty()) checkoutBackground(false)
 
         driver_list.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = driversListAdapter
+            adapter = offersAdapter
         }
 
         driver_list.visibility = View.VISIBLE
@@ -437,8 +437,8 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    override fun getAdapter(): DriversListAdapter {
-        return driversListAdapter
+    override fun getAdapter(): OffersAdapter {
+        return offersAdapter
     }
 
 
@@ -524,13 +524,13 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
     override fun onResume() {
         super.onResume()
-        RideService.isAppClose = false
+        PassengerRideService.isAppClose = false
     }
 
 
     override fun onPause() {
         super.onPause()
-        RideService.isAppClose = true
+        PassengerRideService.isAppClose = true
     }
 
 

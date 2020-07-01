@@ -89,6 +89,9 @@ interface ContractPresenter {
         fun cancelDoneOtherReason(comment: String)
         fun timeExpired(textReason: String)
         fun getOffers(): ArrayList<Offer>
+        fun deleteOffer(offerId: Int)
+        fun setOffer(offer: Offer)
+        fun getOffer(): Offer?
         fun onUserLocationAttach()
         fun registerReceivers()
         fun confirmAccept()

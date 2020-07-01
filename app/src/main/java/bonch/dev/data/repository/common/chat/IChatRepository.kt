@@ -16,7 +16,7 @@ interface IChatRepository {
         callback: SuccessHandler
     )
 
-    fun subscribeOnMessages(callback: DataHandler<String?>)
+    fun subscribeOnChat(callback: DataHandler<String?>)
 
     fun disconnectSocket()
 }

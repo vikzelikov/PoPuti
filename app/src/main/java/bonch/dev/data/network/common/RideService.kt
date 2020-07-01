@@ -26,12 +26,6 @@ interface RideService {
     ): Response<*>
 
 
-    @GET("/api/rides/{id}")
-    suspend fun getRide(
-        @Path("id") rideId: Int
-    ): Response<RideInfo>
-
-
     @FormUrlEncoded
     @POST("/api/reasons")
     suspend fun sendReason(
@@ -47,5 +41,19 @@ interface RideService {
         @HeaderMap headers: Map<String, String>,
         @Body review: Review
     ): Response<*>
+
+
+    @DELETE("/api/offers/{id}")
+    suspend fun deleteOffer(
+        @HeaderMap headers: Map<String, String>,
+        @Path("id") offerId: Int
+    ): Response<*>
+
+
+    @GET("/api/rides/{id}")
+    suspend fun getRide(
+        @Path("id") rideId: Int
+    ): Response<RideInfo>
+
 
 }

@@ -205,6 +205,25 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
+    override fun subscribeOnDeleteOffer(callback: DataHandler<String?>) {
+        val offerPriceEvent = "App\\Events\\CancelOffer"
+
+        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
+    }
+
+
     override fun disconnectSocket() {
         Log.w("SOCKET_PUSHER/P", "SOCKET DISCONNECTED")
         pusher?.disconnect()
@@ -327,6 +346,33 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
-    override fun getRide(rideId: Int, callback: DataHandler<RideInfo?>) {}
 
+
+    override fun deleteOffer(offerId: Int, token: String, callback: SuccessHandler) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.deleteOffer(headers, offerId)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e("DELETE_OFFER", "${response.code()}")
+                        callback(false)
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("DELETE_OFFER", "${err.printStackTrace()}")
+                callback(false)
+            }
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package bonch.dev.di.module.passenger
 
+import bonch.dev.data.repository.common.chat.ChatRepository
+import bonch.dev.data.repository.common.chat.IChatRepository
 import bonch.dev.data.repository.passenger.getdriver.GetDriverRepository
 import bonch.dev.data.repository.passenger.getdriver.IGetDriverRepository
 import bonch.dev.data.storage.passenger.getdriver.GetDriverStorage
@@ -63,6 +65,11 @@ class GetDriverModule {
     @Provides
     @CompScope
     fun provideGetDriverRepository(): IGetDriverRepository = GetDriverRepository()
+
+
+    @Provides
+    @CompScope
+    fun provideChatRepository(): IChatRepository = ChatRepository()
 
 
     @Provides

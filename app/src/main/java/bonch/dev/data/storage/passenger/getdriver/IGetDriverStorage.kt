@@ -1,6 +1,7 @@
 package bonch.dev.data.storage.passenger.getdriver
 
 import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.Offer
 import io.realm.RealmResults
 
 interface IGetDriverStorage {

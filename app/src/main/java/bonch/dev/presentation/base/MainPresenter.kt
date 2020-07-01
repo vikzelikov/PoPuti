@@ -4,6 +4,8 @@ import androidx.navigation.get
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.IBaseInteractor
 import bonch.dev.presentation.interfaces.IMainActivity
@@ -36,44 +38,61 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         baseInteractor.validateAccount { isSuccess ->
             if (isSuccess) {
                 if (accessToken != null && userId != -1) {
-
-//                    val rideId = baseInteractor.getRideId()
-//                    if (rideId == -1) {
-//
-//                    } else {
-//                        baseInteractor.getRide(rideId) { ride, _ ->
-//                            if (ride != null) {
-//                                ActiveRide.activeRide = ride
-//
-//
-//                            }
-//                        }
-//                    }
-
-                    getView()?.changeInputMode()
-
+                    val rideId = baseInteractor.getRideId()
                     val ride = ActiveRide.activeRide
 
-                    //redirect to full app
-                    if (baseInteractor.isCheckoutDriver()) {
-                        getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
-                    } else {
-                        if (ride != null) {
-                            //next step
-                            MainRouter.showView(
-                                R.id.get_driver_fragment,
-                                getView()?.getNavHost(),
-                                null
-                            )
-                        } else getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
+                    //check on active ride
+                    when {
+                        //there is active ride
+                        ride != null -> redirectView(ride)
+
+                        rideId != -1 -> {
+                            //check with server on active ride
+                            baseInteractor.getRide(rideId) { rideInfo, _ ->
+                                if (rideInfo?.statusId != null) {
+                                    //save ride local
+                                    ActiveRide.activeRide = rideInfo
+
+                                    //save status ride local
+                                    rideInfo.statusId?.let { statusId ->
+                                        getByValue(statusId)?.let { RideStatus.status = it }
+                                    }
+
+                                    //change view according to ride
+                                    redirectView(rideInfo)
+
+                                } else getView()?.hideFullLoading()
+                            }
+                        }
+
+                        //not active ride
+                        else -> redirectView(null)
                     }
-
-                    getView()?.hideFullLoading()
-
                 } else getView()?.hideFullLoading()
             } else getView()?.hideFullLoading()
-
         }
+    }
+
+
+    private fun redirectView(ride: RideInfo?) {
+        //change behavior all screen in case open keyboard
+        getView()?.changeInputMode()
+
+        //redirect to full app
+        if (baseInteractor.isCheckoutDriver()) {
+            getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
+        } else {
+            if (ride != null) {
+                //next step
+                MainRouter.showView(
+                    R.id.get_driver_fragment,
+                    getView()?.getNavHost(),
+                    null
+                )
+            } else getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
+        }
+
+        getView()?.hideFullLoading()
     }
 
 
@@ -161,6 +180,9 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
             getView()?.pressBack()
         }
     }
+
+
+    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
     override fun instance(): MainPresenter {

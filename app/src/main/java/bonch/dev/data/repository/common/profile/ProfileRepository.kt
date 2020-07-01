@@ -7,7 +7,6 @@ import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.interfaces.DataHandler
-import bonch.dev.presentation.interfaces.ErrorHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

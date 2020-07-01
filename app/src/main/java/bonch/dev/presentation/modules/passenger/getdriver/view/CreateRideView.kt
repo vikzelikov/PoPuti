@@ -28,7 +28,7 @@ import bonch.dev.presentation.base.MBottomSheet
 import bonch.dev.presentation.interfaces.ParentHandler
 import bonch.dev.presentation.interfaces.ParentMapHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
-import bonch.dev.presentation.modules.passenger.getdriver.adapters.AddressesListAdapter
+import bonch.dev.presentation.modules.passenger.getdriver.adapters.AddressesAdapter
 import bonch.dev.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
@@ -44,7 +44,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     lateinit var createRidePresenter: ContractPresenter.ICreateRidePresenter
 
     @Inject
-    lateinit var addressesListAdapter: AddressesListAdapter
+    lateinit var addressAdapter: AddressesAdapter
 
     private var bottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var isBlockSelection = false
@@ -102,7 +102,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
         addresses_list.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = addressesListAdapter
+            adapter = addressAdapter
         }
     }
 
@@ -177,9 +177,9 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.isNotEmpty() && bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    from_cross.visibility = View.VISIBLE
+                    from_cross?.visibility = View.VISIBLE
                 } else {
-                    from_cross.visibility = View.GONE
+                    from_cross?.visibility = View.GONE
                 }
             }
         })
@@ -195,9 +195,9 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.isNotEmpty() && bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    to_cross.visibility = View.VISIBLE
+                    to_cross?.visibility = View.VISIBLE
                 } else {
-                    to_cross.visibility = View.GONE
+                    to_cross?.visibility = View.GONE
                 }
             }
         })
@@ -225,52 +225,52 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
 
     override fun showStartUI() {
-        center_position.setImageResource(R.drawable.ic_map_marker)
-        main_addresses_layout.visibility = View.VISIBLE
-        addresses_list.visibility = View.VISIBLE
-        address_map_marker_layout.visibility = View.GONE
-        back_btn.visibility = View.GONE
+        center_position?.setImageResource(R.drawable.ic_map_marker)
+        main_addresses_layout?.visibility = View.VISIBLE
+        addresses_list?.visibility = View.VISIBLE
+        address_map_marker_layout?.visibility = View.GONE
+        back_btn?.visibility = View.GONE
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
     override fun setAddressView(isFrom: Boolean, address: String) {
         if (isFrom) {
-            from_adr.setText(address)
+            from_adr?.setText(address)
         } else {
-            to_adr.setText(address)
+            to_adr?.setText(address)
         }
 
-        address_map_text.text = address
+        address_map_text?.text = address
     }
 
 
-    override fun getActualFocus(): Boolean {
-        return (address_map_marker_layout.isVisible)
+    override fun getActualFocus(): Boolean? {
+        return address_map_marker_layout?.isVisible
     }
 
 
     override fun removeAddressesView(isFrom: Boolean) {
         if (isFrom) {
-            from_adr.setText("")
+            from_adr?.setText("")
 //            not allow user to remove 'from' address
 //            fromAdr = null
         } else {
-            to_adr.setText("")
+            to_adr?.setText("")
         }
     }
 
 
     override fun addressesMapViewChanged() {
-        main_addresses_layout.visibility = View.GONE
-        addresses_list.visibility = View.GONE
-        address_map_marker_layout.visibility = View.VISIBLE
-        back_btn.visibility = View.VISIBLE
+        main_addresses_layout?.visibility = View.GONE
+        addresses_list?.visibility = View.GONE
+        address_map_marker_layout?.visibility = View.VISIBLE
+        back_btn?.visibility = View.VISIBLE
 
-        address_map_text.isSelected = true
-        center_position.setImageResource(R.drawable.ic_map_marker_black)
-        circle_marker.setImageResource(R.drawable.ic_input_marker_to)
-        address_map_marker_btn.setBackgroundResource(R.drawable.bg_btn_black)
+        address_map_text?.isSelected = true
+        center_position?.setImageResource(R.drawable.ic_map_marker_black)
+        circle_marker?.setImageResource(R.drawable.ic_input_marker_to)
+        address_map_marker_btn?.setBackgroundResource(R.drawable.bg_btn_black)
 
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         hideKeyboard()
@@ -279,44 +279,50 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
     override fun expandedBottomSheet(isFrom: Boolean) {
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
-        from_adr.isSingleLine = true
-        to_adr.isSingleLine = true
+        from_adr?.isSingleLine = true
+        to_adr?.isSingleLine = true
 
         if (isFrom) {
-            if (to_adr.isFocused) {
-                createRidePresenter.clearSuggest()
+            to_adr?.let {
+                if (to_adr.isFocused) {
+                    createRidePresenter.clearSuggest()
+                }
             }
 
             if (!isBlockSelection) {
-                from_adr.requestFocus()
-                from_adr.setSelection(from_adr.text.length)
+                from_adr?.requestFocus()
+                from_adr?.setSelection(from_adr.text.length)
 
-                if (from_adr_box.visibility == View.VISIBLE) {
+                if (from_adr_box?.visibility == View.VISIBLE) {
                     expandedBottomSheetEvent()
                 }
 
                 isBlockSelection = true
             }
 
-            btn_map_from.visibility = View.VISIBLE
-            btn_map_to.visibility = View.GONE
-            to_cross.visibility = View.GONE
+            btn_map_from?.visibility = View.VISIBLE
+            btn_map_to?.visibility = View.GONE
+            to_cross?.visibility = View.GONE
 
-            if (from_adr.text.isNotEmpty()) {
-                from_cross.visibility = View.VISIBLE
-            } else {
-                //set favourite addresses
-                createRidePresenter.getCashSuggest()
-                from_cross.visibility = View.GONE
+            from_adr?.let {
+                if (from_adr.text.isNotEmpty()) {
+                    from_cross?.visibility = View.VISIBLE
+                } else {
+                    //set favourite addresses
+                    createRidePresenter.getCashSuggest()
+                    from_cross?.visibility = View.GONE
+                }
             }
         } else {
-            if (from_adr.isFocused) {
-                createRidePresenter.clearSuggest()
+            from_adr?.let {
+                if (it.isFocused) {
+                    createRidePresenter.clearSuggest()
+                }
             }
 
             if (!isBlockSelection) {
-                to_adr.requestFocus()
-                to_adr.setSelection(to_adr.text.length)
+                to_adr?.requestFocus()
+                to_adr?.setSelection(to_adr.text.length)
 
                 if (to_adr_box.visibility == View.VISIBLE) {
                     expandedBottomSheetEvent()
@@ -325,16 +331,18 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
                 isBlockSelection = true
             }
 
-            btn_map_from.visibility = View.GONE
-            btn_map_to.visibility = View.VISIBLE
-            from_cross.visibility = View.GONE
+            btn_map_from?.visibility = View.GONE
+            btn_map_to?.visibility = View.VISIBLE
+            from_cross?.visibility = View.GONE
 
-            if (to_adr.text.isNotEmpty()) {
-                to_cross.visibility = View.VISIBLE
-            } else {
-                //set favourite addresses
-                createRidePresenter.getCashSuggest()
-                to_cross.visibility = View.GONE
+            to_adr?.let {
+                if (to_adr.text.isNotEmpty()) {
+                    to_cross?.visibility = View.VISIBLE
+                } else {
+                    //set favourite addresses
+                    createRidePresenter.getCashSuggest()
+                    to_cross?.visibility = View.GONE
+                }
             }
         }
     }
@@ -348,8 +356,8 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
                 Keyboard.showKeyboard(activity)
             }
         }, 300)
-        from_adr_box.visibility = View.GONE
-        to_adr_box.visibility = View.GONE
+        from_adr_box?.visibility = View.GONE
+        to_adr_box?.visibility = View.GONE
     }
 
 
@@ -369,11 +377,11 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         shape.setColor(Color.parseColor("#${ChangeOpacity.getOpacity(expandedValue)}FFFFFF"))
         bottomSheet.background = shape
 
-        my_pos.alpha = 1 - slideOffset * 3
-        center_position.alpha = 1 - slideOffset * 3
-        on_map_view.alpha = slideOffset * 0.8f
-        addresses_list.alpha = slideOffset
-        bottom_sheet_arrow.alpha = slideOffset
+        my_pos?.alpha = 1 - slideOffset * 3
+        center_position?.alpha = 1 - slideOffset * 3
+        on_map_view?.alpha = slideOffset * 0.8f
+        addresses_list?.alpha = slideOffset
+        bottom_sheet_arrow?.alpha = slideOffset
     }
 
 
@@ -387,37 +395,37 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
             }
         } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             if (bottomSheetBehavior is MBottomSheet<*>) {
-                btn_map_from.visibility = View.GONE
-                btn_map_to.visibility = View.GONE
-                from_cross.visibility = View.GONE
-                to_cross.visibility = View.GONE
-                on_map_view.visibility = View.GONE
-                from_adr_box.visibility = View.VISIBLE
-                to_adr_box.visibility = View.VISIBLE
-                from_adr.clearFocus()
-                to_adr.clearFocus()
+                btn_map_from?.visibility = View.GONE
+                btn_map_to?.visibility = View.GONE
+                from_cross?.visibility = View.GONE
+                to_cross?.visibility = View.GONE
+                on_map_view?.visibility = View.GONE
+                from_adr_box?.visibility = View.VISIBLE
+                to_adr_box?.visibility = View.VISIBLE
+                from_adr?.clearFocus()
+                to_adr?.clearFocus()
 
-                from_adr.isSingleLine = false
-                to_adr.isSingleLine = false
+                from_adr?.isSingleLine = false
+                to_adr?.isSingleLine = false
                 isBlockSelection = false
-                from_adr.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
-                to_adr.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
+                from_adr?.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
+                to_adr?.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
                 (bottomSheetBehavior as MBottomSheet<*>).swipeEnabled = false
             }
         } else {
-            on_map_view.visibility = View.VISIBLE
+            on_map_view?.visibility = View.VISIBLE
         }
     }
 
 
     override fun onClickItem(address: Address, isFromMapSearch: Boolean) {
         if (isFromMapSearch) {
-            from_adr.setText(address.address)
-            from_adr.setSelection(from_adr.text.length)
+            from_adr?.setText(address.address)
+            from_adr?.setSelection(from_adr.text.length)
             Coordinate.fromAdr = address
         } else {
-            to_adr.setText(address.address)
-            to_adr.setSelection(to_adr.text.length)
+            to_adr?.setText(address.address)
+            to_adr?.setSelection(to_adr.text.length)
             Coordinate.toAdr = address
         }
     }
@@ -428,8 +436,8 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     }
 
 
-    override fun getAddressesAdapter(): AddressesListAdapter {
-        return addressesListAdapter
+    override fun getAddressesAdapter(): AddressesAdapter {
+        return addressAdapter
     }
 
 
@@ -469,7 +477,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
             isBackPressed = false
         }
 
-        if (address_map_marker_layout.visibility == View.VISIBLE) {
+        if (address_map_marker_layout?.visibility == View.VISIBLE) {
             createRidePresenter.instance().isFromMapSearch = true
             isBackPressed = false
             showStartUI()
@@ -481,17 +489,16 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
     override fun showDetailRide() {
         //Out transition: (alpha from 0.5 to 0)
-        create_ride_container.alpha = 1.0f
-        create_ride_container.animate()
-            .alpha(0f)
-            .setDuration(150)
-            .setListener(object : AnimatorListenerAdapter() {
+        create_ride_container?.alpha = 1.0f
+        create_ride_container?.animate()
+            ?.alpha(0f)
+            ?.setDuration(150)
+            ?.setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     //go to the next screen
                     nextFragment()
                 }
             })
-
     }
 
 

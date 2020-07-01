@@ -1,4 +1,4 @@
-package bonch.dev.service.ride.driver
+package bonch.dev.service.driver
 
 import android.app.*
 import android.content.Context
@@ -16,7 +16,7 @@ import bonch.dev.domain.interactor.driver.getpassenger.GetPassengerInteractor
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import com.google.gson.Gson
 
-class RideService : Service() {
+class DriverRideService : Service() {
 
     private val context = App.appComponent.getContext()
     private val notificatonManager =

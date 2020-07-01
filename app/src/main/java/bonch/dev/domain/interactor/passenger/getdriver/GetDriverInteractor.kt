@@ -1,15 +1,18 @@
 package bonch.dev.domain.interactor.passenger.getdriver
 
 import android.util.Log
+import bonch.dev.data.repository.common.chat.IChatRepository
 import bonch.dev.data.repository.passenger.getdriver.IGetDriverRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.passenger.getdriver.IGetDriverStorage
+import bonch.dev.domain.entities.common.chat.MessageObject
 import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.interfaces.SuggestHandler
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
+import com.google.gson.Gson
 import com.yandex.mapkit.geometry.Point
 import io.realm.RealmResults
 import javax.inject.Inject
@@ -18,6 +21,9 @@ class GetDriverInteractor : IGetDriverInteractor {
 
     @Inject
     lateinit var getDriverRepository: IGetDriverRepository
+
+    @Inject
+    lateinit var chatRepository: IChatRepository
 
     @Inject
     lateinit var getDriverStorage: IGetDriverStorage
@@ -68,7 +74,7 @@ class GetDriverInteractor : IGetDriverInteractor {
 
                         if (id != null) {
                             //Ok
-                            getDriverStorage.saveRideId(id)
+                            saveRideId(id)
                             callback(true)
                         } else {
                             //error
@@ -77,7 +83,7 @@ class GetDriverInteractor : IGetDriverInteractor {
                     }
                 } else if (rideId != null) {
                     //Ok
-                    getDriverStorage.saveRideId(rideId)
+                    saveRideId(rideId)
                     callback(true)
                 }
             }
@@ -119,17 +125,68 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
+    override fun subscribeOnDeleteOffer(callback: DataHandler<String?>) {
+        getDriverRepository.subscribeOnDeleteOffer(callback)
+    }
+
+
+    override fun connectChatSocket(callback: SuccessHandler) {
+        val rideId = ActiveRide.activeRide?.rideId
+        val token = profileStorage.getToken()
+
+        if (token != null && rideId != null) {
+            chatRepository.connectSocket(rideId, token) { isSuccess ->
+                if (isSuccess) {
+                    callback(true)
+                } else {
+                    //retry connect
+                    chatRepository.connectSocket(rideId, token, callback)
+                }
+            }
+        } else callback(false)
+    }
+
+
+    override fun subscribeOnChat(callback: DataHandler<String?>) {
+        val userId = profileStorage.getUserId()
+
+        if (userId != -1) {
+            chatRepository.subscribeOnChat { data, _ ->
+                val message = Gson().fromJson(data, MessageObject::class.java)?.message
+                if (message?.author?.id != userId) callback(data, null)
+            }
+        }
+    }
+
+
     override fun disconnectSocket() {
         getDriverRepository.disconnectSocket()
+        chatRepository.disconnectSocket()
+    }
+
+
+    override fun saveRideId(rideId: Int) {
+        ActiveRide.activeRide?.rideId = rideId
+        getDriverStorage.saveRideId(rideId)
+    }
+
+
+    override fun getRideId(): Int {
+        return getDriverStorage.getRideId()
+    }
+
+
+    override fun removeRideId() {
+        getDriverStorage.removeRideId()
     }
 
 
     //update ride status with server
     override fun updateRideStatus(status: StatusRide, callback: SuccessHandler) {
-        val rideId = getDriverStorage.getRideId()
+        val rideId = ActiveRide.activeRide?.rideId
         val token = profileStorage.getToken()
 
-        if (rideId != -1 && token != null) {
+        if (rideId != null && token != null) {
             getDriverRepository.updateRideStatus(status, rideId, token) { isSuccess ->
                 if (!isSuccess) {
                     //retry request
@@ -149,10 +206,10 @@ class GetDriverInteractor : IGetDriverInteractor {
 
 
     override fun setDriverInRide(userId: Int, callback: SuccessHandler) {
-        val rideId = getDriverStorage.getRideId()
+        val rideId = ActiveRide.activeRide?.rideId
         val token = profileStorage.getToken()
 
-        if (rideId != -1 && token != null) {
+        if (rideId != null && token != null) {
             getDriverRepository.setDriverInRide(userId, rideId, token) { isSuccess ->
                 if (!isSuccess) {
                     //retry request
@@ -179,6 +236,18 @@ class GetDriverInteractor : IGetDriverInteractor {
             getDriverRepository.sendCancelReason(rideId, textReason, token) { isSuccess ->
                 if (isSuccess) callback(true)
                 else getDriverRepository.sendCancelReason(rideId, textReason, token, callback)
+            }
+        } else callback(false)
+    }
+
+
+    override fun deleteOffer(offerId: Int, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            getDriverRepository.deleteOffer(offerId, token) { isSuccess ->
+                if (isSuccess) callback(true)
+                else getDriverRepository.deleteOffer(offerId, token, callback)
             }
         } else callback(false)
     }

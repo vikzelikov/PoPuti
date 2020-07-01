@@ -42,6 +42,7 @@ interface ContractPresenter {
         fun startProcessBlock()
         fun onObjectUpdate()
         fun nextFragment()
+        fun cancelOffer()
         fun onDestroy()
         fun showRoute()
     }

@@ -3,6 +3,8 @@ package bonch.dev.data.repository.driver.getpassenger
 import android.util.Log
 import bonch.dev.App
 import bonch.dev.data.network.driver.GetPassangerService
+import bonch.dev.domain.entities.common.ride.Offer
+import bonch.dev.domain.entities.common.ride.OfferPrice
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
@@ -189,9 +191,9 @@ class GetPassengerRepository : IGetPassengerRepository {
         rideId: Int,
         userId: Int,
         token: String,
-        callback: SuccessHandler
+        callback: DataHandler<Offer?>
     ) {
-        var response: Response<*>
+        var response: Response<OfferPrice>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -208,21 +210,23 @@ class GetPassengerRepository : IGetPassengerRepository {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
-                        callback(true)
+                        val offer = response.body()?.offerPrice
+                        if (offer != null) callback(offer, null)
+                        else callback(null, "Error")
                     } else {
                         //Error
                         Log.e(
                             "OFFER_PRICE",
                             "Offer price for ride on server failed with code: ${response.code()}"
                         )
-                        callback(false)
+                        callback(null, " ${response.code()}")
                     }
                 }
 
             } catch (err: Exception) {
                 //Error
                 Log.e("OFFER_PRICE", "${err.printStackTrace()}")
-                callback(false)
+                callback(null, err.message)
             }
         }
     }
@@ -297,6 +301,31 @@ class GetPassengerRepository : IGetPassengerRepository {
     }
 
 
-    override fun getRide(rideId: Int, callback: DataHandler<RideInfo?>) {}
+    override fun deleteOffer(offerId: Int, token: String, callback: SuccessHandler) {
+        var response: Response<*>
 
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.deleteOffer(headers, offerId)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e("DELETE_OFFER", "${response.code()}")
+                        callback(false)
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("DELETE_OFFER", "${err.printStackTrace()}")
+                callback(false)
+            }
+        }
+    }
 }

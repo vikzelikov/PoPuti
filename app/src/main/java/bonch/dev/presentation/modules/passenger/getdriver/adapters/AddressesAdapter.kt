@@ -12,8 +12,8 @@ import kotlinx.android.synthetic.main.ride_item.view.*
 import javax.inject.Inject
 
 
-class AddressesListAdapter @Inject constructor(private val createRidePresenter: ContractPresenter.ICreateRidePresenter) :
-    RecyclerView.Adapter<AddressesListAdapter.ItemPostHolder>() {
+class AddressesAdapter @Inject constructor(private val createRidePresenter: ContractPresenter.ICreateRidePresenter) :
+    RecyclerView.Adapter<AddressesAdapter.ItemPostHolder>() {
 
     var list: ArrayList<Address> = arrayListOf()
 

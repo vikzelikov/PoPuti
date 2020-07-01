@@ -3,7 +3,6 @@ package bonch.dev.data.repository.common.profile
 import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.presentation.interfaces.DataHandler
-import bonch.dev.presentation.interfaces.ErrorHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 
 

@@ -30,6 +30,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     var blockHandler: Handler? = null
     var handlerHotification: Handler? = null
 
+    private var activeOfferId: Int? = null
     private var isBlock = false
 
     private val OFFER_PRICE_TIMEOUT = 30000L
@@ -53,10 +54,12 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
             //set this account of driver into ride
             getPassengerInteractor.setDriverInRide { isSuccess ->
 
+                val rideId = ActiveRide.activeRide?.rideId
+
                 getView()?.hideLoading()
 
-                if (isSuccess) {
-                    getPassengerInteractor.saveRideId()
+                if (isSuccess && rideId != null) {
+                    getPassengerInteractor.saveRideId(rideId)
 
 
                     context.let { Vibration.start(it) }
@@ -153,8 +156,11 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         val rideId = ActiveRide.activeRide?.rideId
 
         if (rideId != null) {
-            getPassengerInteractor.offerPrice(price, rideId) { isSuccess ->
-                if (isSuccess) {
+            getPassengerInteractor.offerPrice(price, rideId) { offer, _ ->
+                if (offer != null) {
+                    //save offerId for delete in future
+                    offer.offerId?.let { activeOfferId = it }
+
                     handlerHotification = Handler()
                     handlerHotification?.postDelayed({
                         getView()?.hideOfferPrice(true)
@@ -164,6 +170,15 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                 }
             }
         } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+    }
+
+
+    override fun cancelOffer() {
+        val offerId = activeOfferId
+
+        offerId?.let {
+            getPassengerInteractor.deleteOffer(offerId) {}
+        }
     }
 
 
@@ -200,6 +215,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
 
     override fun onDestroy() {
+        getPassengerInteractor.removeRideId()
+        //getPassengerInteractor.deleteOffer(todo)
         handlerHotification?.removeCallbacksAndMessages(null)
         blockHandler?.removeCallbacksAndMessages(null)
         getPassengerInteractor.disconnectSocket()

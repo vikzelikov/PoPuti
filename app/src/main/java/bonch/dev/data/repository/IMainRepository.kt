@@ -1,14 +1,10 @@
 package bonch.dev.data.repository
 
-import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
-import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 
 
 interface IMainRepository {
-
-    fun getRide(rideId: Int, callback: DataHandler<RideInfo?>)
 
     fun connectSocket(rideId: Int, token: String, callback: SuccessHandler)
 
@@ -31,6 +27,13 @@ interface IMainRepository {
     fun sendCancelReason(
         rideId: Int,
         textReason: String,
+        token: String,
+        callback: SuccessHandler
+    )
+
+
+    fun deleteOffer(
+        offerId: Int,
         token: String,
         callback: SuccessHandler
     )

@@ -4,9 +4,7 @@ import android.util.Log
 import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.driver.getpassenger.IGetPassengerStorage
-import bonch.dev.domain.entities.common.ride.ActiveRide
-import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.common.ride.StatusRide
+import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
@@ -110,32 +108,38 @@ class GetPassengerInteractor : IGetPassengerInteractor {
     }
 
 
-    override fun saveRideId() {
-        ActiveRide.activeRide?.rideId?.let { rideId ->
-            getPassengerStorage.saveRideId(rideId)
-        }
+    override fun saveRideId(rideId: Int) {
+        getPassengerStorage.saveRideId(rideId)
     }
 
 
-    override fun offerPrice(price: Int, rideId: Int, callback: SuccessHandler) {
+    override fun getRideId(): Int {
+        return getPassengerStorage.getRideId()
+    }
+
+
+    override fun removeRideId() {
+        getPassengerStorage.removeRideId()
+    }
+
+
+    override fun offerPrice(price: Int, rideId: Int, callback: DataHandler<Offer?>) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
         if (token != null && userId != -1) {
-            getPassengerRepository.offerPrice(price, rideId, userId, token) { isSuccess ->
-                if (isSuccess) {
+            getPassengerRepository.offerPrice(price, rideId, userId, token) { data, error ->
+                if (data != null && error == null) {
                     //success
-                    callback(true)
-                } else {
+                    callback(data, null)
+                } else if (data == null) {
                     //retry request
-                    getPassengerRepository.offerPrice(price, rideId, userId, token) {
-                        callback(it)
+                    getPassengerRepository.offerPrice(price, rideId, userId, token) { offer, _ ->
+                        if (offer != null) callback(offer, null)
+                        else callback(null, "error")
                     }
                 }
             }
-        } else {
-            //error
-            callback(false)
         }
     }
 
@@ -166,6 +170,18 @@ class GetPassengerInteractor : IGetPassengerInteractor {
             getPassengerRepository.sendCancelReason(rideId, textReason, token) { isSuccess ->
                 if (isSuccess) callback(true)
                 else getPassengerRepository.sendCancelReason(rideId, textReason, token, callback)
+            }
+        } else callback(false)
+    }
+
+
+    override fun deleteOffer(offerId: Int, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            getPassengerRepository.deleteOffer(offerId, token) { isSuccess ->
+                if (isSuccess) callback(true)
+                else getPassengerRepository.deleteOffer(offerId, token, callback)
             }
         } else callback(false)
     }

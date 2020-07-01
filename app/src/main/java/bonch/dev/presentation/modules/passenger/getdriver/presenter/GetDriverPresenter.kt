@@ -17,7 +17,7 @@ import bonch.dev.presentation.base.BasePresenter
 import bonch.dev.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.route.MainRouter
-import bonch.dev.service.ride.passenger.RideService
+import bonch.dev.service.passenger.PassengerRideService
 import com.google.gson.Gson
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -39,8 +39,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     private val REASON = "REASON"
 
     private var list: ArrayList<Offer> = arrayListOf()
-
-    var offer: Offer? = null
+    private var offer: Offer? = null
 
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
@@ -50,6 +49,13 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     private val offerPriceReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             onOfferPrice(intent)
+        }
+    }
+
+
+    private val deleteOfferReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            onDeleteOffer(intent)
         }
     }
 
@@ -67,12 +73,16 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         //check regestered receivers before
         if (!isRegistered) {
             app.registerReceiver(
-                offerPriceReceiver,
-                IntentFilter(RideService.OFFER_PRICE_TAG)
+                changeRideReceiver,
+                IntentFilter(PassengerRideService.CHANGE_RIDE_TAG)
             )
             app.registerReceiver(
-                changeRideReceiver,
-                IntentFilter(RideService.CHANGE_RIDE_TAG)
+                offerPriceReceiver,
+                IntentFilter(PassengerRideService.OFFER_PRICE_TAG)
+            )
+            app.registerReceiver(
+                deleteOfferReceiver,
+                IntentFilter(PassengerRideService.DELETE_OFFER_TAG)
             )
 
             isRegistered = true
@@ -80,22 +90,10 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
-    private fun unregisterReceivers() {
-        val app = App.appComponent.getApp()
-
-        try {
-            app.unregisterReceiver(offerPriceReceiver)
-            app.unregisterReceiver(changeRideReceiver)
-        } catch (ex: IllegalArgumentException) {
-
-        }
-    }
-
-
     private fun onOfferPrice(intent: Intent?) {
         val res = App.appComponent.getContext().resources
 
-        val data = intent?.getStringExtra(RideService.OFFER_PRICE_TAG)
+        val data = intent?.getStringExtra(PassengerRideService.OFFER_PRICE_TAG)
 
         if (data != null) {
             val offer = Gson().fromJson(data, OfferPrice::class.java)?.offerPrice
@@ -113,10 +111,22 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
+    private fun onDeleteOffer(intent: Intent?) {
+        val data = intent?.getStringExtra(PassengerRideService.DELETE_OFFER_TAG)
+
+        if (data != null) {
+            val offerId = Gson().fromJson(data, OfferPrice::class.java)?.offerPrice?.offerId
+            if (offerId != null) {
+                getView()?.getAdapter()?.deleteOffer(offerId)
+            }
+        }
+    }
+
+
     private fun onChangeRide(intent: Intent?) {
         val res = App.appComponent.getContext().resources
 
-        val data = intent?.getStringExtra(RideService.CHANGE_RIDE_TAG)
+        val data = intent?.getStringExtra(PassengerRideService.CHANGE_RIDE_TAG)
 
         if (data == null) {
             getView()?.showNotification(res.getString(R.string.errorSystem))
@@ -185,7 +195,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
         //start new background service
         val app = App.appComponent.getApp()
-        app.startService(Intent(app.applicationContext, RideService::class.java))
+        app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
 
         getView()?.nextFragment()
     }
@@ -195,7 +205,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     private fun setNewOffer(offer: Offer) {
-        getView()?.getAdapter()?.setNewDriver(offer)
+        getView()?.getAdapter()?.setNewOffer(offer)
 
         if (isAnimaionSearching) {
             //animation off
@@ -207,13 +217,17 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
             }
         }
 
-
         if (!isVibration) {
             val context = App.appComponent.getContext()
             Vibration.start(context)
 
             isVibration = true
         }
+    }
+
+
+    override fun deleteOffer(offerId: Int) {
+        getDriverInteractor.deleteOffer(offerId) {}
     }
 
 
@@ -234,10 +248,6 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
-        //stop getting new offers
-        clearData()
-        ActiveRide.activeRide = null
-
         //cancel ride remote
         getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
 
@@ -247,6 +257,11 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         if (reasonID == ReasonCancel.MISTAKE_ORDER || reasonID == ReasonCancel.OTHER_REASON) {
             Coordinate.toAdr = null
         }
+
+        //stop getting new offers
+        clearData()
+        ActiveRide.activeRide = null
+        getDriverInteractor.removeRideId()
     }
 
 
@@ -288,13 +303,10 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     private fun clearData() {
         val app = App.appComponent
 
-        //todo
-        //unregisterReceivers()
-        app.getApp().stopService(Intent(app.getContext(), RideService::class.java))
-        getDriverInteractor.disconnectSocket()
+        app.getApp().stopService(Intent(app.getContext(), PassengerRideService::class.java))
         mainHandler?.removeCallbacksAndMessages(null)
-        DriverMainTimer.getInstance()?.cancel()
-        DriverMainTimer.deleteInstance()
+        OffersMainTimer.getInstance()?.cancel()
+        OffersMainTimer.deleteInstance()
         list.clear()
     }
 
@@ -320,6 +332,14 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
             isAnimaionSearching = true
         }
     }
+
+
+    override fun setOffer(offer: Offer) {
+        this.offer = offer
+    }
+
+
+    override fun getOffer(): Offer? = this.offer
 
 
     override fun getOffers(): ArrayList<Offer> {

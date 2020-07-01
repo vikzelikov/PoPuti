@@ -1,6 +1,6 @@
 package bonch.dev.domain.entities.common.ride
 
-import bonch.dev.presentation.modules.passenger.getdriver.presenter.DriverMainTimer
+import bonch.dev.presentation.modules.passenger.getdriver.presenter.OffersMainTimer
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -24,5 +24,5 @@ data class Offer(
     @Expose
     var driver: Driver? = null,
 
-    var timeLine: Double = DriverMainTimer.TIME_EXPIRED_ITEM
+    var timeLine: Double = OffersMainTimer.TIME_EXPIRED_ITEM
 )

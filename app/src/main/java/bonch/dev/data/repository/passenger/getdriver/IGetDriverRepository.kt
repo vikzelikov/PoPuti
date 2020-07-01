@@ -19,4 +19,6 @@ interface IGetDriverRepository : IMainRepository {
 
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 
+    fun subscribeOnDeleteOffer(callback: DataHandler<String?>)
+
 }
