@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.*
@@ -22,6 +23,10 @@ import com.google.gson.Gson
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -116,6 +121,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
         if (data != null) {
             val offerId = Gson().fromJson(data, OfferPrice::class.java)?.offerPrice?.offerId
+
             if (offerId != null) {
                 getView()?.getAdapter()?.deleteOffer(offerId)
             }
@@ -231,6 +237,48 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
+    override fun checkOnOffers() {
+        getDriverInteractor.getOffers { offers, _ ->
+            if (offers != null) {
+                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                val today = Calendar.getInstance().timeInMillis
+                val thatDay = Calendar.getInstance()
+
+                isVibration = true
+
+                offers.forEach { offer ->
+                    try {
+                        val createdDate = offer.createDate
+                        if (createdDate != null) {
+                            val parseDate = format.parse(createdDate)
+                            parseDate?.let {
+                                thatDay.time = parseDate
+                                val diff = today - thatDay.timeInMillis
+                                offer.timeLine = OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
+                            }
+                        }
+                    } catch (e: ParseException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                var delay = 500L
+                offers.sortBy { it.timeLine }
+
+                offers.forEach { offer ->
+                    if (offer.timeLine < OffersMainTimer.TIME_EXPIRED_ITEM) {
+                        Handler().postDelayed({
+                            setNewOffer(offer)
+                        }, delay)
+
+                        delay += 500
+                    }
+                }
+            }
+        }
+    }
+
+
     override fun confirmAccept() {
         offer?.let {
             getDriverDone(true)
@@ -256,7 +304,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
         if (reasonID == ReasonCancel.MISTAKE_ORDER || reasonID == ReasonCancel.OTHER_REASON) {
             Coordinate.toAdr = null
-        }
+        } else ActiveRide.activeRide?.let { restoreRide(it) }
 
         //stop getting new offers
         clearData()
@@ -330,6 +378,32 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
             )
 
             isAnimaionSearching = true
+        }
+    }
+
+
+    private fun restoreRide(ride: RideInfo) {
+        val fromLat = ride.fromLat
+        val fromLng = ride.fromLng
+        val toLat = ride.toLat
+        val toLng = ride.toLng
+
+        val fromPoint = if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
+        else null
+
+        val toPoint = if (toLat != null && toLng != null) AddressPoint(toLat, toLng)
+        else null
+
+        if (fromPoint != null && toPoint != null) {
+            val fromAdr = Address()
+            fromAdr.point = fromPoint
+            fromAdr.address = ride.position
+            Coordinate.fromAdr = fromAdr
+
+            val toAdr = Address()
+            toAdr.point = toPoint
+            toAdr.address = ride.destination
+            Coordinate.toAdr = toAdr
         }
     }
 

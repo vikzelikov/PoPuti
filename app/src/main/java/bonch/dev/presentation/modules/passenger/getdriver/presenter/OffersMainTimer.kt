@@ -1,6 +1,7 @@
 package bonch.dev.presentation.modules.passenger.getdriver.presenter
 
 import android.os.CountDownTimer
+import android.util.Log
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.presentation.modules.passenger.getdriver.adapters.OffersAdapter
@@ -9,7 +10,7 @@ import bonch.dev.presentation.modules.passenger.getdriver.adapters.OffersAdapter
 object OffersMainTimer {
 
     private const val MAX_TIME_GET_DRIVER = 3L //min
-    const val TIME_EXPIRED_ITEM = 30.0 //sec
+    const val TIME_EXPIRED_ITEM = 60L //sec
     var DEFAULT_WIDTH: Int = 0
     //ratio for smoothing animation (more ratio -> more smooth anim)
     var ratio = 100
@@ -63,7 +64,6 @@ object OffersMainTimer {
                 for (i in 0 until list.size) {
                     list[i].timeLine.let {
                         list[i].timeLine -= 1
-
                         //if timeLine too small, remove item
                         if (it < 2) {
                             adapter.rejectOffer(null, false)

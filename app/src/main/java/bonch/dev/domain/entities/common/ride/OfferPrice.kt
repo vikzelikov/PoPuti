@@ -20,9 +20,13 @@ data class Offer(
     @Expose
     var price: Int? = null,
 
+    @SerializedName("created_at")
+    @Expose
+    var createDate: String? = null,
+
     @SerializedName("driver_id")
     @Expose
     var driver: Driver? = null,
 
-    var timeLine: Double = OffersMainTimer.TIME_EXPIRED_ITEM
+    var timeLine: Long = OffersMainTimer.TIME_EXPIRED_ITEM
 )

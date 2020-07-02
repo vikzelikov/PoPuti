@@ -173,6 +173,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
         app.getApp().stopService(Intent(app.getContext(), PassengerRideService::class.java))
         getDriverInteractor.disconnectSocket()
+        getDriverInteractor.removeRideId()
     }
 
 

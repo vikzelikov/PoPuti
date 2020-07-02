@@ -84,8 +84,7 @@ class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresente
     fun deleteOffer(offerId: Int) {
         var offer: Offer? = null
         list.forEach {
-            offer = if (offerId == it.offerId) it
-            else null
+            if (offerId == it.offerId) offer = it
         }
 
         offer?.let {

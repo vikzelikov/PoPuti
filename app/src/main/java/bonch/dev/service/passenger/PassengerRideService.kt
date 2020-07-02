@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import bonch.dev.App
 import bonch.dev.MainActivity
@@ -75,7 +74,6 @@ class PassengerRideService : Service() {
             if (isSuccess) {
                 //change ride status
                 getDriverInteractor.subscribeOnChangeRide { data, _ ->
-                    Log.e("NEXT", "NEXT")
                     //show notification
                     if (data != null) changeRideNotification(data)
 
@@ -94,6 +92,7 @@ class PassengerRideService : Service() {
 
                 //delete offer from driver
                 getDriverInteractor.subscribeOnDeleteOffer { data, _ ->
+                    println("DELETE")
                     intentDeleteOffer.putExtra(DELETE_OFFER_TAG, data)
                     sendBroadcast(intentDeleteOffer)
                 }
@@ -150,7 +149,7 @@ class PassengerRideService : Service() {
 
     private fun offerPriceNotification() {
         if (isAppClose) {
-            val title = getString(R.string.checkOffersFromDriver).plus(" \uD83D\uDCB5 или 🛒")
+            val title = getString(R.string.checkOffersFromDriver).plus(" 🛒")
             val subtitle = getString(R.string.selectBestOffer)
 
             val notification = buildNotification(
@@ -215,7 +214,7 @@ class PassengerRideService : Service() {
 
         }
 
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
 
@@ -296,15 +295,6 @@ class PassengerRideService : Service() {
         super.onDestroy()
 
         isRunning = false
-
-        if (RideStatus.status == StatusRide.SEARCH) {
-            //cancel ride remote
-            getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
-
-            //send cancel reason
-            val textReason = App.appComponent.getApp().getString(R.string.mistake_order)
-            getDriverInteractor.sendReason(textReason) {}
-        }
 
         //remove all notification from bar
         notificatonManager.cancelAll()

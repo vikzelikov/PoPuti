@@ -5,6 +5,7 @@ import bonch.dev.App
 import bonch.dev.data.network.passenger.GetDriverService
 import bonch.dev.data.repository.common.ride.Autocomplete
 import bonch.dev.data.repository.common.ride.Geocoder
+import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.domain.entities.common.ride.Ride
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
@@ -346,6 +347,32 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
+    override fun getOffers(rideId: Int, callback: DataHandler<ArrayList<Offer>?>) {
+        var response: Response<ArrayList<Offer>>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                response = service.getOffers(rideId)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        val offers = response.body()
+                        if (offers != null) callback(offers, null)
+                        else callback(null, "error")
+                    } else {
+                        //Error
+                        Log.e("GET_OFFERS", "${response.code()}")
+                        callback(null, "${response.code()}")
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("GET_OFFERS", "${err.printStackTrace()}")
+                callback(null, err.message)
+            }
+        }
+    }
 
 
     override fun deleteOffer(offerId: Int, token: String, callback: SuccessHandler) {

@@ -92,6 +92,7 @@ interface ContractPresenter {
         fun deleteOffer(offerId: Int)
         fun setOffer(offer: Offer)
         fun getOffer(): Offer?
+        fun checkOnOffers()
         fun onUserLocationAttach()
         fun registerReceivers()
         fun confirmAccept()

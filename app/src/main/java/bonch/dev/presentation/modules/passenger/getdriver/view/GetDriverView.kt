@@ -72,6 +72,9 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         //change status
         RideStatus.status = StatusRide.SEARCH
 
+        //check offers from server
+        if (!PassengerRideService.isRunning) getDriverPresenter.checkOnOffers()
+
         //start background service
         app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
 

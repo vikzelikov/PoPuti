@@ -1,6 +1,7 @@
 package bonch.dev.data.repository.passenger.getdriver
 
 import bonch.dev.data.repository.IMainRepository
+import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
@@ -20,5 +21,7 @@ interface IGetDriverRepository : IMainRepository {
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 
     fun subscribeOnDeleteOffer(callback: DataHandler<String?>)
+
+    fun getOffers(rideId: Int, callback: DataHandler<ArrayList<Offer>?>)
 
 }

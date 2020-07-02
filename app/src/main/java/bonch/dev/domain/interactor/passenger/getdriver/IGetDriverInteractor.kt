@@ -1,6 +1,7 @@
 package bonch.dev.domain.interactor.passenger.getdriver
 
 import bonch.dev.domain.entities.common.ride.Address
+import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.presentation.interfaces.DataHandler
@@ -46,6 +47,8 @@ interface IGetDriverInteractor {
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
     fun setDriverInRide(userId: Int, callback: SuccessHandler)
+
+    fun getOffers(callback: DataHandler<ArrayList<Offer>?>)
 
     fun deleteOffer(offerId: Int, callback: SuccessHandler)
 

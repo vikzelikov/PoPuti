@@ -355,10 +355,9 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun onDestroy() {
+        super.onDestroy()
         detailOrderPresenter.onDestroy()
         hideOfferPrice(false)
         detailOrderPresenter.instance().detachView()
-        super.onDestroy()
     }
-
 }

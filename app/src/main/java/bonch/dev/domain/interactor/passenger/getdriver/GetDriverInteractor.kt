@@ -99,8 +99,8 @@ class GetDriverInteractor : IGetDriverInteractor {
 
 
     override fun connectSocket(callback: SuccessHandler) {
-        val rideId = getDriverStorage.getRideId()
         val token = profileStorage.getToken()
+        val rideId = getDriverStorage.getRideId()
 
         if (token != null && rideId != -1) {
             getDriverRepository.connectSocket(rideId, token) { isSuccess ->
@@ -238,6 +238,23 @@ class GetDriverInteractor : IGetDriverInteractor {
                 else getDriverRepository.sendCancelReason(rideId, textReason, token, callback)
             }
         } else callback(false)
+    }
+
+
+    override fun getOffers(callback: DataHandler<ArrayList<Offer>?>) {
+        val rideId = ActiveRide.activeRide?.rideId
+
+        if (rideId != null) {
+            getDriverRepository.getOffers(rideId) { offers, _ ->
+                if (offers != null) callback(offers, null)
+                else {
+                    getDriverRepository.getOffers(rideId) { arrOffers, _ ->
+                        if (arrOffers != null) callback(arrOffers, null)
+                        else callback(null, "error")
+                    }
+                }
+            }
+        } else callback(null, "error")
     }
 
 

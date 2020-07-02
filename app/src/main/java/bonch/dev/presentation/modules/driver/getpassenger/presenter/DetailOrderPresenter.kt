@@ -215,8 +215,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
 
     override fun onDestroy() {
+        cancelOffer()
         getPassengerInteractor.removeRideId()
-        //getPassengerInteractor.deleteOffer(todo)
         handlerHotification?.removeCallbacksAndMessages(null)
         blockHandler?.removeCallbacksAndMessages(null)
         getPassengerInteractor.disconnectSocket()
