@@ -1,19 +1,25 @@
 package bonch.dev.domain.interactor.driver.getpassenger
 
 import android.util.Log
+import bonch.dev.data.repository.common.chat.IChatRepository
 import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
 import bonch.dev.data.storage.driver.getpassenger.IGetPassengerStorage
+import bonch.dev.domain.entities.common.chat.MessageObject
 import bonch.dev.domain.entities.common.ride.*
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
+import com.google.gson.Gson
 import javax.inject.Inject
 
 class GetPassengerInteractor : IGetPassengerInteractor {
 
     @Inject
     lateinit var getPassengerRepository: IGetPassengerRepository
+
+    @Inject
+    lateinit var chatRepository: IChatRepository
 
     @Inject
     lateinit var getPassengerStorage: IGetPassengerStorage
@@ -44,13 +50,53 @@ class GetPassengerInteractor : IGetPassengerInteractor {
     }
 
 
+    override fun subscribeOnGetOffers(callback: DataHandler<String?>) {
+        getPassengerRepository.subscribeOnGetOffers(callback)
+    }
+
+
     override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
         getPassengerRepository.subscribeOnChangeRide(callback)
     }
 
 
+    override fun subscribeOnDeleteOffer(callback: DataHandler<String?>) {
+        getPassengerRepository.subscribeOnDeleteOffer(callback)
+    }
+
+
+    override fun connectChatSocket(callback: SuccessHandler) {
+        val rideId = ActiveRide.activeRide?.rideId
+        val token = profileStorage.getToken()
+
+        if (token != null && rideId != null) {
+            chatRepository.connectSocket(rideId, token) { isSuccess ->
+                if (isSuccess) {
+                    callback(true)
+                } else {
+                    //retry connect
+                    chatRepository.connectSocket(rideId, token, callback)
+                }
+            }
+        } else callback(false)
+    }
+
+
+    override fun subscribeOnChat(callback: DataHandler<String?>) {
+        val userId = profileStorage.getUserId()
+
+        if (userId != -1) {
+            chatRepository.subscribeOnChat { data, _ ->
+                val message = Gson().fromJson(data, MessageObject::class.java)?.message
+                if (message?.author?.id != userId) callback(data, null)
+            }
+        }
+    }
+
+
     override fun disconnectSocket() {
         getPassengerRepository.disconnectSocket()
+        chatRepository.disconnectSocket()
     }
 
 
@@ -113,14 +159,20 @@ class GetPassengerInteractor : IGetPassengerInteractor {
     }
 
 
-    override fun getRideId(): Int {
-        return getPassengerStorage.getRideId()
-    }
+    override fun getRideId() = getPassengerStorage.getRideId()
 
 
     override fun removeRideId() {
         getPassengerStorage.removeRideId()
     }
+
+
+    override fun saveWaitTimestamp() {
+        getPassengerStorage.saveWaitTimestamp()
+    }
+
+
+    override fun getWaitTimestamp() = getPassengerStorage.getWaitTimestamp()
 
 
     override fun offerPrice(price: Int, rideId: Int, callback: DataHandler<Offer?>) {

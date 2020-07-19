@@ -16,11 +16,7 @@ interface IGetDriverRepository : IMainRepository {
 
     fun createRide(rideInfo: RideInfo, token: String, callback: DataHandler<RideInfo?>)
 
-    fun subscribeOnChangeRide(callback: DataHandler<String?>)
-
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
-
-    fun subscribeOnDeleteOffer(callback: DataHandler<String?>)
 
     fun getOffers(rideId: Int, callback: DataHandler<ArrayList<Offer>?>)
 

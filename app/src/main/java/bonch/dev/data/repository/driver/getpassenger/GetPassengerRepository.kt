@@ -81,6 +81,25 @@ class GetPassengerRepository : IGetPassengerRepository {
     }
 
 
+    override fun subscribeOnGetOffers(callback: DataHandler<String?>) {
+        val offerPriceEvent = "App\\Events\\RideCreate"
+
+        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
+    }
+
+
     override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
         val rideChangeEvent = "App\\Events\\RideChange"
 
@@ -94,6 +113,25 @@ class GetPassengerRepository : IGetPassengerRepository {
             }
 
             override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
+    }
+
+
+    override fun subscribeOnDeleteOffer(callback: DataHandler<String?>) {
+        val offerPriceEvent = "App\\Events\\CancelOffer"
+
+        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: Exception?) {}
 
             override fun onSubscriptionSucceeded(channelName: String?) {}
         })

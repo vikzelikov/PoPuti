@@ -70,7 +70,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         savedInstanceState: Bundle?
     ): View? {
         //change status
-        RideStatus.status = StatusRide.SEARCH
+        ActiveRide.activeRide?.statusId = StatusRide.SEARCH.status
 
         //check offers from server
         if (!PassengerRideService.isRunning) getDriverPresenter.checkOnOffers()

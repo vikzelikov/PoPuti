@@ -270,12 +270,14 @@ class ChatView : AppCompatActivity(), IChatView {
 
     override fun onResume() {
         PassengerRideService.isChatClose = false
+        DriverRideService.isChatClose = false
         super.onResume()
     }
 
 
     override fun onPause() {
         PassengerRideService.isChatClose = true
+        DriverRideService.isChatClose = true
         super.onPause()
     }
 

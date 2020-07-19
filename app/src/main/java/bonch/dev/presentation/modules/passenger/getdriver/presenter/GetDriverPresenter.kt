@@ -192,7 +192,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         }
 
         //update ride status LOCAL
-        RideStatus.status = StatusRide.WAIT_FOR_DRIVER
+        ActiveRide.activeRide?.statusId = StatusRide.WAIT_FOR_DRIVER.status
 
         getView()?.removeBackground()
 

@@ -22,7 +22,6 @@ import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
@@ -98,7 +97,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         onSlideToNextStep()
 
-        checkoutView(RideStatus.status)
+        //change view according to status ride (restore ride)
+        var status = trackRidePresenter.getByValue(ActiveRide.activeRide?.statusId)
+        if (status == null) status = StatusRide.SEARCH
+        trackRidePresenter.changeState(status, true)
     }
 
 
@@ -117,7 +119,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    override fun tickTimerWaitPassanger(sec: Int, isPaidWaiting: Boolean) {
+    override fun tickTimerWaitPassenger(sec: Long, isPaidWaiting: Boolean) {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
@@ -128,21 +130,19 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
                 if (isPaidWaiting) {
                     status_order?.setTextColor(Color.parseColor("#F73F3F"))
                     textStatus = context.getString(R.string.waitingTime)
-
-                    if (sec > 60) {
-                        val minutes = (sec % 3600) / 60
-                        val seconds = sec.rem(60)
-
-                        timeString =
-                            String.format(
-                                "%2d ${context.getString(R.string.min)} %2d",
-                                minutes,
-                                seconds
-                            )
-                    }
-
                 } else {
                     status_order?.setTextColor(Color.parseColor("#000000"))
+                }
+
+                if (sec > 60) {
+                    val minutes = (sec % 3600) / 60
+                    val seconds = sec.rem(60)
+
+                    timeString = String.format(
+                        "%2d ${context.getString(R.string.min)} %2d",
+                        minutes,
+                        seconds
+                    )
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -162,30 +162,20 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    private fun checkoutView(status: StatusRide) {
-        when (status) {
-            StatusRide.WAIT_FOR_PASSANGER -> stepWaitPassanger()
+    //STEP 2
+    override fun stepWaitDriver() {
+        order_addresses_layout.visibility = View.VISIBLE
+        status_order_layout.visibility = View.GONE
 
-            StatusRide.IN_WAY -> stepInWay()
+        text_step_seekbar.text = getString(R.string.isPlace)
 
-            StatusRide.GET_PLACE -> stepDoneRide()
-
-            StatusRide.CANCEL -> {
-                //todo получить рельную компенсацию за отмену
-                passengerCancelRide(43)
-            }
-
-            else -> {
-                //nothing
-            }
-        }
+        correctMapView()
     }
 
-
     //STEP 3
-    override fun stepWaitPassanger() {
-        order_addresses_layout.visibility = View.GONE
+    override fun stepWaitPassenger() {
         status_order_layout.visibility = View.VISIBLE
+        order_addresses_layout.visibility = View.GONE
 
         text_step_seekbar.text = getString(R.string.letsGo)
 
@@ -210,6 +200,24 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         trackRidePresenter.stopService()
 
         (activity as? MapOrderView)?.let { nextFragment(it.supportFragmentManager) }
+    }
+
+
+    override fun showEndRideAnim() {
+        seekBar.visibility = View.GONE
+        text_step_seekbar.visibility = View.GONE
+
+        view_end_ride.visibility = View.VISIBLE
+        progress_bar_end_ride.visibility = View.VISIBLE
+    }
+
+
+    override fun hideEndRideAnim() {
+        seekBar.visibility = View.VISIBLE
+        text_step_seekbar.visibility = View.VISIBLE
+
+        view_end_ride.visibility = View.GONE
+        progress_bar_end_ride.visibility = View.GONE
     }
 
 
@@ -380,7 +388,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun getCancelReason() {
-        when (RideStatus.status) {
+        var status = trackRidePresenter.getByValue(ActiveRide.activeRide?.statusId)
+        if (status == null) status = StatusRide.SEARCH
+
+        when (status) {
             StatusRide.WAIT_FOR_DRIVER -> {
                 change_mind.visibility = View.VISIBLE
                 force_majeure.visibility = View.VISIBLE
@@ -473,6 +484,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
+    override fun checkoutIconChat(isShow: Boolean) {
+        message_notification?.visibility = if (isShow) View.VISIBLE
+        else View.GONE
+    }
+
+
     private fun getOtherReasonComment() {
         commentBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
 
@@ -500,7 +517,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             on_view_cancel?.isClickable = false
             on_view_cancel?.alpha = 0.8f
 
-            if (RideStatus.status.status > StatusRide.WAIT_FOR_DRIVER.status) {
+            var status = ActiveRide.activeRide?.statusId
+            if (status == null) status = StatusRide.SEARCH.status
+
+            if (status > StatusRide.WAIT_FOR_DRIVER.status) {
                 payment_sum?.text = payment.toString().plus(" ₽")
                 payment_sum?.visibility = View.VISIBLE
                 text_payment_for_cancel?.visibility = View.VISIBLE
@@ -682,8 +702,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    override fun onPause() {
+    override fun onStop() {
         DriverRideService.isAppClose = true
-        super.onPause()
+        super.onStop()
     }
 }

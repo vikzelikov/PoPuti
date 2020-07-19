@@ -5,7 +5,6 @@ import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.rate.Review
 import bonch.dev.domain.entities.common.ride.ActiveRide
-import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.common.rate.IRateRideInteractor
 import bonch.dev.presentation.base.BasePresenter
@@ -91,7 +90,6 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
 
     private fun clearData(){
         ActiveRide.activeRide = null
-        RideStatus.status = StatusRide.SEARCH
     }
 
 

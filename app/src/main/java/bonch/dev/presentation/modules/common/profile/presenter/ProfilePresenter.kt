@@ -100,7 +100,6 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
         } else {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
         }
-
     }
 
 

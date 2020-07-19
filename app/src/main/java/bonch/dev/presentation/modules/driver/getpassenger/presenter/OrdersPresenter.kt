@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import bonch.dev.App
-import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
@@ -49,10 +48,12 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     override fun selectOrder(order: RideInfo) {
         if (!isBlock) {
             getView()?.getFragment()?.context?.let {
+                //set active ride
                 ActiveRide.activeRide = order
 
-                //show detail order
                 val intent = Intent(it, MapOrderView::class.java)
+
+                //show detail order
                 getView()?.getFragment()?.startActivityForResult(intent, 1)
             }
 
@@ -135,8 +136,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
                         //after delete duplicates and old orders, do sorting
                         calcDistance(newOrders)
-
-                    } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem)) //show error
+                    }
 
                     mainHandler?.postDelayed(this, 5000)
                 }

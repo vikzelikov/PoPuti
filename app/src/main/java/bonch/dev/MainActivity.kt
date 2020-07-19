@@ -9,10 +9,10 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.presentation.base.MainPresenter
 import bonch.dev.presentation.interfaces.IMainActivity
 import bonch.dev.presentation.interfaces.IMainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,6 +42,17 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         setContentView(R.layout.activity_main)
 
         mainPresenter.navigate()
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == MainPresenter.DETAIL_ORDER) {
+            mainPresenter.showDriverView()
+        }
+
+        hideFullLoading()
     }
 
 
@@ -109,8 +120,22 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val myRunnable = Runnable {
             kotlin.run {
                 on_view.alpha = 0.7f
-                progress_bar.visibility = View.VISIBLE
                 on_view.visibility = View.VISIBLE
+                progress_bar.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    override fun showFullLoading() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                on_view.alpha = 1.0f
+                on_view.visibility = View.VISIBLE
+                progress_bar.visibility = View.VISIBLE
             }
         }
 
@@ -133,20 +158,6 @@ class MainActivity : AppCompatActivity(), IMainActivity {
                             on_view.visibility = View.GONE
                         }
                     })
-            }
-        }
-
-        mainHandler.post(myRunnable)
-    }
-
-
-    override fun showFullLoading() {
-        val mainHandler = Handler(Looper.getMainLooper())
-        val myRunnable = Runnable {
-            kotlin.run {
-                on_view.alpha = 1f
-                progress_bar.visibility = View.VISIBLE
-                on_view.visibility = View.VISIBLE
             }
         }
 
@@ -177,9 +188,10 @@ class MainActivity : AppCompatActivity(), IMainActivity {
     }
 
 
-    override fun getFM(): FragmentManager {
-        return supportFragmentManager
-    }
+    override fun getFM() = supportFragmentManager
+
+
+    override fun getActivity() = this
 
 
     override fun pressBack() {

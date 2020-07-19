@@ -8,4 +8,8 @@ interface IGetPassengerStorage {
 
     fun removeRideId()
 
+    fun saveWaitTimestamp()
+
+    fun getWaitTimestamp(): Long
+
 }

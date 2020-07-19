@@ -1,12 +1,17 @@
 package bonch.dev.data.repository
 
 import bonch.dev.domain.entities.common.ride.StatusRide
+import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.SuccessHandler
 
 
 interface IMainRepository {
 
     fun connectSocket(rideId: Int, token: String, callback: SuccessHandler)
+
+    fun subscribeOnChangeRide(callback: DataHandler<String?>)
+
+    fun subscribeOnDeleteOffer(callback: DataHandler<String?>)
 
     fun disconnectSocket()
 

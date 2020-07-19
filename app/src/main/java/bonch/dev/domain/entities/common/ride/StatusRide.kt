@@ -9,10 +9,6 @@ package bonch.dev.domain.entities.common.ride
  * 6 - ride cancel
  * */
 
-object RideStatus {
-    var status: StatusRide = StatusRide.SEARCH
-}
-
 enum class StatusRide(val status: Int) {
     SEARCH(1),
     WAIT_FOR_DRIVER(2),

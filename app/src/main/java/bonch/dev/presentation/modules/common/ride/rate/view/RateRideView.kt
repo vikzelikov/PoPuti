@@ -110,7 +110,9 @@ class RateRideView : Fragment(), IRateRideView {
         val activeRide = ActiveRide.activeRide
         if (activeRide != null) {
             try {
-                price_for_ride.text = activeRide.price.toString().plus(" ₽")
+                if (activeRide.price != null) price_for_ride.text =
+                    activeRide.price.toString().plus(" ₽")
+
                 plus_wating_fee.visibility = View.VISIBLE
                 wating_fee.visibility = View.VISIBLE
 

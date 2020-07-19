@@ -10,4 +10,8 @@ interface IMainPresenter {
 
     fun navigate()
 
+    fun showPassengerView()
+
+    fun showDriverView()
+
 }

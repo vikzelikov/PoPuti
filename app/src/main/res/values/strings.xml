@@ -243,6 +243,7 @@
     <string name="checkOffersFromDriver">Посмотрите предложения водителей</string>
     <string name="selectBestOffer">Выберите лучшее предложение</string>
     <string name="newMessage">Новое сообщение</string>
+    <string name="activeRide">Активная поездка</string>
 
 
 </resources>

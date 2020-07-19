@@ -13,7 +13,6 @@ import bonch.dev.R
 import bonch.dev.domain.entities.common.chat.MessageObject
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.Ride
-import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.passenger.getdriver.GetDriverInteractor
 import bonch.dev.domain.interactor.passenger.getdriver.IGetDriverInteractor
@@ -92,7 +91,6 @@ class PassengerRideService : Service() {
 
                 //delete offer from driver
                 getDriverInteractor.subscribeOnDeleteOffer { data, _ ->
-                    println("DELETE")
                     intentDeleteOffer.putExtra(DELETE_OFFER_TAG, data)
                     sendBroadcast(intentDeleteOffer)
                 }
@@ -124,9 +122,6 @@ class PassengerRideService : Service() {
                 statusRide?.let { status ->
                     //update ride LOCAL
                     ActiveRide.activeRide = ride
-
-                    //update status LOCAL
-                    RideStatus.status = status
 
                     val (title, subtitle) = getRideStatusText(status)
 
@@ -196,7 +191,9 @@ class PassengerRideService : Service() {
         if (!isRunning) {
             isRunning = true
 
-            val status = RideStatus.status
+            var status = getByValue(ActiveRide.activeRide?.statusId)
+            if (status == null) status = StatusRide.SEARCH
+
             val (title, subtitle) = getRideStatusText(status)
 
             val notification = buildNotification(
@@ -237,7 +234,6 @@ class PassengerRideService : Service() {
         )
 
         val channelId = if (isHeadsUp) CHANNEL_HEADS_UP else CHANNEL
-
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setContentTitle(title)
@@ -303,7 +299,7 @@ class PassengerRideService : Service() {
     }
 
 
-    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
+    private fun getByValue(status: Int?) = StatusRide.values().firstOrNull { it.status == status }
 
 
     private fun getRideStatusText(status: StatusRide): Pair<String, String> {

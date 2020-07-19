@@ -109,7 +109,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
+    override fun getByValue(status: Int?) = StatusRide.values().firstOrNull { it.status == status }
 
 
     override fun getTaxMoney(): Int {

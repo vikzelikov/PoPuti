@@ -4,8 +4,13 @@ import java.util.*
 
 class WaitingTimer {
 
-    private var freeWating = 60
-    private var isPaidWating = false
+    companion object {
+        const val WAIT_TIMER = 300L
+    }
+
+    var waitingTime = WAIT_TIMER
+    var isPaidWaiting = false
+
     private var timer: Timer? = null
     private var mTimerTask: TimerTask? = null
 
@@ -21,7 +26,7 @@ class WaitingTimer {
     fun cancelTimer() {
         if (timer != null) {
             timer?.cancel()
-            timer = null;
+            timer = null
         }
     }
 
@@ -30,13 +35,13 @@ class WaitingTimer {
         TimerTask() {
         override fun run() {
             try {
-                if (isPaidWating) freeWating++ else freeWating--
+                if (isPaidWaiting) waitingTime++ else waitingTime--
 
-                if (freeWating == 0) {
-                    isPaidWating = true
+                if (waitingTime == 0L) {
+                    isPaidWaiting = true
                 }
 
-                presenter.tickTimerWaitPassanger(freeWating, isPaidWating)
+                presenter.tickTimerWaitPassanger(waitingTime, isPaidWaiting)
 
             } catch (ex: IndexOutOfBoundsException) {
                 println(ex.message)

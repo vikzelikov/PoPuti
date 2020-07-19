@@ -1,12 +1,12 @@
 package bonch.dev.presentation.modules.driver.getpassenger.presenter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
-import android.location.Location
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
 import com.yandex.mapkit.geometry.Point
 
@@ -34,7 +34,7 @@ interface ContractPresenter {
 
 
     interface IDetailOrderPresenter {
-        fun subscribeOnChangeRide()
+        fun subscribeOnRide()
         fun instance(): DetailOrderPresenter
         fun receiveOrder(order: RideInfo?)
         fun offerPrice(context: Context, fragment: Fragment)
@@ -50,12 +50,14 @@ interface ContractPresenter {
 
     interface ITrackRidePresenter {
         fun registerReceivers()
+        fun getByValue(status: Int?): StatusRide?
         fun instance(): TrackRidePresenter
         fun receiveOrder(order: RideInfo?)
         fun showChat(context: Context, fragment: Fragment)
-        fun tickTimerWaitPassanger(sec: Int, isPaidWating: Boolean)
+        fun tickTimerWaitPassanger(sec: Long, isPaidWating: Boolean)
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun cancelDoneOtherReason(comment: String)
+        fun changeState(step: StatusRide, isRestoreRide: Boolean)
         fun stopService()
         fun clearRide()
         fun nextStep()

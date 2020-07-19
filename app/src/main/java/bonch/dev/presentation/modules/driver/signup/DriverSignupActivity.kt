@@ -202,7 +202,7 @@ class DriverSignupActivity : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                on_view.alpha = 0.7f
+                on_view.alpha = 1.0f
                 progress_bar.visibility = View.VISIBLE
                 on_view.visibility = View.VISIBLE
             }

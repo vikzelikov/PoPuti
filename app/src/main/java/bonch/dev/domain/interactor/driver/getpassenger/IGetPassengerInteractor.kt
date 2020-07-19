@@ -11,7 +11,15 @@ interface IGetPassengerInteractor {
 
     fun connectSocket(callback: SuccessHandler)
 
+    fun connectChatSocket(callback: SuccessHandler)
+
+    fun subscribeOnGetOffers(callback: DataHandler<String?>)
+
     fun subscribeOnChangeRide(callback: DataHandler<String?>)
+
+    fun subscribeOnDeleteOffer(callback: DataHandler<String?>)
+
+    fun subscribeOnChat(callback: DataHandler<String?>)
 
     fun disconnectSocket()
 
@@ -24,6 +32,10 @@ interface IGetPassengerInteractor {
     fun getRideId(): Int
 
     fun removeRideId()
+
+    fun saveWaitTimestamp()
+
+    fun getWaitTimestamp(): Long
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 

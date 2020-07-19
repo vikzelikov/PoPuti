@@ -7,7 +7,7 @@ import bonch.dev.presentation.interfaces.DataHandler
 
 interface IGetPassengerRepository : IMainRepository {
 
-    fun subscribeOnChangeRide(callback: DataHandler<String?>)
+    fun subscribeOnGetOffers(callback: DataHandler<String?>)
 
     fun offerPrice(price: Int, rideId: Int, userId: Int, token: String, callback: DataHandler<Offer?>)
 

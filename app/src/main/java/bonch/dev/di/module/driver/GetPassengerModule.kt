@@ -1,5 +1,7 @@
 package bonch.dev.di.module.driver
 
+import bonch.dev.data.repository.common.chat.ChatRepository
+import bonch.dev.data.repository.common.chat.IChatRepository
 import bonch.dev.data.repository.driver.getpassenger.GetPassengerRepository
 import bonch.dev.data.repository.driver.getpassenger.IGetPassengerRepository
 import bonch.dev.data.storage.common.profile.IProfileStorage
@@ -20,29 +22,41 @@ class GetPassengerModule {
     @CompScope
     fun provideOrdersPresenter(): ContractPresenter.IOrdersPresenter = OrdersPresenter()
 
+
     @Provides
     @CompScope
     fun provideDetailOrderPresenter(): ContractPresenter.IDetailOrderPresenter = DetailOrderPresenter()
+
 
     @Provides
     @CompScope
     fun provideTrackRidePresenter(): ContractPresenter.ITrackRidePresenter = TrackRidePresenter()
 
+
     @Provides
     @CompScope
     fun provideMapOrderPresenter(): ContractPresenter.IMapOrderPresenter = MapOrderPresenter()
+
 
     @Provides
     @CompScope
     fun provideGetPassangerInteractor(): IGetPassengerInteractor = GetPassengerInteractor()
 
+
     @Provides
     @CompScope
     fun provideGetPassangerRepository(): IGetPassengerRepository = GetPassengerRepository()
 
+
+    @Provides
+    @CompScope
+    fun provideChatRepository(): IChatRepository = ChatRepository()
+
+
     @Provides
     @CompScope
     fun provideProfileStorage(): IProfileStorage = ProfileStorage()
+
 
     @Provides
     @CompScope

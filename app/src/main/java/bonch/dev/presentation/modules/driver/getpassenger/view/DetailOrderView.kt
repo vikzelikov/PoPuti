@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,7 +68,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         super.onViewCreated(view, savedInstanceState)
 
         //in case passenger cancel the ride
-        detailOrderPresenter.subscribeOnChangeRide()
+        detailOrderPresenter.subscribeOnRide()
 
         detailOrderPresenter.receiveOrder(ActiveRide.activeRide)
 
@@ -87,7 +88,8 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         passanger_name.text = order.passenger?.firstName
         from_order.text = order.position
         to_order.text = order.destination
-        order_price.text = order.price.toString().plus(" ₽")
+
+        if (order.price != null) order_price.text = order.price.toString().plus(" ₽")
 
         val rating = order.passenger?.rating?.toString()
         if (rating != null) passanger_rating.text = rating
@@ -118,7 +120,11 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //end offer price process
+        detailOrderPresenter.instance().isOfferPrice = false
+
         if (requestCode == detailOrderPresenter.instance().OFFER_PRICE && resultCode == RESULT_OK) {
+
             val price = data?.getIntExtra(1.toString(), 0)
             if (price != null) {
                 detailOrderPresenter.offerPriceDone(price)
@@ -204,16 +210,10 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
         cancel_offer.setOnClickListener {
             detailOrderPresenter.cancelOffer()
-
-            hideOfferPrice(false)
         }
 
         back_btn.setOnClickListener {
-            if (isBlock) showNotification(getString(R.string.waitPlease))
-            else {
-                ActiveRide.activeRide = null
-                finish(RESULT_OK)
-            }
+            if (onBackPressed()) finish(RESULT_OK)
         }
     }
 
@@ -336,12 +336,18 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         var isBackPressed = true
 
         if (commentBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED) {
-            //hide
-            commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
             isBackPressed = false
+
+            commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+
         } else {
-            if (isBlock) showNotification(getString(R.string.waitPlease))
-            else ActiveRide.activeRide = null
+            if (isBlock) {
+                isBackPressed = false
+
+                showNotification(getString(R.string.waitPlease))
+            } else {
+                detailOrderPresenter.onDestroy()
+            }
         }
 
         return isBackPressed
@@ -349,15 +355,28 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun passengerCancelRide() {
-        ActiveRide.activeRide = null
+        detailOrderPresenter.onDestroy()
         finish(TIME_EXPIRED)
     }
 
 
+    override fun onResume() {
+        if (ActiveRide.activeRide == null) finish(RESULT_OK)
+        super.onResume()
+    }
+
+
+    override fun onStop() {
+        if (!detailOrderPresenter.instance().isOfferPrice) {
+            detailOrderPresenter.onDestroy()
+        }
+
+        super.onStop()
+    }
+
+
     override fun onDestroy() {
-        super.onDestroy()
-        detailOrderPresenter.onDestroy()
-        hideOfferPrice(false)
         detailOrderPresenter.instance().detachView()
+        super.onDestroy()
     }
 }

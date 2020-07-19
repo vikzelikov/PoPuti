@@ -9,7 +9,11 @@ import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.*
+import bonch.dev.domain.entities.common.chat.MessageObject
+import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.Ride
+import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.driver.getpassenger.ReasonCancel
 import bonch.dev.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.presentation.base.BasePresenter
@@ -45,6 +49,13 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
+    private val chatReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            onChat(intent)
+        }
+    }
+
+
     override fun registerReceivers() {
         val app = App.appComponent.getApp()
 
@@ -55,16 +66,13 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
                 IntentFilter(DriverRideService.CHANGE_RIDE_TAG)
             )
 
+            app.registerReceiver(
+                chatReceiver,
+                IntentFilter(DriverRideService.CHAT_TAG)
+            )
+
+
             isRegistered = true
-        }
-    }
-
-
-    private fun unregisterReceivers() {
-        try {
-            App.appComponent.getApp().unregisterReceiver(changeRideReceiver)
-        } catch (ex: IllegalArgumentException) {
-
         }
     }
 
@@ -98,6 +106,18 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
+    private fun onChat(intent: Intent?) {
+        val data = intent?.getStringExtra(DriverRideService.CHAT_TAG)
+
+        if (data != null) {
+            val message = Gson().fromJson(data, MessageObject::class.java)?.message
+            if (message != null) {
+                getView()?.checkoutIconChat(true)
+            }
+        }
+    }
+
+
     override fun receiveOrder(order: RideInfo?) {
         val res = App.appComponent.getContext().resources
 
@@ -111,20 +131,25 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun nextStep() {
-        val oldStep = RideStatus.status
-        val nextStep = getByValue(oldStep.status.inc())
+        val oldStep = ActiveRide.activeRide?.statusId
+        val nextStep = getByValue(oldStep?.inc())
         val res = App.appComponent.getContext().resources
 
         if (nextStep != null) {
-            RideStatus.status = nextStep
+            ActiveRide.activeRide?.statusId = nextStep.status
 
-            changeView(nextStep)
+            //change view without checking response from server
+            if (nextStep != StatusRide.GET_PLACE) changeState(nextStep, false)
+            else getView()?.showEndRideAnim()
 
-            //update status with server
+            //update status ride with server
             getPassengerInteractor.updateRideStatus(nextStep) { isSuccess ->
-                if (!isSuccess) {
+                if (isSuccess) {
+                    if (nextStep == StatusRide.GET_PLACE) changeState(nextStep, false)
+                } else {
                     backStep()
 
+                    getView()?.hideEndRideAnim()
                     getView()?.showNotification(res.getString(R.string.errorSystem))
                 }
             }
@@ -133,21 +158,46 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     private fun backStep() {
-        val oldStep = RideStatus.status
-        val backStep = getByValue(oldStep.status.dec())
+        val backStep = ActiveRide.activeRide?.statusId?.dec()
+        ActiveRide.activeRide?.statusId = backStep
 
-        if (backStep != null) {
-            changeView(backStep)
-        }
+        getByValue(backStep)?.let { changeState(it, false) }
     }
 
 
-    private fun changeView(step: StatusRide) {
-        if (step == StatusRide.WAIT_FOR_PASSANGER) {
-            getView()?.stepWaitPassanger()
+    //chage view for the next step of ride
+    override fun changeState(step: StatusRide, isRestoreRide: Boolean) {
+        if (step == StatusRide.WAIT_FOR_DRIVER) {
+            getView()?.stepWaitDriver()
+
             timer?.cancelTimer()
-            timer = WaitingTimer()
-            timer?.startTimer(this)
+            timer = null
+        }
+
+        if (step == StatusRide.WAIT_FOR_PASSANGER) {
+            getView()?.stepWaitPassenger()
+
+            if (timer == null) {
+                timer = WaitingTimer()
+
+                if (isRestoreRide) {
+                    val waitTimestamp = getPassengerInteractor.getWaitTimestamp()
+                    if (waitTimestamp != -1L) {
+                        var waitingTime = (System.currentTimeMillis() - waitTimestamp) / 1000
+
+                        if (waitingTime > WaitingTimer.WAIT_TIMER) {
+                            timer?.isPaidWaiting = true
+                            waitingTime -= WaitingTimer.WAIT_TIMER
+                        }
+
+                        timer?.waitingTime = waitingTime
+
+                    } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+
+                } else getPassengerInteractor.saveWaitTimestamp()
+
+                timer?.startTimer(this)
+            }
         }
 
         if (step == StatusRide.IN_WAY) {
@@ -161,12 +211,12 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun tickTimerWaitPassanger(sec: Int, isPaidWating: Boolean) {
-        getView()?.tickTimerWaitPassanger(sec, isPaidWating)
+    override fun tickTimerWaitPassanger(sec: Long, isPaidWating: Boolean) {
+        getView()?.tickTimerWaitPassenger(sec, isPaidWating)
     }
 
 
-    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
+    override fun getByValue(status: Int?) = StatusRide.values().firstOrNull { it.status == status }
 
 
     override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
@@ -199,16 +249,17 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun stopService(){
+    override fun stopService() {
         val app = App.appComponent
         app.getApp().stopService(Intent(app.getContext(), DriverRideService::class.java))
     }
 
 
     override fun clearRide() {
-        ActiveRide.activeRide = null
-        RideStatus.status = StatusRide.SEARCH
         getPassengerInteractor.removeRideId()
+        ActiveRide.activeRide = null
+        timer?.cancelTimer()
+        timer = null
     }
 
 

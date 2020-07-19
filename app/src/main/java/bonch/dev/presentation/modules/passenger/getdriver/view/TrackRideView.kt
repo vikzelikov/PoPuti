@@ -19,7 +19,6 @@ import bonch.dev.MainActivity
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.Driver
-import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
@@ -102,8 +101,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             .error(R.drawable.ic_default_ava)
             .into(img_driver)
 
-        //set default status
-        checkoutStatusView(RideStatus.status)
+        //set status
+        var status = trackRidePresenter.getByValue(ActiveRide.activeRide?.statusId)
+        if (status == null) status = StatusRide.SEARCH
+        checkoutStatusView(status)
     }
 
 
@@ -418,7 +419,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun getConfirmCancel() {
-        if (RideStatus.status == StatusRide.WAIT_FOR_PASSANGER) {
+        var status = trackRidePresenter.getByValue(ActiveRide.activeRide?.statusId)
+        if (status == null) status = StatusRide.SEARCH
+
+        if (status == StatusRide.WAIT_FOR_PASSANGER) {
             //get payment for cancel
             val tax = trackRidePresenter.getTaxMoney()
 
@@ -434,7 +438,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
             text_message.text = message
 
-        } else if (RideStatus.status == StatusRide.WAIT_FOR_DRIVER) {
+        } else if (status == StatusRide.WAIT_FOR_DRIVER) {
             text_message.text = resources.getString(R.string.messageWarningDriverIs)
         }
 

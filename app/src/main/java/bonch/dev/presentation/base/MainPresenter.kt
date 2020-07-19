@@ -1,16 +1,16 @@
 package bonch.dev.presentation.base
 
+import android.content.Intent
 import androidx.navigation.get
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.ActiveRide
 import bonch.dev.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.entities.common.ride.RideStatus
-import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.interactor.IBaseInteractor
 import bonch.dev.presentation.interfaces.IMainActivity
 import bonch.dev.presentation.interfaces.IMainPresenter
 import bonch.dev.presentation.modules.common.ride.rate.view.RateRideView
+import bonch.dev.presentation.modules.driver.getpassenger.view.MapOrderView
 import bonch.dev.presentation.modules.driver.getpassenger.view.OrdersView
 import bonch.dev.presentation.modules.passenger.getdriver.view.*
 import bonch.dev.route.MainRouter
@@ -28,6 +28,11 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
     }
 
 
+    companion object {
+        const val DETAIL_ORDER = 11
+    }
+
+
     override fun navigate() {
         getView()?.showFullLoading()
 
@@ -35,42 +40,44 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         val accessToken = baseInteractor.getToken()
         val userId = baseInteractor.getUserId()
 
-        baseInteractor.validateAccount { isSuccess ->
-            if (isSuccess) {
-                if (accessToken != null && userId != -1) {
-                    val rideId = baseInteractor.getRideId()
-                    val ride = ActiveRide.activeRide
+        val rideInfo = RideInfo()
+        rideInfo.statusId = 3
+        rideInfo.position = "Васька"
+        rideInfo.destination = "Парнас"
+        ActiveRide.activeRide = rideInfo
+        redirectView(rideInfo)
 
-                    //check on active ride
-                    when {
-                        //there is active ride
-                        ride != null -> redirectView(ride)
-
-                        rideId != -1 -> {
-                            //check with server on active ride
-                            baseInteractor.getRide(rideId) { rideInfo, _ ->
-                                if (rideInfo?.statusId != null) {
-                                    //save ride local
-                                    ActiveRide.activeRide = rideInfo
-
-                                    //save status ride local
-                                    rideInfo.statusId?.let { statusId ->
-                                        getByValue(statusId)?.let { RideStatus.status = it }
-                                    }
-
-                                    //change view according to ride
-                                    redirectView(rideInfo)
-
-                                } else getView()?.hideFullLoading()
-                            }
-                        }
-
-                        //not active ride
-                        else -> redirectView(null)
-                    }
-                } else getView()?.hideFullLoading()
-            } else getView()?.hideFullLoading()
-        }
+//        baseInteractor.validateAccount { isSuccess ->
+//            if (isSuccess) {
+//                if (accessToken != null && userId != -1) {
+//                    val rideId = baseInteractor.getRideId()
+//                    val ride = ActiveRide.activeRide
+//
+//                    //check on active ride
+//                    when {
+//                        //there is active ride
+//                        ride != null -> redirectView(ride)
+//
+//                        rideId != -1 -> {
+//                            //check with server on active ride
+//                            baseInteractor.getRide(rideId) { rideInfo, _ ->
+//                                if (rideInfo?.statusId != null) {
+//                                    //save ride local
+//                                    ActiveRide.activeRide = rideInfo
+//
+//                                    //change view according to ride
+//                                    redirectView(rideInfo)
+//
+//                                } else getView()?.hideFullLoading()
+//                            }
+//                        }
+//
+//                        //not active ride
+//                        else -> redirectView(null)
+//                    }
+//                } else getView()?.hideFullLoading()
+//            } else getView()?.hideFullLoading()
+//        }
     }
 
 
@@ -80,7 +87,20 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
         //redirect to full app
         if (baseInteractor.isCheckoutDriver()) {
-            getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
+
+            if (ride != null) {
+                getView()?.getActivity()?.let { activity ->
+                    val intent = Intent(activity.applicationContext, MapOrderView::class.java)
+
+                    //show next step
+                    getView()?.getActivity()?.startActivityForResult(intent, DETAIL_ORDER)
+                }
+            } else {
+                showDriverView()
+
+                getView()?.hideFullLoading()
+            }
+
         } else {
             if (ride != null) {
                 //next step
@@ -89,10 +109,20 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                     getView()?.getNavHost(),
                     null
                 )
-            } else getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
-        }
+            } else showPassengerView()
 
-        getView()?.hideFullLoading()
+            getView()?.hideFullLoading()
+        }
+    }
+
+
+    override fun showPassengerView() {
+        getView()?.getNavHost()?.navigate(R.id.main_passenger_fragment)
+    }
+
+
+    override fun showDriverView() {
+        getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
     }
 
 
@@ -180,9 +210,6 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
             getView()?.pressBack()
         }
     }
-
-
-    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
     override fun instance(): MainPresenter {

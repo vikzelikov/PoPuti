@@ -7,13 +7,16 @@ import android.graphics.PointF
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import bonch.dev.App
 import bonch.dev.Permissions
 import bonch.dev.R
+import bonch.dev.di.component.driver.DaggerGetPassengerComponent
+import bonch.dev.di.module.driver.GetPassengerModule
 import bonch.dev.domain.entities.common.ride.ActiveRide
-import bonch.dev.domain.entities.common.ride.RideStatus
 import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.presentation.modules.driver.getpassenger.GetPassengerComponent
@@ -48,9 +51,23 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
 
 
     init {
+        initDI()
+
         GetPassengerComponent.getPassengerComponent?.inject(this)
 
         mapOrderPresenter.instance().attachView(this)
+    }
+
+
+    //first build DI component
+    private fun initDI() {
+        if (GetPassengerComponent.getPassengerComponent == null) {
+            GetPassengerComponent.getPassengerComponent = DaggerGetPassengerComponent
+                .builder()
+                .getPassengerModule(GetPassengerModule())
+                .appComponent(App.appComponent)
+                .build()
+        }
     }
 
 
@@ -78,10 +95,12 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
 
         val ride = ActiveRide.activeRide
         if (ride != null) {
-            if (RideStatus.status > StatusRide.SEARCH) {
-                mapOrderPresenter.attachTrackRide(supportFragmentManager)
-            } else {
-                mapOrderPresenter.attachDetailOrder(supportFragmentManager)
+            ride.statusId?.let { status ->
+                if (status > StatusRide.SEARCH.status) {
+                    mapOrderPresenter.attachTrackRide(supportFragmentManager)
+                } else {
+                    mapOrderPresenter.attachDetailOrder(supportFragmentManager)
+                }
             }
         }
     }
@@ -312,9 +331,14 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
 
+    override fun onResume() {
+        if (ActiveRide.activeRide == null) finish()
+        super.onResume()
+    }
+
+
     override fun onDestroy() {
         mapOrderPresenter.instance().detachView()
         super.onDestroy()
     }
-
 }

@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import bonch.dev.domain.entities.common.banking.BankCard
 import bonch.dev.domain.entities.common.ride.Address
 import bonch.dev.domain.entities.common.ride.Offer
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
@@ -107,6 +108,7 @@ interface ContractPresenter {
         fun backFragment(reasonID: ReasonCancel)
         fun showChat(context: Context, fragment: Fragment)
         fun cancelDoneOtherReason(comment: String)
+        fun getByValue(status: Int?): StatusRide?
         fun instance(): TrackRidePresenter
         fun getTaxMoney(): Int
     }

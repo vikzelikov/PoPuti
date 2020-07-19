@@ -35,6 +35,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
     private val OFFER_PRICE_TIMEOUT = 30000L
     val OFFER_PRICE = 1
+    var isOfferPrice = false
 
     init {
         GetPassengerComponent.getPassengerComponent?.inject(this)
@@ -46,7 +47,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
         val context = App.appComponent.getContext()
 
-        RideStatus.status = StatusRide.WAIT_FOR_DRIVER
+        //update status
+        ActiveRide.activeRide?.statusId = StatusRide.WAIT_FOR_DRIVER.status
 
         if (!isBlock) {
             isBlock = true
@@ -83,18 +85,12 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
             val toLng = order.toLng
 
             //check
-            val fromPoint = if (fromLat != null && fromLng != null) {
-                Point(fromLat, fromLng)
-            } else {
-                null
-            }
+            val fromPoint = if (fromLat != null && fromLng != null) Point(fromLat, fromLng)
+            else null
 
             //check
-            val toPoint = if (toLat != null && toLng != null) {
-                Point(toLat, toLng)
-            } else {
-                null
-            }
+            val toPoint = if (toLat != null && toLng != null) Point(toLat, toLng)
+            else null
 
             //set directions
             if (fromPoint != null && toPoint != null && map != null) {
@@ -111,7 +107,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     }
 
 
-    override fun subscribeOnChangeRide() {
+    //SOCKET: change ride status (cancel) and cancel offer price
+    override fun subscribeOnRide() {
         getPassengerInteractor.connectSocket { isSuccess ->
             if (isSuccess) {
                 getPassengerInteractor.subscribeOnChangeRide { data, _ ->
@@ -129,9 +126,20 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
                             //ride change for this driver
                             if (status == StatusRide.WAIT_FOR_DRIVER.status && userIdLocal == userIdRemote) {
-                                getPassengerInteractor.disconnectSocket()
+                                clearData()
                                 nextFragment()
                             }
+                        }
+                    }
+                }
+
+                getPassengerInteractor.subscribeOnDeleteOffer { data, _ ->
+                    if (data != null) {
+                        val offerId =
+                            Gson().fromJson(data, OfferPrice::class.java)?.offerPrice?.offerId
+
+                        if (offerId == activeOfferId) {
+                            cancelOffer()
                         }
                     }
                 }
@@ -149,6 +157,9 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     override fun offerPrice(context: Context, fragment: Fragment) {
         val intent = Intent(context, OfferPriceView::class.java)
         fragment.startActivityForResult(intent, OFFER_PRICE)
+
+        //start offer price process
+        isOfferPrice = true
     }
 
 
@@ -177,7 +188,10 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         val offerId = activeOfferId
 
         offerId?.let {
+            getView()?.hideOfferPrice(false)
             getPassengerInteractor.deleteOffer(offerId) {}
+
+            activeOfferId = null
         }
     }
 
@@ -216,7 +230,14 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
     override fun onDestroy() {
         cancelOffer()
-        getPassengerInteractor.removeRideId()
+
+        clearData()
+
+        ActiveRide.activeRide = null
+    }
+
+
+    private fun clearData() {
         handlerHotification?.removeCallbacksAndMessages(null)
         blockHandler?.removeCallbacksAndMessages(null)
         getPassengerInteractor.disconnectSocket()

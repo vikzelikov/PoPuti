@@ -10,7 +10,7 @@ import bonch.dev.presentation.modules.passenger.getdriver.adapters.OffersAdapter
 object OffersMainTimer {
 
     private const val MAX_TIME_GET_DRIVER = 3L //min
-    const val TIME_EXPIRED_ITEM = 60L //sec
+    const val TIME_EXPIRED_ITEM = 30L //sec
     var DEFAULT_WIDTH: Int = 0
     //ratio for smoothing animation (more ratio -> more smooth anim)
     var ratio = 100
