@@ -244,6 +244,9 @@
     <string name="selectBestOffer">Выберите лучшее предложение</string>
     <string name="newMessage">Новое сообщение</string>
     <string name="activeRide">Активная поездка</string>
+    <string name="select_card">Выбрать карту</string>
+    <string name="pinCard">Прикрепите карту</string>
+    <string name="addCardForPayments">Прикрепите карту, на которую будут поступать средства</string>
 
 
 </resources>

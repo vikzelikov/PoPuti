@@ -56,6 +56,10 @@ data class RideInfo(
     @Expose
     var comment: String? = null,
 
+    @SerializedName("city")
+    @Expose
+    var city: String? = null,
+
     @SerializedName("price")
     @Expose
     var price: Int? = null,
@@ -96,6 +100,7 @@ data class RideInfo(
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readString(),
+        parcel.readString(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readInt(),
@@ -103,11 +108,16 @@ data class RideInfo(
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readByte() != 0.toByte(),
         parcel.readParcelable(Profile::class.java.classLoader),
-        parcel.readParcelable(Profile::class.java.classLoader)
+        parcel.readParcelable(Driver::class.java.classLoader)
     )
 
     override fun equals(other: Any?): Boolean {
         return rideId == (other as RideInfo).rideId
+    }
+
+
+    override fun describeContents(): Int {
+        return 0
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -122,6 +132,7 @@ data class RideInfo(
         parcel.writeValue(toLat)
         parcel.writeValue(toLng)
         parcel.writeString(comment)
+        parcel.writeString(city)
         parcel.writeValue(price)
         parcel.writeValue(userId)
         parcel.writeInt(paymentMethod)
@@ -130,10 +141,6 @@ data class RideInfo(
         parcel.writeByte(if (isNewOrder) 1 else 0)
         parcel.writeParcelable(passenger, flags)
         parcel.writeParcelable(driver, flags)
-    }
-
-    override fun describeContents(): Int {
-        return 0
     }
 
     override fun hashCode(): Int {
@@ -148,6 +155,7 @@ data class RideInfo(
         result = 31 * result + (toLat?.hashCode() ?: 0)
         result = 31 * result + (toLng?.hashCode() ?: 0)
         result = 31 * result + (comment?.hashCode() ?: 0)
+        result = 31 * result + (city?.hashCode() ?: 0)
         result = 31 * result + (price ?: 0)
         result = 31 * result + (userId ?: 0)
         result = 31 * result + paymentMethod
@@ -168,6 +176,7 @@ data class RideInfo(
             return arrayOfNulls(size)
         }
     }
+
 
 }
 

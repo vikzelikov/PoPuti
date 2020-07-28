@@ -64,10 +64,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //start background service
-        val app = App.appComponent.getApp()
-        app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
-
         //regestered receivers for listener data from service
         trackRidePresenter.registerReceivers()
 
@@ -292,7 +288,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     private fun hideAllBottomSheet() {
         on_map_view?.visibility = View.GONE
-        comment_text.clearFocus()
+        comment_text?.clearFocus()
         hideKeyboard()
 
         cancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED

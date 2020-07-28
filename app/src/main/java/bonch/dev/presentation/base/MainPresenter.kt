@@ -40,44 +40,44 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         val accessToken = baseInteractor.getToken()
         val userId = baseInteractor.getUserId()
 
-        val rideInfo = RideInfo()
-        rideInfo.statusId = 3
-        rideInfo.position = "Васька"
-        rideInfo.destination = "Парнас"
-        ActiveRide.activeRide = rideInfo
-        redirectView(rideInfo)
+//        val rideInfo = RideInfo()
+//        rideInfo.statusId = 3
+//        rideInfo.position = "Васька"
+//        rideInfo.destination = "Парнас"
+//        ActiveRide.activeRide = rideInfo
+//        redirectView(rideInfo)
 
-//        baseInteractor.validateAccount { isSuccess ->
-//            if (isSuccess) {
-//                if (accessToken != null && userId != -1) {
-//                    val rideId = baseInteractor.getRideId()
-//                    val ride = ActiveRide.activeRide
-//
-//                    //check on active ride
-//                    when {
-//                        //there is active ride
-//                        ride != null -> redirectView(ride)
-//
-//                        rideId != -1 -> {
-//                            //check with server on active ride
-//                            baseInteractor.getRide(rideId) { rideInfo, _ ->
-//                                if (rideInfo?.statusId != null) {
-//                                    //save ride local
-//                                    ActiveRide.activeRide = rideInfo
-//
-//                                    //change view according to ride
-//                                    redirectView(rideInfo)
-//
-//                                } else getView()?.hideFullLoading()
-//                            }
-//                        }
-//
-//                        //not active ride
-//                        else -> redirectView(null)
-//                    }
-//                } else getView()?.hideFullLoading()
-//            } else getView()?.hideFullLoading()
-//        }
+        baseInteractor.validateAccount { isSuccess ->
+            if (isSuccess) {
+                if (accessToken != null && userId != -1) {
+                    val rideId = baseInteractor.getRideId()
+                    val ride = ActiveRide.activeRide
+
+                    //check on active ride
+                    when {
+                        //there is active ride
+                        ride != null -> redirectView(ride)
+
+                        rideId != -1 -> {
+                            //check with server on active ride
+                            baseInteractor.getRide(rideId) { rideInfo, _ ->
+                                if (rideInfo?.statusId != null) {
+                                    //save ride local
+                                    ActiveRide.activeRide = rideInfo
+
+                                    //change view according to ride
+                                    redirectView(rideInfo)
+
+                                } else getView()?.hideFullLoading()
+                            }
+                        }
+
+                        //not active ride
+                        else -> redirectView(null)
+                    }
+                } else getView()?.hideFullLoading()
+            } else getView()?.hideFullLoading()
+        }
     }
 
 

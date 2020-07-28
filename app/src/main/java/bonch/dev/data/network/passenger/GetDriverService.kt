@@ -17,6 +17,17 @@ interface GetDriverService : RideService {
     ): Response<Ride>
 
 
+    @FormUrlEncoded
+    @PUT("/api/rides/{id}")
+    suspend fun setDriverInRide(
+        @HeaderMap headers: Map<String, String>,
+        @Path("id") rideId: Int,
+        @Field("driver_id") driverId: Int,
+        @Field("status_id") statusId: Int,
+        @Field("price") price: Int
+    ): Response<*>
+
+
     @GET("/api/rides/{id}/offers")
     suspend fun getOffers(
         @Path("id") rideId: Int

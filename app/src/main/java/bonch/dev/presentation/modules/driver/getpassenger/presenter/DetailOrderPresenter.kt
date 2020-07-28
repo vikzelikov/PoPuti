@@ -3,6 +3,7 @@ package bonch.dev.presentation.modules.driver.getpassenger.presenter
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
@@ -31,11 +32,12 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     var handlerHotification: Handler? = null
 
     private var activeOfferId: Int? = null
+    private var activeOfferPrice: Int? = null
     private var isBlock = false
+    var isStop = true
 
     private val OFFER_PRICE_TIMEOUT = 30000L
     val OFFER_PRICE = 1
-    var isOfferPrice = false
 
     init {
         GetPassengerComponent.getPassengerComponent?.inject(this)
@@ -61,8 +63,9 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                 getView()?.hideLoading()
 
                 if (isSuccess && rideId != null) {
-                    getPassengerInteractor.saveRideId(rideId)
+                    isStop = false
 
+                    getPassengerInteractor.saveRideId(rideId)
 
                     context.let { Vibration.start(it) }
                     getView()?.showNotification(context.getString(R.string.rideCreated))
@@ -107,7 +110,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     }
 
 
-    //SOCKET: change ride status (cancel) and cancel offer price
+    //SOCKET: change ride status (cancel) or cancel offer price
     override fun subscribeOnRide() {
         getPassengerInteractor.connectSocket { isSuccess ->
             if (isSuccess) {
@@ -126,6 +129,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
                             //ride change for this driver
                             if (status == StatusRide.WAIT_FOR_DRIVER.status && userIdLocal == userIdRemote) {
+                                ActiveRide.activeRide?.price = activeOfferPrice
                                 clearData()
                                 nextFragment()
                             }
@@ -139,11 +143,13 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                             Gson().fromJson(data, OfferPrice::class.java)?.offerPrice?.offerId
 
                         if (offerId == activeOfferId) {
-                            cancelOffer()
+                            cancelOffer(false)
                         }
                     }
                 }
-            } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+            } else getView()?.showNotification(
+                App.appComponent.getContext().getString(R.string.errorSystem)
+            )
         }
     }
 
@@ -159,7 +165,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         fragment.startActivityForResult(intent, OFFER_PRICE)
 
         //start offer price process
-        isOfferPrice = true
+        isStop = false
     }
 
 
@@ -169,8 +175,9 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         if (rideId != null) {
             getPassengerInteractor.offerPrice(price, rideId) { offer, _ ->
                 if (offer != null) {
-                    //save offerId for delete in future
+                    //save offerId for delete in future and price
                     offer.offerId?.let { activeOfferId = it }
+                    offer.price?.let { activeOfferPrice = it }
 
                     handlerHotification = Handler()
                     handlerHotification?.postDelayed({
@@ -180,16 +187,31 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                     getView()?.hideOfferPrice(true)
                 }
             }
-        } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+        } else getView()?.showNotification(
+            App.appComponent.getContext().getString(R.string.errorSystem)
+        )
     }
 
 
-    override fun cancelOffer() {
+    override fun cancelOffer(byDriver: Boolean) {
         val offerId = activeOfferId
 
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                getView()?.hideOfferPrice(false)
+
+                if (!byDriver) getView()?.showNotification(
+                    App.appComponent.getApp().getString(R.string.userCancellPrice)
+                )
+            }
+        }
+
+        mainHandler.post(myRunnable)
+
         offerId?.let {
-            getView()?.hideOfferPrice(false)
-            getPassengerInteractor.deleteOffer(offerId) {}
+            if (byDriver)
+                getPassengerInteractor.deleteOffer(offerId) {}
 
             activeOfferId = null
         }
@@ -229,7 +251,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
 
     override fun onDestroy() {
-        cancelOffer()
+        cancelOffer(true)
 
         clearData()
 

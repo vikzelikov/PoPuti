@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -121,7 +120,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         //end offer price process
-        detailOrderPresenter.instance().isOfferPrice = false
+        detailOrderPresenter.instance().isStop = true
 
         if (requestCode == detailOrderPresenter.instance().OFFER_PRICE && resultCode == RESULT_OK) {
 
@@ -209,7 +208,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         }
 
         cancel_offer.setOnClickListener {
-            detailOrderPresenter.cancelOffer()
+            detailOrderPresenter.cancelOffer(true)
         }
 
         back_btn.setOnClickListener {
@@ -299,8 +298,10 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         val myRunnable = Runnable {
             kotlin.run {
                 isBlock = true
-                confirm_with_price.text = ""
-                progress_bar.visibility = View.VISIBLE
+                confirm_with_price?.text = ""
+                confirm_with_price?.isClickable = false
+                confirm_with_price?.isFocusable = false
+                progress_bar?.visibility = View.VISIBLE
             }
         }
 
@@ -312,8 +313,10 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                confirm_with_price?.text = getString(R.string.agreeWithPrice)
                 isBlock = false
+                confirm_with_price?.text = getString(R.string.agreeWithPrice)
+                confirm_with_price?.isClickable = true
+                confirm_with_price?.isFocusable = true
                 progress_bar?.visibility = View.GONE
             }
         }
@@ -367,7 +370,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun onStop() {
-        if (!detailOrderPresenter.instance().isOfferPrice) {
+        if (detailOrderPresenter.instance().isStop) {
             detailOrderPresenter.onDestroy()
         }
 

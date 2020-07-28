@@ -3,7 +3,7 @@ package bonch.dev.data.repository.passenger.signup
 import android.util.Log
 import bonch.dev.App
 import bonch.dev.data.network.passenger.SignupService
-import bonch.dev.domain.entities.common.profile.ProfileData
+import bonch.dev.domain.entities.common.profile.Profile
 import bonch.dev.domain.entities.passenger.signup.Token
 import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.presentation.interfaces.DataHandler
@@ -78,7 +78,7 @@ class SignupRepository : ISignupRepository {
 
 
     override fun getUserId(token: String, callback: DataHandler<Int?>) {
-        var response: Response<ProfileData>
+        var response: Response<Profile>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -91,8 +91,10 @@ class SignupRepository : ISignupRepository {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
-                        val id = response.body()?.data?.id
-                        callback(id, null)
+                        val id = response.body()?.id
+
+                        if (id != null) callback(id, null)
+                        else callback(null, "${response.body()}")
                     } else {
                         //Error
                         Log.e("GET_USER_ID", "${response.code()}")

@@ -7,14 +7,6 @@ import bonch.dev.domain.entities.driver.signup.DriverData
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-
-open class ProfileData(
-    @SerializedName("data")
-    @Expose
-    val data: Profile
-)
-
-
 open class Profile(
     @SerializedName("id")
     @Expose
@@ -36,13 +28,19 @@ open class Profile(
     @Expose
     var email: String? = null,
 
+    @SerializedName("city")
+    @Expose
+    var city: String? = null,
+
     @SerializedName("rating")
     @Expose
     var rating: Float? = null,
 
-    var isNotificationsEnable: Boolean = false,
-
+    @SerializedName("calls_allowed")
+    @Expose
     var isCallsEnable: Boolean = false,
+
+    var isNotificationsEnable: Boolean = false,
 
     var imgUser: String? = null,
 
@@ -61,6 +59,7 @@ open class Profile(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
         parcel.readValue(Float::class.java.classLoader) as? Float,
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
@@ -73,9 +72,10 @@ open class Profile(
         parcel.writeString(lastName)
         parcel.writeString(phone)
         parcel.writeString(email)
+        parcel.writeString(city)
         parcel.writeValue(rating)
-        parcel.writeByte(if (isNotificationsEnable) 1 else 0)
         parcel.writeByte(if (isCallsEnable) 1 else 0)
+        parcel.writeByte(if (isNotificationsEnable) 1 else 0)
         parcel.writeString(imgUser)
     }
 

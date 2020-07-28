@@ -90,7 +90,10 @@ class SignupInteractor : ISignupInteractor {
                     callback(true)
 
                 }
-                else -> callback(false)
+                else -> {
+                    println("$id $error")
+                    callback(false)
+                }
             }
         }
     }

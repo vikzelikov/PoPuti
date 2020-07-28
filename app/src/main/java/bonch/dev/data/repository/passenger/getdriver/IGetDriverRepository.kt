@@ -5,6 +5,7 @@ import bonch.dev.domain.entities.common.ride.Offer
 import bonch.dev.domain.entities.common.ride.RideInfo
 import bonch.dev.presentation.interfaces.DataHandler
 import bonch.dev.presentation.interfaces.GeocoderHandler
+import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.interfaces.SuggestHandler
 import com.yandex.mapkit.geometry.Point
 
@@ -19,5 +20,13 @@ interface IGetDriverRepository : IMainRepository {
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 
     fun getOffers(rideId: Int, callback: DataHandler<ArrayList<Offer>?>)
+
+    fun setDriverInRide(
+        userId: Int,
+        rideId: Int,
+        price: Int,
+        token: String,
+        callback: SuccessHandler
+    )
 
 }

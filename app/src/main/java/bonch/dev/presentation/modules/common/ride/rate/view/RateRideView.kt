@@ -93,6 +93,10 @@ class RateRideView : Fragment(), IRateRideView {
 
         setPriceForRide()
 
+        //todo
+        wating_fee.visibility = View.GONE
+        plus_wating_fee.visibility = View.GONE
+
         if (isForPassenger)
             setViewForPassenger()
     }
@@ -101,8 +105,6 @@ class RateRideView : Fragment(), IRateRideView {
     private fun setViewForPassenger() {
         rating_title.text = resources.getString(R.string.youGetPlace)
         subtitle_rating.text = resources.getString(R.string.rateRide)
-        wating_fee.visibility = View.GONE
-        plus_wating_fee.visibility = View.GONE
     }
 
 
@@ -110,8 +112,8 @@ class RateRideView : Fragment(), IRateRideView {
         val activeRide = ActiveRide.activeRide
         if (activeRide != null) {
             try {
-                if (activeRide.price != null) price_for_ride.text =
-                    activeRide.price.toString().plus(" ₽")
+                if (activeRide.price != null)
+                    price_for_ride.text = activeRide.price.toString().plus(" ₽")
 
                 plus_wating_fee.visibility = View.VISIBLE
                 wating_fee.visibility = View.VISIBLE

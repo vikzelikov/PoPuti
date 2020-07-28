@@ -46,7 +46,7 @@ interface IGetDriverInteractor {
 
     fun updateRideStatus(status: StatusRide, callback: SuccessHandler)
 
-    fun setDriverInRide(userId: Int, callback: SuccessHandler)
+    fun setDriverInRide(userId: Int, price: Int, callback: SuccessHandler)
 
     fun getOffers(callback: DataHandler<ArrayList<Offer>?>)
 

@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import bonch.dev.App
 import bonch.dev.R
 import bonch.dev.domain.entities.common.ride.*
@@ -23,10 +22,7 @@ import com.google.gson.Gson
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -152,9 +148,14 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         val res = App.appComponent.getContext().resources
 
         if (isAcceptByPassenger) {
+            getView()?.showLoading()
+
             val driverId = offer?.driver?.id
-            if (driverId != null) {
-                getDriverInteractor.setDriverInRide(driverId) { isSuccess ->
+            val price = offer?.price
+            if (driverId != null && price != null) {
+                getDriverInteractor.setDriverInRide(driverId, price) { isSuccess ->
+                    getView()?.hideLoading()
+
                     if (!isSuccess) getView()?.showNotification(res.getString(R.string.errorSystem))
                 }
             } else getView()?.showNotification(res.getString(R.string.errorSystem))
@@ -238,44 +239,46 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     override fun checkOnOffers() {
-        getDriverInteractor.getOffers { offers, _ ->
-            if (offers != null) {
-                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                val today = Calendar.getInstance().timeInMillis
-                val thatDay = Calendar.getInstance()
+        getView()?.getAdapter()?.notifyDataSetChanged()
 
-                isVibration = true
-
-                offers.forEach { offer ->
-                    try {
-                        val createdDate = offer.createDate
-                        if (createdDate != null) {
-                            val parseDate = format.parse(createdDate)
-                            parseDate?.let {
-                                thatDay.time = parseDate
-                                val diff = today - thatDay.timeInMillis
-                                offer.timeLine = OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
-                            }
-                        }
-                    } catch (e: ParseException) {
-                        e.printStackTrace()
-                    }
-                }
-
-                var delay = 500L
-                offers.sortBy { it.timeLine }
-
-                offers.forEach { offer ->
-                    if (offer.timeLine < OffersMainTimer.TIME_EXPIRED_ITEM) {
-                        Handler().postDelayed({
-                            setNewOffer(offer)
-                        }, delay)
-
-                        delay += 500
-                    }
-                }
-            }
-        }
+//        getDriverInteractor.getOffers { offers, _ ->
+//            if (offers != null) {
+//                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+//                val today = Calendar.getInstance().timeInMillis
+//                val thatDay = Calendar.getInstance()
+//
+//                isVibration = true
+//
+//                offers.forEach { offer ->
+//                    try {
+//                        val createdDate = offer.createDate
+//                        if (createdDate != null) {
+//                            val parseDate = format.parse(createdDate)
+//                            parseDate?.let {
+//                                thatDay.time = parseDate
+//                                val diff = today - thatDay.timeInMillis
+//                                offer.timeLine = OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
+//                            }
+//                        }
+//                    } catch (e: ParseException) {
+//                        e.printStackTrace()
+//                    }
+//                }
+//
+//                var delay = 500L
+//                offers.sortBy { it.timeLine }
+//
+//                offers.forEach { offer ->
+//                    if (offer.timeLine < OffersMainTimer.TIME_EXPIRED_ITEM) {
+//                        Handler().postDelayed({
+//                            setNewOffer(offer)
+//                        }, delay)
+//
+//                        delay += 500
+//                    }
+//                }
+//            }
+//        }
     }
 
 
@@ -307,6 +310,8 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         } else ActiveRide.activeRide?.let { restoreRide(it) }
 
         //stop getting new offers
+        val app = App.appComponent
+        app.getApp().stopService(Intent(app.getContext(), PassengerRideService::class.java))
         clearData()
         ActiveRide.activeRide = null
         getDriverInteractor.removeRideId()
@@ -349,9 +354,6 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     private fun clearData() {
-        val app = App.appComponent
-
-        app.getApp().stopService(Intent(app.getContext(), PassengerRideService::class.java))
         mainHandler?.removeCallbacksAndMessages(null)
         OffersMainTimer.getInstance()?.cancel()
         OffersMainTimer.deleteInstance()

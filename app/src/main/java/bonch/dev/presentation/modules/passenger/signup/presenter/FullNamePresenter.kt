@@ -53,7 +53,9 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
                 getView()?.hideLoading()
 
             } else {
-                getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+                getView()?.showNotification(
+                    App.appComponent.getContext().getString(R.string.errorSystem)
+                )
             }
         }
     }
@@ -85,10 +87,8 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
 
         if (token != null && profileData != null) {
             //remote save
-            signupInteractor.saveProfile(token, profileData) {
-                callback(it)
-            }
-        }
+            signupInteractor.saveProfile(token, profileData) { callback(it) }
+        } else callback(false)
     }
 
 

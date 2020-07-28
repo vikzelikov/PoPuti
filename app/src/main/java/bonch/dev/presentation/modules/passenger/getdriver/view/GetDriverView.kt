@@ -3,6 +3,7 @@ package bonch.dev.presentation.modules.passenger.getdriver.view
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.App
 import bonch.dev.MainActivity
 import bonch.dev.R
-import bonch.dev.domain.entities.common.ride.*
+import bonch.dev.domain.entities.common.ride.ActiveRide
+import bonch.dev.domain.entities.common.ride.Offer
+import bonch.dev.domain.entities.common.ride.RideInfo
+import bonch.dev.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.MBottomSheet
@@ -493,12 +497,32 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     override fun showLoading() {
-        (activity as? MainActivity)?.showLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                confirm_accept_driver?.text = ""
+                confirm_accept_driver?.isClickable = false
+                confirm_accept_driver?.isFocusable = false
+                progress_bar?.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
     override fun hideLoading() {
-        (activity as? MainActivity)?.hideLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                confirm_accept_driver?.text = getString(R.string.letsGo)
+                confirm_accept_driver?.isClickable = true
+                confirm_accept_driver?.isFocusable = true
+                progress_bar?.visibility = View.GONE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 

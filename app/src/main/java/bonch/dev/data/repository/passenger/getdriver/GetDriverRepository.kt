@@ -88,6 +88,8 @@ class GetDriverRepository : IGetDriverRepository {
                 val headers = NetworkUtil.getHeaders(token)
 
                 if (rideInfo.comment == null) rideInfo.comment = ""
+                if (rideInfo.city == null) rideInfo.city = "Cанкт-Петербург"
+                //todo
                 response = service.createRide(
                     headers,
                     rideInfo
@@ -246,7 +248,6 @@ class GetDriverRepository : IGetDriverRepository {
 
                 response = service.updateRideStatus(headers, rideId, status.status)
 
-
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         //Success
@@ -273,6 +274,7 @@ class GetDriverRepository : IGetDriverRepository {
     override fun setDriverInRide(
         userId: Int,
         rideId: Int,
+        price: Int,
         token: String,
         callback: SuccessHandler
     ) {
@@ -287,7 +289,8 @@ class GetDriverRepository : IGetDriverRepository {
                     headers,
                     rideId,
                     userId,
-                    StatusRide.WAIT_FOR_DRIVER.status
+                    StatusRide.WAIT_FOR_DRIVER.status,
+                    price
                 )
 
                 withContext(Dispatchers.Main) {
@@ -310,6 +313,15 @@ class GetDriverRepository : IGetDriverRepository {
                 callback(false)
             }
         }
+    }
+
+    override fun setDriverInRide(
+        userId: Int,
+        rideId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        //not implement
     }
 
 

@@ -468,6 +468,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val myRunnable = Runnable {
             kotlin.run {
                 get_driver_btn.text = ""
+                get_driver_btn.isClickable = false
+                get_driver_btn.isFocusable = false
                 progress_bar.visibility = View.VISIBLE
             }
         }
@@ -481,6 +483,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val myRunnable = Runnable {
             kotlin.run {
                 get_driver_btn.text = getString(R.string.getDriver)
+                get_driver_btn.isClickable = true
+                get_driver_btn.isFocusable = true
                 progress_bar.visibility = View.GONE
             }
         }

@@ -38,11 +38,11 @@ interface ContractPresenter {
         fun instance(): DetailOrderPresenter
         fun receiveOrder(order: RideInfo?)
         fun offerPrice(context: Context, fragment: Fragment)
+        fun cancelOffer(byDriver: Boolean)
         fun offerPriceDone(price: Int)
         fun startProcessBlock()
         fun onObjectUpdate()
         fun nextFragment()
-        fun cancelOffer()
         fun onDestroy()
         fun showRoute()
     }

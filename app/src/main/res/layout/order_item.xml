@@ -24,7 +24,7 @@
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/ava" />
+                android:src="@drawable/ic_default_ava" />
 
             <TextView
                 android:id="@+id/passanger_name"

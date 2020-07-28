@@ -153,7 +153,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ava" />
+                    android:src="@drawable/ic_default_ava" />
 
                 <TextView
                     android:id="@+id/passanger_name"

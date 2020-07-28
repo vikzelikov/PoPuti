@@ -1,6 +1,7 @@
 package bonch.dev.presentation.modules.passenger.getdriver.adapters
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -95,39 +96,36 @@ class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresente
 
 
     fun rejectOffer(position: Int?, isUserAction: Boolean) {
-        val recyclerView = getDriverPresenter.instance().getView()?.getRecyclerView()
-
-        recyclerView?.post {
-            try {
-                if (isUserAction && position != null) {
-                    list[position].offerId?.let {
-                        //delete offer with SERVER
-                        getDriverPresenter.deleteOffer(it)
-                    }
-
-                    //delete offer on view
-                    list.removeAt(position)
-                    notifyItemRemoved(position)
+        //todo все это дело через .post к view recylcler
+        try {
+            if (isUserAction && position != null) {
+                list[position].offerId?.let {
+                    //delete offer with SERVER
+                    getDriverPresenter.deleteOffer(it)
                 }
-            } catch (ex: IndexOutOfBoundsException) {
+
+                //delete offer on view
+                list.removeAt(position)
+                notifyItemRemoved(position)
             }
+        } catch (ex: IndexOutOfBoundsException) {
+        }
 
-            try {
-                if (!isUserAction) {
-                    val offer = getDriverPresenter.getOffer()
-                    if (offer?.offerId == list[list.lastIndex].offerId) {
-                        getDriverPresenter.instance().getView()?.hideConfirmAccept()
-                    }
-
-                    list.removeAt(list.lastIndex)
-                    notifyItemRemoved(list.size)
+        try {
+            if (!isUserAction) {
+                val offer = getDriverPresenter.getOffer()
+                if (offer?.offerId == list[list.lastIndex].offerId) {
+                    getDriverPresenter.instance().getView()?.hideConfirmAccept()
                 }
-            } catch (ex: IndexOutOfBoundsException) {
-            }
 
-            if (list.isEmpty()) {
-                getDriverPresenter.instance().getView()?.checkoutBackground(true)
+                list.removeAt(list.lastIndex)
+                notifyItemRemoved(list.size)
             }
+        } catch (ex: IndexOutOfBoundsException) {
+        }
+
+        if (list.isEmpty()) {
+            getDriverPresenter.instance().getView()?.checkoutBackground(true)
         }
     }
 

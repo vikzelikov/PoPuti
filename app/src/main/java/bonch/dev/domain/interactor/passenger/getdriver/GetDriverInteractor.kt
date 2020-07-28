@@ -67,21 +67,7 @@ class GetDriverInteractor : IGetDriverInteractor {
             getDriverRepository.createRide(rideInfo, token) { ride, error ->
                 val rideId = ride?.rideId
 
-                if (error != null) {
-                    //retry request
-                    getDriverRepository.createRide(rideInfo, token) { rideObj, _ ->
-                        val id = rideObj?.rideId
-
-                        if (id != null) {
-                            //Ok
-                            saveRideId(id)
-                            callback(true)
-                        } else {
-                            //error
-                            callback(false)
-                        }
-                    }
-                } else if (rideId != null) {
+                if (rideId != null) {
                     //Ok
                     saveRideId(rideId)
                     callback(true)
@@ -205,15 +191,15 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
-    override fun setDriverInRide(userId: Int, callback: SuccessHandler) {
+    override fun setDriverInRide(userId: Int, price: Int, callback: SuccessHandler) {
         val rideId = ActiveRide.activeRide?.rideId
         val token = profileStorage.getToken()
 
         if (rideId != null && token != null) {
-            getDriverRepository.setDriverInRide(userId, rideId, token) { isSuccess ->
+            getDriverRepository.setDriverInRide(userId, rideId, price, token) { isSuccess ->
                 if (!isSuccess) {
                     //retry request
-                    getDriverRepository.setDriverInRide(userId, rideId, token) {
+                    getDriverRepository.setDriverInRide(userId, rideId, price, token) {
                         callback(it)
                     }
                 } else callback(true)
