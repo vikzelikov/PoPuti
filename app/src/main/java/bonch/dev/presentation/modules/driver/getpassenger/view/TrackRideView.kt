@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -507,7 +508,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     //passanger cancel this ride
-    override fun passengerCancelRide(payment: Int) {
+    override fun passengerCancelRide(payment: Int, status: Int) {
         hideAllBottomSheet()
 
         Handler().postDelayed({
@@ -516,9 +517,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             on_view_cancel?.visibility = View.VISIBLE
             on_view_cancel?.isClickable = false
             on_view_cancel?.alpha = 0.8f
-
-            var status = ActiveRide.activeRide?.statusId
-            if (status == null) status = StatusRide.SEARCH.status
 
             if (status > StatusRide.WAIT_FOR_DRIVER.status) {
                 payment_sum?.text = payment.toString().plus(" ₽")
@@ -697,6 +695,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onResume() {
+        checkoutIconChat(false)
+
         DriverRideService.isAppClose = false
         super.onResume()
     }

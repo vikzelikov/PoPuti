@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@+id/phone_view">
+    app:startDestination="@+id/some_error">
+
+
+    <fragment
+        android:id="@+id/some_error"
+        android:label="@string/someError"
+        android:name="bonch.dev.presentation.modules.common.ErrorView"
+        tools:layout="@layout/error_layout" />
 
     <fragment
         android:id="@+id/phone_view"

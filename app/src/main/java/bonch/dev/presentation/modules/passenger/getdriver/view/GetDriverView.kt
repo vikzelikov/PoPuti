@@ -114,15 +114,12 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
             }
 
             val comment = ride.comment
-            comment?.let {
-                if (comment.isNotEmpty()) {
-                    comment_min_text.text = ride.comment
-                } else {
-                    comment_btn.visibility = View.GONE
-                }
+            if (comment.isNullOrEmpty()) {
+                comment_btn.visibility = View.GONE
+            } else {
+                comment_min_text.text = ride.comment
             }
         }
-
     }
 
 

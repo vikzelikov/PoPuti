@@ -170,11 +170,19 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun hideOfferPrice(isShowNotification: Boolean) {
-        show_animation?.visibility = View.GONE
-        detailOrderPresenter.instance().handlerHotification?.removeCallbacksAndMessages(null)
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                show_animation?.visibility = View.GONE
+                detailOrderPresenter.instance().handlerHotification?.removeCallbacksAndMessages(null)
 
-        if (isShowNotification)
-            showNotification(getString(R.string.userCancellPrice))
+                if (isShowNotification)
+                    showNotification(getString(R.string.userCancellPrice))
+
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 

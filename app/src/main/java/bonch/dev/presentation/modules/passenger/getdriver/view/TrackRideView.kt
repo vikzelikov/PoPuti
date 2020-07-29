@@ -64,6 +64,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //start background service
+        val app = App.appComponent.getApp()
+        if (!PassengerRideService.isRunning) app.startService(
+            Intent(
+                app.applicationContext,
+                PassengerRideService::class.java
+            )
+        )
+
         //regestered receivers for listener data from service
         trackRidePresenter.registerReceivers()
 
@@ -479,7 +488,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onResume() {
-        message_notification?.visibility = View.GONE
+        checkoutIconChat(false)
 
         PassengerRideService.isAppClose = false
         super.onResume()

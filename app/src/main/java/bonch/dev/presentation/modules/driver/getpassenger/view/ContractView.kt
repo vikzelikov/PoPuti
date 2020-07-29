@@ -41,7 +41,7 @@ interface ContractView {
     interface ITrackRideView : IBaseView {
         fun setOrder(order: RideInfo)
         fun checkoutIconChat(isShow: Boolean)
-        fun passengerCancelRide(payment: Int)
+        fun passengerCancelRide(payment: Int, status: Int)
         fun tickTimerWaitPassenger(sec: Long, isPaidWaiting: Boolean)
         fun onBackPressed(): Boolean
         fun stepWaitPassenger()

@@ -93,9 +93,6 @@ class DriverRideService : Service() {
 
             //passenger cancel ride
             if (status == StatusRide.CANCEL.status && userIdLocal == userIdRemote) {
-                //update status LOCAL
-                ActiveRide.activeRide?.statusId = StatusRide.CANCEL.status
-
                 val notification = buildNotification(
                     getString(R.string.passangerCancelledRide),
                     getString(R.string.clickForDetail),

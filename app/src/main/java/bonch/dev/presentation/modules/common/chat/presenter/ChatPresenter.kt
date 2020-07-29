@@ -155,6 +155,9 @@ class ChatPresenter : BasePresenter<IChatView>(), IChatPresenter {
     }
 
 
+    override fun isCheckoutDriver() = chatInteractor.isCheckoutDriver()
+
+
     override fun instance(): ChatPresenter {
         return this
     }

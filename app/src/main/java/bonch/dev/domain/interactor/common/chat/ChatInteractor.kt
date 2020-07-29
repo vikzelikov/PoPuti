@@ -68,4 +68,7 @@ class ChatInteractor : IChatInteractor {
 
         callback(messages, null)
     }
+
+
+    override fun isCheckoutDriver() = profileStorage.isCheckoutDriver()
 }

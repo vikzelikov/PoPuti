@@ -96,7 +96,10 @@ class GetDriverRepository : IGetDriverRepository {
                 )
 
                 withContext(Dispatchers.Main) {
+                    Log.e("TEST","1")
                     if (response.isSuccessful) {
+                        Log.e("TEST","2")
+
                         //Success
                         val rideId = response.body()?.ride?.rideId
                         if (rideId != null) {
@@ -106,6 +109,8 @@ class GetDriverRepository : IGetDriverRepository {
                             callback(null, response.message())
                         }
                     } else {
+                        Log.e("TEST","3")
+
                         //Error
                         Log.e(
                             "CREATE_RIDE",
@@ -117,6 +122,8 @@ class GetDriverRepository : IGetDriverRepository {
 
 
             } catch (err: Exception) {
+                Log.e("TEST","4")
+
                 //Error
                 callback(null, err.message)
                 Log.e("CREATE_RIDE", "${err.printStackTrace()}")

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -72,7 +73,7 @@ class ChatView : AppCompatActivity(), IChatView {
         //regestered receivers for listener data from service
         chatPresenter.registerReceivers()
 
-        val isDriver = intent.getBooleanExtra(IS_DRIVER, false)
+        val isDriver = chatPresenter.isCheckoutDriver()
         name.text = if (isDriver) {
             //start background service
             app.startService(Intent(app.applicationContext, DriverRideService::class.java))

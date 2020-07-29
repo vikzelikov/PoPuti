@@ -196,18 +196,11 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     override fun cancelOffer(byDriver: Boolean) {
         val offerId = activeOfferId
 
-        val mainHandler = Handler(Looper.getMainLooper())
-        val myRunnable = Runnable {
-            kotlin.run {
-                getView()?.hideOfferPrice(false)
+        getView()?.hideOfferPrice(false)
 
-                if (!byDriver) getView()?.showNotification(
-                    App.appComponent.getApp().getString(R.string.userCancellPrice)
-                )
-            }
-        }
-
-        mainHandler.post(myRunnable)
+        if (!byDriver) getView()?.showNotification(
+            App.appComponent.getApp().getString(R.string.userCancellPrice)
+        )
 
         offerId?.let {
             if (byDriver)

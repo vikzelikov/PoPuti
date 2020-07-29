@@ -75,7 +75,10 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                         //not active ride
                         else -> redirectView(null)
                     }
-                } else getView()?.hideFullLoading()
+                } else {
+                    getView()?.hideFullLoading()
+                    showSignup()
+                }
             } else getView()?.hideFullLoading()
         }
     }
@@ -87,7 +90,6 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
         //redirect to full app
         if (baseInteractor.isCheckoutDriver()) {
-
             if (ride != null) {
                 getView()?.getActivity()?.let { activity ->
                     val intent = Intent(activity.applicationContext, MapOrderView::class.java)
@@ -123,6 +125,11 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
     override fun showDriverView() {
         getView()?.getNavHost()?.navigate(R.id.main_driver_fragment)
+    }
+
+
+    private fun showSignup() {
+        getView()?.getNavHost()?.navigate(R.id.phone_view)
     }
 
 

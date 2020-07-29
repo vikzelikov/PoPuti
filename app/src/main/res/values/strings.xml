@@ -247,6 +247,7 @@
     <string name="select_card">Выбрать карту</string>
     <string name="pinCard">Прикрепите карту</string>
     <string name="addCardForPayments">Прикрепите карту, на которую будут поступать средства</string>
+    <string name="someError">Что-то пошло не так...</string>
 
 
 </resources>

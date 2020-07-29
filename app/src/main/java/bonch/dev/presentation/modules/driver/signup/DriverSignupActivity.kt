@@ -71,8 +71,8 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun navigateOnSignup() {
-        if(true) showDriverUI()
-        else
+//        if(true) showDriverUI()
+//        else
         //try to get info about driver and docs
         signupInteractor.getDriver { driver, _ ->
             if (driver != null) {

@@ -22,6 +22,8 @@ import com.google.gson.Gson
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -239,46 +241,44 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     override fun checkOnOffers() {
-        getView()?.getAdapter()?.notifyDataSetChanged()
+        getDriverInteractor.getOffers { offers, _ ->
+            if (offers != null) {
+                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                val today = Calendar.getInstance().timeInMillis
+                val thatDay = Calendar.getInstance()
 
-//        getDriverInteractor.getOffers { offers, _ ->
-//            if (offers != null) {
-//                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-//                val today = Calendar.getInstance().timeInMillis
-//                val thatDay = Calendar.getInstance()
-//
-//                isVibration = true
-//
-//                offers.forEach { offer ->
-//                    try {
-//                        val createdDate = offer.createDate
-//                        if (createdDate != null) {
-//                            val parseDate = format.parse(createdDate)
-//                            parseDate?.let {
-//                                thatDay.time = parseDate
-//                                val diff = today - thatDay.timeInMillis
-//                                offer.timeLine = OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
-//                            }
-//                        }
-//                    } catch (e: ParseException) {
-//                        e.printStackTrace()
-//                    }
-//                }
-//
-//                var delay = 500L
-//                offers.sortBy { it.timeLine }
-//
-//                offers.forEach { offer ->
-//                    if (offer.timeLine < OffersMainTimer.TIME_EXPIRED_ITEM) {
-//                        Handler().postDelayed({
-//                            setNewOffer(offer)
-//                        }, delay)
-//
-//                        delay += 500
-//                    }
-//                }
-//            }
-//        }
+                isVibration = true
+
+                offers.forEach { offer ->
+                    try {
+                        val createdDate = offer.createDate
+                        if (createdDate != null) {
+                            val parseDate = format.parse(createdDate)
+                            parseDate?.let {
+                                thatDay.time = parseDate
+                                val diff = today - thatDay.timeInMillis
+                                offer.timeLine = OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
+                            }
+                        }
+                    } catch (e: ParseException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                var delay = 500L
+                offers.sortBy { it.timeLine }
+
+                offers.forEach { offer ->
+                    if (offer.timeLine > 1 && offer.timeLine < OffersMainTimer.TIME_EXPIRED_ITEM) {
+                        Handler().postDelayed({
+                            setNewOffer(offer)
+                        }, delay)
+
+                        delay += 500
+                    }
+                }
+            }
+        }
     }
 
 

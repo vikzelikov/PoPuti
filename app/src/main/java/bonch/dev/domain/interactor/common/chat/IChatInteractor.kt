@@ -10,4 +10,6 @@ interface IChatInteractor {
 
     fun getMessages(callback: DataHandler<ArrayList<Message>?>)
 
+    fun isCheckoutDriver(): Boolean
+
 }

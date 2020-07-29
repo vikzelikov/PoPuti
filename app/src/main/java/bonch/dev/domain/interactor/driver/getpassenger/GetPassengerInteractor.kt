@@ -184,12 +184,6 @@ class GetPassengerInteractor : IGetPassengerInteractor {
                 if (data != null && error == null) {
                     //success
                     callback(data, null)
-                } else if (data == null) {
-                    //retry request
-                    getPassengerRepository.offerPrice(price, rideId, userId, token) { offer, _ ->
-                        if (offer != null) callback(offer, null)
-                        else callback(null, "error")
-                    }
                 }
             }
         }

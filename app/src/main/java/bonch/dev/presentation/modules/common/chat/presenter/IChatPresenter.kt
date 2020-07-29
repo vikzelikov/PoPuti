@@ -10,4 +10,6 @@ interface IChatPresenter {
 
     fun registerReceivers()
 
+    fun isCheckoutDriver(): Boolean
+
 }

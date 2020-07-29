@@ -88,14 +88,21 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
                 val userIdLocal = getPassengerInteractor.getUserId()
                 val userIdRemote = ride.driver?.id
                 val status = ride.statusId
+                var oldStatus = ActiveRide.activeRide?.statusId
+
+                if (oldStatus == null) oldStatus = StatusRide.WAIT_FOR_DRIVER.status
 
                 //passenger cancel ride
                 if (status == StatusRide.CANCEL.status && userIdLocal == userIdRemote) {
+
+                    //update status LOCAL
+                    ActiveRide.activeRide?.statusId = StatusRide.CANCEL.status
+
                     val mainHandler = Handler(Looper.getMainLooper())
                     val myRunnable = Runnable {
                         kotlin.run {
                             //todo получить рельную компенсацию за отмену
-                            getView()?.passengerCancelRide(43)
+                            getView()?.passengerCancelRide(43, oldStatus)
                         }
                     }
 
@@ -192,7 +199,9 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
                         timer?.waitingTime = waitingTime
 
-                    } else getView()?.showNotification(App.appComponent.getContext().getString(R.string.errorSystem))
+                    } else getView()?.showNotification(
+                        App.appComponent.getContext().getString(R.string.errorSystem)
+                    )
 
                 } else getPassengerInteractor.saveWaitTimestamp()
 
