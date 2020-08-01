@@ -216,7 +216,7 @@ class TableDocsView : Fragment(), ITableDocsView {
         for (i in viewsImgDocs.indices) {
             viewsImgDocs[i]?.setOnClickListener {
                 val id = tableDocsPresenter.getByValue(i)
-                if (id != null) {
+                if (id != null && !tableDocsPresenter.isBlockBack()) {
                     getReshootBottomSheet(id)
                 }
             }
@@ -227,17 +227,13 @@ class TableDocsView : Fragment(), ITableDocsView {
         }
 
         make_photo.setOnClickListener {
-            if (!tableDocsPresenter.isBlockBack()) {
-                tableDocsPresenter.getCamera(this)
-                blockButtons()
-            }
+            tableDocsPresenter.getCamera(this)
+            blockButtons()
         }
 
         clip_photo.setOnClickListener {
-            if (!tableDocsPresenter.isBlockBack()) {
-                Gallery.getPhoto(this)
-                blockButtons()
-            }
+            Gallery.getPhoto(this)
+            blockButtons()
         }
 
         back_btn.setOnClickListener {
