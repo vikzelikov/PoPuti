@@ -124,8 +124,8 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun resetDriverData() {
-        profileStorage.removeDriverAccess()
+    override fun resetProfile() {
+        profileStorage.removeProfile()
         profileStorage.saveCheckoutDriver(false)
     }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Po Puti</string>
+    <string name="app_name">По Пути</string>
     <string name="input_number_phone">Введите номер телефона</string>
     <string name="confirm_code">Мы отправим на него код подтверждения</string>
     <string name="mobile_phone">Мобильный телефон</string>
@@ -247,7 +247,9 @@
     <string name="select_card">Выбрать карту</string>
     <string name="pinCard">Прикрепите карту</string>
     <string name="addCardForPayments">Прикрепите карту, на которую будут поступать средства</string>
-    <string name="someError">Что-то пошло не так...</string>
+    <string name="someError">Что-то пошло не так…</string>
+    <string name="loadingPhoto">Загрузка фото…</string>
+    <string name="tryAgain">Ошибка\nПопробуйте еще раз</string>
 
 
 </resources>

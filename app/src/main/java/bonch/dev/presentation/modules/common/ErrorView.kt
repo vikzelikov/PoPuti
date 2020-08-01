@@ -13,7 +13,6 @@ class ErrorView : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.error_layout, container, false)
-    }
+    ): View = inflater.inflate(R.layout.error_layout, container, false)
+
 }

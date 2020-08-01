@@ -3,8 +3,6 @@ package bonch.dev.presentation.modules.driver.signup.steps.presenter
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.Permissions
@@ -20,6 +18,7 @@ import bonch.dev.domain.interactor.driver.signup.ISignupInteractor
 import bonch.dev.domain.utils.Camera
 import bonch.dev.domain.utils.Constants.GALLERY
 import bonch.dev.presentation.base.BasePresenter
+import bonch.dev.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.common.checkphoto.CheckPhotoView
 import bonch.dev.presentation.modules.common.media.IMediaEvent
 import bonch.dev.presentation.modules.common.media.MediaEvent
@@ -70,7 +69,9 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHECK_PHOTO) {
 
-                nextStep()
+                Thread(Runnable {
+                    nextStep()
+                }).start()
 
             } else {
                 if (requestCode == GALLERY) {
@@ -98,8 +99,13 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
 
 
     private fun nextStep() {
+        val textError = App.appComponent.getContext().getString(R.string.tryAgain)
+
         //save photo
         if (imgUri != null) {
+
+            getView()?.showLoading()
+
             try {
                 val photo = Photo()
                 photo.id = idStep.step
@@ -108,31 +114,39 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
                 if (idStep != Step.USER_PHOTO) listDocs.add(photo)
 
                 //sent photo to server
-                Thread(Runnable {
-                    sentPhoto(photo)
-                }).start()
+                sendPhoto(photo) { isSuccess ->
+                    getView()?.hideLoading()
+
+                    if (isSuccess) {
+                        if (idStep.step > Step.STS_DOC_BACK.step - 1) {
+                            //end settings docs
+                            MainRouter.showView(
+                                R.id.show_table_docs_view,
+                                getView()?.getNavHost(),
+                                null
+                            )
+                        } else {
+                            //next step
+                            val id = getByValue(idStep.step.inc())
+                            if (id != null) {
+                                idStep = id
+                                val signupData = getStepData(idStep)
+                                getView()?.setDataStep(signupData)
+                            } else getView()?.showNotification(textError)
+                        }
+                    } else {
+                        getView()?.showNotification(textError)
+                        listDocs.removeAt(listDocs.lastIndex)
+                    }
+                }
 
             } catch (ex: IndexOutOfBoundsException) {
             }
-        }
-
-        if (idStep.step > Step.STS_DOC_BACK.step - 1) {
-            //end settings docs
-            MainRouter.showView(R.id.show_table_docs_view, getView()?.getNavHost(), null)
-        } else {
-            //next step
-            val id = getByValue(idStep.step.inc())
-            if (id != null) {
-                idStep = id
-                val signupData = getStepData(idStep)
-                getView()?.setDataStep(signupData)
-            }
-        }
+        } else getView()?.showNotification(textError)
     }
 
 
-    private fun sentPhoto(photo: Photo) {
-        val errText = App.appComponent.getApp().getString(R.string.errorSystem)
+    private fun sendPhoto(photo: Photo, callback: SuccessHandler) {
         val uri = Uri.parse(photo.imgDocs)
 
         if (uri != null) {
@@ -151,16 +165,12 @@ class SignupStepPresenter : BasePresenter<ISignupStepView>(), ISignupStepPresent
 
                     if (file != null) {
                         //upload
-                        signupInteractor.loadPhoto(file, position) { isSuccess ->
-                            if (!isSuccess) {
-                                //error show
-                                getView()?.showNotification(errText)
-                            }
-                        }
-                    } else getView()?.showNotification(errText)
-                } else getView()?.showNotification(errText)
-            } else getView()?.showNotification(errText)
-        } else getView()?.showNotification(errText)
+                        signupInteractor.loadPhoto(file, position, callback)
+
+                    } else callback(false)
+                } else callback(false)
+            } else callback(false)
+        } else callback(false)
     }
 
 

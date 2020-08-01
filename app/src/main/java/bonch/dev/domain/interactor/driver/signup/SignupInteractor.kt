@@ -1,6 +1,5 @@
 package bonch.dev.domain.interactor.driver.signup
 
-import android.util.Log
 import bonch.dev.data.repository.common.media.IMediaRepository
 import bonch.dev.data.repository.common.profile.IProfileRepository
 import bonch.dev.data.repository.driver.signup.ISignupRepository
@@ -44,51 +43,26 @@ class SignupInteractor : ISignupInteractor {
         val token = profileStorage.getToken()
 
         if (token != null) {
-            mediaRepository.loadPhoto(token, image) { media, error ->
-                if (error != null) {
-                    //Retry request
-                    mediaRepository.loadPhoto(token, image) { mediaObj, _ ->
-                        try {
-                            if (mediaObj != null) {
-                                //ok
-                                val imageId = mediaObj.id
-
-                                if (id != -1) {
-                                    SignupMainData.listDocs[id].imgId = imageId
-                                } else loadProfilePhoto(imageId)
-
-                                callback(true)
-                            } else {
-                                //show error notification
-                                SignupMainData.listDocs[id].imgId = -1
-                                callback(false)
-                            }
-                        } catch (ex: IndexOutOfBoundsException) {
-                            callback(false)
-                        }
-                    }
-                } else if (media != null) {
+            mediaRepository.loadPhoto(token, image) { media, _ ->
+                if (media != null) {
                     //ok
                     try {
                         val imageId = media.id
 
                         if (id != -1) {
                             SignupMainData.listDocs[id].imgId = imageId
+                            SignupMainData.listDocs[id].id = imageId
                         } else loadProfilePhoto(imageId)
 
                         callback(true)
                     } catch (ex: IndexOutOfBoundsException) {
                         callback(false)
                     }
-                }
+                } else callback(false)
             }
         } else {
             //error
             callback(false)
-            Log.d(
-                "LOAD_PHOTO",
-                "Load photo to server failed (token: $token)"
-            )
         }
     }
 
@@ -99,8 +73,8 @@ class SignupInteractor : ISignupInteractor {
         val profilePhoto = ProfilePhoto(intArrayOf(imageId))
 
         if (token != null && userId != -1) {
-            profileRepository.savePhoto(userId, token, profilePhoto) { err ->
-                if (err != null) {
+            profileRepository.savePhoto(userId, token, profilePhoto) { isSuccess ->
+                if (!isSuccess) {
                     profileRepository.savePhoto(userId, token, profilePhoto) {}
                 }
             }

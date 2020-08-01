@@ -3,6 +3,8 @@ package bonch.dev.presentation.modules.common.profile.presenter
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import bonch.dev.App
 import bonch.dev.R
@@ -75,19 +77,8 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
         val context = App.appComponent.getContext().applicationContext
         if (NetworkUtil.isNetworkConnected(context)) {
             if (isPassanger) {
-                if (profileInteractor.getDriverAccess()) {
-                    //redirect to driver
-                    profileInteractor.saveCheckoutDriver(true)
-                    MainRouter.showView(
-                        R.id.show_main_driver_fragment,
-                        getView()?.getNavHost(),
-                        null
-                    )
-                } else {
-                    //redirect to signup as driver
-                    val intent = Intent(context, DriverSignupActivity::class.java)
-                    fragment.startActivityForResult(intent, 1)
-                }
+                val intent = Intent(context, DriverSignupActivity::class.java)
+                fragment.startActivityForResult(intent, 1)
             } else {
                 //redirect to passanger
                 profileInteractor.saveCheckoutDriver(false)

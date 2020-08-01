@@ -92,6 +92,23 @@
                         android:layout_weight="0.5"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/loading_passport"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:elevation="10dp"
+                            android:gravity="center_horizontal"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="55dp"
+                                android:theme="@style/WhiteProgressBar" />
+                        </LinearLayout>
+
+
                         <ImageView
                             android:id="@+id/passport"
                             android:layout_width="match_parent"
@@ -106,7 +123,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:src="@drawable/ic_green_tick" />
+                            android:src="@drawable/ic_green_tick"
+                            android:visibility="gone" />
 
 
                         <TextView
@@ -114,6 +132,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/passport"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
                             android:text="@string/passport"
                             android:textAlignment="center"
@@ -130,6 +149,22 @@
                         android:layout_weight="0.5"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/loading_self_passport"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:elevation="10dp"
+                            android:gravity="center_horizontal"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="55dp"
+                                android:theme="@style/WhiteProgressBar" />
+                        </LinearLayout>
+
                         <ImageView
                             android:id="@+id/self_passport"
                             android:layout_width="match_parent"
@@ -144,7 +179,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:src="@drawable/ic_green_tick" />
+                            android:src="@drawable/ic_green_tick"
+                            android:visibility="gone" />
 
 
                         <TextView
@@ -152,6 +188,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/self_passport"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
                             android:text="@string/selfWithPassport"
                             android:textAlignment="center"
@@ -181,6 +218,22 @@
                         android:layout_weight="0.5"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/loading_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:elevation="10dp"
+                            android:gravity="center_horizontal"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="55dp"
+                                android:theme="@style/WhiteProgressBar" />
+                        </LinearLayout>
+
                         <ImageView
                             android:id="@+id/passport_address"
                             android:layout_width="match_parent"
@@ -195,13 +248,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:src="@drawable/ic_red_cross" />
+                            android:src="@drawable/ic_red_cross"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/text_passport_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/passport_address"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
                             android:text="@string/passportAddress"
                             android:textAlignment="center"
@@ -218,6 +273,22 @@
                         android:layout_weight="0.5"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/loading_driver_doc_front"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:elevation="10dp"
+                            android:gravity="center_horizontal"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="55dp"
+                                android:theme="@style/WhiteProgressBar" />
+                        </LinearLayout>
+
                         <ImageView
                             android:id="@+id/driver_doc_front"
                             android:layout_width="match_parent"
@@ -232,13 +303,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:src="@drawable/ic_red_cross" />
+                            android:src="@drawable/ic_red_cross"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/text_driver_doc_front"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/driver_doc_front"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
                             android:text="@string/driverDoc"
                             android:textAlignment="center"
@@ -268,6 +341,22 @@
                         android:layout_weight="0.5"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/loading_driver_doc_back"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:elevation="10dp"
+                            android:gravity="center_horizontal"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="55dp"
+                                android:theme="@style/WhiteProgressBar" />
+                        </LinearLayout>
+
                         <ImageView
                             android:id="@+id/driver_doc_back"
                             android:layout_width="match_parent"
@@ -282,7 +371,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:src="@drawable/ic_green_tick" />
+                            android:src="@drawable/ic_green_tick"
+                            android:visibility="gone" />
 
 
                         <TextView
@@ -290,6 +380,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/driver_doc_back"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
                             android:text="@string/backDriverDoc"
                             android:textAlignment="center"
@@ -306,6 +397,22 @@
                         android:layout_weight="0.5"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:id="@+id/loading_sts_front"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:elevation="10dp"
+                            android:gravity="center_horizontal"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="55dp"
+                                android:theme="@style/WhiteProgressBar" />
+                        </LinearLayout>
+
                         <ImageView
                             android:id="@+id/sts_front"
                             android:layout_width="match_parent"
@@ -320,13 +427,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:src="@drawable/ic_red_cross" />
+                            android:src="@drawable/ic_red_cross"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/text_sts_front"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/sts_front"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
                             android:text="@string/frontSTS"
                             android:textAlignment="center"
@@ -351,11 +460,27 @@
                     app:layout_constraintWidth_max="500dp">
 
                     <RelativeLayout
-                        android:layout_marginEnd="10dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
                         android:layout_weight="0.5"
                         android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/loading_sts_back"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:elevation="10dp"
+                            android:gravity="center_horizontal"
+                            android:visibility="gone">
+
+                            <ProgressBar
+                                android:layout_width="30dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="55dp"
+                                android:theme="@style/WhiteProgressBar" />
+                        </LinearLayout>
 
                         <ImageView
                             android:id="@+id/sts_back"
@@ -371,7 +496,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:src="@drawable/ic_green_tick" />
+                            android:src="@drawable/ic_green_tick"
+                            android:visibility="gone" />
 
 
                         <TextView
@@ -379,6 +505,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/sts_back"
+                            android:layout_marginStart="10dp"
                             android:layout_marginTop="10dp"
                             android:text="@string/backSTS"
                             android:textAlignment="center"

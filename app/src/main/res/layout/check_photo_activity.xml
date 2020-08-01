@@ -13,7 +13,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:textColor="@android:color/black"
         android:textSize="17sp" />
 
@@ -36,12 +36,13 @@
         android:paddingEnd="15dp"
         android:weightSum="1">
 
+
         <TextView
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:paddingTop="50dp"
+            android:paddingTop="30dp"
             android:paddingBottom="30dp"
             android:text="@string/backCaps"
             android:textColor="#CECECE"
@@ -54,11 +55,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="end"
-            android:paddingTop="50dp"
+            android:paddingTop="30dp"
             android:paddingBottom="30dp"
             android:text="@string/save"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import bonch.dev.App
@@ -33,7 +32,6 @@ class DriverSignupActivity : AppCompatActivity() {
 
     private var handlerAnimation: Handler? = null
 
-    private val DRIVER_CREATED = "DRIVER_CREATED"
     private val CHECKOUT = -3
 
     init {
@@ -60,6 +58,8 @@ class DriverSignupActivity : AppCompatActivity() {
         setContentView(R.layout.driver_signup_activity)
 
         showLoading()
+
+        clearData()
 
         navigateOnSignup()
     }
@@ -130,12 +130,10 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun showTableDocsView(driver: DriverData) {
-        val bundle = Bundle()
-        bundle.putBoolean(DRIVER_CREATED, true)
         SignupMainData.listDocs = driver.photoArray.toCollection(ArrayList())
 
         //show table docs
-        MainRouter.showView(R.id.show_start_table_docs_view, navController, bundle)
+        MainRouter.showView(R.id.show_start_table_docs_view, navController, null)
     }
 
 

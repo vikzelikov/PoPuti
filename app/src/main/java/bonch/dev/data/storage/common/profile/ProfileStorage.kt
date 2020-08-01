@@ -120,6 +120,9 @@ class ProfileStorage : IProfileStorage {
         val editor = App.appComponent.getSharedPref().edit()
         editor.remove(ACCESS_TOKEN)
         editor.remove(USER_ID)
+        editor.remove(DRIVER_ID)
+        editor.remove(DRIVER_ACCESS)
+        editor.remove(CHECKOUT_AS_DRIVER)
         editor.apply()
     }
 
@@ -127,13 +130,6 @@ class ProfileStorage : IProfileStorage {
     override fun saveDriverAccess() {
         val editor = App.appComponent.getSharedPref().edit()
         editor.putBoolean(DRIVER_ACCESS, true)
-        editor.apply()
-    }
-
-
-    override fun removeDriverAccess() {
-        val editor = App.appComponent.getSharedPref().edit()
-        editor.remove(DRIVER_ACCESS)
         editor.apply()
     }
 

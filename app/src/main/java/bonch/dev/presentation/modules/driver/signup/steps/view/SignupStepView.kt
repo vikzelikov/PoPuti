@@ -1,8 +1,11 @@
 package bonch.dev.presentation.modules.driver.signup.steps.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +28,6 @@ class SignupStepView : Fragment(), ISignupStepView {
     @Inject
     lateinit var signupStepPresenter: ISignupStepPresenter
 
-    private var blockHandler: Handler? = null
-    private var isBlock = false
-
 
     init {
         SignupComponent.driverSignupComponent?.inject(this)
@@ -48,8 +48,6 @@ class SignupStepView : Fragment(), ISignupStepView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        startProcessBlock()
-
         val stepData = signupStepPresenter.getStepData(SignupMainData.idStep)
         setDataStep(stepData)
 
@@ -60,6 +58,8 @@ class SignupStepView : Fragment(), ISignupStepView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         signupStepPresenter.onActivityResult(this, requestCode, resultCode, data)
+
+        enableButtons()
     }
 
 
@@ -72,20 +72,14 @@ class SignupStepView : Fragment(), ISignupStepView {
 
 
     override fun setListeners() {
-        //TODO holder block btn
-
         make_photo.setOnClickListener {
-            if (!isBlock) {
-                signupStepPresenter.getCamera(this)
-                isBlock = true
-            }
+            signupStepPresenter.getCamera(this)
+            blockButtons()
         }
 
         clip_photo.setOnClickListener {
-            if (!isBlock) {
-                Gallery.getPhoto(this)
-                isBlock = true
-            }
+            Gallery.getPhoto(this)
+            blockButtons()
         }
     }
 
@@ -105,20 +99,6 @@ class SignupStepView : Fragment(), ISignupStepView {
     }
 
 
-    private fun startProcessBlock() {
-        if (blockHandler == null) {
-            blockHandler = Handler()
-        }
-
-        blockHandler?.postDelayed(object : Runnable {
-            override fun run() {
-                isBlock = false
-                blockHandler?.postDelayed(this, 2500)
-            }
-        }, 0)
-    }
-
-
     override fun getNavHost(): NavController? {
         return (activity as? DriverSignupActivity)?.navController
     }
@@ -130,12 +110,64 @@ class SignupStepView : Fragment(), ISignupStepView {
 
 
     override fun showLoading() {
-        (activity as? DriverSignupActivity)?.showLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                on_view?.alpha = 0.9f
+                on_view?.visibility = View.VISIBLE
+                progress_bar?.visibility = View.VISIBLE
+                loading_text?.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
     override fun hideLoading() {
-        (activity as? DriverSignupActivity)?.hideLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                progress_bar?.visibility = View.GONE
+                loading_text?.visibility = View.GONE
+                on_view?.alpha = 0.9f
+                on_view?.animate()
+                    ?.alpha(0f)
+                    ?.setDuration(500)
+                    ?.setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            //go to the next screen
+                            on_view?.visibility = View.GONE
+                        }
+                    })
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    private fun blockButtons() {
+        make_photo?.isClickable = false
+        make_photo?.isFocusable = false
+
+        clip_photo?.isClickable = false
+        clip_photo?.isFocusable = false
+    }
+
+
+    private fun enableButtons() {
+        make_photo?.isClickable = true
+        make_photo?.isFocusable = true
+
+        clip_photo?.isClickable = true
+        clip_photo?.isFocusable = true
+    }
+
+
+    override fun onResume() {
+        enableButtons()
+        super.onResume()
     }
 
 
@@ -143,7 +175,6 @@ class SignupStepView : Fragment(), ISignupStepView {
 
 
     override fun onDestroy() {
-        blockHandler?.removeCallbacksAndMessages(null)
         signupStepPresenter.instance().detachView()
         super.onDestroy()
     }

@@ -1,5 +1,6 @@
 package bonch.dev.presentation.modules.driver.getpassenger.presenter
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
@@ -249,7 +250,8 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
         }, 0)
     }
 
-
+    //we already checked geo permission
+    @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
         mLocationRequest = LocationRequest()
         mLocationRequest?.priority = LocationRequest.PRIORITY_HIGH_ACCURACY

@@ -30,15 +30,11 @@ class BaseInteractor : IBaseInteractor {
     }
 
 
-    override fun validateAccount(callback: SuccessHandler) {
+    override fun validateAccount(callback: DataHandler<Int?>) {
         val token = profileStorage.getToken()
         if (token != null) {
-            signupRepository.getUserId(token) { data, error ->
-                if (data != null && error == null) {
-                    callback(true)
-                } else callback(false)
-            }
-        } else callback(false)
+            signupRepository.getUserId(token, callback)
+        } else callback(-1, null)
     }
 
 

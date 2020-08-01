@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -24,6 +25,8 @@ import bonch.dev.presentation.modules.driver.signup.DriverSignupActivity
 import bonch.dev.presentation.modules.driver.signup.SignupComponent
 import bonch.dev.presentation.modules.driver.signup.tabledocs.presenter.ITableDocsPresenter
 import com.bumptech.glide.Glide
+import com.ethanhua.skeleton.Skeleton
+import com.ethanhua.skeleton.ViewSkeletonScreen
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.table_docs_fragment.*
 import javax.inject.Inject
@@ -34,9 +37,9 @@ class TableDocsView : Fragment(), ITableDocsView {
     lateinit var tableDocsPresenter: ITableDocsPresenter
 
     private var reshootBottomSheet: BottomSheetBehavior<*>? = null
-    private var blockHandler: Handler? = null
-    private var isBlock = false
-    private val DRIVER_CREATED = "DRIVER_CREATED"
+
+    private var imgDocsSkeletons: ArrayList<ViewSkeletonScreen> = arrayListOf()
+    private var textDocsSkeletons: ArrayList<ViewSkeletonScreen> = arrayListOf()
 
 
     init {
@@ -56,33 +59,24 @@ class TableDocsView : Fragment(), ITableDocsView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        showSkeletonAnim()
 
-        startProcessBlock()
-
-        val driverCreated = arguments?.getBoolean(DRIVER_CREATED, false)
-        if (driverCreated != null && driverCreated) {
-            //driver already created
-            tableDocsPresenter.instance().isDriverCreated = true
-        } else {
-            //create driver on background
-            Thread(Runnable {
-                tableDocsPresenter.createDriver()
-            }).start()
-        }
-
-        tableDocsPresenter.sortDocs()
+        tableDocsPresenter.createDriver()
 
         loadPhoto()
 
         setBottomSheet()
 
         setListeners()
+
+        super.onViewCreated(view, savedInstanceState)
     }
 
 
     override fun loadPhoto() {
         Thread(Runnable {
+            tableDocsPresenter.sortDocs()
+
             val listDocs: ArrayList<Photo> = SignupMainData.listDocs
             setDocs(listDocs)
         }).start()
@@ -109,6 +103,8 @@ class TableDocsView : Fragment(), ITableDocsView {
         tableDocsPresenter.onActivityResult(this, requestCode, resultCode, data)
 
         hideReshootBottomSheet()
+
+        enableButtons()
     }
 
 
@@ -116,6 +112,8 @@ class TableDocsView : Fragment(), ITableDocsView {
         val viewsImgDocs = getImgDocs()
         val viewsTitleDocs = getTitleDocs()
         val viewsTicsDocs = getTicsDocs()
+
+        val arrTics = arrayListOf<Int>()
 
         if (list.isNotEmpty()) {
             val mainHandler = Handler(Looper.getMainLooper())
@@ -126,32 +124,41 @@ class TableDocsView : Fragment(), ITableDocsView {
                             val isVerify = list[i].isVerify
 
                             if (isVerify != 0) {
+
+                                val context = viewsTicsDocs[i]?.context
+                                arrTics.add(i)
+
                                 if (isVerify == 1) {
                                     //docs is valid
-                                    viewsImgDocs[i].isClickable = false
-                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#149319"))
-                                    viewsTicsDocs[i].setImageDrawable(
-                                        ContextCompat.getDrawable(
-                                            viewsTicsDocs[i].context,
-                                            R.drawable.ic_green_tick
+                                    viewsImgDocs[i]?.isClickable = false
+                                    viewsTitleDocs[i]?.setTextColor(Color.parseColor("#149319"))
+                                    context?.let {
+                                        viewsTicsDocs[i]?.setImageDrawable(
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.drawable.ic_green_tick
+                                            )
                                         )
-                                    )
+                                    }
                                 } else {
                                     //docs not valid
-                                    status_driver_signup.text = resources.getText(R.string.someDocsNotValid)
+                                    status_driver_signup.text =
+                                        resources.getText(R.string.someDocsNotValid)
                                     status_driver_signup.setTextColor(Color.parseColor("#D03131"))
-                                    viewsTitleDocs[i].setTextColor(Color.parseColor("#D03131"))
-                                    viewsTicsDocs[i].setImageDrawable(
-                                        ContextCompat.getDrawable(
-                                            viewsTicsDocs[i].context,
-                                            R.drawable.ic_red_cross
+                                    viewsTitleDocs[i]?.setTextColor(Color.parseColor("#D03131"))
+                                    context?.let {
+                                        viewsTicsDocs[i]?.setImageDrawable(
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.drawable.ic_red_cross
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             } else {
                                 //docs still is processing
-                                viewsTitleDocs[i].setTextColor(Color.parseColor("#000000"))
-                                viewsTicsDocs[i].visibility = View.GONE
+                                viewsTitleDocs[i]?.setTextColor(Color.parseColor("#000000"))
+                                viewsTicsDocs[i]?.visibility = View.GONE
 
                                 //set deafult status
                                 status_driver_signup.text = resources.getText(R.string.weCheckDocs)
@@ -164,13 +171,20 @@ class TableDocsView : Fragment(), ITableDocsView {
                                 list[i].imgUrl
                             }
 
-                            Glide.with(viewsImgDocs[i].context).load(image)
-                                .into(viewsImgDocs[i])
-
+                            view?.context?.let { context ->
+                                viewsImgDocs[i]?.let {
+                                    Glide.with(context).load(image)
+                                        .into(it)
+                                }
+                            }
                         }
                     } catch (ex: IndexOutOfBoundsException) {
-                        println(ex.message)
+
                     }
+
+                    Handler().postDelayed({
+                        hideSkeletonAnim(arrTics)
+                    }, 2000)
                 }
             }
 
@@ -200,7 +214,7 @@ class TableDocsView : Fragment(), ITableDocsView {
         val viewsImgDocs = getImgDocs()
 
         for (i in viewsImgDocs.indices) {
-            viewsImgDocs[i].setOnClickListener {
+            viewsImgDocs[i]?.setOnClickListener {
                 val id = tableDocsPresenter.getByValue(i)
                 if (id != null) {
                     getReshootBottomSheet(id)
@@ -213,16 +227,16 @@ class TableDocsView : Fragment(), ITableDocsView {
         }
 
         make_photo.setOnClickListener {
-            if (!isBlock) {
+            if (!tableDocsPresenter.isBlockBack()) {
                 tableDocsPresenter.getCamera(this)
-                isBlock = true
+                blockButtons()
             }
         }
 
         clip_photo.setOnClickListener {
-            if (!isBlock) {
+            if (!tableDocsPresenter.isBlockBack()) {
                 Gallery.getPhoto(this)
-                isBlock = true
+                blockButtons()
             }
         }
 
@@ -267,7 +281,7 @@ class TableDocsView : Fragment(), ITableDocsView {
     }
 
 
-    override fun getImgDocs(): Array<ImageView> {
+    override fun getImgDocs(): Array<ImageView?> {
         return arrayOf(
             passport,
             self_passport,
@@ -280,7 +294,7 @@ class TableDocsView : Fragment(), ITableDocsView {
     }
 
 
-    override fun getTitleDocs(): Array<TextView> {
+    override fun getTitleDocs(): Array<TextView?> {
         return arrayOf(
             text_passport,
             text_self_passport,
@@ -293,7 +307,7 @@ class TableDocsView : Fragment(), ITableDocsView {
     }
 
 
-    override fun getTicsDocs(): Array<ImageView> {
+    override fun getTicsDocs(): Array<ImageView?> {
         return arrayOf(
             status_passport,
             status_self_passport,
@@ -303,20 +317,6 @@ class TableDocsView : Fragment(), ITableDocsView {
             status_sts_front,
             status_sts_back
         )
-    }
-
-
-    private fun startProcessBlock() {
-        if (blockHandler == null) {
-            blockHandler = Handler()
-        }
-
-        blockHandler?.postDelayed(object : Runnable {
-            override fun run() {
-                isBlock = false
-                blockHandler?.postDelayed(this, 2500)
-            }
-        }, 0)
     }
 
 
@@ -335,8 +335,26 @@ class TableDocsView : Fragment(), ITableDocsView {
     }
 
 
+    private fun blockButtons() {
+        make_photo?.isClickable = false
+        make_photo?.isFocusable = false
+
+        clip_photo?.isClickable = false
+        clip_photo?.isFocusable = false
+    }
+
+
+    private fun enableButtons() {
+        make_photo?.isClickable = true
+        make_photo?.isFocusable = true
+
+        clip_photo?.isClickable = true
+        clip_photo?.isFocusable = true
+    }
+
+
     fun onBackPressed(): Boolean {
-        return if (tableDocsPresenter.onBackPressed()) {
+        return if (!tableDocsPresenter.isBlockBack()) {
             true
         } else {
             showNotification(resources.getString(R.string.photoLoading))
@@ -345,8 +363,97 @@ class TableDocsView : Fragment(), ITableDocsView {
     }
 
 
+    override fun showLoadingPhoto(idDoc: Step) {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                val photo: Pair<View, View> = when (idDoc) {
+                    Step.USER_PHOTO -> Pair(loading_passport, passport)
+                    Step.PASSPORT_PHOTO -> Pair(loading_passport, passport)
+                    Step.SELF_PHOTO_PASSPORT -> Pair(loading_self_passport, self_passport)
+                    Step.PASSPORT_ADDRESS_PHOTO -> Pair(loading_address, passport_address)
+                    Step.DRIVER_DOC_FRONT -> Pair(loading_driver_doc_front, driver_doc_front)
+                    Step.DRIVER_DOC_BACK -> Pair(loading_driver_doc_back, driver_doc_back)
+                    Step.STS_DOC_FRONT -> Pair(loading_sts_front, sts_front)
+                    Step.STS_DOC_BACK -> Pair(loading_sts_back, sts_back)
+                }
+
+                photo.first.visibility = View.VISIBLE
+                photo.second.alpha = 0.7f
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    override fun hideLoadingPhoto() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                loading_passport?.visibility = View.GONE
+                loading_self_passport?.visibility = View.GONE
+                loading_address?.visibility = View.GONE
+                loading_driver_doc_front?.visibility = View.GONE
+                loading_driver_doc_back?.visibility = View.GONE
+                loading_sts_front?.visibility = View.GONE
+                loading_sts_back?.visibility = View.GONE
+
+                getImgDocs().forEach { it?.alpha = 1.0f }
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    private fun showSkeletonAnim() {
+        getImgDocs().forEach { imgDocs ->
+            val skeletonDocs = Skeleton.bind(imgDocs)
+                .load(R.layout.skeleton_layout)
+                .show()
+            imgDocsSkeletons.add(skeletonDocs)
+        }
+
+        getTitleDocs().forEach { textDocs ->
+            val layoutParams = textDocs?.layoutParams
+            layoutParams?.height = 30
+            textDocs?.layoutParams = layoutParams
+
+            val skeletonText = Skeleton.bind(textDocs)
+                .load(R.layout.skeleton_layout)
+                .show()
+            textDocsSkeletons.add(skeletonText)
+        }
+    }
+
+
+    private fun hideSkeletonAnim(arrTics: ArrayList<Int>) {
+        imgDocsSkeletons.forEach { it.hide() }
+        textDocsSkeletons.forEach { it.hide() }
+
+        getTitleDocs().forEach { textDocs ->
+            val layoutParams = textDocs?.layoutParams
+            layoutParams?.height = LinearLayout.LayoutParams.WRAP_CONTENT
+            textDocs?.layoutParams = layoutParams
+        }
+
+        val viewTics = getTicsDocs()
+        arrTics.forEach { i ->
+            viewTics.forEachIndexed { index, imageView ->
+                if (i == index) imageView?.visibility = View.VISIBLE
+            }
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        enableButtons()
+    }
+
+
     override fun onDestroy() {
-        blockHandler?.removeCallbacksAndMessages(null)
         tableDocsPresenter.instance().detachView()
         super.onDestroy()
     }

@@ -36,7 +36,7 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
     private val TITLE = "TITLE"
     private val CHECK_PHOTO = 12
 
-    var isDriverCreated = false
+    private var isBlock = false
 
 
     init {
@@ -51,13 +51,11 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
         val driverData = SignupMainData.driverData
         if (driverData != null) {
             val arr = IntArray(listDocs.size)
+
             for (i in arr.indices) {
-                while (true) {
-                    val imageId = listDocs[i].imgId
-                    if (imageId != null) {
-                        arr[i] = imageId
-                        break
-                    }
+                val imageId = listDocs[i].imgId
+                if (imageId != null) {
+                    arr[i] = imageId
                 }
             }
 
@@ -67,10 +65,10 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
                 if (!isSuccess) {
                     //error show
                     val res = App.appComponent.getContext().resources
-                    getView()?.showNotification(res.getString(R.string.errorSystem))
+                    getView()?.showNotification(res.getString(R.string.tryAgain))
                 }
 
-                isDriverCreated = true
+                isBlock = false
             }
         }
     }
@@ -89,10 +87,13 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
     ) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHECK_PHOTO) {
-                //block UI
-                isDriverCreated = false
+                //start animation
+                getView()?.showLoadingPhoto(idStep)
 
-                //do it with server
+                //block UI
+                isBlock = true
+
+                //work with server
                 remakePhotoDone()
             } else {
                 if (requestCode == Constants.GALLERY) {
@@ -129,49 +130,20 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
                             Thread(Runnable {
                                 //sent photo to server
                                 sentPhoto(docs)
-
-                                //put new photo
-                                putNewPhoto()
                             }).start()
                         } else {
                             //error delete old photo from server
-                            val res = App.appComponent.getContext().resources
-                            getView()?.showNotification(res.getString(R.string.errorSystem))
+                            failLoadPhoto()
                         }
                     }
-                }
+                } else failLoadPhoto()
             } catch (ex: IndexOutOfBoundsException) {
             }
-        }
+        } else failLoadPhoto()
     }
 
 
-    private fun putNewPhoto() {
-        while (true) {
-            val imageId = listDocs[idStep.step].imgId
-            if (imageId != null) {
-                val photo = NewPhoto()
-                photo.docArray = intArrayOf(imageId)
-                signupInteractor.putNewPhoto(photo) { isSuccess ->
-                    //remove block UI
-                    isDriverCreated = true
-
-                    if (isSuccess) {
-                        getView()?.loadPhoto()
-                    } else {
-                        //error put new photo
-                        val res = App.appComponent.getContext().resources
-                        getView()?.showNotification(res.getString(R.string.errorSystem))
-                    }
-                }
-                break
-            }
-        }
-    }
-
-    //todo remove comment code
     private fun sentPhoto(photo: Photo) {
-        val errText = App.appComponent.getApp().getString(R.string.errorSystem)
         val uri = Uri.parse(photo.imgDocs)
 
         if (uri != null) {
@@ -185,32 +157,50 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
                 val title = TitlePhoto.getTitlePhoto(getByValue(position))
 
                 if (title != null) {
-                    //get orientation
-                    //val exifOrientation = mediaEvent.getOrientation(uri)
-
                     //compress and convert to JPEG
                     val file = mediaEvent.convertImage(btm, title)
 
                     if (file != null) {
-                        //save orientation
-//                        if (exifOrientation != null) {
-//                            val newExif = ExifInterface(file)
-//                            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, exifOrientation)
-//                            newExif.saveAttributes()
-//                        }
-
                         //upload
                         signupInteractor.loadPhoto(file, position) { isSuccess ->
-                            if (!isSuccess) {
-                                //error show
-                                val res = App.appComponent.getContext().resources
-                                getView()?.showNotification(res.getString(R.string.errorSystem))
-                            }
+                            if (isSuccess) putNewPhoto()
+                            else failLoadPhoto()
                         }
-                    } else getView()?.showNotification(errText)
-                } else getView()?.showNotification(errText)
-            } else getView()?.showNotification(errText)
-        } else getView()?.showNotification(errText)
+                    } else failLoadPhoto()
+                } else failLoadPhoto()
+            } else failLoadPhoto()
+        } else failLoadPhoto()
+    }
+
+
+    private fun putNewPhoto() {
+        val imageId = listDocs[idStep.step].imgId
+        if (imageId != null) {
+            val photo = NewPhoto()
+            photo.docArray = intArrayOf(imageId)
+            signupInteractor.putNewPhoto(photo) { isSuccess ->
+                //remove block UI
+                isBlock = false
+
+                if (isSuccess) {
+                    getView()?.loadPhoto()
+                    getView()?.hideLoadingPhoto()
+                } else {
+                    //error put new photo
+                    failLoadPhoto()
+                }
+            }
+        } else failLoadPhoto()
+    }
+
+
+    private fun failLoadPhoto() {
+        val errText = App.appComponent.getApp().getString(R.string.tryAgain)
+        getView()?.showNotification(errText)
+
+        getView()?.hideLoadingPhoto()
+
+        isBlock = false
     }
 
 
@@ -245,11 +235,9 @@ class TableDocsPresenter : BasePresenter<ITableDocsView>(), ITableDocsPresenter 
     override fun getByValue(step: Int) = Step.values().firstOrNull { it.step == step }
 
 
-    override fun instance(): TableDocsPresenter {
-        return this
-    }
+    override fun instance() = this
 
 
-    override fun onBackPressed(): Boolean = isDriverCreated
+    override fun isBlockBack() = isBlock
 
 }

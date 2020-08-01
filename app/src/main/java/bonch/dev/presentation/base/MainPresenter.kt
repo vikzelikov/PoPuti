@@ -1,6 +1,7 @@
 package bonch.dev.presentation.base
 
 import android.content.Intent
+import android.util.Log
 import androidx.navigation.get
 import bonch.dev.App
 import bonch.dev.R
@@ -38,18 +39,20 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
         //check user login
         val accessToken = baseInteractor.getToken()
-        val userId = baseInteractor.getUserId()
 
-//        val rideInfo = RideInfo()
-//        rideInfo.statusId = 3
-//        rideInfo.position = "Васька"
-//        rideInfo.destination = "Парнас"
-//        ActiveRide.activeRide = rideInfo
-//        redirectView(rideInfo)
+        baseInteractor.validateAccount { userId, _ ->
+            when (userId) {
+                -1 -> {
+                    getView()?.hideFullLoading()
+                    showSignup()
+                }
 
-        baseInteractor.validateAccount { isSuccess ->
-            if (isSuccess) {
-                if (accessToken != null && userId != -1) {
+                null -> {
+                    getView()?.hideFullLoading()
+                }
+
+                else -> {
+                    Log.e("TEST", "${accessToken}")
                     val rideId = baseInteractor.getRideId()
                     val ride = ActiveRide.activeRide
 
@@ -75,11 +78,8 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                         //not active ride
                         else -> redirectView(null)
                     }
-                } else {
-                    getView()?.hideFullLoading()
-                    showSignup()
                 }
-            } else getView()?.hideFullLoading()
+            }
         }
     }
 

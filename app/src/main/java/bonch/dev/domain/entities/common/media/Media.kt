@@ -16,9 +16,5 @@ open class MediaObject(
 
     @SerializedName("name")
     @Expose
-    var name: String? = null,
-
-    @SerializedName("file_name")
-    @Expose
-    var fullName: String? = null
+    var name: String? = null
 )

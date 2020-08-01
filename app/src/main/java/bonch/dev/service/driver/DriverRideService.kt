@@ -181,7 +181,7 @@ class DriverRideService : Service() {
         val notification = NotificationCompat.Builder(context, channelId)
             .setContentTitle(title)
             .setContentText(content)
-            .setSmallIcon(R.drawable.ava)
+            .setSmallIcon(R.drawable.ic_system_notification)
             .setContentIntent(pendingIntent)
             .setAutoCancel(isAutoCancel)
             .setOngoing(isSetOngoing)

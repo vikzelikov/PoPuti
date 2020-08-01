@@ -24,8 +24,6 @@ interface IProfileStorage {
 
     fun saveDriverAccess()
 
-    fun removeDriverAccess()
-
     fun getDriverAccess(): Boolean
 
     fun saveCheckoutDriver(isDriver: Boolean)

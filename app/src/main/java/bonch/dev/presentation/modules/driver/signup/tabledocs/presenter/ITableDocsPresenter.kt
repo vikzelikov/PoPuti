@@ -14,7 +14,7 @@ interface ITableDocsPresenter {
 
     fun onActivityResult(fragment: Fragment, requestCode: Int, resultCode: Int, data: Intent?)
 
-    fun onBackPressed(): Boolean
+    fun isBlockBack(): Boolean
 
     fun getByValue(step: Int): Step?
 

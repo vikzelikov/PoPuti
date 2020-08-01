@@ -87,4 +87,8 @@ dependencies {
     //Socket
     implementation 'com.pusher:pusher-java-client:2.2.1'
 
+    //Skeleton view animation
+    implementation 'com.ethanhua:skeleton:1.1.2'
+    implementation 'io.supercharge:shimmerlayout:2.1.0'
+
 }

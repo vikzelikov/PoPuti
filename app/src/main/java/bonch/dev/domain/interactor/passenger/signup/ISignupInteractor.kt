@@ -27,7 +27,7 @@ interface ISignupInteractor {
     fun saveToken(token: String)
 
 
-    fun resetDriverData()
+    fun resetProfile()
 
 
     fun closeRealm()

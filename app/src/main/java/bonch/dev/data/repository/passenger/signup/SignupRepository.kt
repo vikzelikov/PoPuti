@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.net.HttpURLConnection
 
 class SignupRepository : ISignupRepository {
 
@@ -89,16 +90,26 @@ class SignupRepository : ISignupRepository {
                 response = service.getUserId(headers)
 
                 withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        //Success
-                        val id = response.body()?.id
 
-                        if (id != null) callback(id, null)
-                        else callback(null, "${response.body()}")
-                    } else {
-                        //Error
-                        Log.e("GET_USER_ID", "${response.code()}")
-                        callback(null, "${response.code()}")
+                    when (response.code()) {
+                        HttpURLConnection.HTTP_OK -> {
+                            //Success
+                            val id = response.body()?.id
+
+                            if (id != null) callback(id, null)
+                            else callback(-1, "${response.body()}")
+                        }
+
+                        HttpURLConnection.HTTP_UNAUTHORIZED -> {
+                            //go to signup
+                            callback(-1, "${response.body()}")
+                        }
+
+                        else -> {
+                            //Error
+                            Log.e("GET_USER_ID", "${response.code()}")
+                            callback(null, "${response.code()}")
+                        }
                     }
                 }
             } catch (err: Exception) {
