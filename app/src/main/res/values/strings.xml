@@ -6,7 +6,7 @@
     <string name="next">Далее</string>
 
     <string name="terms_cooperation">Нажимая «Далее», я соглашаюсь с
-        <a href="https://google.com">Пользовательским соглашением</a>, а также с обработкой моей персональной информации на условиях <a href="https://google.com">Политики конфиденциальности</a>
+        <a href="https://poputi-backend-staging.server.bonch.dev/eula">Пользовательским соглашением</a>, а также с обработкой моей персональной информации на условиях <a href="https://poputi-backend-staging.server.bonch.dev/policy">Политики конфиденциальности</a>
     </string>
 
     <string name="input_code">Введите код из СМС</string>

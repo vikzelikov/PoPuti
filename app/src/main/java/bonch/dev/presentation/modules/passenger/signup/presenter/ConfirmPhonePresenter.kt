@@ -5,6 +5,7 @@ import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.MainActivity
 import bonch.dev.R
+import bonch.dev.domain.entities.passenger.signup.DataSignup
 import bonch.dev.domain.interactor.passenger.signup.ISignupInteractor
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.base.BasePresenter
@@ -35,7 +36,15 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
             getView()?.showLoading()
 
             signupInteractor.checkCode(phone, code, callback = {
-                onResponseCheckCode(it)
+                //change view from another thread (get Main thread)
+                val mainHandler = Handler(Looper.getMainLooper())
+                val myRunnable = Runnable {
+                    kotlin.run {
+                        onResponseCheckCode(it)
+                    }
+                }
+
+                mainHandler.post(myRunnable)
             })
         }
     }
@@ -43,20 +52,48 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
 
     override fun onResponseCheckCode(isCorrect: Boolean) {
         if (isCorrect) {
-            MainRouter.showView(R.id.show_full_name_view, getView()?.getNavHost(), null)
-        } else {
-            //change view from another thread (get Main thread)
-            val mainHandler = Handler(Looper.getMainLooper())
-            val myRunnable = Runnable {
-                kotlin.run {
-                    getView()?.showError()
+            signupInteractor.checkProfile { isCreated ->
+                if (isCreated) {
+                    //user already created before
+                    doneSignup()
+
+                } else {
+                    //this is new sign up
+                    MainRouter.showView(R.id.show_full_name_view, getView()?.getNavHost(), null)
                 }
             }
-
-            mainHandler.post(myRunnable)
+        } else {
+            getView()?.showError()
         }
 
         getView()?.hideLoading()
+    }
+
+
+    private fun doneSignup() {
+        signupInteractor.initRealm()
+
+        //if there is data from old app version
+        signupInteractor.resetProfile()
+
+        //save Data:
+        //save token
+        saveToken()
+
+        signupInteractor.saveUserId()
+
+        //clear data
+        SignupComponent.passengerSignupComponent = null
+        DataSignup.phone = null
+        DataSignup.token = null
+        DataSignup.userId = null
+
+        //next transition
+        MainRouter.showView(
+            R.id.main_passenger_fragment,
+            getView()?.getNavHost(),
+            null
+        )
     }
 
 
@@ -94,6 +131,15 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
                     R.string.callSupport
                 )
             )
+        }
+    }
+
+
+    private fun saveToken() {
+        val token = DataSignup.token
+
+        if (token != null) {
+            signupInteractor.saveToken(token)
         }
     }
 

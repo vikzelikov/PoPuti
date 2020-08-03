@@ -36,7 +36,7 @@ class SignupInteractor : ISignupInteractor {
             } else {
                 //retry request
                 signupRepository.sendSms(phone) { isSucc ->
-                    callback(isSuccess)
+                    callback(isSucc)
                 }
             }
         }
@@ -56,15 +56,18 @@ class SignupInteractor : ISignupInteractor {
                         if (accessToken != null) {
                             //save token
                             DataSignup.token = token
-                            callback(true)
 
+                            //get user id with token
+                            getUserId(accessToken, callback)
                         } else callback(false)
                     }
                 }
                 token != null -> {
                     //save token
                     DataSignup.token = token
-                    callback(true)
+
+                    //get user id with token
+                    getUserId(token, callback)
                 }
                 else -> callback(false)
             }
@@ -72,26 +75,25 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun saveProfile(token: String, profileData: Profile, callback: SuccessHandler) {
+    override fun getUserId(token: String, callback: SuccessHandler) {
         signupRepository.getUserId(token) { id: Int?, error: String? ->
             when {
                 error != null -> {
                     //retry request
                     signupRepository.getUserId(token) { userId: Int?, _: String? ->
                         if (userId != null) {
-                            saveProfile(userId, token, profileData)
+                            DataSignup.userId = userId
                             callback(true)
 
                         } else callback(false)
                     }
                 }
                 id != null -> {
-                    saveProfile(id, token, profileData)
+                    DataSignup.userId = id
                     callback(true)
 
                 }
                 else -> {
-                    println("$id $error")
                     callback(false)
                 }
             }
@@ -99,7 +101,20 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    private fun saveProfile(userId: Int, token: String, profileData: Profile) {
+    override fun checkProfile(callback: SuccessHandler) {
+        val token = DataSignup.token
+        val userId = DataSignup.userId
+
+        if (token != null && userId != null) {
+            profileRepository.getProfile(userId, token) { profile, _ ->
+                if (profile?.firstName != null) callback(true)
+                else callback(false)
+            }
+        }
+    }
+
+
+    override fun saveProfile(userId: Int, token: String, profileData: Profile) {
         profileRepository.saveProfile(userId, token, profileData) { isSuccess ->
             if (!isSuccess) {
                 //Retry request
@@ -111,6 +126,16 @@ class SignupInteractor : ISignupInteractor {
 
         //local save data
         profileStorage.saveProfile(profileData)
+    }
+
+
+    override fun saveUserId() {
+        val profileData = Profile()
+        DataSignup.userId?.let {
+            profileData.id = it
+            //local save data
+            profileStorage.saveProfile(profileData)
+        }
     }
 
 

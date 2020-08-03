@@ -15,6 +15,7 @@ import bonch.dev.presentation.modules.driver.getpassenger.view.MapOrderView
 import bonch.dev.presentation.modules.driver.getpassenger.view.OrdersView
 import bonch.dev.presentation.modules.passenger.getdriver.view.*
 import bonch.dev.route.MainRouter
+import java.util.logging.Logger
 import javax.inject.Inject
 
 
@@ -39,47 +40,53 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
         //check user login
         val accessToken = baseInteractor.getToken()
+        val idUser = baseInteractor.getUserId()
 
-        baseInteractor.validateAccount { userId, _ ->
-            when (userId) {
-                -1 -> {
-                    getView()?.hideFullLoading()
-                    showSignup()
-                }
+        if (accessToken != null && idUser != -1) {
+            baseInteractor.validateAccount { userId, _ ->
+                when (userId) {
+                    -1 -> {
+                        getView()?.hideFullLoading()
+                        showSignup()
+                    }
 
-                null -> {
-                    getView()?.hideFullLoading()
-                }
+                    null -> {
+                        getView()?.hideFullLoading()
+                    }
 
-                else -> {
-                    Log.e("TEST", "${accessToken}")
-                    val rideId = baseInteractor.getRideId()
-                    val ride = ActiveRide.activeRide
+                    else -> {
+                        val rideId = baseInteractor.getRideId()
+                        val ride = ActiveRide.activeRide
 
-                    //check on active ride
-                    when {
-                        //there is active ride
-                        ride != null -> redirectView(ride)
+                        //check on active ride
+                        when {
+                            //there is active ride
+                            ride != null -> redirectView(ride)
 
-                        rideId != -1 -> {
-                            //check with server on active ride
-                            baseInteractor.getRide(rideId) { rideInfo, _ ->
-                                if (rideInfo?.statusId != null) {
-                                    //save ride local
-                                    ActiveRide.activeRide = rideInfo
+                            rideId != -1 -> {
+                                //check with server on active ride
+                                baseInteractor.getRide(rideId) { rideInfo, _ ->
+                                    if (rideInfo?.statusId != null) {
+                                        //save ride local
+                                        ActiveRide.activeRide = rideInfo
 
-                                    //change view according to ride
-                                    redirectView(rideInfo)
+                                        //change view according to ride
+                                        redirectView(rideInfo)
 
-                                } else getView()?.hideFullLoading()
+                                    } else getView()?.hideFullLoading()
+                                }
                             }
-                        }
 
-                        //not active ride
-                        else -> redirectView(null)
+                            //not active ride
+                            else -> redirectView(null)
+                        }
                     }
                 }
             }
+
+        } else {
+            getView()?.hideFullLoading()
+            showSignup()
         }
     }
 

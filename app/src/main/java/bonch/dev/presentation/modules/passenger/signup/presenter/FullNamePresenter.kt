@@ -42,10 +42,11 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
                 SignupComponent.passengerSignupComponent = null
                 DataSignup.phone = null
                 DataSignup.token = null
+                DataSignup.userId = null
 
                 //next transition
                 MainRouter.showView(
-                    R.id.show_main_passenger_fragment,
+                    R.id.main_passenger_fragment,
                     getView()?.getNavHost(),
                     null
                 )
@@ -83,11 +84,13 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
     private fun saveProfileData(callback: SuccessHandler) {
         val profileData = getView()?.getProfileData()
         val token = DataSignup.token
+        val userId = DataSignup.userId
         profileData?.phone = DataSignup.phone
 
-        if (token != null && profileData != null) {
+        if (token != null && userId != null && profileData != null) {
             //remote save
-            signupInteractor.saveProfile(token, profileData) { callback(it) }
+            signupInteractor.saveProfile(userId, token, profileData)
+            callback(true)
         } else callback(false)
     }
 

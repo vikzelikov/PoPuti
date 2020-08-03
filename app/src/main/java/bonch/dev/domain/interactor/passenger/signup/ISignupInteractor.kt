@@ -18,10 +18,19 @@ interface ISignupInteractor {
     )
 
 
+    fun getUserId(token: String, callback: SuccessHandler)
+
+
     fun initRealm()
 
 
-    fun saveProfile(token: String, profileData: Profile, callback: SuccessHandler)
+    fun saveProfile(userId: Int, token: String, profileData: Profile)
+
+
+    fun saveUserId()
+
+
+    fun checkProfile(callback: SuccessHandler)
 
 
     fun saveToken(token: String)
