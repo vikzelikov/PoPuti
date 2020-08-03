@@ -2,6 +2,7 @@ package bonch.dev.presentation.base
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.navigation.get
 import bonch.dev.App
 import bonch.dev.R
@@ -42,6 +43,8 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         val accessToken = baseInteractor.getToken()
         val idUser = baseInteractor.getUserId()
 
+        Log.e("TEST", accessToken)
+
         if (accessToken != null && idUser != -1) {
             baseInteractor.validateAccount { userId, _ ->
                 when (userId) {
@@ -55,13 +58,16 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                     }
 
                     else -> {
+
                         val rideId = baseInteractor.getRideId()
                         val ride = ActiveRide.activeRide
 
                         //check on active ride
                         when {
                             //there is active ride
-                            ride != null -> redirectView(ride)
+                            ride != null -> {
+                                redirectView(ride)
+                            }
 
                             rideId != -1 -> {
                                 //check with server on active ride
@@ -73,12 +79,16 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                                         //change view according to ride
                                         redirectView(rideInfo)
 
-                                    } else getView()?.hideFullLoading()
+                                    } else {
+                                        redirectView(null)
+                                    }
                                 }
                             }
 
                             //not active ride
-                            else -> redirectView(null)
+                            else -> {
+                                redirectView(null)
+                            }
                         }
                     }
                 }

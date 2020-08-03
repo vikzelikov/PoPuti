@@ -1,5 +1,6 @@
 package bonch.dev.domain.interactor
 
+import android.widget.Toast
 import bonch.dev.App
 import bonch.dev.data.repository.common.ride.IRideRepository
 import bonch.dev.data.repository.passenger.signup.ISignupRepository
