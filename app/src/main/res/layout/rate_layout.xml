@@ -72,7 +72,7 @@
             android:visibility="gone" />
 
 
-        <bonch.dev.presentation.base.RatingBar
+        <bonch.dev.poputi.presentation.base.RatingBar
             android:id="@+id/rating_bar"
             android:layout_width="wrap_content"
             android:layout_height="41dp"
@@ -166,7 +166,7 @@
             android:elevation="30dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".presentation.base.MBottomSheet">
+            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
 
             <LinearLayout
                 android:layout_width="match_parent"

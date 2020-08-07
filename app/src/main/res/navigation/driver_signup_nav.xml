@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/list_docs_view"
-        android:name="bonch.dev.presentation.modules.driver.signup.steps.view.ListDocsView"
+        android:name="bonch.dev.poputi.presentation.modules.driver.signup.steps.view.ListDocsView"
         android:label="list_docs_view"
         tools:layout="@layout/signup_docs_fragment">
 
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/car_info_view"
-        android:name="bonch.dev.presentation.modules.driver.signup.carinfo.view.CarInfoView"
+        android:name="bonch.dev.poputi.presentation.modules.driver.signup.carinfo.view.CarInfoView"
         android:label="car_info_view"
         tools:layout="@layout/signup_car_info_fragment">
 
@@ -47,7 +47,7 @@
 
     <fragment
         android:id="@+id/signup_step_view"
-        android:name="bonch.dev.presentation.modules.driver.signup.steps.view.SignupStepView"
+        android:name="bonch.dev.poputi.presentation.modules.driver.signup.steps.view.SignupStepView"
         android:label="signup_step_view"
         tools:layout="@layout/driver_signup_step_fragment">
 
@@ -61,7 +61,7 @@
 
     <fragment
         android:id="@+id/table_docs_view"
-        android:name="bonch.dev.presentation.modules.driver.signup.tabledocs.view.TableDocsView"
+        android:name="bonch.dev.poputi.presentation.modules.driver.signup.tabledocs.view.TableDocsView"
         android:label="table_docs_view"
         tools:layout="@layout/table_docs_fragment">
 
@@ -70,7 +70,7 @@
 
     <activity
         android:id="@+id/suggest_view"
-        android:name="bonch.dev.presentation.modules.driver.signup.suggest.view.SuggestView"
+        android:name="bonch.dev.poputi.presentation.modules.driver.signup.suggest.view.SuggestView"
         android:label="suggest_view"
         tools:layout="@layout/signup_car_info_suggest"/>
 

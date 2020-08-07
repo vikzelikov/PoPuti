@@ -56,7 +56,7 @@
         android:layout_height="650dp"
         android:background="@drawable/bg_bottom_sheet_collapsed"
         app:behavior_peekHeight="190dp"
-        app:layout_behavior=".presentation.base.MBottomSheet">
+        app:layout_behavior=".poputi.presentation.base.MBottomSheet">
 
 
         <ImageView

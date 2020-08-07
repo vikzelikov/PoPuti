@@ -9,12 +9,12 @@
     <fragment
         android:id="@+id/some_error"
         android:label="@string/someError"
-        android:name="bonch.dev.presentation.modules.common.ErrorView"
+        android:name="bonch.dev.poputi.presentation.modules.common.ErrorView"
         tools:layout="@layout/error_layout" />
 
     <fragment
         android:id="@+id/phone_view"
-        android:name="bonch.dev.presentation.modules.passenger.signup.view.PhoneView"
+        android:name="bonch.dev.poputi.presentation.modules.passenger.signup.view.PhoneView"
         android:label="phone_view_fragment"
         tools:layout="@layout/phone_signup_fragment">
 
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/confirm_phone_view"
-        android:name="bonch.dev.presentation.modules.passenger.signup.view.ConfirmPhoneView"
+        android:name="bonch.dev.poputi.presentation.modules.passenger.signup.view.ConfirmPhoneView"
         android:label="confirm_phone_view_fragment"
         tools:layout="@layout/confirm_phone_fragment">
 
@@ -42,7 +42,7 @@
 
     <fragment
         android:id="@+id/full_name_view"
-        android:name="bonch.dev.presentation.modules.passenger.signup.view.FullNameView"
+        android:name="bonch.dev.poputi.presentation.modules.passenger.signup.view.FullNameView"
         android:label="full_name_view_fragment"
         tools:layout="@layout/full_name_signup_fragment">
 
@@ -60,7 +60,7 @@
 
     <fragment
         android:id="@+id/main_passenger_fragment"
-        android:name="bonch.dev.presentation.modules.passenger.MainFragment"
+        android:name="bonch.dev.poputi.presentation.modules.passenger.MainFragment"
         android:label="main_passenger_fragment"
         tools:layout="@layout/main_passenger_fragment">
 
@@ -91,7 +91,7 @@
 
     <fragment
         android:id="@+id/get_driver_fragment"
-        android:name="bonch.dev.presentation.modules.passenger.getdriver.view.MapGetDriverView"
+        android:name="bonch.dev.poputi.presentation.modules.passenger.getdriver.view.MapGetDriverView"
         android:label="get_driver_fragment"
         tools:layout="@layout/map_get_driver_fragment">
 
@@ -110,13 +110,13 @@
 
     <activity
         android:id="@+id/chat_activity"
-        android:name="bonch.dev.presentation.modules.common.chat.view.ChatView"
+        android:name="bonch.dev.poputi.presentation.modules.common.chat.view.ChatView"
         android:label="chat_activity" />
 
 
     <fragment
         android:id="@+id/main_driver_fragment"
-        android:name="bonch.dev.presentation.modules.driver.MainFragment"
+        android:name="bonch.dev.poputi.presentation.modules.driver.MainFragment"
         android:label="main_driver_fragment"
         tools:layout="@layout/main_driver_fragment">
 
@@ -143,7 +143,7 @@
 
     <activity
         android:id="@+id/map_order_activity"
-        android:name="bonch.dev.presentation.modules.driver.getpassenger.view.MapOrderView"
+        android:name="bonch.dev.poputi.presentation.modules.driver.getpassenger.view.MapOrderView"
         android:label="map_order_activity" />
 
 </navigation>

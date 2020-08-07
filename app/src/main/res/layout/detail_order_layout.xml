@@ -317,7 +317,7 @@
             android:paddingEnd="15dp"
             android:paddingBottom="20dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".presentation.base.MBottomSheet">
+            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
