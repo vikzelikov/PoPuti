@@ -986,7 +986,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
 
     override fun getTime() {
-        //TODO
+        //TODO time
     }
 
 
