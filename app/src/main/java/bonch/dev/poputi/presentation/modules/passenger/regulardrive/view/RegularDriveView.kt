@@ -1,9 +1,12 @@
 package bonch.dev.poputi.presentation.modules.passenger.regulardrive.view
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -69,7 +72,7 @@ class RegularDriveView : Fragment(), ContractView.IRegularDriveView {
     }
 
 
-    private fun setViewPager(){
+    private fun setViewPager() {
         val adapter = ViewPagerAdapter(childFragmentManager)
 
         tabs.setupWithViewPager(viewPager)
@@ -107,12 +110,38 @@ class RegularDriveView : Fragment(), ContractView.IRegularDriveView {
 
 
     override fun showLoading() {
-        (activity as? MainActivity)?.showLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                (create_regular_ride as ImageButton).setImageResource(R.drawable.ic_plus_invisible)
+                create_regular_ride.isClickable = false
+                create_regular_ride.isFocusable = false
+                progress_bar.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
     override fun hideLoading() {
-        (activity as? MainActivity)?.hideLoading()
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                (create_regular_ride as ImageButton).setImageResource(R.drawable.ic_plus_btn)
+                create_regular_ride.isClickable = true
+                create_regular_ride.isFocusable = true
+                progress_bar.visibility = View.GONE
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        hideLoading()
     }
 
 

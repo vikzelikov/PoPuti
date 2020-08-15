@@ -1,13 +1,17 @@
 package bonch.dev.poputi.presentation.modules.passenger.regulardrive.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,18 +21,24 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.utils.ChangeOpacity
+import bonch.dev.poputi.presentation.base.MBottomSheet
+import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.RegularDriveComponent
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.adapters.AddressesListAdapter
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.adapters.PaymentsListAdapter
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.ContractPresenter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.regular_create_ride_layout.*
 import java.util.*
 import javax.inject.Inject
@@ -51,8 +61,13 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     private var addressesBottomSheet: BottomSheetBehavior<*>? = null
     private var dateBottomSheet: BottomSheetBehavior<*>? = null
     private var timeBottomSheet: BottomSheetBehavior<*>? = null
+    private var mainInfoBottomSheet: BottomSheetBehavior<*>? = null
 
+    lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
+    lateinit var moveMapCamera: ParentHandler<Point>
     lateinit var mapView: ParentMapHandler<MapView>
+
+    private var arrSelectedDays = BooleanArray(7)
 
 
     init {
@@ -76,12 +91,15 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
         initBankingAdapter()
 
+        initAdapter()
+
         setListeners()
 
         setBottomSheet()
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun setListeners() {
 
         setListenersAdr()
@@ -92,15 +110,50 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
         listenerSelectTime()
 
+        save_ride.setOnClickListener {
+            createRegularDrivePresenter.createRide()
+        }
+
+        from_cross.setOnClickListener {
+            createRegularDrivePresenter.touchCrossAddress(true)
+        }
+
+        to_cross.setOnClickListener {
+            createRegularDrivePresenter.touchCrossAddress(false)
+        }
+
+        from_adr.setOnTouchListener { _, _ ->
+            createRegularDrivePresenter.touchAddress(isFrom = true, isShowKeyboard = false)
+            false
+        }
+
         from_address.setOnClickListener {
-            expandedBottomSheet(true)
+            createRegularDrivePresenter.touchAddress(isFrom = true, isShowKeyboard = true)
+        }
+
+        to_adr.setOnTouchListener { _, _ ->
+            createRegularDrivePresenter.touchAddress(isFrom = false, isShowKeyboard = false)
+            false
         }
 
         to_address.setOnClickListener {
-            expandedBottomSheet(false)
+            createRegularDrivePresenter.touchAddress(isFrom = false, isShowKeyboard = true)
         }
 
         select_date.setOnClickListener {
+            if (select_date?.text == getString(R.string.selectDate)) {
+                val arrView: Array<TextView?> = arrayOf(every_day, work_day, select_days)
+
+                arrView.forEach {
+                    it?.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_tick,
+                        0
+                    )
+                }
+            }
+
             dateBottomSheet?.let { getBottomSheet(it) }
         }
 
@@ -116,10 +169,6 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
             cardsBottomSheetBehavior?.let { getBottomSheet(it) }
         }
 
-        select_days.setOnClickListener {
-            daysBottomSheet?.let { getBottomSheet(it) }
-        }
-
         cancel_days.setOnClickListener {
             hideAllBottomSheet()
         }
@@ -133,7 +182,17 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         }
 
         show_route.setOnClickListener {
+            hideAllBottomSheet()
+            hideMainInfoLayout()
+
             createRegularDrivePresenter.showRoute()
+        }
+
+        show_my_position.setOnClickListener {
+            hideAllBottomSheet()
+            hideMainInfoLayout()
+
+            createRegularDrivePresenter.showMyPosition()
         }
 
         comment_back_btn.setOnClickListener {
@@ -141,8 +200,8 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         }
 
         comment_done.setOnClickListener {
-            val comment = comment_text.text.toString().trim()
-            comment_min_text.text = comment
+            val comment = comment_text?.text?.toString()?.trim()
+            comment_min_text?.text = comment
 
             commentDone()
         }
@@ -160,11 +219,23 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         }
 
         back_btn.setOnClickListener {
-            (activity as? MapCreateRegularDrive)?.finish()
+            if (onBackPressed()) (activity as? MapCreateRegularDrive)?.finish()
         }
 
         on_view.setOnClickListener {
             hideAllBottomSheet()
+        }
+
+        btn_map_from.setOnClickListener {
+            createRegularDrivePresenter.touchMapBtn(true)
+        }
+
+        btn_map_to.setOnClickListener {
+            createRegularDrivePresenter.touchMapBtn(false)
+        }
+
+        address_map_marker_btn.setOnClickListener {
+            createRegularDrivePresenter.touchAddressMapMarkerBtn()
         }
     }
 
@@ -173,7 +244,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         from_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    //  createRegularDrivePresenter.requestSuggest(from_adr.text.toString())
+                    createRegularDrivePresenter.requestSuggest(from_adr.text.toString())
                 }
             }
 
@@ -181,9 +252,9 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.isNotEmpty() && addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    from_cross.visibility = View.VISIBLE
+                    from_cross?.visibility = View.VISIBLE
                 } else {
-                    from_cross.visibility = View.GONE
+                    from_cross?.visibility = View.GONE
                 }
             }
         })
@@ -191,7 +262,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         to_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    //createRegularDrivePresenter.requestSuggest(to_adr.text.toString())
+                    createRegularDrivePresenter.requestSuggest(to_adr.text.toString())
                 }
             }
 
@@ -199,110 +270,165 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.isNotEmpty() && addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    to_cross.visibility = View.VISIBLE
+                    to_cross?.visibility = View.VISIBLE
                 } else {
-                    to_cross.visibility = View.GONE
+                    to_cross?.visibility = View.GONE
                 }
             }
         })
     }
 
 
-    override fun expandedBottomSheet(isFrom: Boolean) {
-
+    override fun expandedBottomSheet(isFrom: Boolean, isShowKeyboard: Boolean) {
         addressesBottomSheet?.let { getBottomSheet(it) }
+        from_adr?.isSingleLine = true
+        to_adr?.isSingleLine = true
 
         if (isFrom) {
-            if (to_adr.isFocused) {
-                createRegularDrivePresenter.clearSuggest()
+            to_adr?.let {
+                if (it.isFocused) {
+                    createRegularDrivePresenter.clearSuggest()
+                }
             }
 
-            from_adr.requestFocus()
-            from_adr.setSelection(from_adr.text.length)
+            from_adr?.requestFocus()
+            from_adr?.setSelection(from_adr.text.length)
 
-            expandedBottomSheetEvent()
+            expandedBottomSheetEvent(isShowKeyboard)
 
-            btn_map_from.visibility = View.VISIBLE
-            btn_map_to.visibility = View.GONE
-            to_cross.visibility = View.GONE
+            btn_map_from?.visibility = View.VISIBLE
+            btn_map_to?.visibility = View.GONE
+            to_cross?.visibility = View.GONE
 
-            if (from_adr.text.isNotEmpty()) {
-                from_cross.visibility = View.VISIBLE
-            } else {
-                //set favourite addresses
-                createRegularDrivePresenter.getCashSuggest()
-                from_cross.visibility = View.GONE
+            from_adr?.text?.let {
+                if (it.isNotEmpty()) {
+                    from_cross?.visibility = View.VISIBLE
+                } else {
+                    //set favourite addresses
+                    createRegularDrivePresenter.getCashSuggest()
+                    from_cross?.visibility = View.GONE
+                }
             }
         } else {
-            if (from_adr.isFocused) {
-                createRegularDrivePresenter.clearSuggest()
+            from_adr?.let {
+                if (it.isFocused) {
+                    createRegularDrivePresenter.clearSuggest()
+                }
             }
 
-            to_adr.requestFocus()
-            to_adr.setSelection(to_adr.text.length)
+            to_adr?.requestFocus()
+            to_adr?.setSelection(to_adr.text.length)
 
-            expandedBottomSheetEvent()
+            expandedBottomSheetEvent(isShowKeyboard)
 
-            btn_map_from.visibility = View.GONE
-            btn_map_to.visibility = View.VISIBLE
-            from_cross.visibility = View.GONE
+            btn_map_from?.visibility = View.GONE
+            btn_map_to?.visibility = View.VISIBLE
+            from_cross?.visibility = View.GONE
 
-            if (to_adr.text.isNotEmpty()) {
-                to_cross.visibility = View.VISIBLE
-            } else {
-                //set favourite addresses
-                createRegularDrivePresenter.getCashSuggest()
-                to_cross.visibility = View.GONE
+            to_adr?.text?.let {
+                if (it.isNotEmpty()) {
+                    to_cross?.visibility = View.VISIBLE
+                } else {
+                    //set favourite addresses
+                    createRegularDrivePresenter.getCashSuggest()
+                    to_cross?.visibility = View.GONE
+                }
             }
         }
     }
 
 
-    private fun expandedBottomSheetEvent() {
-        val activity = activity as? MapCreateRegularDrive
+    private fun expandedBottomSheetEvent(isShowKeyboard: Boolean) {
+        if (isShowKeyboard) {
+            val activity = activity as? MapCreateRegularDrive
 
-        Handler().postDelayed({
-            activity?.let {
-                Keyboard.showKeyboard(activity)
-            }
-        }, 300)
+            Handler().postDelayed({
+                activity?.let {
+                    Keyboard.showKeyboard(activity)
+                }
+            }, 300)
+        }
     }
 
 
     private fun listenerSelectDate() {
-        val arrView: Array<TextView> = arrayOf(every_day, work_day, select_days)
+        val arrView: Array<TextView?> = arrayOf(every_day, work_day, select_days)
 
         for (i in arrView.indices) {
-            arrView[i].setOnClickListener {
+            arrView[i]?.setOnClickListener {
 
-                arrView.forEach {
-                    it.setCompoundDrawablesWithIntrinsicBounds(
+                if (arrView[i] != select_days) {
+                    arrView.forEach {
+                        it?.setCompoundDrawablesWithIntrinsicBounds(
+                            0,
+                            0,
+                            R.drawable.ic_tick,
+                            0
+                        )
+                    }
+
+
+                    arrView[i]?.setCompoundDrawablesWithIntrinsicBounds(
                         0,
                         0,
-                        R.drawable.ic_tick,
+                        R.drawable.ic_tick_selected,
                         0
                     )
                 }
 
-                arrView[i].setCompoundDrawablesWithIntrinsicBounds(
-                    0,
-                    0,
-                    R.drawable.ic_tick_selected,
-                    0
-                )
+                if (arrView[i] == every_day) {
+                    val arrDays = booleanArrayOf(true, true, true, true, true, true, true)
+                    setDays(arrDays)
+
+                    dateBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+
+                if (arrView[i] == work_day) {
+                    val arrDays = booleanArrayOf(true, true, true, true, true, false, false)
+                    setDays(arrDays)
+
+                    dateBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+
+                if (arrView[i] == select_days) {
+                    daysBottomSheet?.let {
+                        //update days
+                        arrSelectedDays = getDays()
+
+                        val arrDaysTics: Array<TextView?> =
+                            arrayOf(mondey, tuesday, wednesday, thursday, friday, saturday, sunday)
+
+                        arrDaysTics.forEachIndexed { i, view ->
+                            var icon = R.drawable.ic_unselected_item
+
+                            if (arrSelectedDays[i]) {
+                                icon = R.drawable.ic_selected_item
+                            }
+
+                            view?.setCompoundDrawablesWithIntrinsicBounds(
+                                0,
+                                0,
+                                icon,
+                                0
+                            )
+                        }
+
+                        getBottomSheet(it)
+                    }
+                }
+
+                isDataComplete()
             }
         }
     }
 
 
     private fun listenerSelectDays() {
-        val arrSelectedDays = BooleanArray(7)
-        val arrView: Array<TextView> =
+        val arrView: Array<TextView?> =
             arrayOf(mondey, tuesday, wednesday, thursday, friday, saturday, sunday)
 
         for (i in arrView.indices) {
-            arrView[i].setOnClickListener {
-
+            arrView[i]?.setOnClickListener {
                 var icon = R.drawable.ic_selected_item
 
                 try {
@@ -317,7 +443,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
                 } catch (ex: IndexOutOfBoundsException) {
                 }
 
-                arrView[i].setCompoundDrawablesWithIntrinsicBounds(
+                arrView[i]?.setCompoundDrawablesWithIntrinsicBounds(
                     0,
                     0,
                     icon,
@@ -326,32 +452,59 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
             }
         }
 
-        save_days.setOnClickListener {
-            var daysStr = ""
+        save_days?.setOnClickListener {
+            setDays(arrSelectedDays)
 
-            for (i in arrSelectedDays.indices) {
-                if (arrSelectedDays[i]) {
-                    val day = getStrDay(i)
-                    daysStr = daysStr.plus(day).plus(" ")
-                }
+            every_day?.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_tick, 0)
+            work_day?.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_tick, 0)
+            select_days?.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.ic_tick_selected,
+                0
+            )
+
+            hideAllBottomSheet()
+
+            isDataComplete()
+        }
+    }
+
+
+    private fun setDays(arrSelectedDays: BooleanArray) {
+        var daysStr = ""
+
+        for (i in arrSelectedDays.indices) {
+            if (arrSelectedDays[i]) {
+                val day = getStrDay(i)
+                daysStr = daysStr.plus(day).plus(" ")
             }
+        }
 
-            select_date.setCompoundDrawablesWithIntrinsicBounds(
+        if (daysStr.trim().isEmpty()) {
+            select_date?.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.ic_arrow_right,
+                0
+            )
+
+            select_date?.text = getString(R.string.selectDate)
+        } else {
+            select_date?.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_calendar,
                 0,
                 0,
                 0
             )
 
-            select_date.text = daysStr
-
-            hideAllBottomSheet()
+            select_date?.text = daysStr
         }
     }
 
 
     private fun listenerSelectTime() {
-        picker_select_time.setIsAmPm(false)
+        picker_select_time?.setIsAmPm(false)
 
         val timeZone = GregorianCalendar().timeZone
         val mGMTOffset =
@@ -369,14 +522,14 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
                 if (min.length == 1) min = "0".plus(min)
                 if (hour.length == 1) hour = "0".plus(hour)
 
-                select_time.setCompoundDrawablesWithIntrinsicBounds(
+                select_time?.setCompoundDrawablesWithIntrinsicBounds(
                     R.drawable.ic_clock,
                     0,
                     0,
                     0
                 )
 
-                select_time.text = hour.plus(":").plus(min)
+                select_time?.text = hour.plus(":").plus(min)
             }
 
             hideAllBottomSheet()
@@ -384,53 +537,108 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     }
 
 
-    override fun showStartUI() {
-        center_position.setImageResource(R.drawable.ic_map_marker)
-        main_addresses_layout.visibility = View.VISIBLE
-        addresses_list.visibility = View.VISIBLE
-        address_map_marker_layout.visibility = View.GONE
-        back_btn.visibility = View.GONE
-        addressesBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    override fun showStartUI(isShowBottomSheet: Boolean) {
+        val shape = GradientDrawable()
+        val corners = floatArrayOf(24f, 24f, 24f, 24f, 0f, 0f, 0f, 0f)
+        shape.cornerRadii = corners
+        shape.setColor(Color.parseColor("#${ChangeOpacity.getOpacity(100)}FFFFFF"))
+        bottom_sheet_addresses?.background = shape
+        bottom_sheet_arrow?.visibility = View.VISIBLE
+
+        addressesBottomSheet?.peekHeight = 0
+        main_info_layout?.visibility = View.VISIBLE
+        (addressesBottomSheet as? MBottomSheet<*>)?.swipeEnabled = true
+
+        center_position?.setImageResource(R.drawable.ic_map_marker)
+        main_addresses_layout?.visibility = View.VISIBLE
+        addresses_list?.visibility = View.VISIBLE
+        address_map_marker_layout?.visibility = View.GONE
+
+        hideMapMarker()
+
+        if (isShowBottomSheet)
+            addressesBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+
+    private fun initAdapter() {
+        addresses_list.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = addressesListAdapter
+        }
     }
 
 
     override fun setAddressView(isFrom: Boolean, address: String) {
+        clearMapData()
+
         if (isFrom) {
-            from_adr.setText(address)
+            from_adr?.setText(address)
+            from_address?.text = address
         } else {
-            to_adr.setText(address)
+            to_adr?.setText(address)
+            to_address?.text = address
         }
 
-        address_map_text.text = address
+        address_map_text?.text = address
+
+        isDataComplete()
     }
 
 
-    override fun getActualFocus(): Boolean {
-        return (address_map_marker_layout.isVisible)
+    override fun getActualFocus(): Boolean? {
+        return (address_map_marker_layout?.isVisible)
     }
 
 
     override fun removeAddressesView(isFrom: Boolean) {
+        clearMapData()
+
         if (isFrom) {
-            from_adr.setText("")
+            from_adr?.setText("")
+            from_address?.text = ""
 //            not allow user to remove 'from' address
 //            fromAdr = null
         } else {
-            to_adr.setText("")
+            to_adr?.setText("")
+            to_address?.text = ""
         }
+
+        isDataComplete()
     }
 
 
-    override fun addressesMapViewChanged() {
-        main_addresses_layout.visibility = View.GONE
-        addresses_list.visibility = View.GONE
-        address_map_marker_layout.visibility = View.VISIBLE
-        back_btn.visibility = View.VISIBLE
+    override fun addressesMapViewChanged(isFrom: Boolean) {
+        val shape = GradientDrawable()
+        val corners = floatArrayOf(24f, 24f, 24f, 24f, 0f, 0f, 0f, 0f)
+        shape.cornerRadii = corners
+        shape.setColor(Color.parseColor("#${ChangeOpacity.getOpacity(0)}FFFFFF"))
+        bottom_sheet_addresses?.background = shape
+        bottom_sheet_arrow?.visibility = View.GONE
 
-        address_map_text.isSelected = true
-        center_position.setImageResource(R.drawable.ic_map_marker_black)
-        circle_marker.setImageResource(R.drawable.ic_input_marker_to)
-        address_map_marker_btn.setBackgroundResource(R.drawable.bg_btn_black)
+        addressesBottomSheet?.peekHeight = 400
+        main_info_layout?.visibility = View.GONE
+        (addressesBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
+
+        main_addresses_layout?.visibility = View.GONE
+        addresses_list?.visibility = View.GONE
+        address_map_marker_layout?.visibility = View.VISIBLE
+        back_btn?.visibility = View.VISIBLE
+        address_map_text?.isSelected = true
+
+        createRegularDrivePresenter.instance().isBlockGeocoder = false
+        clearMapData()
+        showMapMarker()
+
+        if (isFrom) {
+            center_position?.setImageResource(R.drawable.ic_map_marker)
+            circle_marker?.setImageResource(R.drawable.ic_input_marker_from)
+            address_map_marker_btn?.setBackgroundResource(R.drawable.bg_btn_blue)
+        } else {
+            center_position?.setImageResource(R.drawable.ic_map_marker_black)
+            circle_marker?.setImageResource(R.drawable.ic_input_marker_to)
+            address_map_marker_btn?.setBackgroundResource(R.drawable.bg_btn_black)
+        }
 
         addressesBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         hideKeyboard()
@@ -462,7 +670,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         )
         paymentsListAdapter.list = list
 
-        payments_list.apply {
+        payments_list?.apply {
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = paymentsListAdapter
@@ -471,6 +679,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
 
     private fun setBottomSheet() {
+        mainInfoBottomSheet = BottomSheetBehavior.from<View>(main_info_layout)
         cardsBottomSheetBehavior = BottomSheetBehavior.from<View>(cards_bottom_sheet)
         commentBottomSheetBehavior = BottomSheetBehavior.from<View>(comment_bottom_sheet)
         infoPriceBottomSheetBehavior = BottomSheetBehavior.from<View>(info_price_bottom_sheet)
@@ -478,6 +687,8 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         addressesBottomSheet = BottomSheetBehavior.from<View>(bottom_sheet_addresses)
         dateBottomSheet = BottomSheetBehavior.from<View>(select_date_bottom_sheet)
         timeBottomSheet = BottomSheetBehavior.from<View>(select_time_bottom_sheet)
+
+        (mainInfoBottomSheet as? MBottomSheet<*>)?.swipeEnabled = true
 
         val arrView: Array<BottomSheetBehavior<*>?> = arrayOf(
             cardsBottomSheetBehavior,
@@ -490,28 +701,41 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         )
 
         arrView.forEach {
-            it?.addBottomSheetCallback(object :
-                BottomSheetBehavior.BottomSheetCallback() {
+            if (it != daysBottomSheet) {
+                it?.addBottomSheetCallback(object :
+                    BottomSheetBehavior.BottomSheetCallback() {
 
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    onSlideBottomSheet(slideOffset)
-                }
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                        onSlideBottomSheet(slideOffset)
+                    }
 
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    onStateChangedBottomSheet(newState)
-                }
-            })
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        onStateChangedBottomSheet(newState)
+                    }
+                })
+            } else {
+                it?.addBottomSheetCallback(object :
+                    BottomSheetBehavior.BottomSheetCallback() {
+
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                        onSlideBottomSheet(slideOffset)
+                    }
+
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        onStateDaysBottomSheet(newState)
+                    }
+                })
+            }
         }
-
 
         //set correct height
         val display = (activity as? MapCreateRegularDrive)?.windowManager?.defaultDisplay
         val size = android.graphics.Point()
         display?.getSize(size)
         val height = size.y
-        val layoutParams: ViewGroup.LayoutParams = bottom_sheet_addresses.layoutParams
-        layoutParams.height = height - 200
-        bottom_sheet_addresses.layoutParams = layoutParams
+        val layoutParams = bottom_sheet_addresses?.layoutParams
+        layoutParams?.height = height - 200
+        bottom_sheet_addresses?.layoutParams = layoutParams
     }
 
 
@@ -522,7 +746,7 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
     override fun hideAllBottomSheet() {
         hideKeyboard()
-        comment_text.clearFocus()
+        comment_text?.clearFocus()
 
         commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -531,14 +755,28 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
         addressesBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         dateBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         timeBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        on_view?.visibility = View.GONE
+        Handler().postDelayed({
+            select_date_bottom_sheet?.visibility = View.VISIBLE
+        }, 500)
+    }
+
+
+    override fun hideMainInfoLayout() {
+        mainInfoBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+
+    override fun showMainInfoLayout() {
+        mainInfoBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
     private fun onSlideBottomSheet(slideOffset: Float) {
         if (slideOffset > 0 && slideOffset < 1) {
-            on_view.alpha = slideOffset * 0.8f
-            back_btn.alpha = 1 - slideOffset
-            show_route.alpha = 1 - slideOffset
+            on_view?.alpha = slideOffset * 0.8f
+            addresses_list?.alpha = 1.0f
         }
     }
 
@@ -546,53 +784,107 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     private fun onStateChangedBottomSheet(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
             hideKeyboard()
-            comment_text.clearFocus()
+            comment_text?.clearFocus()
         }
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view.visibility = View.GONE
-            main_info_layout.elevation = 30f
-            comment_text.clearFocus()
-            hideAllBottomSheet()
+            on_view?.visibility = View.GONE
+            comment_text?.clearFocus()
         } else {
-            on_view.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            on_view?.visibility = View.VISIBLE
         }
     }
 
 
-    override fun isDataComplete(): Boolean {
-        val isComplete: Boolean
-        val offerPrice = offer_price.text.toString().trim()
+    private fun onStateDaysBottomSheet(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+            hideKeyboard()
+            comment_text?.clearFocus()
 
-        if (selected_payment_method.visibility == View.VISIBLE && offerPrice.length < 5) {
-            isComplete = true
-            changeBtnEnable(true)
-        } else {
-            isComplete = false
-            changeBtnEnable(false)
+            select_date_bottom_sheet?.visibility = View.GONE
         }
+
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            on_view?.visibility = View.GONE
+            comment_text?.clearFocus()
+
+            hideAllBottomSheet()
+        } else {
+            on_view?.visibility = View.VISIBLE
+        }
+    }
+
+
+    override fun getRideInfo(): RideInfo {
+        val rideInfo = RideInfo()
+        try {
+            val comment = comment_text.text.toString().trim()
+            val price = offer_price.text.toString().toInt()
+
+            rideInfo.comment = comment
+            rideInfo.price = price
+        } catch (ex: NumberFormatException) {
+            Log.e("Convert", "Converting price ride to Int " + this::class.java.simpleName)
+        }
+
+        return rideInfo
+    }
+
+
+    override fun isDataComplete(): Boolean {
+        var isComplete = false
+        val offerPrice = offer_price?.text?.toString()?.trim()
+
+        offerPrice?.let {
+            if (selected_payment_method?.visibility == View.VISIBLE
+                && offerPrice.length < 5
+                && Coordinate.fromAdr != null
+                && Coordinate.toAdr != null
+                && checkDays()
+            ) {
+                isComplete = true
+            }
+        }
+
+        changeBtnEnable(isComplete)
 
         return isComplete
     }
 
 
+    private fun checkDays(): Boolean {
+        var result = false
+        getDays().forEach {
+            if (it) result = true
+        }
+
+        return result
+    }
+
+
+    override fun requestGeocoder(point: Point?) {
+        hideMainInfoLayout()
+
+        createRegularDrivePresenter.requestGeocoder(point)
+    }
+
+
     override fun offerPriceDone(price: Int, averagePrice: Int) {
-        offer_price.textSize = 22f
-        offer_price.setPadding(0, 5, 0, 25)
-        offer_price.setTextColor(Color.parseColor("#000000"))
-        offer_price.typeface = Typeface.DEFAULT_BOLD
+        offer_price?.textSize = 22f
+        offer_price?.setPadding(0, 5, 0, 25)
+        offer_price?.setTextColor(Color.parseColor("#000000"))
+        offer_price?.typeface = Typeface.DEFAULT_BOLD
 
         if (averagePrice <= price) {
-            info_price.visibility = View.GONE
+            info_price?.visibility = View.GONE
         } else {
-            info_price.visibility = View.VISIBLE
+            info_price?.visibility = View.VISIBLE
         }
 
         try {
-            offer_price.text = price.toString()
+            offer_price?.text = price.toString()
         } catch (ex: NumberFormatException) {
-            offer_price.text = "0"
+            offer_price?.text = "0"
         }
 
         //change btn enabled in case completed detail info
@@ -601,13 +893,13 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
 
     override fun setSelectedBankCard(bankCard: BankCard) {
-        selected_payment_method.visibility = View.VISIBLE
-        payment_method.visibility = View.GONE
+        selected_payment_method?.visibility = View.VISIBLE
+        payment_method?.visibility = View.GONE
 
         number_card.text = bankCard.numberCard
         val img = bankCard.img
         if (img != null) {
-            payment_method_img.setImageResource(img)
+            payment_method_img?.setImageResource(img)
         }
 
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -618,12 +910,14 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
 
 
     override fun removeTickSelected() {
-        val childCount = payments_list.childCount
+        val childCount = payments_list?.childCount
 
-        for (i in 0 until childCount) {
-            val holder = payments_list.getChildViewHolder(payments_list.getChildAt(i))
-            val tick = holder.itemView.findViewById<ImageView>(R.id.tick)
-            tick.setImageResource(R.drawable.ic_tick)
+        childCount?.let {
+            for (i in 0 until childCount) {
+                val holder = payments_list?.getChildViewHolder(payments_list.getChildAt(i))
+                val tick = holder?.itemView?.findViewById<ImageView>(R.id.tick)
+                tick?.setImageResource(R.drawable.ic_tick)
+            }
         }
     }
 
@@ -631,15 +925,17 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     override fun commentEditStart() {
         commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        if (!comment_text.isFocused) {
-            comment_text.requestFocus()
-            //set a little timer to open keyboard
-            Handler().postDelayed({
-                val activity = activity as? MapCreateRegularDrive
-                activity?.let {
-                    Keyboard.showKeyboard(activity)
-                }
-            }, 200)
+        comment_text?.let {
+            if (!comment_text.isFocused) {
+                comment_text?.requestFocus()
+                //set a little timer to open keyboard
+                Handler().postDelayed({
+                    val activity = activity as? MapCreateRegularDrive
+                    activity?.let {
+                        Keyboard.showKeyboard(activity)
+                    }
+                }, 200)
+            }
         }
     }
 
@@ -665,45 +961,89 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     }
 
 
+    override fun getDays(): BooleanArray {
+        val arrSelected = BooleanArray(7)
+
+        val daysStr = select_date?.text?.toString()?.trim()
+
+        if (daysStr != null) {
+            val arrDays = daysStr.split(" ")
+            arrDays.forEach {
+                when (it) {
+                    getString(R.string.mondayC) -> arrSelected[0] = true
+                    getString(R.string.tuesdayC) -> arrSelected[1] = true
+                    getString(R.string.wednesdayC) -> arrSelected[2] = true
+                    getString(R.string.thursdayC) -> arrSelected[3] = true
+                    getString(R.string.fridayC) -> arrSelected[4] = true
+                    getString(R.string.saturdayC) -> arrSelected[5] = true
+                    getString(R.string.sundayC) -> arrSelected[6] = true
+                }
+            }
+        }
+
+        return arrSelected
+    }
+
+
+    override fun getTime() {
+        //TODO
+    }
+
+
     override fun onClickItem(address: Address, isFromMapSearch: Boolean) {
         if (isFromMapSearch) {
-            from_adr.setText(address.address)
-            from_adr.setSelection(from_adr.text.length)
+            from_adr?.setText(address.address)
+            from_address?.text = address.address
+            from_adr?.setSelection(from_adr.text.length)
             Coordinate.fromAdr = address
         } else {
-            to_adr.setText(address.address)
-            to_adr.setSelection(to_adr.text.length)
+            to_adr?.setText(address.address)
+            to_address?.text = address.address
+            to_adr?.setSelection(to_adr.text.length)
             Coordinate.toAdr = address
         }
+
+        isDataComplete()
     }
 
 
     private fun changeBtnEnable(isEnable: Boolean) {
         if (isEnable) {
-            save_ride.setBackgroundResource(R.drawable.bg_btn_blue)
+            save_ride?.isClickable = true
+            save_ride?.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
-            save_ride.setBackgroundResource(R.drawable.bg_btn_gray)
+            save_ride?.isClickable = false
+            save_ride?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
 
 
-    override fun getPaymentsAdapter(): PaymentsListAdapter {
-        return paymentsListAdapter
+    override fun getPaymentsAdapter(): PaymentsListAdapter = paymentsListAdapter
+
+
+    override fun getAddressesAdapter(): AddressesListAdapter = addressesListAdapter
+
+
+    override fun getNavHost(): NavController? = null
+
+
+    override fun getUserLocationLayer(): UserLocationLayer? = locationLayer()
+
+
+    override fun getMap(): MapView? = mapView()
+
+
+    override fun moveCamera(point: Point) = moveMapCamera(point)
+
+
+    private fun showMapMarker() {
+        center_position?.visibility = View.VISIBLE
+        center_position?.alpha = 1.0f
     }
 
 
-    override fun getAddressesAdapter(): AddressesListAdapter {
-        return addressesListAdapter
-    }
-
-
-    override fun getNavHost(): NavController? {
-        return null
-    }
-
-
-    override fun getMap(): MapView? {
-        return mapView()
+    override fun hideMapMarker() {
+        center_position?.visibility = View.GONE
     }
 
 
@@ -715,18 +1055,96 @@ class CreateRegularDriveView : Fragment(), ContractView.ICreateRegularDriveView 
     }
 
 
+    override fun onObjectUpdate() {
+        createRegularDrivePresenter.onObjectUpdate()
+    }
+
+
     override fun showNotification(text: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        (activity as? MapCreateRegularDrive)?.showNotification(text)
     }
 
 
     override fun showLoading() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                save_ride.text = ""
+                save_ride.isClickable = false
+                save_ride.isFocusable = false
+                progress_bar.visibility = View.VISIBLE
+            }
+        }
+
+        mainHandler.post(myRunnable)
     }
 
 
     override fun hideLoading() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val mainHandler = Handler(Looper.getMainLooper())
+        val myRunnable = Runnable {
+            kotlin.run {
+                save_ride.text = getString(R.string.saveC)
+                save_ride.isClickable = true
+                save_ride.isFocusable = true
+                progress_bar.visibility = View.GONE
+            }
+        }
+
+        mainHandler.post(myRunnable)
+    }
+
+
+    private fun clearMapData() {
+        hideRouteBtn()
+
+        createRegularDrivePresenter.removeRoute()
+    }
+
+
+    override fun showRouteBtn() {
+        show_route?.visibility = View.VISIBLE
+    }
+
+
+    override fun hideRouteBtn() {
+        show_route?.visibility = View.INVISIBLE
+    }
+
+
+    override fun onBackPressed(): Boolean {
+        return if (cardsBottomSheetBehavior?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || commentBottomSheetBehavior?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || dateBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || daysBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || timeBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+            || addressesBottomSheet?.state != BottomSheetBehavior.STATE_COLLAPSED
+        ) {
+            //hide all bottom sheet
+            hideAllBottomSheet()
+
+            false
+        } else {
+            if (address_map_marker_layout?.visibility == View.VISIBLE) {
+                val isFrom = createRegularDrivePresenter.instance().isFromMapSearch
+                if (isFrom) {
+                    Coordinate.fromAdr = null
+                } else {
+                    Coordinate.toAdr = null
+                }
+                removeAddressesView(isFrom)
+
+                createRegularDrivePresenter.instance().isFromMapSearch = true
+                showStartUI(true)
+                false
+            } else true
+        }
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        createRegularDrivePresenter.onDestroy()
     }
 
 

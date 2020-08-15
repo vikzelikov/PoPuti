@@ -166,7 +166,7 @@
             android:elevation="30dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
             <LinearLayout
                 android:layout_width="match_parent"

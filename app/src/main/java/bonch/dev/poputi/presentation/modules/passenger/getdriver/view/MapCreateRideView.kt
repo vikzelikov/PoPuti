@@ -21,6 +21,7 @@ import bonch.dev.poputi.di.module.passenger.GetDriverModule
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.domain.utils.Constants.API_KEY
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -96,6 +97,9 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             val alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
             logo.setAlignment(alignment)
         }
+
+        Coordinate.fromAdr = null
+        Coordinate.toAdr = null
 
         return root
     }

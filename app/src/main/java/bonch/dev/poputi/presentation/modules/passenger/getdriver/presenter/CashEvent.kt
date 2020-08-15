@@ -1,42 +1,36 @@
 package bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter
 
 import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 
 /**
  * Class works with cash request to Yandex MapKit server
  * and cashed suggest addresses (autocomplete)
  * */
 
-class CashEvent(private val presenter: CreateRidePresenter) {
+class CashEvent(private val getDriverInteractor: IGetDriverInteractor) {
 
     private val CASH_VALUE_COUNT = 12
 
-    var cashSuggest: ArrayList<Address>? = null
+    var cashSuggests: ArrayList<Address>? = null
 
 
-    fun getCashSuggest() {
-        if (cashSuggest == null) {
-            val interactor = presenter.getDriverInteractor
+    fun getCashSuggest(): ArrayList<Address>? {
+        if (cashSuggests == null) {
+            val interactor = getDriverInteractor
             interactor.initRealm()
-            cashSuggest = interactor.getCashSuggest()
+            cashSuggests = interactor.getCashSuggest()
         }
 
-        val suggest = cashSuggest
-
-        if (suggest != null) {
-            val adapter = presenter.getView()?.getAddressesAdapter()
-            adapter?.list?.clear()
-            adapter?.list?.addAll(suggest)
-            adapter?.notifyDataSetChanged()
-        }
+        return cashSuggests
     }
 
 
     fun saveCashSuggest(adr: Address) {
         val tempList = arrayListOf<Address>()
-        val interactor = presenter.getDriverInteractor
+        val interactor = getDriverInteractor
 
-        val suggest = cashSuggest
+        val suggest = cashSuggests
 
         if (!suggest.isNullOrEmpty()) {
             tempList.addAll(suggest)
@@ -71,9 +65,8 @@ class CashEvent(private val presenter: CreateRidePresenter) {
             //update or save cash
             interactor.saveCashSuggest(tempList)
             //clear and get again
-            cashSuggest = null
+            cashSuggests = null
             getCashSuggest()
         }
     }
-
 }

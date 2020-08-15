@@ -12,7 +12,7 @@ import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.Offer
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.OffersMainTimer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import kotlinx.android.synthetic.main.driver_item.view.*
+import kotlinx.android.synthetic.main.offer_item.view.*
 import javax.inject.Inject
 
 
@@ -29,7 +29,7 @@ class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresente
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.driver_item, parent, false)
+                .inflate(R.layout.offer_item, parent, false)
         )
     }
 

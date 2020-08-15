@@ -5,8 +5,7 @@
     android:id="@+id/car_info_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".poputi.presentation.modules.driver.signup.DriverSignupActivity">
+    android:background="@android:color/white">
 
 
     <ScrollView

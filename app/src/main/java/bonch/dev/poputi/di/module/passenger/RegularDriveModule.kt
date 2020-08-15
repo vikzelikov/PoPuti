@@ -1,6 +1,8 @@
 package bonch.dev.poputi.di.module.passenger
 
 import bonch.dev.poputi.di.scope.CompScope
+import bonch.dev.poputi.domain.interactor.passenger.getdriver.GetDriverInteractor
+import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.ContractPresenter
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.CreateRegularDrivePresenter
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.MapCreateRegDrivePresenter
@@ -27,6 +29,11 @@ class RegularDriveModule {
     @CompScope
     fun provideCreateRegularDrivePresenter(): ContractPresenter.ICreateRegularDrivePresenter =
         CreateRegularDrivePresenter()
+
+
+    @Provides
+    @CompScope
+    fun provideGetDriverInteractor(): IGetDriverInteractor = GetDriverInteractor()
 
 
 }

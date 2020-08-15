@@ -50,6 +50,5 @@ class AddressesListAdapter @Inject constructor(private val createRegularDrivePre
             itemView.city.text = post.description
         }
     }
-
 }
 

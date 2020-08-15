@@ -8,6 +8,8 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.R
@@ -97,6 +99,14 @@ class AddBankCardView : AppCompatActivity(),
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
+
+        cvc.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addBankCardPresenter.addCardBank(card_number.text.toString())
+                return@OnEditorActionListener true
+            }
+            false
         })
     }
 

@@ -38,9 +38,12 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
     fun setNewOrder(index: Int, order: RideInfo) {
         order.isNewOrder = false
 
-        list.add(index, order)
-        notifyItemInserted(index)
-        notifyItemChanged(index)
+        try {
+            list.add(index, order)
+            notifyItemInserted(index)
+            notifyItemChanged(index)
+        } catch (ex: java.lang.IndexOutOfBoundsException) {
+        }
     }
 
 

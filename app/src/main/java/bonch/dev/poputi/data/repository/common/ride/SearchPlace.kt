@@ -1,18 +1,22 @@
 package bonch.dev.poputi.data.repository.common.ride
 
-import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.DetailRidePresenter
+import bonch.dev.poputi.presentation.interfaces.DataHandler
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 
-class SearchPlace(private val detailRidePresenter: DetailRidePresenter) : Session.SearchListener {
+class SearchPlace : Session.SearchListener {
 
     private var searchSession: Session? = null
     private var searchManager: SearchManager =
         SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     private val searchOptions = SearchOptions()
+    private var callback: DataHandler<Point?>? = null
 
 
-    fun request(uri: String) {
+    fun request(uri: String, callback: DataHandler<Point?>) {
+        this.callback = callback
+
         searchSession = searchManager.resolveURI(uri, searchOptions, this)
     }
 
@@ -24,15 +28,10 @@ class SearchPlace(private val detailRidePresenter: DetailRidePresenter) : Sessio
         try {
             val point = response.collection.children.first().obj?.geometry?.first()?.point
 
-            if (detailRidePresenter.fromPoint == null) {
-                detailRidePresenter.fromPoint = point
-            } else {
-                detailRidePresenter.toPoint = point
-            }
-        }catch (ex: NoSuchElementException){}
+            callback?.let { it(point, null) }
 
-
-        detailRidePresenter.submitRoute()
+        } catch (ex: NoSuchElementException) {
+        }
     }
 }
 

@@ -41,7 +41,8 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         val accessToken = baseInteractor.getToken()
         val idUser = baseInteractor.getUserId()
 
-        Log.e("TEST", accessToken)
+        Log.e("TEST", "$accessToken")
+
 
         if (accessToken != null && idUser != -1) {
             baseInteractor.validateAccount { userId, _ ->

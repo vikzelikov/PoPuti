@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "933171609403",
+    "firebase_url": "https://poputi-70216.firebaseio.com",
+    "project_id": "poputi-70216",
+    "storage_bucket": "poputi-70216.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933171609403:android:2d212ef89bd6a8525f011e",
+        "android_client_info": {
+          "package_name": "bonch.dev.mobile.poputi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933171609403-3fm06v3ggi958ags8auuu22n2gi0sajb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfUhNKV-eiUlJStVJAzsgnJU99-JTUxVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933171609403-3fm06v3ggi958ags8auuu22n2gi0sajb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "933171609403-9uh1eojvs0j7u66sknhfgvkipcrf9jp5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "v"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

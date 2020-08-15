@@ -4,6 +4,7 @@ import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
+import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -23,6 +24,8 @@ interface IGetDriverInteractor {
 
     //Ride
     fun createRide(rideInfo: RideInfo, callback: SuccessHandler)
+
+    fun createRideSchedule(dateInfo: DateInfo, callback: SuccessHandler)
 
     fun connectSocket(callback: SuccessHandler)
 

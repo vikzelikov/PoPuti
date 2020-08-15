@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.domain.utils.Constants
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.RegularDriveComponent
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.ContractPresenter
 import com.yandex.mapkit.Animation
@@ -79,6 +80,8 @@ class MapCreateRegularDrive : AppCompatActivity(), UserLocationObjectListener, C
 
         mapCreateDrivePresenter.attachCreateRegularDrive(supportFragmentManager)
 
+        Coordinate.fromAdr = null
+        Coordinate.toAdr = null
     }
 
 
@@ -176,7 +179,9 @@ class MapCreateRegularDrive : AppCompatActivity(), UserLocationObjectListener, C
     }
 
 
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
+    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
+        mapCreateDrivePresenter.onObjectUpdate()
+    }
 
 
     private fun setUserLocation() {
@@ -294,5 +299,15 @@ class MapCreateRegularDrive : AppCompatActivity(), UserLocationObjectListener, C
 
 
     override fun hideKeyboard() {}
+
+
+    override fun pressBack() {
+        super.onBackPressed()
+    }
+
+
+    override fun onBackPressed() {
+        mapCreateDrivePresenter.onBackPressed()
+    }
 
 }

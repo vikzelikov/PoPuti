@@ -25,9 +25,9 @@ class MapCreateRegDrivePresenter : BasePresenter<ContractView.IMapCreateRegularD
         val childFragment = CreateRegularDriveView()
 
         //pass callback
-//        childFragment.locationLayer = { getUserLocation() }
-//        childFragment.moveMapCamera = { getView()?.moveCamera(it) }
-//        childFragment.mapView = { getView()?.getMap() }
+        childFragment.locationLayer = { getUserLocation() }
+        childFragment.moveMapCamera = { getView()?.moveCamera(it) }
+        childFragment.mapView = { getView()?.getMap() }
 
         this.childCreateRegularDrive = childFragment
         fm.beginTransaction()
@@ -47,7 +47,12 @@ class MapCreateRegDrivePresenter : BasePresenter<ContractView.IMapCreateRegularD
 
 
     override fun requestGeocoder(point: Point?) {
-        //childCreateRegularDrive?.requestGeocoder(point)
+        childCreateRegularDrive?.requestGeocoder(point)
+    }
+
+
+    override fun onObjectUpdate() {
+        childCreateRegularDrive?.onObjectUpdate()
     }
 
 
@@ -70,6 +75,15 @@ class MapCreateRegDrivePresenter : BasePresenter<ContractView.IMapCreateRegularD
         drawable.draw(canvas)
 
         return bitmap
+    }
+
+
+    override fun onBackPressed() {
+        childCreateRegularDrive?.let {
+            if (it.onBackPressed()) {
+                getView()?.pressBack()
+            }
+        }
     }
 
 

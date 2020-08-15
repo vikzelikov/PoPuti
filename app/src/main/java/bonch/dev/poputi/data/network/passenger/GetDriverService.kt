@@ -4,6 +4,7 @@ import bonch.dev.poputi.data.network.common.RideService
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.Ride
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -14,6 +15,13 @@ interface GetDriverService : RideService {
         @HeaderMap headers: Map<String, String>,
         @Body ride: RideInfo
     ): Response<Ride>
+
+
+    @POST("/api/schedules")
+    suspend fun createRideSchedule(
+        @HeaderMap headers: Map<String, String>,
+        @Body date: DateInfo
+    ): Response<*>
 
 
     @FormUrlEncoded

@@ -2,43 +2,185 @@ package bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.util.Log
 import androidx.fragment.app.Fragment
+import bonch.dev.poputi.App
+import bonch.dev.poputi.R
 import bonch.dev.poputi.data.repository.common.ride.SearchPlace
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
-import bonch.dev.poputi.domain.entities.common.ride.Address
-import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
-import bonch.dev.poputi.domain.entities.common.ride.Coordinate
+import bonch.dev.poputi.domain.entities.common.ride.*
+import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.CashEvent
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.RegularDriveComponent
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.view.ContractView
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.mapview.MapView
 import javax.inject.Inject
 
 class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDriveView>(),
     ContractPresenter.ICreateRegularDrivePresenter {
 
     @Inject
+    lateinit var getDriverInteractor: IGetDriverInteractor
+
+
+    @Inject
     lateinit var routing: Routing
+
+    private var blockRequestHandler: Handler? = null
+
+    private var cashEvent: CashEvent
 
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
     private val AVERAGE_PRICE = "AVERAGE_PRICE"
+    private val NOT_DESCRIPTION = "Место"
+    private val BLOCK_REQUEST_GEOCODER = 1500L
 
-    private var searchPlace: SearchPlace? = null
-    var fromPoint: Point? = null
-    var toPoint: Point? = null
+
+    private var fromPoint: Point? = null
+    private var toPoint: Point? = null
 
     var isFromMapSearch = true
-
+    var isBlockGeocoder = false
+    private var isBlockRequest = false
 
 
     init {
         RegularDriveComponent.regularDriveComponent?.inject(this)
-        //searchPlace = SearchPlace()
+
+        cashEvent = CashEvent(getDriverInteractor)
+    }
+
+
+    override fun createDone(): Boolean {
+        var isSuccess = false
+        val from = Coordinate.fromAdr
+        val to = Coordinate.toAdr
+
+        if (from != null && to != null) {
+            //remove all old routes
+            removeRoute()
+
+            //cash data (both of adr)
+            cashEvent.saveCashSuggest(from)
+            cashEvent.saveCashSuggest(to)
+
+            getView()?.showStartUI(false)
+            getView()?.hideMapMarker()
+            getView()?.hideAllBottomSheet()
+            getView()?.hideMainInfoLayout()
+            getView()?.showRouteBtn()
+
+            checkAddressPoints(from, to)
+
+            Handler().postDelayed({
+                getView()?.showMainInfoLayout()
+            }, 3000)
+
+            isSuccess = true
+            isBlockGeocoder = true
+        }
+
+        return isSuccess
+    }
+
+
+    override fun requestGeocoder(point: Point?) {
+        if (!isBlockGeocoder && !isBlockRequest && point != null) {
+            //send request and set block for several seconds
+            getDriverInteractor.requestGeocoder(point) { address, responsePoint ->
+                responseGeocoder(address, responsePoint)
+            }
+            isBlockRequest = true
+        }
+    }
+
+
+    private fun responseGeocoder(address: String?, point: Point) {
+        val actualFocus = getView()?.getActualFocus()
+
+        if (address != null) {
+            if (isFromMapSearch || (actualFocus != null && !actualFocus)) {
+                Coordinate.fromAdr = Address(
+                    0,
+                    address,
+                    NOT_DESCRIPTION,
+                    null,
+                    AddressPoint(
+                        point.latitude,
+                        point.longitude
+                    )
+                )
+            } else {
+                Coordinate.toAdr = Address(
+                    0,
+                    address,
+                    NOT_DESCRIPTION,
+                    null,
+                    AddressPoint(
+                        point.latitude,
+                        point.longitude
+                    )
+                )
+            }
+
+            if (actualFocus != null && !actualFocus) {
+                getView()?.setAddressView(true, address)
+            } else {
+                getView()?.setAddressView(isFromMapSearch, address)
+            }
+        }
+    }
+
+
+    override fun requestSuggest(query: String) {
+        if (query.length > 2) {
+            getDriverInteractor.initRealm()
+            //first check cash, then go to net
+            //try to get data from cash
+            if (!isBlockRequest) {
+                val cashRequest = getDriverInteractor.getCashRequest(query)
+
+                if (!cashRequest.isNullOrEmpty()) {
+                    //set in view
+                    val adapter = getView()?.getAddressesAdapter()
+                    adapter?.list?.clear()
+                    adapter?.list?.addAll(cashRequest)
+                    adapter?.notifyDataSetChanged()
+                    isBlockRequest = true
+
+                } else {
+                    getDriverInteractor.requestSuggest(query, getUserPoint()) {
+                        responseSuggest(it)
+                    }
+                }
+
+                isBlockRequest = true
+            }
+
+        } else {
+            clearSuggest()
+        }
+
+        if (query.isEmpty()) {
+            getCashSuggest()
+        }
+    }
+
+
+    private fun responseSuggest(suggestResult: ArrayList<Address>) {
+        //cash request
+        getDriverInteractor.saveCashRequest(suggestResult)
+
+        //set in view
+        val adapter = getView()?.getAddressesAdapter()
+        adapter?.list = suggestResult
+        adapter?.notifyDataSetChanged()
     }
 
 
@@ -61,7 +203,9 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
             if (fromUri.length > 50) {
                 fromPoint = getPoint(fromUri)
             } else {
-                searchPlace?.request(fromUri)
+                SearchPlace().request(fromUri) { point, _ ->
+                    fromPoint = point
+                }
             }
         }
 
@@ -69,7 +213,11 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
             if (toUri.length > 50) {
                 toPoint = getPoint(toUri)
             } else {
-                searchPlace?.request(toUri)
+                SearchPlace().request(toUri) { point, _ ->
+                    toPoint = point
+
+                    submitRoute()
+                }
             }
         }
 
@@ -80,7 +228,7 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
     override fun submitRoute() {
         val from = fromPoint
         val to = toPoint
-        val map = getMap()
+        val map = getView()?.getMap()
 
         if (from != null && to != null && map != null) {
             //update points
@@ -103,7 +251,46 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
     override fun onClickItem(address: Address) {
         getView()?.onClickItem(address, isFromMapSearch)
 
-        //addressesDone()
+        createDone()
+    }
+
+
+    override fun touchCrossAddress(isFrom: Boolean) {
+        if (isFrom) {
+            Coordinate.fromAdr = null
+        }else{
+            Coordinate.toAdr = null
+        }
+
+        getView()?.removeAddressesView(isFrom)
+    }
+
+
+    override fun touchAddress(isFrom: Boolean, isShowKeyboard: Boolean) {
+
+        getView()?.expandedBottomSheet(isFrom, isShowKeyboard)
+
+        //update current focus
+        isFromMapSearch = isFrom
+    }
+
+
+    override fun touchMapBtn(isFrom: Boolean) {
+        isFromMapSearch = isFrom
+
+        getView()?.addressesMapViewChanged(isFrom)
+
+        removeRoute()
+        isBlockGeocoder = false
+    }
+
+
+    override fun touchAddressMapMarkerBtn() {
+        val res = createDone()
+
+        if (!res) {
+            getView()?.showStartUI(true)
+        }
     }
 
 
@@ -115,12 +302,34 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
 
 
     override fun getCashSuggest() {
-        //cashEvent.getCashSuggest()
+        val suggest = cashEvent.getCashSuggest()
+
+        if (suggest != null) {
+            val adapter = getView()?.getAddressesAdapter()
+            adapter?.list?.clear()
+            adapter?.list?.addAll(suggest)
+            adapter?.notifyDataSetChanged()
+        }
     }
 
 
     override fun showRoute() {
         routing.showRoute()
+    }
+
+
+    override fun showMyPosition() {
+        val userPoint = getUserPoint()
+
+        if (userPoint != null) {
+            getView()?.moveCamera(userPoint)
+        }
+    }
+
+
+    private fun getUserPoint(): Point? {
+        val userLocation = getView()?.getUserLocationLayer()
+        return userLocation?.cameraPosition()?.target
     }
 
 
@@ -151,6 +360,53 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
     }
 
 
+    //create ride with SERVER
+    override fun createRide() {
+        val view = getView()
+
+        if (view != null && view.isDataComplete()) {
+            val rideInfo = getView()?.getRideInfo()
+
+            getView()?.showLoading()
+
+            rideInfo?.fromAdr = Coordinate.fromAdr
+            rideInfo?.toAdr = Coordinate.toAdr
+
+            if (rideInfo != null) {
+                val ride = RideInfo()
+                ride.position = rideInfo.fromAdr?.address
+                ride.fromLat = rideInfo.fromAdr?.point?.latitude
+                ride.fromLng = rideInfo.fromAdr?.point?.longitude
+                ride.destination = rideInfo.toAdr?.address
+                ride.toLat = rideInfo.toAdr?.point?.latitude
+                ride.toLng = rideInfo.toAdr?.point?.longitude
+                ride.price = rideInfo.price
+                ride.comment = rideInfo.comment
+
+                //save ride
+                ActiveRide.activeRide = ride
+
+                //create ride with SERVER
+                getDriverInteractor.createRide(ride) { isSuccess ->
+
+                    getView()?.hideLoading()
+
+                    if (isSuccess) {
+                        //next step
+                        Log.e("TEST", "успех")
+
+
+
+                    } else {
+                        val res = App.appComponent.getContext().resources
+                        getView()?.showNotification(res.getString(R.string.tryAgain))
+                    }
+                }
+            }
+        }
+    }
+
+
     override fun offerPriceDone(data: Intent?) {
         val price = data?.getIntExtra(OFFER_PRICE.toString(), 0)
         val averagePrice = data?.getIntExtra(AVERAGE_PRICE, 0)
@@ -177,6 +433,39 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
     }
 
 
+    override fun startProcessBlockRequest() {
+        isBlockGeocoder = false
+
+        if (blockRequestHandler == null) {
+            blockRequestHandler = Handler()
+        }
+
+        blockRequestHandler?.postDelayed(object : Runnable {
+            override fun run() {
+                isBlockRequest = false
+                blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER)
+            }
+        }, 0)
+
+        requestGeocoder(getUserPoint())
+
+        isBlockGeocoder = true
+    }
+
+
+    override fun onObjectUpdate() {
+        if (blockRequestHandler == null) {
+            startProcessBlockRequest()
+        }
+    }
+
+
+    private fun stopProcessBlockRequest() {
+        blockRequestHandler?.removeCallbacksAndMessages(null)
+        blockRequestHandler = null
+    }
+
+
     override fun offerPrice(context: Context, fragment: Fragment) {
         val intent = Intent(context, OfferPriceView::class.java)
         fragment.startActivityForResult(intent, OFFER_PRICE)
@@ -199,13 +488,13 @@ class CreateRegularDrivePresenter : BasePresenter<ContractView.ICreateRegularDri
     }
 
 
-    override fun getMap(): MapView? {
-        return getView()?.getMap()
-    }
+    override fun instance() = this
 
 
-    override fun instance(): CreateRegularDrivePresenter {
-        return this
+    override fun onDestroy() {
+        stopProcessBlockRequest()
+        cashEvent.cashSuggests = null
+        getDriverInteractor.closeRealm()
     }
 
 }

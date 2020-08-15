@@ -11,6 +11,8 @@ class RegularDrivePresenter : BasePresenter<ContractView.IRegularDriveView>(),
 
     override fun createRegularDrive() {
         getView()?.getFragment()?.context?.let {
+            getView()?.showLoading()
+
             //show detail order
             val intent = Intent(it, MapCreateRegularDrive::class.java)
             getView()?.getFragment()?.startActivityForResult(intent, 1)
@@ -18,8 +20,6 @@ class RegularDrivePresenter : BasePresenter<ContractView.IRegularDriveView>(),
     }
 
 
-    override fun instance(): RegularDrivePresenter {
-        return this
-    }
+    override fun instance() = this
 
 }

@@ -11,6 +11,7 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -127,6 +128,49 @@ class GetDriverRepository : IGetDriverRepository {
                 //Error
                 callback(null, err.message)
                 Log.e("CREATE_RIDE", "${err.printStackTrace()}")
+            }
+        }
+    }
+
+
+    override fun createRideSchedule(dateInfo: DateInfo, token: String, callback: SuccessHandler) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.createRideSchedule(
+                    headers,
+                    dateInfo
+                )
+
+                withContext(Dispatchers.Main) {
+                    Log.e("TEST","1")
+                    if (response.isSuccessful) {
+                        Log.e("TEST","2")
+
+                        val body = response.body()
+
+                        Log.e("TEST", "${body}")
+                    } else {
+                        Log.e("TEST","3")
+
+                        //Error
+                        Log.e(
+                            "CREATE_SCHEDULER",
+                            "Create Schedule on server failed with code: ${response.code()}"
+                        )
+                        callback(false)
+                    }
+                }
+            } catch (err: Exception) {
+                Log.e("TEST","4")
+
+                //Error
+                callback(false)
+                Log.e("CREATE_SCHEDULER", "${err.printStackTrace()}")
             }
         }
     }

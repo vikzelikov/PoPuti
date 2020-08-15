@@ -18,6 +18,7 @@ interface ContractView {
         fun hideError()
         fun setViewTimer()
         fun finishTimer()
+        fun setSoftInput()
     }
 
 

@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,8 @@ import bonch.dev.poputi.di.module.passenger.PassengerSignupModule
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.passenger.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.passenger.signup.presenter.ContractPresenter
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.redmadrobot.inputmask.MaskedTextChangedListener.Companion.installOn
 import com.redmadrobot.inputmask.MaskedTextChangedListener.ValueListener
 import kotlinx.android.synthetic.main.phone_signup_fragment.*
@@ -79,7 +82,21 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
         (activity as? MainActivity)?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         setPhoneMask()
-
+//
+//
+//        FirebaseInstanceId.getInstance().instanceId
+//            .addOnCompleteListener(OnCompleteListener { task ->
+//                if (!task.isSuccessful) {
+//                    Log.e("TEST", "getInstanceId failed", task.exception)
+//                    return@OnCompleteListener
+//                }
+//
+//                // Get new Instance ID token
+//                val token = task.result?.token
+//
+//                // Log and toast
+//                test.setText(token)
+//            })
 
 
         super.onViewCreated(view, savedInstanceState)

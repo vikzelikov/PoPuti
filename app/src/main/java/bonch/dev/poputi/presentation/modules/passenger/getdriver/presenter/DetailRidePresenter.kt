@@ -39,7 +39,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     val ADD_BANK_CARD = 2
     private val AVERAGE_PRICE = "AVERAGE_PRICE"
 
-    private var searchPlace: SearchPlace? = null
     private var blockHandler: Handler? = null
 
     private var isBlock = false
@@ -50,7 +49,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
-        searchPlace = SearchPlace(this)
     }
 
 
@@ -92,7 +90,9 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
             if (fromUri.length > 50) {
                 fromPoint = getPoint(fromUri)
             } else {
-                searchPlace?.request(fromUri)
+                SearchPlace().request(fromUri) { point, _ ->
+                    fromPoint = point
+                }
             }
         }
 
@@ -100,7 +100,11 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
             if (toUri.length > 50) {
                 toPoint = getPoint(toUri)
             } else {
-                searchPlace?.request(toUri)
+                SearchPlace().request(toUri) { point, _ ->
+                    toPoint = point
+
+                    submitRoute()
+                }
             }
         }
 

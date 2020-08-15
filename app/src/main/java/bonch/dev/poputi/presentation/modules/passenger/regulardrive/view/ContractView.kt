@@ -3,6 +3,7 @@ package bonch.dev.poputi.presentation.modules.passenger.regulardrive.view
 import androidx.fragment.app.Fragment
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.IBaseView
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.adapters.AddressesListAdapter
 import bonch.dev.poputi.presentation.modules.passenger.regulardrive.adapters.PaymentsListAdapter
@@ -22,27 +23,40 @@ interface ContractView {
         fun getUserLocation(): UserLocationLayer?
         fun getMap(): MapView
         fun moveCamera(point: Point)
+        fun pressBack()
     }
 
 
     interface ICreateRegularDriveView : IBaseView {
-        fun showStartUI()
+        fun getTime()
         fun commentEditStart()
         fun hideAllBottomSheet()
+        fun hideMainInfoLayout()
+        fun showMainInfoLayout()
+        fun getRideInfo(): RideInfo
+        fun showStartUI(isShowBottomSheet: Boolean)
         fun setSelectedBankCard(bankCard: BankCard)
         fun offerPriceDone(price: Int, averagePrice: Int)
         fun setAddressView(isFrom: Boolean, address: String)
         fun getBottomSheet(bottomSheetBehavior: BottomSheetBehavior<*>)
         fun onClickItem(address: Address, isFromMapSearch: Boolean)
+        fun expandedBottomSheet(isFrom: Boolean, isShowKeyboard: Boolean)
         fun getAddressesAdapter(): AddressesListAdapter
         fun getPaymentsAdapter(): PaymentsListAdapter
-        fun expandedBottomSheet(isFrom: Boolean)
+        fun getUserLocationLayer(): UserLocationLayer?
+        fun addressesMapViewChanged(isFrom: Boolean)
         fun removeAddressesView(isFrom: Boolean)
-        fun getActualFocus(): Boolean
+        fun requestGeocoder(point: Point?)
+        fun getActualFocus(): Boolean?
         fun isDataComplete(): Boolean
-        fun addressesMapViewChanged()
+        fun moveCamera(point: Point)
+        fun onBackPressed(): Boolean
+        fun getDays(): BooleanArray
         fun removeTickSelected()
         fun getMap(): MapView?
+        fun onObjectUpdate()
+        fun hideMapMarker()
+        fun showRouteBtn()
+        fun hideRouteBtn()
     }
-
 }

@@ -7,6 +7,7 @@ import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.passenger.getdriver.IGetDriverStorage
 import bonch.dev.poputi.domain.entities.common.chat.MessageObject
 import bonch.dev.poputi.domain.entities.common.ride.*
+import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -71,7 +72,7 @@ class GetDriverInteractor : IGetDriverInteractor {
                     //Ok
                     saveRideId(rideId)
                     callback(true)
-                }
+                } else callback(false)
             }
         } else {
             //error
@@ -79,6 +80,18 @@ class GetDriverInteractor : IGetDriverInteractor {
                 "CREATE_RIDE",
                 "Create ride with server failed (userId: $userId, token: $token)"
             )
+            callback(false)
+        }
+    }
+
+
+    override fun createRideSchedule(dateInfo: DateInfo, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            getDriverRepository.createRideSchedule(dateInfo, token, callback)
+        } else {
+            //error
             callback(false)
         }
     }

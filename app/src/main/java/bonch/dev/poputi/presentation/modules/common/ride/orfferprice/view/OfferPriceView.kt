@@ -7,6 +7,8 @@ import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.App
@@ -79,6 +81,28 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
             hideKeyboard()
             finish()
         }
+
+        price.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val intent = Intent()
+                val price = priceEditText.text.toString().split('₽')[0].trim()
+                val averagePrice = offerPricePresenter.getAveragePrice()
+                try {
+                    if (price.length < 7 && price.isNotEmpty() && price.toInt() > 0) {
+                        hideKeyboard()
+                        intent.putExtra(OFFER_PRICE.toString(), price.toInt())
+                        intent.putExtra(AVERAGE_PRICE, averagePrice)
+                        setResult(RESULT_OK, intent)
+                        finish()
+
+                        return@OnEditorActionListener true
+                    }
+                } catch (ex: NumberFormatException) {
+                }
+            }
+
+            false
+        })
 
         offerBtn.setOnClickListener {
             val intent = Intent()

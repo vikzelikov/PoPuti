@@ -2,6 +2,7 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -22,7 +23,7 @@ import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
-import bonch.dev.domain.utils.ChangeOpacity
+import bonch.dev.poputi.domain.utils.ChangeOpacity
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
@@ -107,6 +108,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun setListeners() {
         my_pos.setOnClickListener {
             createRidePresenter.showMyPosition()
@@ -478,6 +480,14 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         }
 
         if (address_map_marker_layout?.visibility == View.VISIBLE) {
+            val isFrom = createRidePresenter.instance().isFromMapSearch
+            if (isFrom) {
+                Coordinate.fromAdr = null
+            } else {
+                Coordinate.toAdr = null
+            }
+            removeAddressesView(isFrom)
+
             createRidePresenter.instance().isFromMapSearch = true
             isBackPressed = false
             showStartUI()

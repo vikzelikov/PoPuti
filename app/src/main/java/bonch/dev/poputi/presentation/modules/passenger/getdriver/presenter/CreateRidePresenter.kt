@@ -34,7 +34,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
 
-        cashEvent = CashEvent(this)
+        cashEvent = CashEvent(getDriverInteractor)
     }
 
 
@@ -162,7 +162,14 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
 
     override fun getCashSuggest() {
-        cashEvent.getCashSuggest()
+        val suggest = cashEvent.getCashSuggest()
+
+        if (suggest != null) {
+            val adapter = getView()?.getAddressesAdapter()
+            adapter?.list?.clear()
+            adapter?.list?.addAll(suggest)
+            adapter?.notifyDataSetChanged()
+        }
     }
 
 
@@ -272,7 +279,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
 
     override fun onDestroy() {
-        cashEvent.cashSuggest = null
+        cashEvent.cashSuggests = null
         blockRequestHandler = null
         getDriverInteractor.closeRealm()
     }

@@ -306,7 +306,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -340,12 +340,12 @@
         <LinearLayout
             android:id="@+id/comment_bottom_sheet"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
+            android:layout_height="550dp"
             android:background="@drawable/bg_corners_layout"
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -406,7 +406,7 @@
             android:elevation="10dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"

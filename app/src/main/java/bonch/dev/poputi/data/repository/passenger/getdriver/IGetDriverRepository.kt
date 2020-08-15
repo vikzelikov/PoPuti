@@ -3,6 +3,7 @@ package bonch.dev.poputi.data.repository.passenger.getdriver
 import bonch.dev.poputi.data.repository.IMainRepository
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -16,6 +17,8 @@ interface IGetDriverRepository : IMainRepository {
     fun requestSuggest(query: String, userLocationPoint: Point?, callback: SuggestHandler)
 
     fun createRide(rideInfo: RideInfo, token: String, callback: DataHandler<RideInfo?>)
+
+    fun createRideSchedule(dateInfo: DateInfo, token: String, callback: SuccessHandler)
 
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 

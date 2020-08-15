@@ -130,7 +130,10 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
 
     fun removeRoute() {
         mapObjects?.let {
-            mapView?.map?.mapObjects?.remove(it)
+            try {
+                mapView?.map?.mapObjects?.remove(it)
+            } catch (ex: java.lang.Exception) {
+            }
         }
     }
 

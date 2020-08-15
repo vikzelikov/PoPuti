@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import bonch.dev.poputi.MainActivity
@@ -179,6 +180,11 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
 
     override fun finishTimer() {
         retry_send?.text = getString(R.string.retrySms)
+    }
+
+
+    override fun setSoftInput() {
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
 

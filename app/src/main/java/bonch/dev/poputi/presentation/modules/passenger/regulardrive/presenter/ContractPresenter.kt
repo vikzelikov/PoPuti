@@ -25,25 +25,38 @@ interface ContractPresenter {
         fun getBitmap(drawableId: Int): Bitmap?
         fun getUserLocation(): UserLocationLayer?
         fun requestGeocoder(point: Point?)
+        fun onObjectUpdate()
+        fun onBackPressed()
     }
 
 
     interface ICreateRegularDrivePresenter {
-        fun instance(): CreateRegularDrivePresenter
-        fun getMap(): MapView?
-        fun setSelectedBankCard(bankCard: BankCard)
+        fun createRide()
+        fun onObjectUpdate()
         fun removeTickSelected()
+        fun createDone(): Boolean
+        fun startProcessBlockRequest()
+        fun requestGeocoder(point: Point?)
+        fun requestSuggest(query: String)
+        fun instance(): CreateRegularDrivePresenter
+        fun setSelectedBankCard(bankCard: BankCard)
         fun addBankCard(context: Context, fragment: Fragment)
         fun checkAddressPoints(fromAddress: Address, toAddress: Address)
         fun offerPrice(context: Context, fragment: Fragment)
         fun addBankCardDone(data: Intent?)
         fun onClickItem(address: Address)
         fun offerPriceDone(data: Intent?)
+        fun touchAddressMapMarkerBtn()
+        fun touchMapBtn(isFrom: Boolean)
+        fun touchAddress(isFrom: Boolean, isShowKeyboard: Boolean)
+        fun touchCrossAddress(isFrom: Boolean)
         fun getCashSuggest()
         fun clearSuggest()
         fun removeRoute()
+        fun showMyPosition()
         fun submitRoute()
         fun showRoute()
+        fun onDestroy()
     }
 
 }

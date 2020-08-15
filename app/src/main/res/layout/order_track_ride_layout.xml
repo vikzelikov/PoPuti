@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/order_get_passanger_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".poputi.presentation.modules.passenger.getdriver.view.MapGetDriverView">
+    android:layout_height="match_parent">
 
 
     <LinearLayout
@@ -393,7 +392,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -501,7 +500,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
 
             <TextView
@@ -565,7 +564,7 @@
             android:elevation="30dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
 
             <LinearLayout
@@ -637,7 +636,7 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             app:behavior_peekHeight="0dp"
-            app:layout_behavior=".poputi.presentation.base.MBottomSheet">
+            app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
 
             <ImageView
                 android:layout_width="wrap_content"
