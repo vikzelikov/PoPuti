@@ -1,36 +1,50 @@
 package bonch.dev.poputi.di.component.passenger
 
 import bonch.dev.poputi.di.component.AppComponent
-import bonch.dev.poputi.di.module.passenger.RegularDriveModule
+import bonch.dev.poputi.di.module.passenger.RegularRidesModule
 import bonch.dev.poputi.di.scope.CompScope
-import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.CreateRegularDrivePresenter
-import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.MapCreateRegDrivePresenter
-import bonch.dev.poputi.presentation.modules.passenger.regulardrive.presenter.RegularDrivePresenter
-import bonch.dev.poputi.presentation.modules.passenger.regulardrive.view.CreateRegularDriveView
-import bonch.dev.poputi.presentation.modules.passenger.regulardrive.view.MapCreateRegularDrive
-import bonch.dev.poputi.presentation.modules.passenger.regulardrive.view.RegularDriveView
+import bonch.dev.poputi.domain.interactor.passenger.regular.ride.RegularRidesInteractor
+import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.ActiveRidesPresenter
+import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.CreateRegularRidePresenter
+import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.MapCreateRegRidePresenter
+import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.RegularRidesPresenter
+import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.*
 import dagger.Component
 
 
 @CompScope
-@Component(modules = [RegularDriveModule::class], dependencies = [AppComponent::class])
+@Component(modules = [RegularRidesModule::class], dependencies = [AppComponent::class])
 interface RegularDriveComponent {
 
     //main regular drive
-    fun inject(target: RegularDriveView)
+    fun inject(target: RegularRidesView)
 
-    fun inject(target: RegularDrivePresenter)
+    fun inject(target: RegularRidesPresenter)
 
 
     //yandex map create regular drive
-    fun inject(target: MapCreateRegularDrive)
+    fun inject(target: MapCreateRegularRide)
 
-    fun inject(target: MapCreateRegDrivePresenter)
+    fun inject(target: MapCreateRegRidePresenter)
 
 
     //create regular drive
-    fun inject(target: CreateRegularDriveView)
+    fun inject(target: CreateRegularRideView)
 
-    fun inject(target: CreateRegularDrivePresenter)
+    fun inject(target: CreateRegularRidePresenter)
+
+
+    //active rides list
+    fun inject(target: ActiveRidesView)
+    fun inject(target: ActiveRidesPresenter)
+
+
+    //archive rides list
+    fun inject(target: ArchiveRidesView)
+
+
+    //interactor
+    fun inject(target: RegularRidesInteractor)
+
 
 }

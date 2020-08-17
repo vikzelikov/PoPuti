@@ -7,6 +7,7 @@ package bonch.dev.poputi.domain.entities.common.ride
  * 4 - in way
  * 5 - passanger get place
  * 6 - ride cancel
+ * 7 - REGULAR RIDE
  * */
 
 enum class StatusRide(val status: Int) {
@@ -15,5 +16,6 @@ enum class StatusRide(val status: Int) {
     WAIT_FOR_PASSANGER(3),
     IN_WAY(4),
     GET_PLACE(5),
-    CANCEL(6)
+    CANCEL(6),
+    REGULAR_RIDE(7)
 }

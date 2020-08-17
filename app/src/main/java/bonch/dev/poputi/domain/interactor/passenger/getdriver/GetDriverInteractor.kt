@@ -7,7 +7,7 @@ import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.passenger.getdriver.IGetDriverStorage
 import bonch.dev.poputi.domain.entities.common.chat.MessageObject
 import bonch.dev.poputi.domain.entities.common.ride.*
-import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
+import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -87,9 +87,14 @@ class GetDriverInteractor : IGetDriverInteractor {
 
     override fun createRideSchedule(dateInfo: DateInfo, callback: SuccessHandler) {
         val token = profileStorage.getToken()
+        val rideId = getDriverStorage.getRideId()
 
-        if (token != null) {
+        if (token != null && rideId != -1) {
+            dateInfo.rideId = rideId
             getDriverRepository.createRideSchedule(dateInfo, token, callback)
+
+            //remove ride id so it is regular riding
+            removeRideId()
         } else {
             //error
             callback(false)
@@ -176,6 +181,7 @@ class GetDriverInteractor : IGetDriverInteractor {
 
 
     override fun removeRideId() {
+        ActiveRide.activeRide?.rideId = null
         getDriverStorage.removeRideId()
     }
 
@@ -187,12 +193,12 @@ class GetDriverInteractor : IGetDriverInteractor {
 
         if (rideId != null && token != null) {
             getDriverRepository.updateRideStatus(status, rideId, token) { isSuccess ->
-                if (!isSuccess) {
+                if (isSuccess) {
+                    callback(true)
+                } else {
                     //retry request
-                    getDriverRepository.updateRideStatus(status, rideId, token) {
-                        callback(it)
-                    }
-                } else callback(true)
+                    getDriverRepository.updateRideStatus(status, rideId, token, callback)
+                }
             }
         } else {
             Log.d(

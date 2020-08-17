@@ -333,6 +333,11 @@ class PassengerRideService : Service() {
                 getString(R.string.driverCancelledRide),
                 getString(R.string.clickForDetail)
             )
+
+            else -> Pair(
+                getString(R.string.errorSystem),
+                ""
+            )
         }
     }
 }

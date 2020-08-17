@@ -142,10 +142,11 @@
                 android:layout_weight="1"
                 android:drawableStart="@drawable/ic_ruble"
                 android:drawablePadding="20dp"
+                android:hint="@string/offer_price"
                 android:paddingTop="5dp"
                 android:paddingBottom="20dp"
-                android:text="@string/offer_price"
-                android:textColor="#50000000"
+                android:textColor="#000000"
+                android:textColorHint="#50000000"
                 android:textSize="14sp" />
 
             <ImageButton
@@ -271,6 +272,7 @@
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/bg_btn_gray"
+                android:clickable="false"
                 android:fontFamily="@font/roboto"
                 android:shadowColor="@color/colorBlue"
                 android:text="@string/getDriver"

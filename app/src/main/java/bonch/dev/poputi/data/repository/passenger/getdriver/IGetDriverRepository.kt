@@ -3,7 +3,7 @@ package bonch.dev.poputi.data.repository.passenger.getdriver
 import bonch.dev.poputi.data.repository.IMainRepository
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
-import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
+import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler

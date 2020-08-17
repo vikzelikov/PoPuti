@@ -53,7 +53,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".presentation.modules.passenger.regulardrive.view.MapCreateRegularDrive"
+            android:name="bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.MapCreateRegularRide"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 

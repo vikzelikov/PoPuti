@@ -10,12 +10,12 @@ import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.presentation.modules.common.profile.view.ProfileView
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.MapCreateRideView
-import bonch.dev.poputi.presentation.modules.passenger.regulardrive.view.RegularDriveView
+import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.RegularRidesView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment() {
 
-    private var regularDriving: RegularDriveView? = null
+    private var regularDriving: RegularRidesView? = null
     private var mapCreateRide: MapCreateRideView? = null
     private var profile: ProfileView? = null
 
@@ -67,7 +67,7 @@ class MainFragment : Fragment() {
 
         if (regular != null) {
             fm?.beginTransaction()
-                ?.add(R.id.nav_host_fragment, regular, RegularDriveView::class.java.simpleName)
+                ?.add(R.id.nav_host_fragment, regular, RegularRidesView::class.java.simpleName)
                 ?.hide(regular)
                 ?.commit()
         }
@@ -134,7 +134,7 @@ class MainFragment : Fragment() {
         fm = (activity as MainActivity).supportFragmentManager
 
         if (regularDriving == null) {
-            regularDriving = RegularDriveView()
+            regularDriving = RegularRidesView()
         }
 
         if (mapCreateRide == null) {

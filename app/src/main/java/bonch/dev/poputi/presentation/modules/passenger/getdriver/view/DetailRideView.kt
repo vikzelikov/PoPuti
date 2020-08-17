@@ -18,13 +18,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
@@ -252,25 +252,40 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
 
     override fun isDataComplete(): Boolean {
-        val isComplete: Boolean
-        val offerPrice = offer_price.text.toString().trim()
+        var isComplete = false
 
-        if (selected_payment_method.visibility == View.VISIBLE && offerPrice.length < 5) {
+        if (selected_payment_method.visibility == View.VISIBLE && checkPrice()) {
             isComplete = true
-            changeBtnEnable(true)
-        } else {
-            isComplete = false
-            changeBtnEnable(false)
         }
+
+        changeBtnEnable(isComplete)
 
         return isComplete
     }
 
 
+    private fun checkPrice(): Boolean {
+        var result = false
+
+        try {
+            val price = offer_price?.text?.toString()?.trim()?.toInt()
+            if (price != null && price > 0) {
+                result = true
+            }
+        } catch (ex: NumberFormatException) {
+
+        }
+
+        return result
+    }
+
+
     private fun changeBtnEnable(isEnable: Boolean) {
         if (isEnable) {
+            get_driver_btn?.isClickable = true
             get_driver_btn.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
+            get_driver_btn?.isClickable = false
             get_driver_btn.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
@@ -278,7 +293,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
     override fun offerPriceDone(price: Int, averagePrice: Int) {
         offer_price.textSize = 22f
-        offer_price.setPadding(0, 5, 0, 25)
+        getDP(15)?.let { offer_price.setPadding(0, 5, 0, it) }
         offer_price.setTextColor(Color.parseColor("#000000"))
         offer_price.typeface = Typeface.DEFAULT_BOLD
 
@@ -490,6 +505,16 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         }
 
         mainHandler.post(myRunnable)
+    }
+
+
+    private fun getDP(dp: Int): Int? {
+        var returnDP: Int? = null
+        context?.resources?.displayMetrics?.density?.let {
+            returnDP = ((dp * it).toInt())
+        }
+
+        return returnDP
     }
 
 

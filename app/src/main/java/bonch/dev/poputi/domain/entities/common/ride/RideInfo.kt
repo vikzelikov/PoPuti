@@ -3,6 +3,7 @@ package bonch.dev.poputi.domain.entities.common.ride
 import android.os.Parcel
 import android.os.Parcelable
 import bonch.dev.poputi.domain.entities.common.profile.Profile
+import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.OrdersTimer
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -85,7 +86,11 @@ data class RideInfo(
 
     @SerializedName("driver")
     @Expose
-    val driver: Driver? = null
+    val driver: Driver? = null,
+
+    @SerializedName("schedule")
+    @Expose
+    val dateInfo: DateInfo? = null
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -115,11 +120,6 @@ data class RideInfo(
         return rideId == (other as RideInfo).rideId
     }
 
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(rideId)
         parcel.writeValue(statusId)
@@ -143,6 +143,10 @@ data class RideInfo(
         parcel.writeParcelable(driver, flags)
     }
 
+    override fun describeContents(): Int {
+        return 0
+    }
+
     override fun hashCode(): Int {
         var result = rideId ?: 0
         result = 31 * result + (statusId ?: 0)
@@ -164,6 +168,7 @@ data class RideInfo(
         result = 31 * result + isNewOrder.hashCode()
         result = 31 * result + (passenger?.hashCode() ?: 0)
         result = 31 * result + (driver?.hashCode() ?: 0)
+        result = 31 * result + (dateInfo?.hashCode() ?: 0)
         return result
     }
 

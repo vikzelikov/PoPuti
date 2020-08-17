@@ -11,7 +11,7 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.NetworkUtil
-import bonch.dev.poputi.domain.entities.passenger.regulardrive.DateInfo
+import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -97,10 +97,7 @@ class GetDriverRepository : IGetDriverRepository {
                 )
 
                 withContext(Dispatchers.Main) {
-                    Log.e("TEST","1")
                     if (response.isSuccessful) {
-                        Log.e("TEST","2")
-
                         //Success
                         val rideId = response.body()?.ride?.rideId
                         if (rideId != null) {
@@ -110,8 +107,6 @@ class GetDriverRepository : IGetDriverRepository {
                             callback(null, response.message())
                         }
                     } else {
-                        Log.e("TEST","3")
-
                         //Error
                         Log.e(
                             "CREATE_RIDE",
@@ -123,8 +118,6 @@ class GetDriverRepository : IGetDriverRepository {
 
 
             } catch (err: Exception) {
-                Log.e("TEST","4")
-
                 //Error
                 callback(null, err.message)
                 Log.e("CREATE_RIDE", "${err.printStackTrace()}")
@@ -147,16 +140,9 @@ class GetDriverRepository : IGetDriverRepository {
                 )
 
                 withContext(Dispatchers.Main) {
-                    Log.e("TEST","1")
                     if (response.isSuccessful) {
-                        Log.e("TEST","2")
-
-                        val body = response.body()
-
-                        Log.e("TEST", "${body}")
+                        callback(true)
                     } else {
-                        Log.e("TEST","3")
-
                         //Error
                         Log.e(
                             "CREATE_SCHEDULER",
@@ -166,11 +152,9 @@ class GetDriverRepository : IGetDriverRepository {
                     }
                 }
             } catch (err: Exception) {
-                Log.e("TEST","4")
-
                 //Error
-                callback(false)
                 Log.e("CREATE_SCHEDULER", "${err.printStackTrace()}")
+                callback(false)
             }
         }
     }

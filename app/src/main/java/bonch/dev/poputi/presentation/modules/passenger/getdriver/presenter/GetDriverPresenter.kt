@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import bonch.dev.poputi.R
 import bonch.dev.domain.utils.Vibration
 import bonch.dev.poputi.App

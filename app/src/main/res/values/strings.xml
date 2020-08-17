@@ -250,6 +250,8 @@
     <string name="someError">Что-то пошло не так…</string>
     <string name="loadingPhoto">Загрузка фото…</string>
     <string name="tryAgain">Ошибка\nПопробуйте еще раз</string>
+    <string name="setAddress">Укажите адреса!</string>
+    <string name="notRegularRides">У вас нет регулярных поездок</string>
 
 
 </resources>
