@@ -1,6 +1,8 @@
 package bonch.dev.poputi.data.repository.passenger.getdriver
 
 import android.util.Log
+import bonch.dev.domain.utils.Constants
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.passenger.GetDriverService
 import bonch.dev.poputi.data.repository.common.ride.Autocomplete
@@ -9,9 +11,8 @@ import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.Ride
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.utils.Constants
-import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
+import bonch.dev.poputi.domain.entities.passenger.regular.ride.Schedule
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -126,8 +127,55 @@ class GetDriverRepository : IGetDriverRepository {
     }
 
 
-    override fun createRideSchedule(dateInfo: DateInfo, token: String, callback: SuccessHandler) {
+    override fun updateRide(
+        rideInfo: RideInfo,
+        rideId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
         var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                if (rideInfo.comment == null) rideInfo.comment = ""
+                if (rideInfo.city == null) rideInfo.city = "Cанкт-Петербург"
+
+                response = service.updateRide(
+                    headers,
+                    rideId,
+                    rideInfo
+                )
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e(
+                            "UPDATE_RIDE",
+                            "Update ride on server failed with code: ${response.code()}"
+                        )
+                        callback(false)
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("UPDATE_RIDE", "${err.printStackTrace()}")
+                callback(false)
+            }
+        }
+    }
+
+
+    override fun createRideSchedule(
+        dateInfo: DateInfo,
+        token: String,
+        callback: DataHandler<DateInfo?>
+    ) {
+        var response: Response<Schedule>
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -141,19 +189,64 @@ class GetDriverRepository : IGetDriverRepository {
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        callback(true)
+                        val scheduler = response.body()?.dateInfo
+
+                        if (scheduler != null) callback(scheduler, null)
+                        else callback(null, "error")
                     } else {
                         //Error
                         Log.e(
                             "CREATE_SCHEDULER",
                             "Create Schedule on server failed with code: ${response.code()}"
                         )
-                        callback(false)
+                        callback(null, "${response.code()}")
                     }
                 }
             } catch (err: Exception) {
                 //Error
                 Log.e("CREATE_SCHEDULER", "${err.printStackTrace()}")
+                callback(null, "${err.message}")
+            }
+        }
+    }
+
+
+    override fun updateRideSchedule(
+        dateInfo: DateInfo,
+        scheduleId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.updateRideSchedule(
+                    headers,
+                    scheduleId,
+                    dateInfo
+                )
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val schedule = response.body()
+                        Log.e("TEST", "$schedule")
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e(
+                            "UPDATE_SCHEDULER",
+                            "Update Schedule on server failed with code: ${response.code()}"
+                        )
+                        callback(false)
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("UPDATE_SCHEDULER", "${err.printStackTrace()}")
                 callback(false)
             }
         }

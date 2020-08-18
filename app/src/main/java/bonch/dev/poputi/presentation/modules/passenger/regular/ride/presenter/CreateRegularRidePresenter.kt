@@ -20,6 +20,7 @@ import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.CashE
 import bonch.dev.poputi.presentation.modules.passenger.regular.RegularDriveComponent
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.ContractView
 import com.yandex.mapkit.geometry.Point
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
@@ -50,16 +51,77 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
     var isFromMapSearch = true
     var isBlockGeocoder = false
+    var isOnRouting = false
     private var isBlockRequest = false
-    private var checkCreateResponse: AtomicInteger = AtomicInteger(0)
     private var onResponseScheduler = false
-    private var onResponseChangeStatus = false
+    private var onResponseChangeRide = false
+    private var checkOnServerResponse: AtomicInteger = AtomicInteger(0)
 
 
     init {
         RegularDriveComponent.regularDriveComponent?.inject(this)
 
         cashEvent = CashEvent(getDriverInteractor)
+    }
+
+
+    override fun checkOnEditRide() {
+        val ride = ActiveRide.activeRide
+        if (ride != null) {
+            val from = ride.position
+            val to = ride.destination
+            val fromLat = ride.fromLat
+            val fromLng = ride.fromLng
+            val toLat = ride.toLat
+            val toLng = ride.toLng
+            val price = ride.price
+            val days = getDays(ride.dateInfo)
+            val time = ride.dateInfo?.time
+            val comment = ride.comment
+
+            if (from != null && fromLat != null && fromLng != null) {
+                val address = Address()
+                address.address = from
+                val point = AddressPoint(fromLat, fromLng)
+                address.point = point
+
+                Coordinate.fromAdr = address
+            }
+
+            if (to != null && toLat != null && toLng != null) {
+                val address = Address()
+                address.address = to
+                val point = AddressPoint(toLat, toLng)
+                address.point = point
+
+                Coordinate.toAdr = address
+            }
+
+            val fromAdr = Coordinate.fromAdr
+            val toAdr = Coordinate.toAdr
+            if (fromAdr != null && toAdr != null) checkAddressPoints(fromAdr, toAdr)
+
+            if (from != null && to != null) {
+                getView()?.setAddressView(true, from)
+                getView()?.setAddressView(false, to)
+            }
+            //todo average price and selected bank card
+            if (price != null) getView()?.offerPriceDone(price, 555)
+            if (days != null) getView()?.setDays(days)
+            parseTime(time)?.let { getView()?.setTime(it) }
+            if (comment != null) getView()?.setComment(comment)
+            setSelectedBankCard(
+                BankCard("google", null, null, R.drawable.ic_google_pay, true)
+            )
+
+            getView()?.hideMapMarker()
+            getView()?.showRouteBtn()
+            isBlockGeocoder = true
+
+        } else {
+            isBlockGeocoder = false
+            isOnRouting = false
+        }
     }
 
 
@@ -204,30 +266,34 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             toPoint = Point(toP.latitude, toP.longitude)
         }
 
-        //50 - ok length for detect correct URI or no
-        if (fromUri != null) {
-            if (fromUri.length > 50) {
-                fromPoint = getPoint(fromUri)
-            } else {
-                SearchPlace().request(fromUri) { point, _ ->
-                    fromPoint = point
+        if (fromPoint != null && toPoint != null) {
+            submitRoute()
+        } else {
+            //50 - ok length for detect correct URI or no
+            if (fromUri != null) {
+                if (fromUri.length > 50) {
+                    fromPoint = getPoint(fromUri)
+                } else {
+                    SearchPlace().request(fromUri) { point, _ ->
+                        fromPoint = point
+
+                        submitRoute()
+                    }
+                }
+            }
+
+            if (toUri != null) {
+                if (toUri.length > 50) {
+                    toPoint = getPoint(toUri)
+                } else {
+                    SearchPlace().request(toUri) { point, _ ->
+                        toPoint = point
+
+                        submitRoute()
+                    }
                 }
             }
         }
-
-        if (toUri != null) {
-            if (toUri.length > 50) {
-                toPoint = getPoint(toUri)
-            } else {
-                SearchPlace().request(toUri) { point, _ ->
-                    toPoint = point
-
-                    submitRoute()
-                }
-            }
-        }
-
-        submitRoute()
     }
 
 
@@ -250,11 +316,17 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                 )
 
             routing.submitRequest(from, to, true, map)
+
+            isOnRouting = true
         }
     }
 
 
     override fun onClickItem(address: Address) {
+        if (isFromMapSearch) {
+            fromPoint = null
+        } else toPoint = null
+
         getView()?.onClickItem(address, isFromMapSearch)
 
         createDone()
@@ -364,11 +436,10 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
     }
 
 
-    //create ride with SERVER
-    override fun createRide() {
-        val view = getView()
-        val res = App.appComponent.getContext().resources
+    private fun getRide(): RideInfo? {
+        var resultRide: RideInfo? = null
 
+        val view = getView()
         if (view != null && view.isDataComplete()) {
             val rideInfo = getView()?.getRideInfo()
 
@@ -379,6 +450,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
             if (rideInfo != null) {
                 val ride = RideInfo()
+                ride.rideId = ActiveRide.activeRide?.rideId
                 ride.position = rideInfo.fromAdr?.address
                 ride.fromLat = rideInfo.fromAdr?.point?.latitude
                 ride.fromLng = rideInfo.fromAdr?.point?.longitude
@@ -387,61 +459,108 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                 ride.toLng = rideInfo.toAdr?.point?.longitude
                 ride.price = rideInfo.price
                 ride.comment = rideInfo.comment
+                ride.statusId = StatusRide.REGULAR_RIDE.status
+
+                val dateInfo = getDateInfo()
+                ride.dateInfo = dateInfo
 
                 //save ride
                 ActiveRide.activeRide = ride
 
-                //create ride with SERVER
-                getDriverInteractor.createRide(ride) { isSuccess ->
-                    if (isSuccess) {
-                        //next step
-                        val dateInfo = getDateInfo()
-                        if (dateInfo != null) {
-                            getDriverInteractor.updateRideStatus(StatusRide.REGULAR_RIDE) { result ->
-                                onResponseChangeStatus = result
-                                onResponseCreateRide()
-                            }
+                resultRide = ride
+            }
+        }
 
-                            getDriverInteractor.createRideSchedule(dateInfo) { result ->
-                                onResponseScheduler = result
-                                onResponseCreateRide()
+        return resultRide
+    }
+
+
+    //create ride with SERVER
+    override fun createRide() {
+        val res = App.appComponent.getContext().resources
+
+        val ride = getRide()
+
+        if (ride != null) {
+            //create ride with SERVER
+            getDriverInteractor.createRide(ride) { isSuccess ->
+                if (isSuccess) {
+                    //next step
+                    val dateInfo = ride.dateInfo
+                    if (dateInfo != null) {
+                        getDriverInteractor.createRideSchedule(dateInfo) { result ->
+                            if (result) {
+                                getView()?.finishActivity()
+                            } else {
+                                ActiveRide.activeRide = null
+                                errorResponse()
                             }
-                        } else {
-                            getView()?.showNotification(res.getString(R.string.tryAgain))
-                            getView()?.hideLoading()
                         }
                     } else {
-                        getView()?.hideLoading()
-
                         getView()?.showNotification(res.getString(R.string.tryAgain))
+                        getView()?.hideLoading()
                     }
+                } else {
+                    getView()?.hideLoading()
+
+                    getView()?.showNotification(res.getString(R.string.tryAgain))
                 }
             }
+        } else getView()?.showNotification(res.getString(R.string.someError))
+    }
+
+
+    override fun updateRide() {
+        val ride = getRide()
+        val dateInfo = ride?.dateInfo
+
+        if (ride != null && dateInfo != null) {
+            //update ride with SERVER
+            getDriverInteractor.updateRide(ride) { result ->
+                onResponseChangeRide = result
+                onResponseUpdate()
+            }
+
+            //update schedule with SERVER
+            getDriverInteractor.updateRideSchedule(dateInfo) { result ->
+                onResponseScheduler = result
+                onResponseUpdate()
+            }
+        } else {
+            errorResponse()
         }
     }
 
 
-    private fun onResponseCreateRide() {
-        val check = checkCreateResponse.incrementAndGet()
+    private fun onResponseUpdate() {
+        val check = checkOnServerResponse.incrementAndGet()
         if (check == 2) {
-            if (onResponseChangeStatus && onResponseScheduler) {
-                getView()?.finishCreate()
+            if (onResponseChangeRide && onResponseScheduler) {
+                getView()?.finishActivity()
             } else {
-                val res = App.appComponent.getContext().resources
-                getView()?.showNotification(res.getString(R.string.tryAgain))
+                errorResponse()
             }
 
             getView()?.hideLoading()
 
             //reset for next trying
-            checkCreateResponse = AtomicInteger(0)
+            checkOnServerResponse = AtomicInteger(0)
         }
     }
 
 
+    private fun errorResponse() {
+        val res = App.appComponent.getContext().resources
+        getView()?.showNotification(res.getString(R.string.tryAgain))
+
+        checkOnServerResponse = AtomicInteger(0)
+
+        getView()?.hideLoading()
+    }
+
+
     private fun getDateInfo(): DateInfo? {
-        val dateInfo =
-            DateInfo()
+        val dateInfo = DateInfo()
         val date = getTime()
         val days = getView()?.getDays()
         days?.forEachIndexed { i, day ->
@@ -505,8 +624,6 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     override fun startProcessBlockRequest() {
-        isBlockGeocoder = false
-
         if (blockRequestHandler == null) {
             blockRequestHandler = Handler()
         }
@@ -544,6 +661,57 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
     override fun addBankCard(context: Context, fragment: Fragment) {
         val intent = Intent(context, AddBankCardView::class.java)
         fragment.startActivityForResult(intent, ADD_BANK_CARD)
+    }
+
+
+    private fun getDays(dateInfo: DateInfo?): BooleanArray? {
+        var days = BooleanArray(7)
+
+        if (dateInfo != null) {
+            days = booleanArrayOf(
+                dateInfo.monday,
+                dateInfo.tuesday,
+                dateInfo.wednesday,
+                dateInfo.thursday,
+                dateInfo.friday,
+                dateInfo.saturday,
+                dateInfo.sunday
+            )
+        }
+
+        return days
+    }
+
+
+    private fun parseTime(time: String?): String? {
+        var resultTime: String? = null
+        if (time != null) {
+            if (time.length > 8) {
+                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+                try {
+                    val date = format.parse(time)
+                    if (date != null) {
+                        val calendar = GregorianCalendar.getInstance()
+                        calendar.time = date
+
+                        resultTime = calendar[Calendar.HOUR_OF_DAY].toString()
+                            .plus(":")
+                            .plus(calendar[Calendar.MINUTE])
+
+                    }
+                } catch (e: Exception) {
+                }
+            } else {
+                try {
+                    val splitTime = time.split(":")
+                    resultTime = splitTime[0].plus(":").plus(splitTime[1])
+                } catch (ex: IndexOutOfBoundsException) {
+                }
+            }
+        }
+
+        return resultTime
     }
 
 

@@ -2,6 +2,7 @@ package bonch.dev.poputi.presentation.modules.passenger.regular.ride.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
+import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
@@ -40,6 +42,8 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.regular_create_ride_layout.*
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -96,6 +100,8 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         setListeners()
 
         setBottomSheet()
+
+        createRegularDrivePresenter.checkOnEditRide()
     }
 
 
@@ -111,7 +117,11 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         listenerSelectTime()
 
         save_ride.setOnClickListener {
-            createRegularDrivePresenter.createRide()
+            if (ActiveRide.activeRide == null) {
+                createRegularDrivePresenter.createRide()
+            } else {
+                createRegularDrivePresenter.updateRide()
+            }
         }
 
         from_cross.setOnClickListener {
@@ -207,8 +217,9 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         }
 
         comment_done.setOnClickListener {
-            val comment = comment_text?.text?.toString()?.trim()
-            comment_min_text?.text = comment
+            comment_text?.text?.toString()?.trim()?.let {
+                setComment(it)
+            }
 
             commentDone()
         }
@@ -484,7 +495,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     }
 
 
-    private fun setDays(arrSelectedDays: BooleanArray) {
+    override fun setDays(arrSelectedDays: BooleanArray) {
         var daysStr = ""
 
         for (i in arrSelectedDays.indices) {
@@ -516,6 +527,17 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     }
 
 
+    override fun setTime(time: String) {
+        select_time?.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_clock,
+            0,
+            0,
+            0
+        )
+        select_time?.text = time
+    }
+
+
     private fun listenerSelectTime() {
         picker_select_time?.setIsAmPm(false)
 
@@ -542,7 +564,8 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
                     0
                 )
 
-                select_time?.text = hour.plus(":").plus(min)
+                val time = hour.plus(":").plus(min)
+                setTime(time)
             }
 
             hideAllBottomSheet()
@@ -567,7 +590,14 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         addresses_list?.visibility = View.VISIBLE
         address_map_marker_layout?.visibility = View.GONE
 
-        hideMapMarker()
+        val isOnRouting = createRegularDrivePresenter.instance().isOnRouting
+        createRegularDrivePresenter.instance().isBlockGeocoder = if (isOnRouting) {
+            hideMapMarker()
+            true
+        } else {
+            showMapMarker()
+            false
+        }
 
         if (isShowBottomSheet)
             addressesBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
@@ -657,11 +687,11 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == createRegularDrivePresenter.instance().OFFER_PRICE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == createRegularDrivePresenter.instance().OFFER_PRICE && resultCode == RESULT_OK) {
             createRegularDrivePresenter.offerPriceDone(data)
         }
 
-        if (requestCode == createRegularDrivePresenter.instance().ADD_BANK_CARD && resultCode == Activity.RESULT_OK) {
+        if (requestCode == createRegularDrivePresenter.instance().ADD_BANK_CARD && resultCode == RESULT_OK) {
             createRegularDrivePresenter.addBankCardDone(data)
         }
     }
@@ -673,7 +703,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         //add google pay
         list.add(
             BankCard(
-                null,
+                "google",
                 null,
                 null,
                 R.drawable.ic_google_pay
@@ -848,8 +878,14 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     override fun getRideInfo(): RideInfo {
         val rideInfo = RideInfo()
         try {
-            val comment = comment_text.text.toString().trim()
-            val price = offer_price.text.toString().toInt()
+            val comment = comment_min_text?.text?.let {
+                if (it.isEmpty()) {
+                    null
+                } else {
+                    comment_text?.text?.toString()?.trim()
+                }
+            }
+            val price = offer_price?.text?.toString()?.toInt()
 
             rideInfo.comment = comment
             rideInfo.price = price
@@ -892,6 +928,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
         return result
     }
+
 
     private fun checkDays(): Boolean {
         var result = false
@@ -964,13 +1001,18 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         selected_payment_method?.visibility = View.VISIBLE
         payment_method?.visibility = View.GONE
 
-        number_card.text = bankCard.numberCard
+        number_card?.text = bankCard.numberCard
         val img = bankCard.img
         if (img != null) {
             payment_method_img?.setImageResource(img)
         }
+        if (img == R.drawable.ic_google_pay) {
+            number_card?.text = ""
+        }
 
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        paymentsListAdapter.setBankCard(bankCard)
 
         //change btn enabled in case completed detail info
         isDataComplete()
@@ -1005,6 +1047,12 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
                 }, 200)
             }
         }
+    }
+
+
+    override fun setComment(comment: String) {
+        comment_min_text?.text = comment
+        comment_text?.setText(comment)
     }
 
 
@@ -1054,10 +1102,25 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
 
     override fun getTime(): Long? {
-        val timeZone = GregorianCalendar().timeZone
-        val mGMTOffset =
-            timeZone.rawOffset + if (timeZone.inDaylightTime(Date())) timeZone.dstSavings else 0
-        return picker_select_time?.date?.time?.plus(mGMTOffset)
+        var resultTime: Long? = null
+        val stringTime = select_time?.text?.toString()
+        val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+        if (stringTime != null) {
+            try {
+                val date = format.parse(stringTime)
+                if (date != null) {
+                    val timeZone = GregorianCalendar().timeZone
+                    val mGMTOffset =
+                        timeZone.rawOffset + if (timeZone.inDaylightTime(Date())) timeZone.dstSavings else 0
+
+                    resultTime = date.time.plus(mGMTOffset)
+                }
+            } catch (e: ParseException) {
+
+            }
+        }
+
+        return resultTime
     }
 
 
@@ -1212,12 +1275,17 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
                 createRegularDrivePresenter.instance().isFromMapSearch = true
                 showStartUI(true)
                 false
-            } else true
+            } else {
+                ActiveRide.activeRide = null
+                onDestroy()
+                true
+            }
         }
     }
 
 
-    override fun finishCreate() {
+    override fun finishActivity() {
+        (activity as? MapCreateRegularRide)?.setResult(RESULT_OK)
         (activity as? MapCreateRegularRide)?.finish()
     }
 

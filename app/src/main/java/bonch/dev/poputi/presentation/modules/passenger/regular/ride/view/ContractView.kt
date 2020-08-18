@@ -17,6 +17,8 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 interface ContractView {
 
     interface IRegularDriveView : IBaseView {
+        fun setActiveRide(ride: RideInfo)
+        fun setArchiveRide(ride: RideInfo)
         fun getFragment(): Fragment
     }
 
@@ -47,33 +49,48 @@ interface ContractView {
         fun getPaymentsAdapter(): PaymentsListAdapter
         fun getUserLocationLayer(): UserLocationLayer?
         fun addressesMapViewChanged(isFrom: Boolean)
+        fun setDays(arrSelectedDays: BooleanArray)
         fun removeAddressesView(isFrom: Boolean)
         fun requestGeocoder(point: Point?)
+        fun setComment(comment: String)
         fun getActualFocus(): Boolean?
         fun isDataComplete(): Boolean
         fun moveCamera(point: Point)
         fun onBackPressed(): Boolean
         fun getDays(): BooleanArray
+        fun setTime(time: String)
         fun removeTickSelected()
         fun getMap(): MapView?
         fun onObjectUpdate()
+        fun finishActivity()
         fun hideMapMarker()
         fun showRouteBtn()
         fun hideRouteBtn()
-        fun finishCreate()
     }
 
 
     interface IActiveRidesView : IBaseView {
         fun getAdapter(): ActiveRidesAdapter
+        fun onClickItem()
         fun showTextEmptyRides()
         fun hideTextEmptyRides()
+        fun setActiveRide(ride: RideInfo)
+        fun archiveRide(ride: RideInfo)
+        fun onRideDone(ride: RideInfo)
+        fun showLoadingOpenRide()
+        fun hideLoadingOpenRide()
+        fun scrollTop()
+        fun startEdit()
     }
 
 
     interface IArchiveRidesView : IBaseView {
         fun getAdapter(): ArchiveRidesAdapter
+        fun onClickItem()
         fun showTextEmptyRides()
         fun hideTextEmptyRides()
+        fun setArchiveRide(ride: RideInfo)
+        fun restoreRide(ride: RideInfo)
+        fun scrollTop()
     }
 }

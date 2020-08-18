@@ -8,16 +8,15 @@ data class BankCard(
     var validUntil: String? = null,
     var cvc: String? = null,
     var img: Int? = null,
-    var isSelect: Boolean? = null
+    var isSelect: Boolean = false
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Boolean::class.java.classLoader) as? Boolean
-    ) {
-    }
+        parcel.readValue(Boolean::class.java.classLoader) as Boolean
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(numberCard)

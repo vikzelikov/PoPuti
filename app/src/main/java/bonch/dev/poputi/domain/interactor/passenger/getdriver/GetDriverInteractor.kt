@@ -70,6 +70,7 @@ class GetDriverInteractor : IGetDriverInteractor {
 
                 if (rideId != null) {
                     //Ok
+                    ActiveRide.activeRide = ride
                     saveRideId(rideId)
                     callback(true)
                 } else callback(false)
@@ -85,13 +86,30 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
+    override fun updateRide(rideInfo: RideInfo, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+        val rideId = rideInfo.rideId
+
+        if (token != null && rideId != null) {
+            getDriverRepository.updateRide(rideInfo, rideId, token, callback)
+        } else callback(false)
+    }
+
+
     override fun createRideSchedule(dateInfo: DateInfo, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val rideId = getDriverStorage.getRideId()
 
         if (token != null && rideId != -1) {
             dateInfo.rideId = rideId
-            getDriverRepository.createRideSchedule(dateInfo, token, callback)
+
+            getDriverRepository.createRideSchedule(dateInfo, token) { scheduler, _ ->
+                if (scheduler != null) {
+                    ActiveRide.activeRide?.dateInfo = scheduler
+                    callback(true)
+
+                } else callback(false)
+            }
 
             //remove ride id so it is regular riding
             removeRideId()
@@ -99,6 +117,16 @@ class GetDriverInteractor : IGetDriverInteractor {
             //error
             callback(false)
         }
+    }
+
+
+    override fun updateRideSchedule(dateInfo: DateInfo, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+        val scheduleId = dateInfo.id
+
+        if (token != null && scheduleId != null) {
+            getDriverRepository.updateRideSchedule(dateInfo, scheduleId, token, callback)
+        } else callback(false)
     }
 
 
@@ -181,7 +209,6 @@ class GetDriverInteractor : IGetDriverInteractor {
 
 
     override fun removeRideId() {
-        ActiveRide.activeRide?.rideId = null
         getDriverStorage.removeRideId()
     }
 

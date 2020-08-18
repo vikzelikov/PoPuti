@@ -146,7 +146,7 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
             if (cameraPosition != null) {
                 cameraPosition = CameraPosition(
                     cameraPosition.target,
-                    cameraPosition.zoom - 0.3f,
+                    cameraPosition.zoom - 1f,
                     cameraPosition.azimuth,
                     cameraPosition.tilt
                 )

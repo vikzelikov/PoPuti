@@ -90,7 +90,7 @@ data class RideInfo(
 
     @SerializedName("schedule")
     @Expose
-    val dateInfo: DateInfo? = null
+    var dateInfo: DateInfo? = null
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(

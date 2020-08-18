@@ -43,8 +43,8 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
     private var isBlock = false
 
-    var fromPoint: Point? = null
-    var toPoint: Point? = null
+    private var fromPoint: Point? = null
+    private var toPoint: Point? = null
 
 
     init {
@@ -85,30 +85,34 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
             toPoint = Point(toP.latitude, toP.longitude)
         }
 
-        //50 - ok length for detect correct URI or no
-        if (fromUri != null) {
-            if (fromUri.length > 50) {
-                fromPoint = getPoint(fromUri)
-            } else {
-                SearchPlace().request(fromUri) { point, _ ->
-                    fromPoint = point
+        if (fromPoint != null && toPoint != null) {
+            submitRoute()
+        } else {
+            //50 - ok length for detect correct URI or no
+            if (fromUri != null) {
+                if (fromUri.length > 50) {
+                    fromPoint = getPoint(fromUri)
+                } else {
+                    SearchPlace().request(fromUri) { point, _ ->
+                        fromPoint = point
+
+                        submitRoute()
+                    }
+                }
+            }
+
+            if (toUri != null) {
+                if (toUri.length > 50) {
+                    toPoint = getPoint(toUri)
+                } else {
+                    SearchPlace().request(toUri) { point, _ ->
+                        toPoint = point
+
+                        submitRoute()
+                    }
                 }
             }
         }
-
-        if (toUri != null) {
-            if (toUri.length > 50) {
-                toPoint = getPoint(toUri)
-            } else {
-                SearchPlace().request(toUri) { point, _ ->
-                    toPoint = point
-
-                    submitRoute()
-                }
-            }
-        }
-
-        submitRoute()
     }
 
 
@@ -273,6 +277,8 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
 
     override fun onDestroy() {
+        fromPoint = null
+        toPoint = null
         blockHandler?.removeCallbacksAndMessages(null)
     }
 

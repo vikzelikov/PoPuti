@@ -4,6 +4,7 @@ import android.os.Handler
 import android.view.View
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
@@ -28,7 +29,6 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     private var cashEvent: CashEvent
     private val BLOCK_REQUEST_GEOCODER = 1500L
     private val NOT_DESCRIPTION = "Место"
-
 
 
     init {

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.user_location.UserLocationLayer
 
@@ -14,7 +15,7 @@ interface ContractPresenter {
 
     interface IRegularDrivePresenter {
         fun instance(): RegularRidesPresenter
-        fun createRegularDrive()
+        fun openActivity()
     }
 
 
@@ -31,6 +32,7 @@ interface ContractPresenter {
 
     interface ICreateRegularDrivePresenter {
         fun createRide()
+        fun updateRide()
         fun onObjectUpdate()
         fun removeTickSelected()
         fun createDone(): Boolean
@@ -49,6 +51,7 @@ interface ContractPresenter {
         fun touchMapBtn(isFrom: Boolean)
         fun touchAddress(isFrom: Boolean, isShowKeyboard: Boolean)
         fun touchCrossAddress(isFrom: Boolean)
+        fun checkOnEditRide()
         fun getCashSuggest()
         fun clearSuggest()
         fun removeRoute()
@@ -61,12 +64,20 @@ interface ContractPresenter {
 
     interface IActiveRidesPresenter {
         fun getActiveRides()
+        fun onClickItem(ride: RideInfo)
         fun instance(): ActiveRidesPresenter
+        fun onRideDone(ride: RideInfo)
+        fun archive()
+        fun edit()
     }
 
 
     interface IArchiveRidesPresenter {
+        fun getArchiveRides()
+        fun onClickItem(ride: RideInfo)
         fun instance(): ArchiveRidesPresenter
+        fun restore()
+        fun delete()
     }
 
 }

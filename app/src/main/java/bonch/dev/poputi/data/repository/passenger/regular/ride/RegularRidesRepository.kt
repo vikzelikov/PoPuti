@@ -5,7 +5,9 @@ import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.passenger.RegularRidesService
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.presentation.interfaces.DataHandler
+import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -102,6 +104,44 @@ class RegularRidesRepository : IRegularRidesRepository {
                 //Error
                 Log.e("GET_ARCHIVE_REGULAR", "${err.printStackTrace()}")
                 callback(null, "${err.message}")
+            }
+        }
+    }
+
+
+    override fun updateRideStatus(
+        status: StatusRide,
+        rideId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.updateRideStatus(headers, rideId, status.status)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e(
+                            "UPDATE_RIDE",
+                            "Update ride on server failed with code: ${response.code()}"
+                        )
+                        callback(false)
+                    }
+                }
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("UPDATE_RIDE", "${err.printStackTrace()}")
+                callback(false)
             }
         }
     }

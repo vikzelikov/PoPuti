@@ -3,6 +3,13 @@ package bonch.dev.poputi.domain.entities.passenger.regular.ride
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
+open class Schedule(
+    @SerializedName("schedule")
+    @Expose
+    var dateInfo: DateInfo? = null
+)
+
+
 open class DateInfo(
     @SerializedName("monday")
     @Expose
@@ -38,5 +45,9 @@ open class DateInfo(
 
     @SerializedName("ride_id")
     @Expose
-    var rideId: Int? = null
+    var rideId: Int? = null,
+
+    @SerializedName("id")
+    @Expose
+    var id: Int? = null
 )

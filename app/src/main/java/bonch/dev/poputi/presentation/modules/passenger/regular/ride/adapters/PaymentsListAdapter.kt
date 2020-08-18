@@ -31,15 +31,15 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-        val post = list[position]
-        holder.bind(post)
+        val bankCard = list[position]
+        holder.bind(bankCard)
 
         holder.itemView.setOnClickListener {
             removeTickSelected()
 
             setTickSelected(holder.itemView)
-            post.isSelect = true
-            createRegularDrivePresenter.setSelectedBankCard(post)
+            bankCard.isSelect = true
+            createRegularDrivePresenter.setSelectedBankCard(bankCard)
         }
 
         if (position == 0) {
@@ -49,6 +49,27 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
             params.setMargins(30, 0, 30, 0)
             lineDialog.layoutParams = params
         }
+
+        if (bankCard.isSelect) {
+            removeTickSelected()
+
+            setTickSelected(holder.itemView)
+        }
+    }
+
+
+    fun setBankCard(bankCard: BankCard) {
+        list.forEachIndexed { i, card ->
+            if (card.numberCard == bankCard.numberCard) {
+                try {
+                    list[i] = bankCard
+                } catch (ex: IndexOutOfBoundsException) {
+
+                }
+            }
+        }
+
+        notifyDataSetChanged()
     }
 
 
@@ -74,10 +95,15 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
             numberCard.text = post.numberCard
 
             if (post.img != null) {
-                val img = post.img!!
+                val img = post.img
 
-                if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world || img == R.drawable.ic_google_pay) {
-                    paymentImg.setImageResource(post.img!!)
+                if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world) {
+                    paymentImg.setImageResource(img)
+                }
+
+                if (img == R.drawable.ic_google_pay) {
+                    paymentImg.setImageResource(img)
+                    numberCard.text = ""
                 }
             }
         }

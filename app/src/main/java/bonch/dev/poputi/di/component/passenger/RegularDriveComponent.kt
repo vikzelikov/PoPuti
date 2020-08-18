@@ -4,10 +4,7 @@ import bonch.dev.poputi.di.component.AppComponent
 import bonch.dev.poputi.di.module.passenger.RegularRidesModule
 import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.passenger.regular.ride.RegularRidesInteractor
-import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.ActiveRidesPresenter
-import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.CreateRegularRidePresenter
-import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.MapCreateRegRidePresenter
-import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.RegularRidesPresenter
+import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.*
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.*
 import dagger.Component
 
@@ -41,6 +38,7 @@ interface RegularDriveComponent {
 
     //archive rides list
     fun inject(target: ArchiveRidesView)
+    fun inject(target: ArchiveRidesPresenter)
 
 
     //interactor

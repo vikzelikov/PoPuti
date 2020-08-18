@@ -251,7 +251,12 @@
     <string name="loadingPhoto">Загрузка фото…</string>
     <string name="tryAgain">Ошибка\nПопробуйте еще раз</string>
     <string name="setAddress">Укажите адреса!</string>
-    <string name="notRegularRides">У вас нет регулярных поездок</string>
+    <string name="notRegularRides">У Вас нет регулярных поездок</string>
+    <string name="notArchiveRides">У Вас нет архивированных поездок</string>
+    <string name="edit">Редактировать</string>
+    <string name="archive">Архивировать</string>
+    <string name="restore">Восстановить</string>
+    <string name="delete">Удалить</string>
 
 
 </resources>

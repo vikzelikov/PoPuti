@@ -238,7 +238,13 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun getRideInfo(): RideInfo {
         val rideInfo = RideInfo()
         try {
-            val comment = comment_text.text.toString().trim()
+            val comment = comment_min_text?.text?.let {
+                if (it.isEmpty()) {
+                    null
+                } else {
+                    comment_text?.text?.toString()?.trim()
+                }
+            }
             val price = offer_price.text.toString().toInt()
 
             rideInfo.comment = comment
@@ -415,6 +421,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         } else {
             detail_ride_container.alpha = 0.0f
             detailRidePresenter.removeRoute()
+            detailRidePresenter.onDestroy()
 
             val fm = (activity as? MainActivity)?.supportFragmentManager
             fm?.let {

@@ -1,6 +1,5 @@
 package bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,8 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.ContractPresenter
 import kotlinx.android.synthetic.main.regular_ride_item.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class ActiveRidesAdapter @Inject constructor(private val activeRidesPresenter: ContractPresenter.IActiveRidesPresenter) :
@@ -39,13 +40,32 @@ class ActiveRidesAdapter @Inject constructor(private val activeRidesPresenter: C
     }
 
 
+    fun removeRide(rideId: Int) {
+        var ride: RideInfo? = null
+        list.forEach {
+            if (rideId == it.rideId) ride = it
+        }
+
+        ride?.let {
+            val position = list.indexOf(it)
+
+            try {
+                list.removeAt(position)
+                notifyItemRemoved(position)
+
+            } catch (ex: IndexOutOfBoundsException) {
+            }
+        }
+    }
+
+
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
         val ride = list[position]
         holder.bind(ride)
 
 
         holder.itemView.setOnClickListener {
-//            activeRidesPresenter.onClickItem(list[position])
+            activeRidesPresenter.onClickItem(ride)
         }
     }
 
@@ -57,12 +77,8 @@ class ActiveRidesAdapter @Inject constructor(private val activeRidesPresenter: C
             itemView.price.text = ride.price.toString().plus(" ₽")
             itemView.date.text = getDays(ride.dateInfo)
 
-            val time = ride.dateInfo?.time?.split(":")
-            try {
-                if (time != null)
-                    itemView.time.text = time[0].plus(":").plus(time[1])
-            } catch (ex: IndexOutOfBoundsException) {
-            }
+            val time = ride.dateInfo?.time
+            itemView.time.text = parseTime(time)
         }
 
 
@@ -93,6 +109,38 @@ class ActiveRidesAdapter @Inject constructor(private val activeRidesPresenter: C
             }
 
             return days
+        }
+
+
+        private fun parseTime(time: String?): String? {
+            var resultTime: String? = null
+            if (time != null) {
+                if (time.length > 8) {
+                    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+                    try {
+                        val date = format.parse(time)
+                        if (date != null) {
+                            val calendar = GregorianCalendar.getInstance()
+                            calendar.time = date
+
+                            resultTime = calendar[Calendar.HOUR_OF_DAY].toString()
+                                .plus(":")
+                                .plus(calendar[Calendar.MINUTE])
+
+                        }
+                    } catch (e: Exception) {
+                    }
+                } else {
+                    try {
+                        val splitTime = time.split(":")
+                        resultTime = splitTime[0].plus(":").plus(splitTime[1])
+                    } catch (ex: IndexOutOfBoundsException) {
+                    }
+                }
+            }
+
+            return resultTime
         }
     }
 }

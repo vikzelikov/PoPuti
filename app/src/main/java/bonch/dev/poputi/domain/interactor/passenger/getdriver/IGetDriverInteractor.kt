@@ -25,7 +25,11 @@ interface IGetDriverInteractor {
     //Ride
     fun createRide(rideInfo: RideInfo, callback: SuccessHandler)
 
+    fun updateRide(rideInfo: RideInfo, callback: SuccessHandler)
+
     fun createRideSchedule(dateInfo: DateInfo, callback: SuccessHandler)
+
+    fun updateRideSchedule(dateInfo: DateInfo, callback: SuccessHandler)
 
     fun connectSocket(callback: SuccessHandler)
 

@@ -9,7 +9,7 @@ class RegularRidesPresenter : BasePresenter<ContractView.IRegularDriveView>(),
     ContractPresenter.IRegularDrivePresenter {
 
 
-    override fun createRegularDrive() {
+    override fun openActivity() {
         getView()?.getFragment()?.context?.let {
             getView()?.showLoading()
 

@@ -81,17 +81,17 @@ class MainActivity : AppCompatActivity(), IMainActivity {
             kotlin.run {
                 val view = general_notification
 
-                view.text = text
+                view?.text = text
                 handlerAnimation?.removeCallbacksAndMessages(null)
                 handlerAnimation = Handler()
-                view.translationY = 0.0f
-                view.alpha = 0.0f
+                view?.translationY = 0.0f
+                view?.alpha = 0.0f
 
-                view.animate()
-                    .setDuration(500L)
-                    .translationY(100f)
-                    .alpha(1.0f)
-                    .setListener(object : AnimatorListenerAdapter() {
+                view?.animate()
+                    ?.setDuration(500L)
+                    ?.translationY(100f)
+                    ?.alpha(1.0f)
+                    ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
                             handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
@@ -108,10 +108,10 @@ class MainActivity : AppCompatActivity(), IMainActivity {
     private fun hideNotifications() {
         val view = general_notification
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(-100f)
-            .alpha(0.0f)
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(-100f)
+            ?.alpha(0.0f)
     }
 
 
@@ -119,9 +119,9 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                on_view.alpha = 0.7f
-                on_view.visibility = View.VISIBLE
-                progress_bar.visibility = View.VISIBLE
+                on_view?.alpha = 0.7f
+                on_view?.visibility = View.VISIBLE
+                progress_bar?.visibility = View.VISIBLE
             }
         }
 
@@ -133,9 +133,9 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                on_view.alpha = 1.0f
-                on_view.visibility = View.VISIBLE
-                progress_bar.visibility = View.VISIBLE
+                on_view?.alpha = 1.0f
+                on_view?.visibility = View.VISIBLE
+                progress_bar?.visibility = View.VISIBLE
             }
         }
 
@@ -147,12 +147,12 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar.visibility = View.GONE
-                on_view.alpha = 0.7f
-                on_view.animate()
-                    .alpha(0f)
-                    .setDuration(500)
-                    .setListener(object : AnimatorListenerAdapter() {
+                progress_bar?.visibility = View.GONE
+                on_view?.alpha = 0.7f
+                on_view?.animate()
+                    ?.alpha(0f)
+                    ?.setDuration(500)
+                    ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             //go to the next screen
                             on_view.visibility = View.GONE
@@ -169,8 +169,8 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar.visibility = View.GONE
-                on_view.visibility = View.GONE
+                progress_bar?.visibility = View.GONE
+                on_view?.visibility = View.GONE
             }
         }
 

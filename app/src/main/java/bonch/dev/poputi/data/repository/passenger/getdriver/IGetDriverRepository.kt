@@ -18,7 +18,16 @@ interface IGetDriverRepository : IMainRepository {
 
     fun createRide(rideInfo: RideInfo, token: String, callback: DataHandler<RideInfo?>)
 
-    fun createRideSchedule(dateInfo: DateInfo, token: String, callback: SuccessHandler)
+    fun updateRide(rideInfo: RideInfo, rideId: Int, token: String, callback: SuccessHandler)
+
+    fun createRideSchedule(dateInfo: DateInfo, token: String, callback: DataHandler<DateInfo?>)
+
+    fun updateRideSchedule(
+        dateInfo: DateInfo,
+        scheduleId: Int,
+        token: String,
+        callback: SuccessHandler
+    )
 
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)
 

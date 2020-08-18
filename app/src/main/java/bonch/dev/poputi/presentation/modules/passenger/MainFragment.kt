@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.MainActivity
@@ -12,6 +14,9 @@ import bonch.dev.poputi.presentation.modules.common.profile.view.ProfileView
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.MapCreateRideView
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.RegularRidesView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.main_passenger_fragment.*
+
 
 class MainFragment : Fragment() {
 
@@ -21,6 +26,8 @@ class MainFragment : Fragment() {
 
     private var active: Fragment? = null
     private var fm: FragmentManager? = null
+
+    private var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +57,14 @@ class MainFragment : Fragment() {
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        setEditRegularRideUI()
     }
 
 
@@ -146,4 +161,51 @@ class MainFragment : Fragment() {
         }
     }
 
+
+    private fun setEditRegularRideUI() {
+        editRegularRideBottomSheet =
+            BottomSheetBehavior.from<RelativeLayout>(edit_regular_rides_bottom_sheet)
+
+        editRegularRideBottomSheet?.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                onSlideBottomSheet(slideOffset)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                onStateChangedBottomSheet(newState)
+            }
+        })
+
+        //pass links to views
+        regularDriving?.editRegularRideBottomSheet =
+            editRegularRideBottomSheet as BottomSheetBehavior<RelativeLayout>
+        regularDriving?.edit = edit
+        regularDriving?.archive = archive
+        regularDriving?.restore = restore
+        regularDriving?.delete = delete
+        regularDriving?.onView = on_view
+        regularDriving?.progressBarOpenRide = progress_bar
+
+        on_view.setOnClickListener {
+            editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
+
+    private fun onSlideBottomSheet(slideOffset: Float) {
+        if (slideOffset > 0 && slideOffset < 1) {
+            on_view?.alpha = slideOffset * 0.8f
+        }
+    }
+
+
+    private fun onStateChangedBottomSheet(newState: Int) {
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            on_view?.visibility = View.GONE
+        } else {
+            on_view?.visibility = View.VISIBLE
+        }
+    }
 }
