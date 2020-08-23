@@ -1,10 +1,10 @@
 package bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter
 
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
-import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
@@ -24,10 +24,11 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     private var blockRequestHandler: Handler? = null
 
     var isFromMapSearch = true
+    var isNextStep = false
     private var isBlockRequest = true
 
     private var cashEvent: CashEvent
-    private val BLOCK_REQUEST_GEOCODER = 1500L
+    private val BLOCK_REQUEST_GEOCODER = 1000L
     private val NOT_DESCRIPTION = "Место"
 
 
@@ -52,6 +53,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
             stopProcessBlockRequest()
             isSuccess = true
+            isNextStep = true
         }
 
         return isSuccess
@@ -109,14 +111,19 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
 
     override fun requestSuggest(query: String) {
+        Log.e("REQUEST", "SUGGEST1")
         if (query.length > 2) {
             getDriverInteractor.initRealm()
             //first check cash, then go to net
             //try to get data from cash
             if (!isBlockRequest) {
+                Log.e("REQUEST", "SUGGEST2")
+
                 val cashRequest = getDriverInteractor.getCashRequest(query)
 
                 if (!cashRequest.isNullOrEmpty()) {
+                    Log.e("REQUEST", "SUGGEST3")
+
                     //set in view
                     val adapter = getView()?.getAddressesAdapter()
                     adapter?.list?.clear()
@@ -125,6 +132,8 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                     isBlockRequest = true
 
                 } else {
+                    Log.e("REQUEST", "SUGGEST4")
+
                     getDriverInteractor.requestSuggest(query, getUserPoint()) {
                         responseSuggest(it)
                     }
@@ -144,6 +153,8 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
 
     private fun responseSuggest(suggestResult: ArrayList<Address>) {
+        Log.e("REQUEST", "RESPONSE")
+
         //cash request
         getDriverInteractor.saveCashRequest(suggestResult)
 
@@ -167,6 +178,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
         if (suggest != null) {
             val adapter = getView()?.getAddressesAdapter()
             adapter?.list?.clear()
+
             adapter?.list?.addAll(suggest)
             adapter?.notifyDataSetChanged()
         }
@@ -258,7 +270,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
 
     override fun onObjectUpdate() {
-        if (blockRequestHandler == null) {
+        if (blockRequestHandler == null && !isNextStep) {
             startProcessBlockRequest()
         }
     }
@@ -266,15 +278,8 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
     private fun stopProcessBlockRequest() {
         blockRequestHandler?.removeCallbacksAndMessages(null)
+        blockRequestHandler = null
         isBlockRequest = true
-    }
-
-
-    override fun backEvent() {
-        //block too often request
-        startProcessBlockRequest()
-
-        toAdr = null
     }
 
 

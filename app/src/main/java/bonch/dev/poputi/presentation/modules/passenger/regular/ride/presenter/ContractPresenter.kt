@@ -15,7 +15,7 @@ interface ContractPresenter {
 
     interface IRegularDrivePresenter {
         fun instance(): RegularRidesPresenter
-        fun openActivity()
+        fun openActivity(isCreate: Boolean)
     }
 
 

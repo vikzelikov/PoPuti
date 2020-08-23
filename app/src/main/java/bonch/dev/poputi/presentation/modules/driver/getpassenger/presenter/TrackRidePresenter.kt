@@ -56,6 +56,16 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
+    private fun startService() {
+        //start background service
+        val app = App.appComponent.getApp()
+        app.startService(Intent(app.applicationContext, DriverRideService::class.java))
+
+        //regestered receivers for listener data from service
+        registerReceivers()
+    }
+
+
     override fun registerReceivers() {
         val app = App.appComponent.getApp()
 
@@ -94,7 +104,6 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
                 //passenger cancel ride
                 if (status == StatusRide.CANCEL.status && userIdLocal == userIdRemote) {
-
                     //update status LOCAL
                     ActiveRide.activeRide?.statusId = StatusRide.CANCEL.status
 
@@ -175,6 +184,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     //chage view for the next step of ride
     override fun changeState(step: StatusRide, isRestoreRide: Boolean) {
         if (step == StatusRide.WAIT_FOR_DRIVER) {
+            startService()
+
             getView()?.stepWaitDriver()
 
             timer?.cancelTimer()
@@ -182,6 +193,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         }
 
         if (step == StatusRide.WAIT_FOR_PASSANGER) {
+            startService()
+
             getView()?.stepWaitPassenger()
 
             if (timer == null) {
@@ -210,12 +223,19 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         }
 
         if (step == StatusRide.IN_WAY) {
+            startService()
+
             timer?.cancelTimer()
             getView()?.stepInWay()
         }
 
         if (step == StatusRide.GET_PLACE) {
             getView()?.stepDoneRide()
+        }
+
+        //todo взять предыдущий статус
+        if (step == StatusRide.CANCEL) {
+            getView()?.passengerCancelRide(43, 4)
         }
     }
 
@@ -261,6 +281,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun stopService() {
         val app = App.appComponent
         app.getApp().stopService(Intent(app.getContext(), DriverRideService::class.java))
+        getPassengerInteractor.disconnectSocket()
     }
 
 
@@ -276,11 +297,13 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         val intent = Intent(context, ChatView::class.java)
         intent.putExtra(IS_DRIVER, true)
         fragment.startActivity(intent)
+
+        Handler().postDelayed({
+            getView()?.checkoutIconChat(false)
+        }, 1000)
     }
 
 
-    override fun instance(): TrackRidePresenter {
-        return this
-    }
+    override fun instance() = this
 
 }

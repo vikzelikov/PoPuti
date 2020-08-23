@@ -18,13 +18,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.driver.getpassenger.ReasonCancel
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
@@ -36,7 +36,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
-import kotlinx.android.synthetic.main.order_track_ride_layout.*
+import kotlinx.android.synthetic.main.track_order_ride_layout.*
 import java.util.*
 import javax.inject.Inject
 
@@ -53,6 +53,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     private var blockHandler: Handler? = null
     private var isBlock = false
+    private var isAllowSlide = true
 
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var nextFragment: ParentHandler<FragmentManager>
@@ -71,16 +72,9 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //start background service
-        val app = App.appComponent.getApp()
-        app.startService(Intent(app.applicationContext, DriverRideService::class.java))
-
-        //regestered receivers for listener data from service
-        trackRidePresenter.registerReceivers()
-
         startProcessBlock()
 
-        return inflater.inflate(R.layout.order_track_ride_layout, container, false)
+        return inflater.inflate(R.layout.track_order_ride_layout, container, false)
     }
 
 
@@ -105,17 +99,19 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun setOrder(order: RideInfo) {
-        passanger_name.text = order.passenger?.firstName
-        from_address.text = order.position
-        to_address.text = order.destination
+        passanger_name?.text = order.passenger?.firstName
+        from_address?.text = order.position
+        to_address?.text = order.destination
 
         order.passenger?.photos?.sortBy { it.id }
         var photo: Any? = order.passenger?.photos?.lastOrNull()?.imgUrl
         if (photo == null) photo = R.drawable.ic_default_ava
-        Glide.with(img_passanger.context).load(photo)
-            .apply(RequestOptions().centerCrop().circleCrop())
-            .error(R.drawable.ic_default_ava)
-            .into(img_passanger)
+        img_passanger?.let {
+            Glide.with(it.context).load(photo)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
+                .into(it)
+        }
     }
 
 
@@ -147,12 +143,14 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     status_order?.text = Html.fromHtml(
-                        textStatus.plus("<br>").plus("<b>$timeString ${getString(R.string.sec)}</b>"),
+                        textStatus.plus("<br>")
+                            .plus("<b>$timeString ${getString(R.string.sec)}</b>"),
                         Html.FROM_HTML_MODE_COMPACT
                     )
                 } else {
                     status_order?.text = Html.fromHtml(
-                        textStatus.plus("<br>").plus("<b>$timeString ${getString(R.string.sec)}</b>")
+                        textStatus.plus("<br>")
+                            .plus("<b>$timeString ${getString(R.string.sec)}</b>")
                     )
                 }
             }
@@ -164,33 +162,33 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     //STEP 2
     override fun stepWaitDriver() {
-        order_addresses_layout.visibility = View.VISIBLE
-        status_order_layout.visibility = View.GONE
+        order_addresses_layout?.visibility = View.VISIBLE
+        status_order_layout?.visibility = View.GONE
 
-        text_step_seekbar.text = getString(R.string.isPlace)
+        text_step_seekbar?.text = getString(R.string.isPlace)
 
         correctMapView()
     }
 
     //STEP 3
     override fun stepWaitPassenger() {
-        status_order_layout.visibility = View.VISIBLE
-        order_addresses_layout.visibility = View.GONE
+        status_order_layout?.visibility = View.VISIBLE
+        order_addresses_layout?.visibility = View.GONE
 
-        text_step_seekbar.text = getString(R.string.letsGo)
+        text_step_seekbar?.text = getString(R.string.letsGo)
 
         correctMapView()
     }
 
     //STEP 4
     override fun stepInWay() {
-        status_order_layout.visibility = View.GONE
-        phone_call_layout.visibility = View.GONE
-        message_layout.visibility = View.GONE
-        navigator_layout.visibility = View.VISIBLE
-        order_addresses_layout.visibility = View.VISIBLE
+        status_order_layout?.visibility = View.GONE
+        phone_call_layout?.visibility = View.GONE
+        message_layout?.visibility = View.GONE
+        navigator_layout?.visibility = View.VISIBLE
+        order_addresses_layout?.visibility = View.VISIBLE
 
-        text_step_seekbar.text = getString(R.string.toEndRide)
+        text_step_seekbar?.text = getString(R.string.toEndRide)
 
         correctMapView()
     }
@@ -200,6 +198,27 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         trackRidePresenter.stopService()
 
         (activity as? MapOrderView)?.let { nextFragment(it.supportFragmentManager) }
+    }
+
+
+    //STEP 6 passanger cancel this ride
+    override fun passengerCancelRide(payment: Int, status: Int) {
+        hideAllBottomSheet()
+
+        isAllowSlide = false
+        (passangerCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
+        main_coordinator?.elevation = 100f
+        on_view_cancel?.visibility = View.VISIBLE
+        on_view_cancel?.isClickable = false
+        on_view_cancel?.alpha = 0.8f
+
+        if (status > StatusRide.WAIT_FOR_DRIVER.status) {
+            payment_sum?.text = payment.toString().plus(" ₽")
+            payment_sum?.visibility = View.VISIBLE
+            text_payment_for_cancel?.visibility = View.VISIBLE
+        }
+
+        passangerCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
@@ -506,28 +525,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    //passanger cancel this ride
-    override fun passengerCancelRide(payment: Int, status: Int) {
-        hideAllBottomSheet()
-
-        Handler().postDelayed({
-            (passangerCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
-            main_info_layout?.elevation = 0f
-            on_view_cancel?.visibility = View.VISIBLE
-            on_view_cancel?.isClickable = false
-            on_view_cancel?.alpha = 0.8f
-
-            if (status > StatusRide.WAIT_FOR_DRIVER.status) {
-                payment_sum?.text = payment.toString().plus(" ₽")
-                payment_sum?.visibility = View.VISIBLE
-                text_payment_for_cancel?.visibility = View.VISIBLE
-            }
-
-            passangerCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
-        }, 500)
-    }
-
-
     private fun setBottomSheet() {
         cancelBottomSheet = BottomSheetBehavior.from<View>(reasons_bottom_sheet)
         confirmCancelBottomSheet = BottomSheetBehavior.from<View>(confirm_cancel_bottom_sheet)
@@ -571,49 +568,52 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     private fun onSlideCancelReason(slideOffset: Float) {
-        if (slideOffset > 0) {
+        if (slideOffset > 0 && isAllowSlide) {
             on_view_cancel?.alpha = slideOffset * 0.8f
         }
     }
 
 
     private fun onChangedStateCancelReason(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view_cancel.visibility = View.GONE
-            main_info_layout.elevation = 30f
-            comment_text.clearFocus()
-        } else {
-            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-            on_view_cancel?.visibility = View.VISIBLE
-            main_info_layout?.elevation = 0f
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                on_view_cancel.visibility = View.GONE
+                comment_text.clearFocus()
+            } else {
+                confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                on_view_cancel?.visibility = View.VISIBLE
+            }
         }
     }
 
 
     private fun onChangedStateConfirmCancel(newState: Int) {
-        try {
-            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                main_coordinator.elevation = 10f
-            } else {
-                main_coordinator.elevation = 0f
+        if (isAllowSlide) {
+            try {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    main_coordinator.elevation = 100f
+                } else {
+                    main_coordinator.elevation = 65f
+                }
+            } catch (ex: java.lang.Exception) {
             }
-        } catch (ex: java.lang.Exception) {
         }
     }
 
 
     private fun onChangedStateComment(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-            hideKeyboard()
-            comment_text.clearFocus()
-        }
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                hideKeyboard()
+                comment_text.clearFocus()
+            }
 
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            comment_text.clearFocus()
-        } else {
-            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-            on_view_cancel.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                comment_text.clearFocus()
+            } else {
+                confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                on_view_cancel.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -694,8 +694,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onResume() {
-        checkoutIconChat(false)
-
         DriverRideService.isAppClose = false
         super.onResume()
     }

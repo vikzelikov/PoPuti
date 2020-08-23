@@ -29,12 +29,15 @@ import javax.inject.Inject
 class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
 
     private var mapView: MapView? = null
-    private var mapObjects: MapObjectCollection? = null
     private var drivingRouter: DrivingRouter? = null
     private var drivingSession: DrivingSession? = null
-    private var boundingBox: BoundingBox? = null
     private var isWaypoint = true
 
+    companion object {
+        var mapObjects: MapObjectCollection? = null
+        var mapObjectsDriver: MapObjectCollection? = null
+        private var boundingBox: BoundingBox? = null
+    }
 
     init {
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
@@ -48,9 +51,15 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         //unsupported Yandex Map exception
         try {
             for (route in routes) {
-                val pol = mapObjects?.addPolyline(route.geometry)
+//                val t1 = PolylinePosition(0, 50.3)
+//                val t2 = PolylinePosition(100, 50.3)
+//                val x = Subpolyline(t1, t2)
 
-                //set color for direction
+//                mapObjects?.hide(route.geometry as? Subpolyline)
+//                Log.e("TEST", "${mapObjects?.geometry?.points?.size}")
+                val pol = mapObjects?.addPolyline(route.geometry)
+//                Routing.mapObjects?.co
+//                //set color for direction
                 pol?.strokeColor = if (isWaypoint) {
                     Color.parseColor("#1152FD")
                 } else {
@@ -76,12 +85,6 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-
-        //move camera to show the route
-        Handler().postDelayed({
-            showRoute()
-        }, 500)
-
     }
 
 
@@ -89,25 +92,47 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         startLocation: Point,
         endLocation: Point,
         isWaypoint: Boolean,
-        mapView: MapView
+
+        mapView: MapView,
+        isDriver: Boolean
     ) {
+
+        this.mapView = mapView
+        this.isWaypoint = isWaypoint
+
+        if (isWaypoint && mapObjects == null) {
+            mapObjects = mapView.map?.mapObjects?.addCollection()
+            boundingBox = BoundingBox(
+                Point(startLocation.latitude, startLocation.longitude),
+                Point(endLocation.latitude, endLocation.longitude)
+            )
+
+            route(startLocation, endLocation)
+
+            if (isDriver) {
+                Handler().postDelayed({
+                    showRoute()
+                }, 1000)
+            } else enterAnimation()
+
+        } else if (!isWaypoint && mapObjectsDriver == null) {
+            mapObjectsDriver = mapView.map?.mapObjects?.addCollection()
+
+            route(startLocation, endLocation)
+        }
+
+        if (boundingBox != null && !isDriver) {
+            enterAnimation()
+        }
+    }
+
+
+    private fun route(startLocation: Point, endLocation: Point) {
         val drivingOptions = DrivingOptions().apply {
             alternativeCount = 1
         }
         val requestPoints = ArrayList<RequestPoint>()
 
-        this.mapView = mapView
-        this.isWaypoint = isWaypoint
-        mapObjects = mapView.map?.mapObjects?.addCollection()
-
-
-        //get boundingBox around two point
-        if (isWaypoint) {
-            boundingBox = BoundingBox(
-                Point(startLocation.latitude, startLocation.longitude),
-                Point(endLocation.latitude, endLocation.longitude)
-            )
-        }
         requestPoints.add(
             RequestPoint(
                 startLocation,
@@ -132,7 +157,43 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         mapObjects?.let {
             try {
                 mapView?.map?.mapObjects?.remove(it)
+                mapObjects = null
             } catch (ex: java.lang.Exception) {
+            }
+        }
+    }
+
+
+    private fun enterAnimation() {
+        val box = boundingBox
+        box?.let {
+            var cameraPosition = mapView?.map?.cameraPosition(box)
+
+            if (cameraPosition != null) {
+                cameraPosition = CameraPosition(
+                    cameraPosition.target,
+                    cameraPosition.zoom - 0.5f,
+                    cameraPosition.azimuth,
+                    cameraPosition.tilt
+                )
+
+                mapView?.map?.move(
+                    cameraPosition,
+                    Animation(Animation.Type.SMOOTH, 0f),
+                    null
+                )
+
+                cameraPosition = CameraPosition(
+                    cameraPosition.target,
+                    cameraPosition.zoom - 0.5f,
+                    cameraPosition.azimuth,
+                    cameraPosition.tilt
+                )
+                mapView?.map?.move(
+                    cameraPosition,
+                    Animation(Animation.Type.SMOOTH, 1.1f),
+                    null
+                )
             }
         }
     }
@@ -146,7 +207,7 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
             if (cameraPosition != null) {
                 cameraPosition = CameraPosition(
                     cameraPosition.target,
-                    cameraPosition.zoom - 1f,
+                    cameraPosition.zoom - 0.3f,
                     cameraPosition.azimuth,
                     cameraPosition.tilt
                 )

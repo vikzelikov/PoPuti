@@ -47,9 +47,9 @@ object OffersMainTimer {
     ) : CountDownTimer(startTime, interval) {
 
         override fun onFinish() {
-            adapter.getDriverPresenter.instance().getView()?.getExpiredTimeConfirm()
+            adapter.getOffersPresenter.instance().getView()?.getExpiredTimeConfirm()
 
-            adapter.getDriverPresenter.timeExpired(
+            adapter.getOffersPresenter.timeExpired(
                 App.appComponent.getContext().getString(
                     R.string.mistake_order
                 )

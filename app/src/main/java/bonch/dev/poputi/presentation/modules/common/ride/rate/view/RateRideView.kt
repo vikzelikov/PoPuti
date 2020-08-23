@@ -1,5 +1,7 @@
 package bonch.dev.poputi.presentation.modules.common.ride.rate.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,13 +14,14 @@ import android.widget.RatingBar.OnRatingBarChangeListener
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerCommonComponent
 import bonch.dev.poputi.di.module.common.CommonModule
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
 import bonch.dev.poputi.presentation.modules.common.CommonComponent
@@ -44,6 +47,7 @@ class RateRideView : Fragment(), IRateRideView {
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
     lateinit var mapView: ParentMapHandler<MapView>
+    lateinit var backView: ParentEmptyHandler
     lateinit var finishActivity: ParentHandler<Int>
 
 
@@ -83,6 +87,8 @@ class RateRideView : Fragment(), IRateRideView {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        onViewCreatedAnimation()
+
         correctMapView()
 
         setListenerRatingBar()
@@ -113,7 +119,7 @@ class RateRideView : Fragment(), IRateRideView {
         if (activeRide != null) {
             try {
                 if (activeRide.price != null)
-                    price_for_ride.text = activeRide.price.toString().plus(" ₽")
+                    price_for_ride?.text = activeRide.price.toString().plus(" ₽")
 
                 plus_wating_fee.visibility = View.VISIBLE
                 wating_fee.visibility = View.VISIBLE
@@ -327,6 +333,25 @@ class RateRideView : Fragment(), IRateRideView {
         }
 
         return isBackPressed
+    }
+
+
+    private fun onViewCreatedAnimation() {
+        rate_container?.alpha = 0.0f
+        rate_container?.animate()?.alpha(1f)?.duration = 200
+    }
+
+
+    override fun backViewPassenger() {
+        rate_container?.alpha = 1.0f
+        rate_container?.animate()
+            ?.alpha(0f)
+            ?.setDuration(150)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    backView()
+                }
+            })
     }
 
 

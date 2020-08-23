@@ -10,4 +10,6 @@ interface IRateRideView : IBaseView {
 
     fun finish(resultCode: Int)
 
+    fun backViewPassenger()
+
 }

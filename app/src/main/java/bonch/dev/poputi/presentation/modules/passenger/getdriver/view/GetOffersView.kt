@@ -1,49 +1,48 @@
 package bonch.dev.poputi.presentation.modules.passenger.getdriver.view
 
-import android.content.Intent
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.poputi.App
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
-import bonch.dev.poputi.domain.entities.common.ride.Offer
-import bonch.dev.poputi.domain.entities.common.ride.RideInfo
-import bonch.dev.poputi.domain.entities.common.ride.StatusRide
+import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
+import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.OffersAdapter
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.WrapContentLinearLayoutManager
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
-import kotlinx.android.synthetic.main.get_driver_layout.*
+import kotlinx.android.synthetic.main.get_offers_layout.*
 import javax.inject.Inject
 
 
-class GetDriverView : Fragment(), ContractView.IGetDriverView {
+class GetOffersView : Fragment(), ContractView.IGetOffersView {
 
     @Inject
-    lateinit var getDriverPresenter: ContractPresenter.IGetDriverPresenter
+    lateinit var getOffersPresenter: ContractPresenter.IGetOffersPresenter
 
     @Inject
     lateinit var offersAdapter: OffersAdapter
@@ -54,17 +53,21 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     private var confirmGetBottomSheet: BottomSheetBehavior<*>? = null
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
-    private val app = App.appComponent.getApp()
-
     lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
-    lateinit var nextFragment: ParentHandler<FragmentManager>
+    lateinit var nextFragment: ParentEmptyHandler
+    lateinit var onGetOfferFail: ParentEmptyHandler
     lateinit var mapView: ParentMapHandler<MapView>
+    lateinit var cancelRide: ParentHandler<ReasonCancel>
+    lateinit var notification: ParentHandler<String>
+    lateinit var offerText: TextView
+
+    private var isAllowSlide = true
 
 
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
 
-        getDriverPresenter.instance().attachView(this)
+        getOffersPresenter.instance().attachView(this)
     }
 
 
@@ -73,24 +76,22 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //change status
-        ActiveRide.activeRide?.statusId = StatusRide.SEARCH.status
-
-        //check offers from server
-        if (!PassengerRideService.isRunning) getDriverPresenter.checkOnOffers()
-
-        //start background service
-        app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
-
-        //regestered receivers for listener data from service
-        getDriverPresenter.registerReceivers()
-
-        return inflater.inflate(R.layout.get_driver_layout, container, false)
+        return inflater.inflate(R.layout.get_offers_layout, container, false)
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //change status
+        ActiveRide.activeRide?.statusId = StatusRide.SEARCH.status
+
+        //check offers from server
+        if (!PassengerRideService.isRunning) getOffersPresenter.checkOnOffers()
+
+        onViewCreatedAnimation()
+
+        getOffersPresenter.startSearchAnimation()
 
         correctMapView()
 
@@ -156,22 +157,22 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         }
 
         comment_done.setOnClickListener {
-            getDriverPresenter.cancelDoneOtherReason(comment_text.text.toString())
+            getOffersPresenter.cancelDoneOtherReason(comment_text.text.toString())
         }
 
         cancel.setOnClickListener {
             textReason?.let {
-                getDriverPresenter.cancelDone(reasonID, it)
-                getDriverPresenter.backFragment(reasonID)
+                getOffersPresenter.cancelDone(reasonID, it)
+                getOffersPresenter.backFragment(reasonID)
             }
         }
 
         expired_time_ok_btn.setOnClickListener {
-            getDriverPresenter.backFragment(ReasonCancel.MISTAKE_ORDER)
+            getOffersPresenter.backFragment(ReasonCancel.MISTAKE_ORDER)
         }
 
         confirm_accept_driver.setOnClickListener {
-            getDriverPresenter.confirmAccept()
+            getOffersPresenter.confirmAccept()
         }
 
         not_cancel.setOnClickListener {
@@ -244,16 +245,6 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    override fun startAnimSearch(point: Point) {
-        val zoom = getMap()?.map?.cameraPosition?.zoom?.minus(1)
-        zoom?.let {
-            Handler().postDelayed({
-                getDriverPresenter.moveCamera(zoom, point)
-            }, 1000)
-        }
-    }
-
-
     private fun setConfirmAcceptData(offerPrice: Offer?) {
         //set data in BottomSheet for confirm or cancel
         offerPrice?.let { offer ->
@@ -281,46 +272,49 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     private fun onSlideCancelReason(slideOffset: Float) {
-        if (slideOffset > 0) {
-            on_view_cancel.alpha = slideOffset * 0.8f
+        if (slideOffset > 0 && isAllowSlide) {
+            on_view_cancel?.alpha = slideOffset * 0.8f
         }
     }
 
 
     private fun onChangedStateCancelReason(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view_cancel.visibility = View.GONE
-            main_info_layout.elevation = 30f
-            comment_text.clearFocus()
-        } else {
-            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-            on_view_cancel.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                on_view_cancel?.visibility = View.GONE
+                comment_text?.clearFocus()
+            } else {
+                confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                on_view_cancel?.visibility = View.VISIBLE
+            }
         }
     }
 
 
     private fun onChangedStateConfirmCancel(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            get_driver_coordinator.elevation = 10f
-        } else {
-            get_driver_coordinator.elevation = 0f
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                get_driver_coordinator?.elevation = 100f
+            } else {
+                get_driver_coordinator?.elevation = 65f
+            }
         }
     }
 
 
     private fun onChangedStateComment(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-            hideKeyboard()
-            comment_text.clearFocus()
-        }
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                hideKeyboard()
+                comment_text.clearFocus()
+            }
 
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            comment_text.clearFocus()
-        } else {
-            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-            on_view_cancel.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                comment_text.clearFocus()
+            } else {
+                confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                on_view_cancel?.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -332,7 +326,6 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
     private fun getConfirmCancel() {
         confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
-        get_driver_coordinator.elevation = 0f
     }
 
 
@@ -361,15 +354,15 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     override fun getExpiredTimeConfirm() {
         hideAllBottomSheet()
 
+        isAllowSlide = false
         (expiredTimeBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
-        main_info_layout?.elevation = 0f
         on_view_cancel?.visibility = View.VISIBLE
         on_view_cancel?.isClickable = false
         on_view_cancel?.alpha = 0.8f
+        get_driver_coordinator?.elevation = 100f
 
-        Handler().postDelayed({
-            expiredTimeBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
-        }, 500)
+
+        expiredTimeBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
@@ -407,12 +400,13 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     private fun initializeAdapter() {
-        offersAdapter.list = getDriverPresenter.getOffers()
+        offersAdapter.list = getOffersPresenter.getOffers()
 
         if (!offersAdapter.list.isNullOrEmpty()) checkoutBackground(false)
 
         driver_list.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager =
+                WrapContentLinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = offersAdapter
         }
 
@@ -431,7 +425,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
                     )
                 //"-10" for correct view radius corners
                 if (height != null) {
-                    layoutParams.setMargins(0, 0, 0, height - 10)
+                    layoutParams.setMargins(0, 0, 0, 0)
                 }
                 getMap()?.layoutParams = layoutParams
             }
@@ -451,10 +445,10 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
         try {
             if (on_view_main != null) {
                 if (isShow) {
-                    get_driver_center_text?.visibility = View.VISIBLE
+                    offerText.alpha = 1.0f
                     on_view_main?.alpha = 0f
                 } else {
-                    get_driver_center_text?.visibility = View.GONE
+                    offerText.alpha = 0f
                     on_view_main?.alpha = 0.8f
                 }
             }
@@ -464,7 +458,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     override fun removeBackground() {
-        get_driver_center_text?.visibility = View.GONE
+        offerText.alpha = 0f
         on_view_main?.visibility = View.GONE
     }
 
@@ -489,7 +483,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
 
 
     override fun showNotification(text: String) {
-        (activity as? MainActivity)?.showNotification(text)
+        notification(text)
     }
 
 
@@ -500,7 +494,7 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
                 confirm_accept_driver?.text = ""
                 confirm_accept_driver?.isClickable = false
                 confirm_accept_driver?.isFocusable = false
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -515,11 +509,26 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
                 confirm_accept_driver?.text = getString(R.string.letsGo)
                 confirm_accept_driver?.isClickable = true
                 confirm_accept_driver?.isFocusable = true
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
             }
         }
 
         mainHandler.post(myRunnable)
+    }
+
+
+    private fun onViewCreatedAnimation() {
+        get_offers_layout?.alpha = 0.0f
+        get_offers_layout?.animate()?.alpha(1f)?.duration = 300
+
+        offerText.alpha = 0.0f
+        offerText.animate()?.alpha(1f)?.duration = 200
+
+        val a = AnimationUtils.loadAnimation(context, R.anim.scale)
+        a.reset()
+
+        offerText.clearAnimation()
+        offerText.startAnimation(a)
     }
 
 
@@ -533,11 +542,31 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     }
 
 
-    override fun nextFragment() {
-        val fm = (activity as? MainActivity)?.supportFragmentManager
-        fm?.let {
-            nextFragment(it)
-        }
+    override fun registerReceivers() {
+        getOffersPresenter.registerReceivers()
+    }
+
+
+    override fun attachTrackRide() {
+        get_offers_layout?.alpha = 1.0f
+        get_offers_layout?.animate()
+            ?.alpha(0f)
+            ?.setDuration(50)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    nextFragment()
+                }
+            })
+    }
+
+
+    override fun getOfferFail() {
+        onGetOfferFail()
+    }
+
+
+    override fun onCancelRide(reason: ReasonCancel) {
+        cancelRide(reason)
     }
 
 
@@ -555,10 +584,5 @@ class GetDriverView : Fragment(), ContractView.IGetDriverView {
     override fun onPause() {
         super.onPause()
         PassengerRideService.isAppClose = true
-    }
-
-
-    override fun onObjectUpdated() {
-        getDriverPresenter.onUserLocationAttach()
     }
 }

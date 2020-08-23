@@ -4,6 +4,7 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.view
 import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,9 +22,9 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.poputi.di.module.passenger.GetDriverModule
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
+import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
@@ -51,8 +52,13 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     lateinit var mapPresenter: ContractPresenter.IMapCreateRidePresenter
 
     private lateinit var mapView: MapView
-    var bottomNavView: BottomNavigationView? = null
+    lateinit var nextFragment: ParentEmptyHandler
+    lateinit var navigateUser: ParentEmptyHandler
     private var userLocationLayer: UserLocationLayer? = null
+
+    private var isAllowFirstZoom = false
+    private var isAllowZoom = false
+
 
     init {
         initDI()
@@ -111,7 +117,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
                 Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
             }
 
-            mapPresenter.isUserCoordinate(arguments)
+            navigateUser()
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -147,7 +153,14 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         }
 
         if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
-            mapPresenter.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
+            isAllowZoom = true
+//            zoomMap(p1)
+            mapPresenter.requestGeocoder(p1, false)
+
+        } else if (p2 == CameraUpdateSource.GESTURES) {
+            mapPresenter.requestGeocoder(p1, true)
+
+            isAllowZoom = false
         }
     }
 
@@ -187,6 +200,9 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
 
     override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
+        Handler().postDelayed({
+            isAllowFirstZoom = true
+        }, 3000)
         mapPresenter.onObjectUpdate()
     }
 
@@ -206,9 +222,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     }
 
 
-    override fun getUserLocation(): UserLocationLayer? {
-        return userLocationLayer
-    }
+    override fun getUserLocation() = userLocationLayer
 
 
     override fun correctMapView() {
@@ -223,17 +237,69 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     override fun setListeners() {}
 
 
-    override fun getMap(): MapView {
-        return mapView
+    override fun getMap() = mapView
+
+
+    override fun zoomMap(cameraPosition: CameraPosition) {
+        val point = cameraPosition.target
+        val zoom = cameraPosition.zoom + 0.05
+
+        if (isAllowFirstZoom && isAllowZoom) {
+            mapView.map?.move(
+                CameraPosition(point, zoom.toFloat(), cameraPosition.azimuth, cameraPosition.tilt),
+                Animation(Animation.Type.SMOOTH, 0.3f),
+                null
+            )
+
+            isAllowZoom = false
+        }
+    }
+
+
+    override fun zoomMapDistance(cameraPosition: CameraPosition) {
+        val point = cameraPosition.target
+        val zoom = cameraPosition.zoom - 0.5f
+
+        mapView.map?.move(
+            CameraPosition(point, zoom, cameraPosition.azimuth, cameraPosition.tilt),
+            Animation(Animation.Type.SMOOTH, 1.1f),
+            null
+        )
     }
 
 
     override fun moveCamera(point: Point) {
         mapView.map?.move(
-            CameraPosition(point, 35.0f, 0.0f, 0.0f),
+            CameraPosition(point, 17.0f, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 1f),
             null
         )
+    }
+
+
+    override fun attachCreateRide() {
+        (activity as? MainActivity)?.supportFragmentManager?.let {
+            mapPresenter.attachCreateRide(it)
+
+            frame_container?.visibility = View.VISIBLE
+
+            fadeMap()
+        }
+    }
+
+
+    override fun attachDetailRide() {
+        nextFragment()
+
+        fadeMap()
+
+        frame_container?.visibility = View.GONE
+    }
+
+
+    override fun fadeMap() {
+        on_map_view?.alpha = 1.0f
+        on_map_view?.animate()?.alpha(0f)?.duration = 800
     }
 
 
@@ -276,11 +342,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
     override fun getFM(): FragmentManager? {
         return (activity as? MainActivity)?.supportFragmentManager
-    }
-
-
-    override fun getNavView(): BottomNavigationView? {
-        return bottomNavView
     }
 
 

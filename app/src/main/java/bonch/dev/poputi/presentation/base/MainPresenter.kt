@@ -119,14 +119,7 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
             }
 
         } else {
-            if (ride != null) {
-                //next step
-                MainRouter.showView(
-                    R.id.get_driver_fragment,
-                    getView()?.getNavHost(),
-                    null
-                )
-            } else showPassengerView()
+            showPassengerView()
 
             getView()?.hideFullLoading()
         }
@@ -181,29 +174,21 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
     private fun onBackPressedGetDriver() {
         val fm = getView()?.getFM()
-        val navHostFragment = fm?.findFragmentById(R.id.fragment_container)
-        val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
         val createRideView =
             fm?.findFragmentByTag(CreateRideView::class.java.simpleName) as? CreateRideView?
         val detailRideView =
             fm?.findFragmentByTag(DetailRideView::class.java.simpleName) as? DetailRideView?
         val getDriverView =
-            fm?.findFragmentByTag(GetDriverView::class.java.simpleName) as? GetDriverView?
+            fm?.findFragmentByTag(GetOffersView::class.java.simpleName) as? GetOffersView?
         val trackRideView =
             fm?.findFragmentByTag(TrackRideView::class.java.simpleName) as? TrackRideView?
         val rateRideView =
             fm?.findFragmentByTag(RateRideView::class.java.simpleName) as? RateRideView?
 
 
-        if (createRideView?.view != null && createRideView.onBackPressed()) {
-            getView()?.pressBack()
-        }
-
-        if (fragment is MapGetDriverView) {
-            if (fragment.onBackPressed()) {
-                getView()?.pressBack()
-            }
+        if (createRideView?.view != null) {
+            createRideView.onBackPressed()
         }
 
         if (detailRideView?.view != null) {

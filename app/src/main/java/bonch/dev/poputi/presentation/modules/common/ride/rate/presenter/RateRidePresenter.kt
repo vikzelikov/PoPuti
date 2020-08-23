@@ -9,14 +9,13 @@ import bonch.dev.poputi.domain.interactor.common.rate.IRateRideInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.CommonComponent
 import bonch.dev.poputi.presentation.modules.common.ride.rate.view.IRateRideView
-import bonch.dev.poputi.route.MainRouter
-import java.lang.Exception
 import javax.inject.Inject
 
 class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
 
     @Inject
     lateinit var rateRideInteractor: IRateRideInteractor
+
 
     private val FEEDBACK = 1
 
@@ -41,7 +40,7 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
             if (isForPassanger) {
                 //passenger - this is not new Activity, show general notification
                 getView()?.showNotification(res.getString(R.string.thanksForRate))
-                MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
+                getView()?.backViewPassenger()
             } else {
                 //driver - this New Activity, show notification in start launch fragment
                 getView()?.finish(FEEDBACK)
@@ -64,7 +63,7 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
             clearData()
 
             if (isForPassanger) {
-                MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
+                getView()?.backViewPassenger()
             } else {
                 getView()?.finish(RESULT_OK)
             }
@@ -78,7 +77,7 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
 
     private fun failLogout() {
         try {
-            MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), null)
+            getView()?.backViewPassenger()
         } catch (ex: Exception) {
             getView()?.finish(RESULT_OK)
         }
@@ -87,7 +86,8 @@ class RateRidePresenter : BasePresenter<IRateRideView>(), IRateRidePresenter {
     }
 
 
-    private fun clearData(){
+    private fun clearData() {
+        rateRideInteractor.removeRideId()
         ActiveRide.activeRide = null
     }
 

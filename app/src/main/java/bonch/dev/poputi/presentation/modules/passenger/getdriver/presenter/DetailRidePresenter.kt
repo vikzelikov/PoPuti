@@ -3,7 +3,9 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.data.repository.common.ride.SearchPlace
@@ -21,7 +23,6 @@ import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.view.OfferP
 import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
-import bonch.dev.poputi.route.MainRouter
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import javax.inject.Inject
@@ -38,10 +39,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
     private val AVERAGE_PRICE = "AVERAGE_PRICE"
-
-    private var blockHandler: Handler? = null
-
-    private var isBlock = false
 
     private var fromPoint: Point? = null
     private var toPoint: Point? = null
@@ -92,6 +89,8 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
             if (fromUri != null) {
                 if (fromUri.length > 50) {
                     fromPoint = getPoint(fromUri)
+
+                    submitRoute()
                 } else {
                     SearchPlace().request(fromUri) { point, _ ->
                         fromPoint = point
@@ -104,6 +103,8 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
             if (toUri != null) {
                 if (toUri.length > 50) {
                     toPoint = getPoint(toUri)
+
+                    submitRoute()
                 } else {
                     SearchPlace().request(toUri) { point, _ ->
                         toPoint = point
@@ -132,7 +133,7 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                 to.longitude
             )
 
-            routing.submitRequest(from, to, true, map)
+            routing.submitRequest(from, to, true, map, false)
         }
     }
 
@@ -198,66 +199,57 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     //create ride with SERVER
     override fun createRide() {
         val view = getView()
+        val res = App.appComponent.getContext().resources
 
-        if (view != null && view.isDataComplete() && !isBlock) {
-            val rideInfo = getView()?.getRideInfo()
+        if (NetworkUtil.isNetworkConnected(App.appComponent.getContext())) {
+            if (view != null && view.isDataComplete()) {
+                val rideInfo = getView()?.getRideInfo()
 
-            getView()?.showLoading()
+                rideInfo?.fromAdr = fromAdr
+                rideInfo?.toAdr = toAdr
 
-            isBlock = true
+                if (rideInfo != null) {
 
-            rideInfo?.fromAdr = fromAdr
-            rideInfo?.toAdr = toAdr
+                    getView()?.showLoading()
 
-            if (rideInfo != null) {
-                val ride = RideInfo()
-                ride.position = rideInfo.fromAdr?.address
-                ride.fromLat = rideInfo.fromAdr?.point?.latitude
-                ride.fromLng = rideInfo.fromAdr?.point?.longitude
-                ride.destination = rideInfo.toAdr?.address
-                ride.toLat = rideInfo.toAdr?.point?.latitude
-                ride.toLng = rideInfo.toAdr?.point?.longitude
-                ride.price = rideInfo.price
-                ride.comment = rideInfo.comment
+                    getView()?.attachGetOffers()
 
-                //save ride
-                ActiveRide.activeRide = ride
+                    val ride = RideInfo()
+                    ride.position = rideInfo.fromAdr?.address
+                    ride.fromLat = rideInfo.fromAdr?.point?.latitude
+                    ride.fromLng = rideInfo.fromAdr?.point?.longitude
+                    ride.destination = rideInfo.toAdr?.address
+                    ride.toLat = rideInfo.toAdr?.point?.latitude
+                    ride.toLng = rideInfo.toAdr?.point?.longitude
+                    ride.price = rideInfo.price
+                    ride.comment = rideInfo.comment
 
-                //create ride with SERVER
-                getDriverInteractor.createRide(ride) { isSuccess ->
+                    //save ride
+                    ActiveRide.activeRide = ride
 
-                    getView()?.hideLoading()
+                    //create ride with SERVER
+                    getDriverInteractor.createRide(ride) { isSuccess ->
 
-                    if (isSuccess) {
-                        //next step
-                        MainRouter.showView(
-                            R.id.show_get_driver_fragment,
-                            getView()?.getNavHost(),
-                            null
-                        )
-                    } else {
-                        ActiveRide.activeRide = null
+                        getView()?.hideLoading()
 
-                        val res = App.appComponent.getContext().resources
-                        getView()?.showNotification(res.getString(R.string.errorSystem))
+                        if (!isSuccess) {
+                            //back step
+                            val mainHandler = Handler(Looper.getMainLooper())
+                            val myRunnable = Runnable {
+                                kotlin.run {
+                                    getView()?.showNotification(res.getString(R.string.tryAgain))
+
+                                    ActiveRide.activeRide = null
+
+                                    getView()?.createRideFail()
+                                }
+                            }
+                            mainHandler.post(myRunnable)
+                        }
                     }
                 }
             }
-        }
-    }
-
-
-    override fun startProcessBlock() {
-        if (blockHandler == null) {
-            blockHandler = Handler()
-        }
-
-        blockHandler?.postDelayed(object : Runnable {
-            override fun run() {
-                isBlock = false
-                blockHandler?.postDelayed(this, 3500)
-            }
-        }, 0)
+        } else getView()?.showNotification(res.getString(R.string.checkInternet))
     }
 
 
@@ -279,7 +271,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
     override fun onDestroy() {
         fromPoint = null
         toPoint = null
-        blockHandler?.removeCallbacksAndMessages(null)
     }
 
 

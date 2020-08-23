@@ -1,5 +1,7 @@
 package bonch.dev.poputi.presentation.modules.passenger.getdriver.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
@@ -15,7 +17,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.domain.utils.Keyboard
@@ -25,12 +26,12 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.PaymentsAdapter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.detail_ride_layout.*
@@ -50,10 +51,12 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     private var commentBottomSheetBehavior: BottomSheetBehavior<*>? = null
     private var infoPriceBottomSheetBehavior: BottomSheetBehavior<*>? = null
 
-    lateinit var backHandler: ParentHandler<FragmentManager>
-    lateinit var mapView: ParentMapHandler<MapView>
-    var bottomNavView: BottomNavigationView? = null
 
+    lateinit var backHandler: ParentEmptyHandler
+    lateinit var nextFragment: ParentEmptyHandler
+    lateinit var onCreateRideFail: ParentEmptyHandler
+    lateinit var mapView: ParentMapHandler<MapView>
+    lateinit var notification: ParentHandler<String>
 
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
@@ -74,7 +77,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        detailRidePresenter.startProcessBlock()
+        onViewCreatedAnimation()
 
         val from = fromAdr
         val to = toAdr
@@ -366,8 +369,6 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun onSlideBottomSheet(slideOffset: Float) {
         if (slideOffset > 0 && slideOffset < 1) {
             on_map_view.alpha = slideOffset * 0.8f
-            back_btn.alpha = 1 - slideOffset
-            show_route.alpha = 1 - slideOffset
         }
     }
 
@@ -375,16 +376,14 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun onStateChangedBottomSheet(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
             hideKeyboard()
-            comment_text.clearFocus()
+            comment_text?.clearFocus()
         }
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_map_view.visibility = View.GONE
-            main_info_layout.elevation = 30f
-            comment_text.clearFocus()
+            on_map_view?.visibility = View.GONE
+            comment_text?.clearFocus()
         } else {
-            on_map_view.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            on_map_view?.visibility = View.VISIBLE
         }
     }
 
@@ -419,17 +418,34 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
             false
         } else {
-            detail_ride_container.alpha = 0.0f
+            detail_ride_container?.alpha = 0.0f
             detailRidePresenter.removeRoute()
             detailRidePresenter.onDestroy()
 
-            val fm = (activity as? MainActivity)?.supportFragmentManager
-            fm?.let {
-                backHandler(fm)
-            }
+            backHandler()
 
             true
         }
+    }
+
+
+    override fun attachGetOffers() {
+        detail_ride_container?.alpha = 1.0f
+        detail_ride_container?.animate()
+            ?.alpha(0f)
+            ?.setDuration(200)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    //go to the next screen
+                }
+            })
+
+        nextFragment()
+    }
+
+
+    override fun createRideFail() {
+        onCreateRideFail()
     }
 
 
@@ -444,10 +460,9 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
                     )
                 //"-10" for correct view radius corners
                 if (height != null) {
-                    layoutParams.setMargins(0, 0, 0, height - 10)
+                    layoutParams.setMargins(0, 0, 0, 250)
                 }
                 getMap()?.layoutParams = layoutParams
-                bottomNavView?.visibility = View.GONE
             }
         } catch (ex: Exception) {
 
@@ -481,7 +496,17 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
 
     override fun showNotification(text: String) {
-        (activity as? MainActivity)?.showNotification(text)
+        notification(text)
+    }
+
+
+    private fun onViewCreatedAnimation() {
+        Handler().postDelayed({
+            back_btn?.animate()?.alpha(1f)?.duration = 200
+        }, 700)
+
+        detail_ride_container?.alpha = 0.0f
+        detail_ride_container?.animate()?.alpha(1f)?.duration = 200
     }
 
 
@@ -489,10 +514,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                get_driver_btn.text = ""
                 get_driver_btn.isClickable = false
                 get_driver_btn.isFocusable = false
-                progress_bar.visibility = View.VISIBLE
             }
         }
 
@@ -504,14 +527,17 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                get_driver_btn.text = getString(R.string.getDriver)
-                get_driver_btn.isClickable = true
-                get_driver_btn.isFocusable = true
-                progress_bar.visibility = View.GONE
+                get_driver_btn?.isClickable = true
+                get_driver_btn?.isFocusable = true
             }
         }
 
         mainHandler.post(myRunnable)
+    }
+
+
+    override fun removeRoute() {
+        detailRidePresenter.removeRoute()
     }
 
 
@@ -522,11 +548,6 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         }
 
         return returnDP
-    }
-
-
-    override fun getBottomNav(): BottomNavigationView? {
-        return bottomNavView
     }
 
 

@@ -13,6 +13,7 @@ import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 
@@ -22,10 +23,8 @@ interface ContractPresenter {
         fun instance(): MapCreateRidePresenter
         fun getBitmap(drawableId: Int): Bitmap?
         fun attachCreateRide(fm: FragmentManager)
-        fun attachDetailRide(fm: FragmentManager)
+        fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean)
         fun getUserLocation(): UserLocationLayer?
-        fun requestGeocoder(point: Point?)
-        fun isUserCoordinate(args: Bundle?)
         fun onObjectUpdate()
     }
 
@@ -47,7 +46,6 @@ interface ContractPresenter {
         fun onObjectUpdate()
         fun showMyPosition()
         fun clearSuggest()
-        fun backEvent()
         fun onDestroy()
     }
 
@@ -57,7 +55,6 @@ interface ContractPresenter {
         fun removeRoute()
         fun createRide()
         fun getMap(): MapView?
-        fun startProcessBlock()
         fun removeTickSelected()
         fun offerPriceDone(data: Intent?)
         fun instance(): DetailRidePresenter
@@ -71,21 +68,9 @@ interface ContractPresenter {
     }
 
 
-    interface IMapGetDriverPresenter {
-        fun instance(): MapGetDriverPresenter
-        fun getBitmap(drawableId: Int): Bitmap?
-        fun attachGetDriver(fm: FragmentManager)
-        fun attachTrackRide(fm: FragmentManager)
-        fun attachRateRide(fm: FragmentManager)
-        fun onBackPressed(): Boolean
-        fun onObjectUpdated()
-    }
-
-
-    interface IGetDriverPresenter {
-        fun instance(): GetDriverPresenter
+    interface IGetOffersPresenter {
+        fun instance(): GetOffersPresenter
         fun backFragment(reasonID: ReasonCancel)
-        fun moveCamera(zoom: Float, point: Point)
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun cancelDoneOtherReason(comment: String)
         fun timeExpired(textReason: String)
@@ -94,14 +79,17 @@ interface ContractPresenter {
         fun setOffer(offer: Offer)
         fun getOffer(): Offer?
         fun checkOnOffers()
-        fun onUserLocationAttach()
+        fun startSearchAnimation()
         fun registerReceivers()
         fun confirmAccept()
     }
 
 
     interface ITrackRidePresenter {
+        fun route()
+        fun showRoute()
         fun clearData()
+        fun removeRoute()
         fun registerReceivers()
         fun nextStep(idStep: Int)
         fun cancelDone(reasonID: ReasonCancel, textReason: String)

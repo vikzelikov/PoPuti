@@ -4,6 +4,7 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Offer
@@ -16,10 +17,11 @@ import kotlinx.android.synthetic.main.offer_item.view.*
 import javax.inject.Inject
 
 
-class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresenter.IGetDriverPresenter) :
+class OffersAdapter @Inject constructor(val getOffersPresenter: ContractPresenter.IGetOffersPresenter) :
     RecyclerView.Adapter<OffersAdapter.ItemPostHolder>() {
 
     var list: ArrayList<Offer> = arrayListOf()
+
 
     init {
         if (OffersMainTimer.getInstance() == null)
@@ -57,26 +59,48 @@ class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresente
             }
 
             holder.offerItemTimer?.cancel()
-            holder.offerItemTimer = OfferItemTimer(startTime.toLong() * 1000, 10, timeLine)
+            holder.offerItemTimer = OfferItemTimer(startTime * 1000, 10, timeLine)
             holder.offerItemTimer?.start()
 
         })
 
 
         holder.itemView.accept_driver.setOnClickListener {
-            getDriverPresenter.setOffer(offer)
-            getDriverPresenter.instance().getView()?.getConfirmAccept(offer)
+            getOffersPresenter.setOffer(offer)
+            getOffersPresenter.instance().getView()?.getConfirmAccept(offer)
         }
+
+        setAnimation(holder.itemView)
+    }
+
+
+    private fun setAnimation(viewToAnimate: View) {
+        val animation =
+            AnimationUtils.loadAnimation(viewToAnimate.context, R.anim.offer_slide_in_top)
+        viewToAnimate.startAnimation(animation)
     }
 
 
     fun setNewOffer(offer: Offer) {
-        list.add(0, offer)
-        notifyItemInserted(0)
-        notifyItemChanged(0)
+        var check = true
+        list.forEach {
+            if (offer.offerId == it.offerId) {
+                check = false
+            }
+        }
 
-        if (list.isNotEmpty()) {
-            getDriverPresenter.instance().getView()?.checkoutBackground(false)
+        if (check) {
+            try {
+                list.add(offer)
+                notifyItemInserted(list.size)
+                notifyItemChanged(list.size)
+
+                if (list.isNotEmpty()) {
+                    getOffersPresenter.instance().getView()?.checkoutBackground(false)
+                }
+            } catch (ex: java.lang.IndexOutOfBoundsException) {
+
+            }
         }
     }
 
@@ -100,7 +124,7 @@ class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresente
             if (isUserAction && position != null) {
                 list[position].offerId?.let {
                     //delete offer with SERVER
-                    getDriverPresenter.deleteOffer(it)
+                    getOffersPresenter.deleteOffer(it)
                 }
 
                 //delete offer on view
@@ -112,19 +136,19 @@ class OffersAdapter @Inject constructor(val getDriverPresenter: ContractPresente
 
         try {
             if (!isUserAction) {
-                val offer = getDriverPresenter.getOffer()
+                val offer = getOffersPresenter.getOffer()
                 if (offer?.offerId == list[list.lastIndex].offerId) {
-                    getDriverPresenter.instance().getView()?.hideConfirmAccept()
+                    getOffersPresenter.instance().getView()?.hideConfirmAccept()
                 }
 
-                list.removeAt(list.lastIndex)
-                notifyItemRemoved(list.size)
+                list.removeAt(0)
+                notifyItemRemoved(0)
             }
         } catch (ex: IndexOutOfBoundsException) {
         }
 
         if (list.isEmpty()) {
-            getDriverPresenter.instance().getView()?.checkoutBackground(true)
+            getOffersPresenter.instance().getView()?.checkoutBackground(true)
         }
     }
 

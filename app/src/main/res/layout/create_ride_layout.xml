@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/create_ride_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -14,8 +15,8 @@
         android:background="@drawable/bg_back_btn"
         android:elevation="12dp"
         android:padding="13dp"
-        android:visibility="gone"
-        android:src="@drawable/ic_back_arrow" />
+        android:src="@drawable/ic_back_arrow"
+        android:visibility="gone" />
 
     <View
         android:id="@+id/on_map_view"
@@ -49,6 +50,15 @@
         android:layout_marginBottom="55dp"
         android:src="@drawable/ic_map_marker" />
 
+    <ImageView
+        android:id="@+id/shadow_marker"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="2dp"
+        android:alpha="0.6"
+        android:src="@drawable/ic_shadow_marker" />
+
 
     <RelativeLayout
         android:id="@+id/bottom_sheet_addresses"
@@ -80,13 +90,16 @@
             android:layout_marginEnd="15dp"
             android:background="@drawable/bg_inputs_layout"
             android:clickable="true"
-            android:elevation="10dp"
+            android:elevation="1px"
             android:focusable="true"
             android:orientation="horizontal"
+            android:outlineAmbientShadowColor="#a8a8a8"
+            android:outlineSpotShadowColor="#a8a8a8"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:translationZ="7dp"
-            android:visibility="visible">
+            android:translationZ="12dp"
+            android:visibility="visible"
+            tools:targetApi="p">
 
 
             <LinearLayout

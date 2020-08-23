@@ -1,11 +1,11 @@
 package bonch.dev.poputi.data.repository.common.chat
 
 import android.util.Log
+import bonch.dev.domain.utils.Constants
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.common.ChatService
 import bonch.dev.poputi.domain.entities.common.chat.Message
-import bonch.dev.domain.utils.Constants
-import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import com.pusher.client.Pusher
@@ -13,9 +13,7 @@ import com.pusher.client.PusherOptions
 import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
-import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
-import com.pusher.client.connection.ConnectionStateChange
 import com.pusher.client.util.HttpAuthorizer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -115,13 +113,7 @@ class ChatRepository : IChatRepository {
 
             pusher = Pusher(apiKey, options)
 
-            pusher?.connect(object : ConnectionEventListener {
-                override fun onConnectionStateChange(change: ConnectionStateChange) {}
-
-                override fun onError(message: String, code: String, e: Exception) {
-                    callback(false)
-                }
-            }, ConnectionState.ALL)
+            pusher?.connect()
 
             channel = pusher?.subscribePrivate("private-ride.$rideId.chat",
                 object : PrivateChannelEventListener {
@@ -137,7 +129,7 @@ class ChatRepository : IChatRepository {
                         callback(true)
                     }
                 })
-        }
+        } else callback(true)
     }
 
 

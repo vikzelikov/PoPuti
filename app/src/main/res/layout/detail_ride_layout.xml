@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/detail_ride_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:alpha="0.0">
 
 
     <ImageButton
@@ -15,6 +16,7 @@
         android:background="@drawable/bg_back_btn"
         android:elevation="12dp"
         android:padding="13dp"
+        android:alpha="0"
         android:src="@drawable/ic_back_arrow" />
 
 
@@ -280,7 +282,7 @@
                 android:textSize="16sp" />
 
             <ProgressBar
-                android:id="@+id/progress_bar"
+                android:id="@+id/progress_bar_btn"
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -298,14 +300,14 @@
         android:id="@+id/container_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="10dp">
+        android:elevation="40dp">
 
         <LinearLayout
             android:id="@+id/cards_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_corners_layout"
-            android:elevation="10dp"
+            android:elevation="40dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
             app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
@@ -344,7 +346,7 @@
             android:layout_width="match_parent"
             android:layout_height="550dp"
             android:background="@drawable/bg_corners_layout"
-            android:elevation="10dp"
+            android:elevation="40dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
             app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
@@ -405,7 +407,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_corners_layout"
-            android:elevation="10dp"
+            android:elevation="40dp"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
             app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
@@ -451,6 +453,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0"
+            android:elevation="30dp"
             android:background="@android:color/black"
             android:visibility="gone" />
 

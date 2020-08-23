@@ -175,12 +175,12 @@ class ChatView : AppCompatActivity(), IChatView {
 
 
     override fun showLoading() {
-        progress_bar?.visibility = View.VISIBLE
+        progress_bar_btn?.visibility = View.VISIBLE
     }
 
 
     override fun hideLoading() {
-        progress_bar?.visibility = View.GONE
+        progress_bar_btn?.visibility = View.GONE
     }
 
 

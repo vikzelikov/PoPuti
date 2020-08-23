@@ -56,7 +56,10 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
                 setNewOrder(i, order)
             }, delay)
 
-            delay += 300
+            delay += if (i > 7) {
+                0
+            } else
+                250
         }
     }
 

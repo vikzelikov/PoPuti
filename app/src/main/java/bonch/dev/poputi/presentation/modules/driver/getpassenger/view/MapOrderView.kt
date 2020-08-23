@@ -244,7 +244,7 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
         val myRunnable = Runnable {
             kotlin.run {
                 on_view.alpha = 0.7f
-                progress_bar.visibility = View.VISIBLE
+                progress_bar_btn.visibility = View.VISIBLE
                 on_view.visibility = View.VISIBLE
             }
         }
@@ -257,7 +257,7 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar.visibility = View.GONE
+                progress_bar_btn.visibility = View.GONE
                 on_view.alpha = 0.7f
                 on_view.animate()
                     .alpha(0f)

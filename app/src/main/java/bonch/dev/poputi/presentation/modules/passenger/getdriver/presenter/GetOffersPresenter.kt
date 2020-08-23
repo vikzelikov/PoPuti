@@ -4,20 +4,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import bonch.dev.poputi.R
-import bonch.dev.domain.utils.Vibration
 import bonch.dev.poputi.App
+import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
+import bonch.dev.poputi.domain.utils.Vibration
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
-import bonch.dev.poputi.route.MainRouter
 import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.google.gson.Gson
 import com.yandex.mapkit.Animation
@@ -29,18 +26,14 @@ import java.util.*
 import javax.inject.Inject
 
 
-class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
-    ContractPresenter.IGetDriverPresenter {
+class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
+    ContractPresenter.IGetOffersPresenter {
 
     @Inject
     lateinit var getDriverInteractor: IGetDriverInteractor
 
-    private var mainHandler: Handler? = null
-    private var isAnimaionSearching = false
     private var isVibration = false
-    private var isRegistered = false
-
-    private val REASON = "REASON"
+    private var isNextStep = false
 
     private var list: ArrayList<Offer> = arrayListOf()
     private var offer: Offer? = null
@@ -75,22 +68,21 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         val app = App.appComponent.getApp()
 
         //check regestered receivers before
-        if (!isRegistered) {
-            app.registerReceiver(
-                changeRideReceiver,
-                IntentFilter(PassengerRideService.CHANGE_RIDE_TAG)
-            )
-            app.registerReceiver(
-                offerPriceReceiver,
-                IntentFilter(PassengerRideService.OFFER_PRICE_TAG)
-            )
-            app.registerReceiver(
-                deleteOfferReceiver,
-                IntentFilter(PassengerRideService.DELETE_OFFER_TAG)
-            )
+        app.registerReceiver(
+            changeRideReceiver,
+            IntentFilter(PassengerRideService.CHANGE_RIDE_TAG)
+        )
+        app.registerReceiver(
+            offerPriceReceiver,
+            IntentFilter(PassengerRideService.OFFER_PRICE_TAG)
+        )
+        app.registerReceiver(
+            deleteOfferReceiver,
+            IntentFilter(PassengerRideService.DELETE_OFFER_TAG)
+        )
 
-            isRegistered = true
-        }
+        isVibration = false
+        isNextStep = false
     }
 
 
@@ -141,42 +133,60 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
                 getView()?.showNotification(res.getString(R.string.errorSystem))
             } else {
                 ActiveRide.activeRide = ride
-                getDriverDone(false)
+                getOfferDone(false)
             }
         }
     }
 
 
-    private fun getDriverDone(isAcceptByPassenger: Boolean) {
+    private fun getOfferDone(isAcceptByPassenger: Boolean) {
         val res = App.appComponent.getContext().resources
 
-        if (isAcceptByPassenger) {
-            getView()?.showLoading()
+        if (!isNextStep) {
+            if (isAcceptByPassenger) {
+                val driverId = offer?.driver?.id
+                val price = offer?.price
 
-            val driverId = offer?.driver?.id
-            val price = offer?.price
-            if (driverId != null && price != null) {
-                getDriverInteractor.setDriverInRide(driverId, price) { isSuccess ->
-                    getView()?.hideLoading()
+                if (driverId != null && price != null) {
 
-                    if (!isSuccess) getView()?.showNotification(res.getString(R.string.errorSystem))
-                }
-            } else getView()?.showNotification(res.getString(R.string.errorSystem))
-        } else {
-            //driver has confirmed with a price
-            val status = ActiveRide.activeRide?.statusId
-            status?.let {
-                getByValue(it)?.let { status ->
-                    if (status == StatusRide.WAIT_FOR_DRIVER) {
-                        //next step
-                        val mainHandler = Handler(Looper.getMainLooper())
-                        val myRunnable = Runnable {
-                            kotlin.run {
-                                nextFragment()
+                    nextFragment()
+
+                    isNextStep = true
+
+                    getDriverInteractor.setDriverInRide(driverId, price) { isSuccess ->
+                        if (!isSuccess) {
+                            //back step
+                            val mainHandler = Handler(Looper.getMainLooper())
+                            val myRunnable = Runnable {
+                                kotlin.run {
+                                    getView()?.showNotification(res.getString(R.string.errorSystem))
+
+                                    getView()?.getOfferFail()
+                                }
                             }
+                            mainHandler.post(myRunnable)
                         }
+                    }
+                } else getView()?.showNotification(res.getString(R.string.errorSystem))
+            } else {
+                //driver has confirmed with a price
+                val status = ActiveRide.activeRide?.statusId
+                status?.let {
+                    getByValue(it)?.let { status ->
+                        if (status == StatusRide.WAIT_FOR_DRIVER) {
 
-                        mainHandler.post(myRunnable)
+                            isNextStep = true
+
+                            //next step
+                            val mainHandler = Handler(Looper.getMainLooper())
+                            val myRunnable = Runnable {
+                                kotlin.run {
+                                    nextFragment()
+                                }
+                            }
+
+                            mainHandler.post(myRunnable)
+                        }
                     }
                 }
             }
@@ -185,14 +195,12 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     private fun nextFragment() {
-        if (isAnimaionSearching) {
-            //animation off
-            val zoom = getView()?.getMap()?.map?.cameraPosition?.zoom
-            val userPoint = getUserPoint()
+        //animation off
+        val zoom = getView()?.getMap()?.map?.cameraPosition?.zoom
+        val userPoint = getUserPoint()
 
-            if (zoom != null && userPoint != null) {
-                moveCamera(zoom, userPoint)
-            }
+        if (zoom != null && userPoint != null) {
+            moveCamera(zoom, userPoint, 0f)
         }
 
         //update ride status LOCAL
@@ -203,28 +211,23 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         //stop getting new driver
         clearData()
 
-        //start new background service
-        val app = App.appComponent.getApp()
-        app.startService(Intent(app.applicationContext, PassengerRideService::class.java))
-
-        getView()?.nextFragment()
+        getView()?.attachTrackRide()
     }
 
 
-    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
+    private fun getByValue(status: Int) =
+        StatusRide.values().firstOrNull { it.status == status }
 
 
     private fun setNewOffer(offer: Offer) {
         getView()?.getAdapter()?.setNewOffer(offer)
 
-        if (isAnimaionSearching) {
-            //animation off
-            val zoom = getView()?.getMap()?.map?.cameraPosition?.zoom
-            val userPoint = getUserPoint()
+        //animation off
+        val zoom = getView()?.getMap()?.map?.cameraPosition?.zoom
+        val userPoint = getUserPoint()
 
-            if (zoom != null && userPoint != null) {
-                moveCamera(zoom, userPoint)
-            }
+        if (zoom != null && userPoint != null) {
+            moveCamera(zoom, userPoint, 0f)
         }
 
         if (!isVibration) {
@@ -258,7 +261,8 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
                             parseDate?.let {
                                 thatDay.time = parseDate
                                 val diff = today - thatDay.timeInMillis
-                                offer.timeLine = OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
+                                offer.timeLine =
+                                    OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
                             }
                         }
                     } catch (e: ParseException) {
@@ -285,35 +289,46 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
     override fun confirmAccept() {
         offer?.let {
-            getDriverDone(true)
+            getOfferDone(true)
         }
     }
 
 
-    override fun moveCamera(zoom: Float, point: Point) {
+    private fun moveCamera(zoom: Float, point: Point, duration: Float) {
         getView()?.getMap()?.map?.move(
             CameraPosition(point, zoom, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 30f),
+            Animation(Animation.Type.LINEAR, duration),
             null
         )
     }
 
 
     override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
-        //cancel ride remote
-        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
-
-        //send cancel reason
-        getDriverInteractor.sendReason(textReason) {}
-
-        if (reasonID == ReasonCancel.MISTAKE_ORDER || reasonID == ReasonCancel.OTHER_REASON) {
-            Coordinate.toAdr = null
-        } else ActiveRide.activeRide?.let { restoreRide(it) }
-
         //stop getting new offers
         val app = App.appComponent
         app.getApp().stopService(Intent(app.getContext(), PassengerRideService::class.java))
+
+        ActiveRide.activeRide?.let { restoreRide(it) }
+
+        cancelRideListener(reasonID, textReason)
+
         clearData()
+        ActiveRide.activeRide = null
+        getDriverInteractor.removeRideId()
+    }
+
+
+    private fun cancelRideListener(reasonID: ReasonCancel, textReason: String) {
+        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) { isSuccess ->
+            if (!isSuccess) {
+                Handler().postDelayed({
+                    cancelDone(reasonID, textReason)
+                }, 500)
+            }
+        }
+
+        getDriverInteractor.sendReason(textReason) {}
+
         ActiveRide.activeRide = null
         getDriverInteractor.removeRideId()
     }
@@ -324,9 +339,7 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         getView()?.showNotification(res.getString(R.string.rideCancel))
 
         //redirect
-        val bundle = Bundle()
-        bundle.putInt(REASON, reasonID.reason)
-        MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), bundle)
+        getView()?.onCancelRide(reasonID)
     }
 
 
@@ -355,7 +368,6 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
 
 
     private fun clearData() {
-        mainHandler?.removeCallbacksAndMessages(null)
         OffersMainTimer.getInstance()?.cancel()
         OffersMainTimer.deleteInstance()
         list.clear()
@@ -368,19 +380,15 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     }
 
 
-    override fun onUserLocationAttach() {
-        //start animation searching
+    override fun startSearchAnimation() {
         val userPoint = getUserPoint()
 
-        if (userPoint != null && !isAnimaionSearching) {
-            getView()?.startAnimSearch(
-                Point(
-                    userPoint.latitude,
-                    userPoint.longitude
-                )
-            )
-
-            isAnimaionSearching = true
+        if (userPoint != null) {
+            val zoom = getView()?.getMap()?.map?.cameraPosition?.zoom?.minus(1)
+            zoom?.let {
+                moveCamera(35f, userPoint, 0f)
+                moveCamera(zoom, userPoint, 150f)
+            }
         }
     }
 
@@ -391,8 +399,9 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
         val toLat = ride.toLat
         val toLng = ride.toLng
 
-        val fromPoint = if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
-        else null
+        val fromPoint =
+            if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
+            else null
 
         val toPoint = if (toLat != null && toLng != null) AddressPoint(toLat, toLng)
         else null
@@ -419,12 +428,9 @@ class GetDriverPresenter : BasePresenter<ContractView.IGetDriverView>(),
     override fun getOffer(): Offer? = this.offer
 
 
-    override fun getOffers(): ArrayList<Offer> {
-        return list
-    }
+    override fun getOffers() = list
 
 
-    override fun instance(): GetDriverPresenter {
-        return this
-    }
+    override fun instance() = this
+
 }

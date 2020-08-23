@@ -1,7 +1,6 @@
 package bonch.dev.poputi.presentation.modules.passenger.regular.ride.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
@@ -1218,7 +1217,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
                 save_ride.text = ""
                 save_ride.isClickable = false
                 save_ride.isFocusable = false
-                progress_bar.visibility = View.VISIBLE
+                progress_bar_btn.visibility = View.VISIBLE
             }
         }
 
@@ -1233,7 +1232,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
                 save_ride.text = getString(R.string.saveC)
                 save_ride.isClickable = true
                 save_ride.isFocusable = true
-                progress_bar.visibility = View.GONE
+                progress_bar_btn.visibility = View.GONE
             }
         }
 

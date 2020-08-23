@@ -4,22 +4,23 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
-import bonch.dev.poputi.R
 import bonch.dev.poputi.App
+import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.chat.MessageObject
 import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
+import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.poputi.route.MainRouter
 import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.google.gson.Gson
+import com.yandex.mapkit.geometry.Point
 import javax.inject.Inject
 
 class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
@@ -28,9 +29,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     @Inject
     lateinit var getDriverInteractor: IGetDriverInteractor
 
-    private val REASON = "REASON"
-
-    private var isRegistered = false
+    @Inject
+    lateinit var routing: Routing
 
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
@@ -55,19 +55,15 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         val app = App.appComponent.getApp()
 
         //check regestered receivers before
-        if (!isRegistered) {
-            app.registerReceiver(
-                changeRideReceiver,
-                IntentFilter(PassengerRideService.CHANGE_RIDE_TAG)
-            )
+        app.registerReceiver(
+            changeRideReceiver,
+            IntentFilter(PassengerRideService.CHANGE_RIDE_TAG)
+        )
 
-            app.registerReceiver(
-                chatReceiver,
-                IntentFilter(PassengerRideService.CHAT_TAG)
-            )
-
-            isRegistered = true
-        }
+        app.registerReceiver(
+            chatReceiver,
+            IntentFilter(PassengerRideService.CHAT_TAG)
+        )
     }
 
 
@@ -136,9 +132,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun backFragment(reasonID: ReasonCancel) {
-        if (reasonID != ReasonCancel.MISTAKE_ORDER && reasonID != ReasonCancel.OTHER_REASON) {
-            ActiveRide.activeRide?.let { restoreRide(it) }
-        }
+        ActiveRide.activeRide?.let { restoreRide(it) }
 
         ActiveRide.activeRide = null
         getDriverInteractor.removeRideId()
@@ -146,10 +140,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         val res = App.appComponent.getContext().resources
         getView()?.showNotification(res.getString(R.string.rideCancel))
 
-        //redirect
-        val bundle = Bundle()
-        bundle.putInt(REASON, reasonID.reason)
-        MainRouter.showView(R.id.show_back_view, getView()?.getNavHost(), bundle)
+        getView()?.onCancelRide(reasonID)
     }
 
 
@@ -190,8 +181,11 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun showChat(context: Context, fragment: Fragment) {
-        MainRouter.showView(R.id.show_chat, getView()?.getNavHost(), null)
-        getView()?.checkoutIconChat(false)
+        MainRouter.showView(R.id.chat_activity, getView()?.getNavHost(), null)
+
+        Handler().postDelayed({
+            getView()?.checkoutIconChat(false)
+        }, 1000)
     }
 
 
@@ -221,9 +215,32 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun instance(): TrackRidePresenter {
-        return this
+    override fun route() {
+        val fromLat = ActiveRide.activeRide?.fromLat
+        val fromLng = ActiveRide.activeRide?.fromLng
+        val toLat = ActiveRide.activeRide?.toLat
+        val toLng = ActiveRide.activeRide?.toLng
+        val map = getView()?.getMap()
+
+        if (fromLat != null && fromLng != null && toLat != null && toLng != null && map != null) {
+            val from = Point(fromLat, fromLng)
+            val to = Point(toLat, toLng)
+
+            routing.submitRequest(from, to, true, map, false)
+        }
     }
 
+
+    override fun showRoute() {
+        routing.showRoute()
+    }
+
+
+    override fun removeRoute() {
+        routing.removeRoute()
+    }
+
+
+    override fun instance() = this
 
 }

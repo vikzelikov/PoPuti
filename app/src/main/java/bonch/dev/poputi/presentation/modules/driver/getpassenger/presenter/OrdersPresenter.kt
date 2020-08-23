@@ -200,7 +200,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
 
     private fun showOrder(orders: ArrayList<RideInfo>, isFirst: Boolean) {
-        var delay = 500L
+        var delay = 350L
         orders.sortBy { it.distance }
 
         orders.forEachIndexed { i, order ->
@@ -212,7 +212,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                         getView()?.getAdapter()?.setNewOrder(i, order)
                     }, delay)
 
-                    delay += 500
+                    delay += 300
                 }
             }
         }

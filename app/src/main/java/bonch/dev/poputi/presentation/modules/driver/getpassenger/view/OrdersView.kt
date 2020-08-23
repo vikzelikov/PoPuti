@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.driver.DaggerGetPassengerComponent
 import bonch.dev.poputi.di.module.driver.GetPassengerModule
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.adapters.OrdersAdapter
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.ContractPresenter

@@ -3,18 +3,14 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.os.Bundle
-import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.CreateRideView
-import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.DetailRideView
-import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.user_location.UserLocationLayer
 
 
@@ -23,63 +19,22 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
 
 
     private var childCreateRide: ContractView.ICreateRideView? = null
-    private var childDetailRide: ContractView.IDetailRideView? = null
 
-    private val REASON = "REASON"
 
-    override fun isUserCoordinate(args: Bundle?) {
-        val reason = args?.getInt(REASON)
-        val fm = getView()?.getFM()
-
-        if (reason == ReasonCancel.DRIVER_CANCEL.reason || reason == ReasonCancel.WAIT_LONG.reason) {
-            //in case cancel ride
-            //redirect user to next screens
-            fm?.let {
-                attachDetailRide(fm)
-            }
-        } else {
-            fm?.let {
-                attachCreateRide(fm)
-            }
-        }
-    }
-
-    //Child fragments
     override fun attachCreateRide(fm: FragmentManager) {
-        childDetailRide = null
-
         val childFragment = CreateRideView()
 
         //pass callback
         childFragment.locationLayer = { getUserLocation() }
         childFragment.moveMapCamera = { getView()?.moveCamera(it) }
-        childFragment.nextFragment = { attachDetailRide(it) }
+        childFragment.attachDetalRide = { getView()?.attachDetailRide() }
+        childFragment.mapView = { getView()?.getMap() }
+        childFragment.zoomMap = { getView()?.zoomMap(it) }
 
         this.childCreateRide = childFragment
         fm.beginTransaction()
             .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
             .replace(R.id.frame_container, childFragment, CreateRideView::class.java.simpleName)
-            .commit()
-
-        getView()?.getNavView()?.visibility = View.VISIBLE
-        getView()?.correctMapView()
-    }
-
-
-    override fun attachDetailRide(fm: FragmentManager) {
-        childCreateRide = null
-
-        val childFragment = DetailRideView()
-
-        //pass callback
-        childFragment.backHandler = { backFragment(it) }
-        childFragment.mapView = { getView()?.getMap() }
-        childFragment.bottomNavView = getView()?.getNavView()
-
-        this.childDetailRide = childFragment
-        fm.beginTransaction()
-            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-            .replace(R.id.frame_container, childFragment, DetailRideView::class.java.simpleName)
             .commit()
     }
 
@@ -94,13 +49,11 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
     }
 
 
-    override fun instance(): MapCreateRidePresenter {
-        return this
-    }
+    override fun instance() = this
 
 
-    override fun requestGeocoder(point: Point?) {
-        childCreateRide?.requestGeocoder(point)
+    override fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean) {
+        childCreateRide?.requestGeocoder(cameraPosition, isUp)
     }
 
 
@@ -124,11 +77,4 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
 
         return bitmap
     }
-
-
-    private fun backFragment(fm: FragmentManager) {
-        attachCreateRide(fm)
-        childCreateRide?.backEvent()
-    }
-
 }

@@ -1,5 +1,7 @@
 package bonch.dev.poputi.presentation.modules.passenger.getdriver.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -12,18 +14,17 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
-import bonch.dev.poputi.App
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Driver
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
-import bonch.dev.domain.utils.Keyboard
-import bonch.dev.domain.utils.Vibration
+import bonch.dev.poputi.domain.utils.Vibration
 import bonch.dev.poputi.presentation.base.MBottomSheet
+import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
@@ -31,6 +32,7 @@ import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.Contr
 import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.ethanhua.skeleton.Skeleton
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.track_ride_layout.*
@@ -49,7 +51,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     lateinit var mapView: ParentMapHandler<MapView>
-    lateinit var nextFragment: ParentHandler<FragmentManager>
+    lateinit var nextFragment: ParentEmptyHandler
+    lateinit var cancelRide: ParentHandler<ReasonCancel>
+
+    private var isAllowSlide = true
 
 
     init {
@@ -64,24 +69,16 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //start background service
-        val app = App.appComponent.getApp()
-        if (!PassengerRideService.isRunning) app.startService(
-            Intent(
-                app.applicationContext,
-                PassengerRideService::class.java
-            )
-        )
-
-        //regestered receivers for listener data from service
-        trackRidePresenter.registerReceivers()
-
         return inflater.inflate(R.layout.track_ride_layout, container, false)
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        showSkeletonAnim()
+
+        onViewCreatedAnimation()
 
         correctMapView()
 
@@ -95,16 +92,18 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun setInfoDriver(driver: Driver) {
-        driver_name.text = driver.firstName
-        car_number.text = driver.car?.number
-        car_name.text = driver.car?.name?.plus(" ")?.plus(driver.car?.model)
+        driver_name?.text = driver.firstName
+        car_number?.text = driver.car?.number
+        car_name?.text = driver.car?.name?.plus(" ")?.plus(driver.car?.model)
 
         var photo: Any? = driver.photos?.lastOrNull()?.imgUrl
         if (photo == null) photo = R.drawable.ic_default_ava
-        Glide.with(img_driver.context).load(photo)
-            .apply(RequestOptions().centerCrop().circleCrop())
-            .error(R.drawable.ic_default_ava)
-            .into(img_driver)
+        img_driver?.let {
+            Glide.with(it.context).load(photo)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
+                .into(it)
+        }
 
         //set status
         var status = trackRidePresenter.getByValue(ActiveRide.activeRide?.statusId)
@@ -114,28 +113,33 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun checkoutStatusView(idStep: StatusRide) {
-        context?.let { Vibration.start(it) }
-
         when (idStep) {
             StatusRide.WAIT_FOR_DRIVER -> {
                 status_driver?.text = resources.getString(R.string.driverInWay)
             }
 
             StatusRide.WAIT_FOR_PASSANGER -> {
+                context?.let { Vibration.start(it) }
                 status_driver?.text = resources.getString(R.string.driverArrived)
             }
 
             StatusRide.IN_WAY -> {
+                trackRidePresenter.route()
+                phone_call_layout?.visibility = View.GONE
+                chat_layout?.visibility = View.GONE
+                show_route?.visibility = View.VISIBLE
                 status_driver?.text = resources.getString(R.string.inWay)
             }
 
             StatusRide.GET_PLACE -> {
+                context?.let { Vibration.start(it) }
                 trackRidePresenter.clearData()
 
-                nextFragment()
+                attachRateView()
             }
 
             StatusRide.CANCEL -> {
+                context?.let { Vibration.start(it) }
                 trackRidePresenter.clearData()
 
                 //driver has cancelled this ride
@@ -241,6 +245,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             trackRidePresenter.cancelDoneOtherReason(comment_text.text.toString())
         }
 
+        show_route.setOnClickListener {
+            trackRidePresenter.showRoute()
+        }
+
         cancel.setOnClickListener {
             textReason?.let {
                 trackRidePresenter.cancelDone(reasonID, it)
@@ -330,59 +338,61 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private fun driverCancelRide() {
         hideAllBottomSheet()
 
+        isAllowSlide = false
         (driverCancelledBottomSheet as? MBottomSheet<*>)?.swipeEnabled = false
-        main_info_layout.elevation = 0f
-        on_map_view.visibility = View.VISIBLE
-        on_map_view.isClickable = false
-        on_map_view.alpha = 0.8f
+        on_map_view?.visibility = View.VISIBLE
+        on_map_view?.isClickable = false
+        on_map_view?.alpha = 0.8f
+        main_coordinator?.elevation = 100f
 
-        Handler().postDelayed({
-            driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
-        }, 500)
+        driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
     private fun onSlideCancelReason(slideOffset: Float) {
-        if (slideOffset > 0) {
+        if (slideOffset > 0 && isAllowSlide) {
             on_map_view.alpha = slideOffset * 0.8f
         }
     }
 
 
     private fun onChangedStateCancelReason(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_map_view.visibility = View.GONE
-            main_info_layout.elevation = 30f
-            comment_text.clearFocus()
-        } else {
-            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-            on_map_view.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                on_map_view.visibility = View.GONE
+                comment_text.clearFocus()
+            } else {
+                confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                on_map_view.visibility = View.VISIBLE
+            }
         }
     }
 
 
     private fun onChangedStateConfirmCancel(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            main_coordinator.elevation = 10f
-        } else {
-            main_coordinator.elevation = 0f
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                main_coordinator?.elevation = 100f
+            } else {
+                main_coordinator?.elevation = 65f
+            }
         }
     }
 
 
     private fun onChangedStateComment(newState: Int) {
-        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-            hideKeyboard()
-            comment_text.clearFocus()
-        }
+        if (isAllowSlide) {
+            if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                hideKeyboard()
+                comment_text.clearFocus()
+            }
 
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            comment_text.clearFocus()
-        } else {
-            confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-            on_map_view.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                comment_text.clearFocus()
+            } else {
+                confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+                on_map_view.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -398,7 +408,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
                     )
                 //"-10" for correct view radius corners
                 if (height != null) {
-                    layoutParams.setMargins(0, 0, 0, height - 10)
+                    layoutParams.setMargins(0, 0, 0, height - 300)
                 }
                 getMap()?.layoutParams = layoutParams
             }
@@ -427,11 +437,13 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         var status = trackRidePresenter.getByValue(ActiveRide.activeRide?.statusId)
         if (status == null) status = StatusRide.SEARCH
 
-        if (status == StatusRide.WAIT_FOR_PASSANGER) {
+        if (status == StatusRide.WAIT_FOR_PASSANGER || status == StatusRide.IN_WAY) {
             //get payment for cancel
             val tax = trackRidePresenter.getTaxMoney()
 
-            var message = resources.getString(R.string.messageWarningTakeMoney)
+            var message = if (status == StatusRide.IN_WAY) {
+                resources.getString(R.string.messageWarningTakeMoneyInWay)
+            } else resources.getString(R.string.messageWarningTakeMoney)
             val rub = resources.getString(R.string.rub)
 
             message = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -441,13 +453,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
                 message.plus(" ").plus(Html.fromHtml("<b>$tax $rub</b>"))
             }
 
-            text_message.text = message
+            text_message?.text = message
 
         } else if (status == StatusRide.WAIT_FOR_DRIVER) {
-            text_message.text = resources.getString(R.string.messageWarningDriverIs)
+            text_message?.text = resources.getString(R.string.messageWarningDriverIs)
         }
 
-        main_coordinator.elevation = 0f
         confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -463,9 +474,17 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
-    override fun nextFragment() {
-        val fm = (activity as? MainActivity)?.supportFragmentManager
-        fm?.let { nextFragment(fm) }
+    override fun attachRateView() {
+        track_ride_layout?.alpha = 1.0f
+        track_ride_layout?.animate()
+            ?.alpha(0f)
+            ?.setDuration(150)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                }
+            })
+
+        nextFragment()
     }
 
 
@@ -484,6 +503,83 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         }
 
         return isBackPressed
+    }
+
+
+    override fun registerReceivers() {
+        trackRidePresenter.registerReceivers()
+    }
+
+
+    private fun onViewCreatedAnimation() {
+        track_ride_layout?.alpha = 0.0f
+        track_ride_layout?.animate()?.alpha(1f)?.duration = 200
+    }
+
+
+    override fun onCancelRide(reason: ReasonCancel) {
+        cancelRide(reason)
+    }
+
+
+    private fun showSkeletonAnim() {
+        val imgDriver = Skeleton.bind(img_driver)
+            .load(R.layout.skeleton_layout)
+            .show()
+
+        val driverName = Skeleton.bind(driver_name)
+            .load(R.layout.skeleton_layout)
+            .show()
+
+        val carNumber = Skeleton.bind(car_number)
+            .load(R.layout.skeleton_layout)
+            .show()
+
+        val carName = Skeleton.bind(car_name)
+            .load(R.layout.skeleton_layout)
+            .show()
+
+        var handler: Handler? = Handler()
+        handler?.postDelayed(object : Runnable {
+            override fun run() {
+                val driver = ActiveRide.activeRide?.driver
+                if (driver != null) {
+
+                    resetLayouts()
+
+                    setInfoDriver(driver)
+
+                    imgDriver.hide()
+                    driverName.hide()
+                    carNumber.hide()
+                    carName.hide()
+
+                    handler?.removeCallbacksAndMessages(null)
+                    handler = null
+                }
+
+                handler?.postDelayed(this, 1500)
+            }
+        }, 0)
+    }
+
+
+    private fun resetLayouts() {
+        val layoutDriverName = driver_name?.layoutParams
+        layoutDriverName?.height = LinearLayout.LayoutParams.WRAP_CONTENT
+        layoutDriverName?.width = LinearLayout.LayoutParams.WRAP_CONTENT
+        driver_name?.layoutParams = layoutDriverName
+
+        val layoutCarNumber = car_number?.layoutParams
+        layoutCarNumber?.height = LinearLayout.LayoutParams.WRAP_CONTENT
+        layoutCarNumber?.width = LinearLayout.LayoutParams.WRAP_CONTENT
+        car_number?.layoutParams = layoutCarNumber
+
+        val layoutCarName = car_name?.layoutParams
+        layoutCarName?.height = LinearLayout.LayoutParams.WRAP_CONTENT
+        layoutCarName?.width = LinearLayout.LayoutParams.WRAP_CONTENT
+        car_name?.layoutParams = layoutCarName
+
     }
 
 

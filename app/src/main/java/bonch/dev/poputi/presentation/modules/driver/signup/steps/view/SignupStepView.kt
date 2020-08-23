@@ -115,7 +115,7 @@ class SignupStepView : Fragment(), ISignupStepView {
             kotlin.run {
                 on_view?.alpha = 0.9f
                 on_view?.visibility = View.VISIBLE
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
                 loading_text?.visibility = View.VISIBLE
             }
         }
@@ -128,7 +128,7 @@ class SignupStepView : Fragment(), ISignupStepView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
                 loading_text?.visibility = View.GONE
                 on_view?.alpha = 0.9f
                 on_view?.animate()

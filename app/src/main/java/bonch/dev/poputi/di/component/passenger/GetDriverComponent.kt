@@ -20,37 +20,28 @@ interface GetDriverComponent {
     fun inject(target: MapCreateRidePresenter)
 
 
-    //yandex map get driver
-    fun inject(target: MapGetDriverView)
-
-
     //create ride
     fun inject(target: CreateRideView)
-
     fun inject(target: CreateRidePresenter)
 
 
     //detail ride
     fun inject(target: DetailRideView)
-
     fun inject(target: DetailRidePresenter)
 
 
     //add bank card
     fun inject(target: AddBankCardView)
-
     fun inject(target: AddBankCardPresenter)
 
 
-    //get driver
-    fun inject(target: GetDriverView)
-
-    fun inject(target: GetDriverPresenter)
+    //get offers
+    fun inject(target: GetOffersView)
+    fun inject(target: GetOffersPresenter)
 
 
     //track ride
     fun inject(target: TrackRideView)
-
     fun inject(target: TrackRidePresenter)
 
 

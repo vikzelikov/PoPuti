@@ -66,6 +66,7 @@
     <string name="driver_say_to_cancel">Водитель попросил отменить</string>
     <string name="messageWarningDriverIs">Водитель уже нашелся! Вы уверены, что хотите отменить поездку?</string>
     <string name="messageWarningTakeMoney">Водитель уже подъехал! В случае отмены мы вынуждены снять с вас </string>
+    <string name="messageWarningTakeMoneyInWay">Вы уже в пути! В случае отмены мы вынуждены снять с вас </string>
     <string name="timeExpired">Время ожидания истекло</string>
     <string name="ok">Понятно</string>
     <string name="becomeDriver">Стать водителем</string>
@@ -237,7 +238,7 @@
     <string name="change_mind_text">Пассажир уже ожидает вас! В случае отмены заказа мы будем вынуждены снизить вам рейтинг.</string>
     <string name="force_majeure_text">Сломалась машина? Попали в ДТП? Остановили сотрудники ГИБДД? Сложная дорожная ситуация?</string>
     <string name="searchingDriver">Поиск водителя</string>
-    <string name="hurriesToYou">Уже спешит к вам</string>
+    <string name="hurriesToYou">Спешит к вам</string>
     <string name="clickForDetail">Нажмите для подробностей</string>
     <string name="waitFreeTime">Время бесплатного ожидания - 5 минут</string>
     <string name="checkOffersFromDriver">Посмотрите предложения водителей</string>

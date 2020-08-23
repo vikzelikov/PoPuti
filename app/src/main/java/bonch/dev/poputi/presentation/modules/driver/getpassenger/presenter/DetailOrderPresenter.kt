@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import androidx.fragment.app.Fragment
-import bonch.dev.poputi.R
-import bonch.dev.domain.utils.Vibration
 import bonch.dev.poputi.App
+import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
+import bonch.dev.poputi.domain.utils.Vibration
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
@@ -27,12 +27,11 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     @Inject
     lateinit var getPassengerInteractor: IGetPassengerInteractor
 
-    var blockHandler: Handler? = null
-    var handlerHotification: Handler? = null
+    var offerPriceHandler: Handler? = null
 
     private var activeOfferId: Int? = null
     private var activeOfferPrice: Int? = null
-    private var isBlock = false
+    private var isNextStep = false
     var isStop = true
 
     private val OFFER_PRICE_TIMEOUT = 30000L
@@ -46,39 +45,19 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     override fun nextFragment() {
         getView()?.showLoading()
 
-        val context = App.appComponent.getContext()
+        isNextStep = true
 
-        //update status
-        ActiveRide.activeRide?.statusId = StatusRide.WAIT_FOR_DRIVER.status
-
-        if (!isBlock) {
-            isBlock = true
-
-            //set this account of driver into ride
-            getPassengerInteractor.setDriverInRide { isSuccess ->
-
-                val rideId = ActiveRide.activeRide?.rideId
-
-                getView()?.hideLoading()
-
-                if (isSuccess && rideId != null) {
-                    isStop = false
-
-                    getPassengerInteractor.saveRideId(rideId)
-
-                    context.let { Vibration.start(it) }
-                    getView()?.showNotification(context.getString(R.string.rideCreated))
-
-                    getView()?.nextFragment()
-                } else {
-                    getView()?.showNotification(context.getString(R.string.errorSystem))
-                }
-            }
+        //set this account of driver into ride
+        getPassengerInteractor.setDriverInRide { isSuccess ->
+            onResponseServer(isSuccess)
         }
     }
 
 
     override fun receiveOrder(order: RideInfo?) {
+        Routing.mapObjects = null
+        Routing.mapObjectsDriver = null
+
         if (order != null) {
             val map = getView()?.getMap()
             val fromLat = order.fromLat
@@ -97,7 +76,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
             //set directions
             if (fromPoint != null && toPoint != null && map != null) {
                 //set routes
-                routing.submitRequest(fromPoint, toPoint, true, map)
+                routing.submitRequest(fromPoint, toPoint, true, map, true)
             }
 
             //set UI
@@ -111,10 +90,13 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
     //SOCKET: change ride status (cancel) or cancel offer price
     override fun subscribeOnRide() {
+        isNextStep = false
+        isStop = true
+
         getPassengerInteractor.connectSocket { isSuccess ->
             if (isSuccess) {
                 getPassengerInteractor.subscribeOnChangeRide { data, _ ->
-                    if (data != null) {
+                    if (data != null && !isNextStep) {
                         val ride = Gson().fromJson(data, Ride::class.java)?.ride
                         if (ride != null) {
                             val userIdLocal = getPassengerInteractor.getUserId()
@@ -129,8 +111,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                             //ride change for this driver
                             if (status == StatusRide.WAIT_FOR_DRIVER.status && userIdLocal == userIdRemote) {
                                 ActiveRide.activeRide?.price = activeOfferPrice
-                                clearData()
-                                nextFragment()
+
+                                onResponseServer(true)
                             }
                         }
                     }
@@ -149,6 +131,35 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
             } else getView()?.showNotification(
                 App.appComponent.getContext().getString(R.string.errorSystem)
             )
+        }
+    }
+
+
+    private fun onResponseServer(isSuccess: Boolean) {
+        val context = App.appComponent.getContext()
+
+        //update status
+        ActiveRide.activeRide?.statusId = StatusRide.WAIT_FOR_DRIVER.status
+
+        val rideId = ActiveRide.activeRide?.rideId
+
+        getView()?.hideLoading()
+
+        if (isSuccess && rideId != null) {
+            isStop = false
+
+            clearData()
+
+            getPassengerInteractor.saveRideId(rideId)
+
+            context.let { Vibration.start(it) }
+            getView()?.showNotification(context.getString(R.string.rideCreated))
+
+            getView()?.nextFragment()
+        } else {
+            isNextStep = false
+
+            getView()?.showNotification(context.getString(R.string.errorSystem))
         }
     }
 
@@ -178,8 +189,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
                     offer.offerId?.let { activeOfferId = it }
                     offer.price?.let { activeOfferPrice = it }
 
-                    handlerHotification = Handler()
-                    handlerHotification?.postDelayed({
+                    offerPriceHandler = Handler()
+                    offerPriceHandler?.postDelayed({
                         getView()?.hideOfferPrice(true)
                     }, OFFER_PRICE_TIMEOUT)
                 } else {
@@ -223,22 +234,8 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         }
 
         if (userPoint != null && fromPoint != null && map != null) {
-            Routing().submitRequest(userPoint, fromPoint, false, map)
+            Routing().submitRequest(userPoint, fromPoint, false, map, true)
         }
-    }
-
-
-    override fun startProcessBlock() {
-        if (blockHandler == null) {
-            blockHandler = Handler()
-        }
-
-        blockHandler?.postDelayed(object : Runnable {
-            override fun run() {
-                isBlock = false
-                blockHandler?.postDelayed(this, 3500)
-            }
-        }, 0)
     }
 
 
@@ -252,8 +249,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
 
 
     private fun clearData() {
-        handlerHotification?.removeCallbacksAndMessages(null)
-        blockHandler?.removeCallbacksAndMessages(null)
+        offerPriceHandler?.removeCallbacksAndMessages(null)
         getPassengerInteractor.disconnectSocket()
     }
 

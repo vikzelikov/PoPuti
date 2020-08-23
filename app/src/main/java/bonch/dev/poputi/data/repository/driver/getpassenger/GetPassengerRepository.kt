@@ -1,14 +1,14 @@
 package bonch.dev.poputi.data.repository.driver.getpassenger
 
 import android.util.Log
+import bonch.dev.domain.utils.Constants
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.driver.GetPassangerService
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.OfferPrice
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.utils.Constants
-import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import com.pusher.client.Pusher
@@ -16,9 +16,7 @@ import com.pusher.client.PusherOptions
 import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
-import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
-import com.pusher.client.connection.ConnectionStateChange
 import com.pusher.client.util.HttpAuthorizer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,13 +53,7 @@ class GetPassengerRepository : IGetPassengerRepository {
 
             pusher = Pusher(apiKey, options)
 
-            pusher?.connect(object : ConnectionEventListener {
-                override fun onConnectionStateChange(change: ConnectionStateChange) {}
-
-                override fun onError(message: String, code: String, e: Exception) {
-                    callback(false)
-                }
-            }, ConnectionState.ALL)
+            pusher?.connect()
 
             channel = pusher?.subscribePrivate("private-$channelName.$rideId",
                 object : PrivateChannelEventListener {
@@ -106,6 +98,7 @@ class GetPassengerRepository : IGetPassengerRepository {
         channel?.bind(rideChangeEvent, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
+                    Log.e("TEST", "еу")
                     callback(event.data, null)
                 } else {
                     callback(null, "error")
@@ -139,6 +132,7 @@ class GetPassengerRepository : IGetPassengerRepository {
 
 
     override fun disconnectSocket() {
+        Log.i("SOCKET_PUSHER/P", "DISCONNECT")
         pusher?.disconnect()
     }
 

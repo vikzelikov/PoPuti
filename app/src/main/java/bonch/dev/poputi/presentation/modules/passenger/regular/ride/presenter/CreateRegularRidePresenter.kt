@@ -273,6 +273,8 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             if (fromUri != null) {
                 if (fromUri.length > 50) {
                     fromPoint = getPoint(fromUri)
+
+                    submitRoute()
                 } else {
                     SearchPlace().request(fromUri) { point, _ ->
                         fromPoint = point
@@ -285,6 +287,8 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             if (toUri != null) {
                 if (toUri.length > 50) {
                     toPoint = getPoint(toUri)
+
+                    submitRoute()
                 } else {
                     SearchPlace().request(toUri) { point, _ ->
                         toPoint = point
@@ -315,7 +319,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                     to.longitude
                 )
 
-            routing.submitRequest(from, to, true, map)
+            routing.submitRequest(from, to, true, map, false)
 
             isOnRouting = true
         }

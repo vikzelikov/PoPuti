@@ -95,12 +95,14 @@ class ActiveRidesPresenter : BasePresenter<ContractView.IActiveRidesView>(),
                     if (list.isEmpty()) getView()?.showTextEmptyRides()
                 }
 
+                getView()?.archiveRide(ride)
+
                 regularRidesInteractor.updateRideStatus(
                     StatusRide.ARCHIVE_REGULAR_RIDE,
                     it
                 ) { isSuccess ->
                     if (isSuccess) {
-                        getView()?.archiveRide(ride)
+//                        getView()?.archiveRide(ride)
                     } else {
                         getView()?.showNotification(
                             App.appComponent.getContext().getString(R.string.someError)

@@ -6,6 +6,10 @@ import bonch.dev.poputi.data.repository.common.rate.IRateRideRepository
 import bonch.dev.poputi.data.repository.common.rate.RateRideRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.common.profile.ProfileStorage
+import bonch.dev.poputi.data.storage.driver.getpassenger.GetPassengerStorage
+import bonch.dev.poputi.data.storage.driver.getpassenger.IGetPassengerStorage
+import bonch.dev.poputi.data.storage.passenger.getdriver.GetDriverStorage
+import bonch.dev.poputi.data.storage.passenger.getdriver.IGetDriverStorage
 import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.common.chat.ChatInteractor
 import bonch.dev.poputi.domain.interactor.common.chat.IChatInteractor
@@ -13,6 +17,10 @@ import bonch.dev.poputi.domain.interactor.common.offerprice.IOfferPriceInteracto
 import bonch.dev.poputi.domain.interactor.common.offerprice.OfferPriceInteractor
 import bonch.dev.poputi.domain.interactor.common.rate.IRateRideInteractor
 import bonch.dev.poputi.domain.interactor.common.rate.RateRideInteractor
+import bonch.dev.poputi.domain.interactor.driver.getpassenger.GetPassengerInteractor
+import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
+import bonch.dev.poputi.domain.interactor.passenger.getdriver.GetDriverInteractor
+import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.modules.common.chat.presenter.ChatPresenter
 import bonch.dev.poputi.presentation.modules.common.chat.presenter.IChatPresenter
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.presenter.IOfferPricePresenter
@@ -37,7 +45,7 @@ class CommonModule {
 
     @Provides
     @CompScope
-    fun providesRateRideRepository(): IRateRideRepository= RateRideRepository()
+    fun providesRateRideRepository(): IRateRideRepository = RateRideRepository()
 
 
     //CHAT
@@ -68,5 +76,13 @@ class CommonModule {
     @Provides
     @CompScope
     fun provideProfileStorage(): IProfileStorage = ProfileStorage()
+
+    @Provides
+    @CompScope
+    fun provideGetPassengerStorage(): IGetPassengerStorage = GetPassengerStorage()
+
+    @Provides
+    @CompScope
+    fun provideGetDriverStorage(): IGetDriverStorage = GetDriverStorage()
 
 }

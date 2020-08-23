@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -121,7 +122,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
             kotlin.run {
                 on_view?.alpha = 0.7f
                 on_view?.visibility = View.VISIBLE
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -135,7 +136,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
             kotlin.run {
                 on_view?.alpha = 1.0f
                 on_view?.visibility = View.VISIBLE
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -147,7 +148,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
                 on_view?.alpha = 0.7f
                 on_view?.animate()
                     ?.alpha(0f)
@@ -169,7 +170,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
                 on_view?.visibility = View.GONE
             }
         }

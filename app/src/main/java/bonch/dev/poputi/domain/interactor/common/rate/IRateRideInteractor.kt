@@ -11,4 +11,6 @@ interface IRateRideInteractor {
         callback: SuccessHandler
     )
 
+    fun removeRideId()
+
 }

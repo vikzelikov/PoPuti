@@ -2,6 +2,8 @@ package bonch.dev.poputi.domain.interactor.common.rate
 
 import bonch.dev.poputi.data.repository.common.rate.IRateRideRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
+import bonch.dev.poputi.data.storage.driver.getpassenger.IGetPassengerStorage
+import bonch.dev.poputi.data.storage.passenger.getdriver.IGetDriverStorage
 import bonch.dev.poputi.domain.entities.common.rate.Review
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -15,6 +17,12 @@ class RateRideInteractor : IRateRideInteractor {
 
     @Inject
     lateinit var profileStorage: IProfileStorage
+
+    @Inject
+    lateinit var getDriverStorage: IGetDriverStorage
+
+    @Inject
+    lateinit var getPassengerStorage: IGetPassengerStorage
 
     init {
         CommonComponent.commonComponent?.inject(this)
@@ -36,5 +44,11 @@ class RateRideInteractor : IRateRideInteractor {
                 else rateRideRepository.sendReview(review, token, callback)
             }
         } else callback(false)
+    }
+
+
+    override fun removeRideId() {
+        getDriverStorage.removeRideId()
+        getPassengerStorage.removeRideId()
     }
 }

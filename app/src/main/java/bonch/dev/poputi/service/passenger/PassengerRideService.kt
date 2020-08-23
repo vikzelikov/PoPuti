@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
@@ -68,6 +69,11 @@ class PassengerRideService : Service() {
 
         createNotificationChannel()
 
+        createConnection()
+    }
+
+
+    private fun createConnection() {
         //connect to socket
         getDriverInteractor.connectSocket { isSuccess ->
             if (isSuccess) {
@@ -94,6 +100,12 @@ class PassengerRideService : Service() {
                     intentDeleteOffer.putExtra(DELETE_OFFER_TAG, data)
                     sendBroadcast(intentDeleteOffer)
                 }
+            }
+
+            if (!isSuccess) {
+                Handler().postDelayed({
+                    createConnection()
+                }, 500)
             }
         }
 
@@ -291,6 +303,8 @@ class PassengerRideService : Service() {
         super.onDestroy()
 
         isRunning = false
+        isAppClose = false
+        isChatClose = true
 
         //remove all notification from bar
         notificatonManager.cancelAll()

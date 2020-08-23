@@ -129,7 +129,7 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
         activeRidesView.onView = onView
         activeRidesView.progressBarOpenRide = progressBarOpenRide
         activeRidesView.setArchiveRide = { setArchiveRide(it) }
-        activeRidesView.openActivity = { regularDrivePresenter.openActivity() }
+        activeRidesView.openActivity = { regularDrivePresenter.openActivity(false) }
 
         archiveRidesView.editRegularRideBottomSheet = editRegularRideBottomSheet
         archiveRidesView.edit = edit
@@ -152,7 +152,7 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
 
     override fun setListeners() {
         create_regular_ride.setOnClickListener {
-            regularDrivePresenter.openActivity()
+            regularDrivePresenter.openActivity(true)
         }
     }
 
@@ -180,7 +180,7 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
                 create_regular_ride?.setImageResource(R.drawable.ic_plus_invisible)
                 create_regular_ride?.isClickable = false
                 create_regular_ride?.isFocusable = false
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -195,7 +195,7 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
                 create_regular_ride?.setImageResource(R.drawable.ic_plus_btn)
                 create_regular_ride?.isClickable = true
                 create_regular_ride?.isFocusable = true
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
             }
         }
 

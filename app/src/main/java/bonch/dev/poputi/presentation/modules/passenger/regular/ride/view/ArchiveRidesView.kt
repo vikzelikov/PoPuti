@@ -6,7 +6,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -184,7 +183,7 @@ class ArchiveRidesView : Fragment(), ContractView.IArchiveRidesView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -196,7 +195,7 @@ class ArchiveRidesView : Fragment(), ContractView.IArchiveRidesView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
             }
         }
 

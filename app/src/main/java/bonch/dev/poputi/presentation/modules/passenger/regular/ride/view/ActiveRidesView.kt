@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -92,6 +93,8 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
 
 
     override fun onRideDone(ride: RideInfo) {
+        hideTextEmptyRides()
+
         activeRidesPresenter.onRideDone(ride)
     }
 
@@ -260,7 +263,7 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -272,7 +275,7 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
             }
         }
 

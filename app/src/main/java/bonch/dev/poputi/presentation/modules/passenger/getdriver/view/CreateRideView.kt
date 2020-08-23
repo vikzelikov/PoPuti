@@ -14,25 +14,30 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.utils.ChangeOpacity
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
+import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.AddressesAdapter
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.WrapContentLinearLayoutManager
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.create_ride_layout.*
 import javax.inject.Inject
@@ -54,7 +59,11 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
     lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var moveMapCamera: ParentHandler<Point>
-    lateinit var nextFragment: ParentHandler<FragmentManager>
+    lateinit var attachDetalRide: ParentEmptyHandler
+    lateinit var zoomMap: ParentHandler<CameraPosition>
+    lateinit var mapView: ParentMapHandler<MapView>
+
+    private var isUpMoved = true
 
 
     init {
@@ -69,6 +78,10 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        correctMapView()
+
+        createRidePresenter.instance().isNextStep = false
+
         return inflater.inflate(R.layout.create_ride_layout, container, false)
     }
 
@@ -84,7 +97,8 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
         setBottomSheet()
 
-        from_adr.setText(Coordinate.fromAdr?.address)
+        from_adr?.setText(Coordinate.fromAdr?.address)
+        Coordinate.toAdr = null
     }
 
 
@@ -102,7 +116,11 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         bottom_sheet_addresses.layoutParams = layoutParams
 
         addresses_list.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = WrapContentLinearLayoutManager(
+                context,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
             adapter = addressAdapter
         }
     }
@@ -141,17 +159,34 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         }
 
         on_map_view.setOnClickListener {
+            from_adr?.clearFocus()
+            to_adr?.clearFocus()
+
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-            hideKeyboard()
+
+            Handler().postDelayed({
+                hideKeyboard()
+            }, 250)
         }
 
         btn_map_from.setOnClickListener {
+            from_adr?.clearFocus()
+
             bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-            hideKeyboard()
+
+            Handler().postDelayed({
+                hideKeyboard()
+            }, 250)
         }
 
         btn_map_to.setOnClickListener {
+            to_adr?.clearFocus()
+
             createRidePresenter.touchMapBtn(false)
+
+            Handler().postDelayed({
+                hideKeyboard()
+            }, 250)
         }
 
         address_map_marker_btn.setOnClickListener {
@@ -163,14 +198,13 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         }
 
         setListenersAdr()
-
     }
 
 
     private fun setListenersAdr() {
         from_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
+                if (bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED && !checkCompleteAddresses()) {
                     createRidePresenter.requestSuggest(from_adr.text.toString())
                 }
             }
@@ -188,7 +222,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
         to_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
+                if (bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED && !checkCompleteAddresses()) {
                     createRidePresenter.requestSuggest(to_adr.text.toString())
                 }
             }
@@ -206,12 +240,23 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     }
 
 
+    private fun checkCompleteAddresses(): Boolean {
+        return if (Coordinate.fromAdr != null && Coordinate.toAdr != null) {
+            hideKeyboard()
+            true
+        } else false
+    }
+
+
     override fun getNavHost(): NavController? {
         return (activity as? MainActivity)?.navController
     }
 
 
     private fun setBottomSheet() {
+        center_position?.post { center_position?.alpha = 1.0f }
+        my_pos?.post { my_pos?.alpha = 1.0f }
+
         bottomSheetBehavior?.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
@@ -316,6 +361,8 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
                 }
             }
         } else {
+            Coordinate.fromAdr?.address?.let { setAddressView(true, it) }
+
             from_adr?.let {
                 if (it.isFocused) {
                     createRidePresenter.clearSuggest()
@@ -351,20 +398,44 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
 
     private fun expandedBottomSheetEvent() {
-        val activity = activity as? MainActivity
-
-        Handler().postDelayed({
-            activity?.let {
-                Keyboard.showKeyboard(activity)
-            }
-        }, 300)
         from_adr_box?.visibility = View.GONE
         to_adr_box?.visibility = View.GONE
     }
 
 
-    override fun requestGeocoder(point: Point?) {
-        createRidePresenter.requestGeocoder(point)
+    override fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean) {
+        if (isUp) {
+            if (isUpMoved) {
+                center_position?.animate()
+                    ?.setDuration(250L)
+                    ?.translationY(-50f)
+                isUpMoved = false
+            }
+        } else {
+            isUpMoved = true
+
+            zoomMap(cameraPosition)
+
+            center_position?.animate()
+                ?.setDuration(250L)
+                ?.translationY(0f)
+                ?.setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
+
+                        center_position?.let {
+                            if (it.translationY == 0.0f) {
+                                createRidePresenter.requestGeocoder(
+                                    Point(
+                                        cameraPosition.target.latitude,
+                                        cameraPosition.target.longitude
+                                    )
+                                )
+                            }
+                        }
+                    }
+                })
+        }
     }
 
 
@@ -389,11 +460,21 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
     override fun onStateChangedBottomSheet(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-            hideKeyboard()
+            from_adr?.clearFocus()
+            to_adr?.clearFocus()
+
+            Handler().postDelayed({
+                hideKeyboard()
+            }, 250)
         }
+
         if (newState == BottomSheetBehavior.STATE_EXPANDED) {
             if (bottomSheetBehavior is MBottomSheet<*>) {
                 (bottomSheetBehavior as MBottomSheet<*>).swipeEnabled = true
+
+                activity?.let {
+                    Keyboard.showKeyboard(it)
+                }
             }
         } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
             if (bottomSheetBehavior is MBottomSheet<*>) {
@@ -413,6 +494,8 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
                 from_adr?.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
                 to_adr?.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
                 (bottomSheetBehavior as MBottomSheet<*>).swipeEnabled = false
+
+                Coordinate.fromAdr?.address?.let { setAddressView(true, it) }
             }
         } else {
             on_map_view?.visibility = View.VISIBLE
@@ -422,13 +505,13 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
     override fun onClickItem(address: Address, isFromMapSearch: Boolean) {
         if (isFromMapSearch) {
+            Coordinate.fromAdr = address
             from_adr?.setText(address.address)
             from_adr?.setSelection(from_adr.text.length)
-            Coordinate.fromAdr = address
         } else {
+            Coordinate.toAdr = address
             to_adr?.setText(address.address)
             to_adr?.setSelection(to_adr.text.length)
-            Coordinate.toAdr = address
         }
     }
 
@@ -512,16 +595,23 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     }
 
 
-    override fun nextFragment() {
-        val fm = (activity as? MainActivity)?.supportFragmentManager
-        fm?.let {
-            nextFragment(it)
+    private fun correctMapView() {
+        try {
+            val layoutParams: RelativeLayout.LayoutParams =
+                RelativeLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+                )
+            layoutParams.setMargins(0, 0, 0, 0)
+            mapView()?.layoutParams = layoutParams
+        } catch (ex: Exception) {
+
         }
     }
 
 
-    override fun backEvent() {
-        createRidePresenter.backEvent()
+    override fun nextFragment() {
+        attachDetalRide()
     }
 
 

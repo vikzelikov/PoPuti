@@ -380,7 +380,7 @@
         android:id="@+id/main_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="10dp">
+        android:elevation="50dp">
 
 
         <LinearLayout
@@ -624,7 +624,7 @@
         android:id="@+id/coordinator_confirm_cancel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="10dp">
+        android:elevation="60dp">
 
         <LinearLayout
             android:id="@+id/confirm_cancel_bottom_sheet"
@@ -735,6 +735,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0"
+        android:elevation="40dp"
         android:background="@android:color/black"
         android:visibility="gone" />
 

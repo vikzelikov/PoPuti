@@ -86,7 +86,7 @@ data class RideInfo(
 
     @SerializedName("driver")
     @Expose
-    val driver: Driver? = null,
+    var driver: Driver? = null,
 
     @SerializedName("schedule")
     @Expose

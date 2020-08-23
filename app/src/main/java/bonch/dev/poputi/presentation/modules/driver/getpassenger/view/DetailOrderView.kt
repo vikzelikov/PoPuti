@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +44,6 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
     lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var nextFragment: ParentHandler<FragmentManager>
 
-    private var isBlock = false
     private val TIME_EXPIRED = 2
 
 
@@ -71,8 +71,6 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
         detailOrderPresenter.receiveOrder(ActiveRide.activeRide)
 
-        detailOrderPresenter.startProcessBlock()
-
         setListeners()
 
         setBottomSheet()
@@ -84,36 +82,38 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun setOrder(order: RideInfo) {
-        passanger_name.text = order.passenger?.firstName
-        from_order.text = order.position
-        to_order.text = order.destination
+        passanger_name?.text = order.passenger?.firstName
+        from_order?.text = order.position
+        to_order?.text = order.destination
 
-        if (order.price != null) order_price.text = order.price.toString().plus(" ₽")
+        if (order.price != null) order_price?.text = order.price.toString().plus(" ₽")
 
         val rating = order.passenger?.rating?.toString()
-        if (rating != null) passanger_rating.text = rating
-        else passanger_rating.text = "0.0"
+        if (rating != null) passanger_rating?.text = rating
+        else passanger_rating?.text = "0.0"
 
         //todo TEST
         order.passenger?.photos?.sortBy { it.id }
         var photo: Any? = order.passenger?.photos?.lastOrNull()?.imgUrl
         if (photo == null) photo = R.drawable.ic_default_ava
-        Glide.with(img_passanger.context).load(photo)
-            .apply(RequestOptions().centerCrop().circleCrop())
-            .error(R.drawable.ic_default_ava)
-            .into(img_passanger)
+        img_passanger?.let{
+            Glide.with(it.context).load(photo)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
+                .into(it)
+        }
 
         if (order.comment == null) {
-            line_comment_price.visibility = View.GONE
-            comment.visibility = View.GONE
+            line_comment_price?.visibility = View.GONE
+            comment?.visibility = View.GONE
             val layoutParams: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            order_price.layoutParams = layoutParams
+            order_price?.layoutParams = layoutParams
         } else {
-            comment.text = order.comment
-            comment_detail.text = order.comment
+            comment?.text = order.comment
+            comment_detail?.text = order.comment
         }
     }
 
@@ -174,7 +174,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         val myRunnable = Runnable {
             kotlin.run {
                 show_animation?.visibility = View.GONE
-                detailOrderPresenter.instance().handlerHotification?.removeCallbacksAndMessages(null)
+                detailOrderPresenter.instance().offerPriceHandler?.removeCallbacksAndMessages(null)
 
                 if (isShowNotification)
                     showNotification(getString(R.string.userCancellPrice))
@@ -244,20 +244,16 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
     private fun onSlideBottomSheet(slideOffset: Float) {
         if (slideOffset > 0 && slideOffset < 1) {
-            on_view.alpha = slideOffset * 0.8f
-            back_btn.alpha = 1 - slideOffset
-            show_route.alpha = 1 - slideOffset
+            on_view?.alpha = slideOffset * 0.8f
         }
     }
 
 
     private fun onStateChangedBottomSheet(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view.visibility = View.GONE
-            main_info_layout.elevation = 30f
+            on_view?.visibility = View.GONE
         } else {
-            on_view.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            on_view?.visibility = View.VISIBLE
         }
     }
 
@@ -305,11 +301,10 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                isBlock = true
                 confirm_with_price?.text = ""
                 confirm_with_price?.isClickable = false
                 confirm_with_price?.isFocusable = false
-                progress_bar?.visibility = View.VISIBLE
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -321,11 +316,10 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                isBlock = false
                 confirm_with_price?.text = getString(R.string.agreeWithPrice)
                 confirm_with_price?.isClickable = true
                 confirm_with_price?.isFocusable = true
-                progress_bar?.visibility = View.GONE
+                progress_bar_btn?.visibility = View.GONE
             }
         }
 
@@ -352,12 +346,14 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
 
         } else {
-            if (isBlock) {
-                isBackPressed = false
+            confirm_with_price?.let {
+                if (confirm_with_price.isClickable) {
+                    detailOrderPresenter.onDestroy()
+                } else {
+                    isBackPressed = false
 
-                showNotification(getString(R.string.waitPlease))
-            } else {
-                detailOrderPresenter.onDestroy()
+                    showNotification(getString(R.string.waitPlease))
+                }
             }
         }
 

@@ -22,9 +22,7 @@ import com.pusher.client.PusherOptions
 import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
-import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
-import com.pusher.client.connection.ConnectionStateChange
 import com.pusher.client.util.HttpAuthorizer
 import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.CoroutineScope
@@ -268,17 +266,12 @@ class GetDriverRepository : IGetDriverRepository {
         auth.setHeaders(NetworkUtil.getHeaders(token))
         options.authorizer = auth
 
+
         if (pusher?.connection?.state != ConnectionState.CONNECTED) {
 
             pusher = Pusher(apiKey, options)
 
-            pusher?.connect(object : ConnectionEventListener {
-                override fun onConnectionStateChange(change: ConnectionStateChange) {}
-
-                override fun onError(message: String, code: String, e: Exception) {
-                    callback(false)
-                }
-            }, ConnectionState.ALL)
+            pusher?.connect()
 
             channel = pusher?.subscribePrivate("private-$channelName.$rideId",
                 object : PrivateChannelEventListener {
@@ -294,7 +287,7 @@ class GetDriverRepository : IGetDriverRepository {
                         callback(true)
                     }
                 })
-        }
+        } else callback(true)
     }
 
 

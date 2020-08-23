@@ -39,7 +39,6 @@ interface ContractPresenter {
         fun offerPrice(context: Context, fragment: Fragment)
         fun cancelOffer(byDriver: Boolean)
         fun offerPriceDone(price: Int)
-        fun startProcessBlock()
         fun onObjectUpdate()
         fun nextFragment()
         fun onDestroy()
