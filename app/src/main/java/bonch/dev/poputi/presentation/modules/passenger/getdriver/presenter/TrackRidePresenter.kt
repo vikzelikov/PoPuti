@@ -226,7 +226,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
             val from = Point(fromLat, fromLng)
             val to = Point(toLat, toLng)
 
-            routing.submitRequest(from, to, true, map, false)
+            routing.submitRequest(from, to, true, map)
         }
     }
 

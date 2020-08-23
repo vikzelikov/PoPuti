@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.os.Handler
 import androidx.core.content.ContextCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
@@ -92,9 +91,7 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         startLocation: Point,
         endLocation: Point,
         isWaypoint: Boolean,
-
-        mapView: MapView,
-        isDriver: Boolean
+        mapView: MapView
     ) {
 
         this.mapView = mapView
@@ -109,11 +106,7 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
 
             route(startLocation, endLocation)
 
-            if (isDriver) {
-                Handler().postDelayed({
-                    showRoute()
-                }, 1000)
-            } else enterAnimation()
+            enterAnimation()
 
         } else if (!isWaypoint && mapObjectsDriver == null) {
             mapObjectsDriver = mapView.map?.mapObjects?.addCollection()
@@ -121,7 +114,7 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
             route(startLocation, endLocation)
         }
 
-        if (boundingBox != null && !isDriver) {
+        if (boundingBox != null) {
             enterAnimation()
         }
     }

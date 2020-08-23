@@ -31,7 +31,6 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
     @Inject
     lateinit var getDriverInteractor: IGetDriverInteractor
 
-
     @Inject
     lateinit var routing: Routing
 
@@ -66,6 +65,9 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     override fun checkOnEditRide() {
+        Routing.mapObjectsDriver = null
+        Routing.mapObjects = null
+
         val ride = ActiveRide.activeRide
         if (ride != null) {
             val from = ride.position
@@ -319,7 +321,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                     to.longitude
                 )
 
-            routing.submitRequest(from, to, true, map, false)
+            routing.submitRequest(from, to, true, map)
 
             isOnRouting = true
         }

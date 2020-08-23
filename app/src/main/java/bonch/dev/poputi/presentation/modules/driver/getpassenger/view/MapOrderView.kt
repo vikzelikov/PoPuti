@@ -137,17 +137,6 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
         val userMark = mapOrderPresenter.getBitmap(R.drawable.ic_car)
         userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
 
-        userLocationLayer?.setAnchor(
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.5).toFloat()
-            ),
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.83).toFloat()
-            )
-        )
-
         //for staying
         pinIcon.setIcon(
             "pin",

@@ -9,6 +9,7 @@ import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
+import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
 import com.yandex.mapkit.geometry.Point
@@ -45,6 +46,8 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
         val to = toAdr
 
         if (from != null && to != null) {
+            Routing.mapObjects = null
+
             getView()?.showDetailRide()
 
             //cash data (both of adr)

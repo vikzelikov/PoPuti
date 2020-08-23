@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.domain.utils.Constants
+import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.presentation.modules.passenger.regular.RegularDriveComponent
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.ContractPresenter
@@ -155,16 +156,18 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
         val userMark = mapCreateDrivePresenter.getBitmap(R.drawable.ic_user_mark)
         userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
 
-        userLocationLayer?.setAnchor(
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.5).toFloat()
-            ),
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.83).toFloat()
+        if (ActiveRide.activeRide == null) {
+            userLocationLayer?.setAnchor(
+                PointF(
+                    (mapView.width * 0.5).toFloat(),
+                    (mapView.height * 0.5).toFloat()
+                ),
+                PointF(
+                    (mapView.width * 0.5).toFloat(),
+                    (mapView.height * 0.83).toFloat()
+                )
             )
-        )
+        }
 
         //for staying
         pinIcon.setIcon(

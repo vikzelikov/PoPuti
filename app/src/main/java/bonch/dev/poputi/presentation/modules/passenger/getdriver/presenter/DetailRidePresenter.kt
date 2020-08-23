@@ -133,7 +133,7 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                 to.longitude
             )
 
-            routing.submitRequest(from, to, true, map, false)
+            routing.submitRequest(from, to, true, map)
         }
     }
 
