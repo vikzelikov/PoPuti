@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
@@ -22,7 +21,7 @@ class PaymentsAdapter @Inject constructor(private val detailRidePresenter: Contr
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.payment_item, parent, false)
+                .inflate(R.layout.bank_card_select_item, parent, false)
         )
     }
 
@@ -40,14 +39,6 @@ class PaymentsAdapter @Inject constructor(private val detailRidePresenter: Contr
             setTickSelected(holder.itemView)
             post.isSelect = true
             detailRidePresenter.setSelectedBankCard(post)
-        }
-
-        if (position == 0) {
-            val lineDialog: View = holder.itemView.findViewById(R.id.line_payment)
-            val params: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1)
-            params.setMargins(30, 0, 30, 0)
-            lineDialog.layoutParams = params
         }
     }
 
@@ -74,16 +65,18 @@ class PaymentsAdapter @Inject constructor(private val detailRidePresenter: Contr
             numberCard.text = post.numberCard
 
             if (post.img != null) {
-                val img = post.img!!
+                val img = post.img
 
                 if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world || img == R.drawable.ic_google_pay) {
-                    paymentImg.setImageResource(post.img!!)
+                    paymentImg.setImageResource(img)
+                }
+
+                if (img == R.drawable.ic_google_pay) {
+                    paymentImg.setImageResource(img)
+                    numberCard.text = ""
                 }
             }
         }
-
     }
-
-
 }
 

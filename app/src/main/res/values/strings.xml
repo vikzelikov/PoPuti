@@ -258,6 +258,9 @@
     <string name="archive">Архивировать</string>
     <string name="restore">Восстановить</string>
     <string name="delete">Удалить</string>
+    <string name="selectCity">Выбор города</string>
+    <string name="profits">Доходы</string>
+    <string name="youHaveNoBanking">У Вас не добавлено ни одной карты</string>
 
 
 </resources>

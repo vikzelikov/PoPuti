@@ -20,6 +20,7 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.passenger.DaggerRegularDriveComponent
 import bonch.dev.poputi.di.module.passenger.RegularRidesModule
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.modules.passenger.regular.RegularDriveComponent
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters.ViewPagerAdapter
@@ -117,6 +118,9 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
                 ActiveRide.activeRide = null
             }
         }
+
+        Coordinate.fromAdr = null
+        Coordinate.toAdr = null
     }
 
 

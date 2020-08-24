@@ -1,4 +1,4 @@
-package bonch.dev.poputi.presentation.modules.common.profile.presenter
+package bonch.dev.poputi.presentation.modules.common.profile.menu.presenter
 
 import android.content.Intent
 import androidx.fragment.app.Fragment
@@ -15,6 +15,12 @@ interface IProfilePresenter {
     fun checkoutAccount(isPassanger: Boolean, fragment: Fragment)
 
     fun profileDataResult(data: Intent)
+
+    fun addBankCard()
+
+    fun confirmPerson(fragment: Fragment)
+
+    fun storyOrders()
 
     fun logout()
 

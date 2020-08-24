@@ -10,6 +10,7 @@ import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.user_location.UserLocationLayer
+import java.util.ArrayList
 
 interface ContractPresenter {
 
@@ -39,6 +40,7 @@ interface ContractPresenter {
         fun startProcessBlockRequest()
         fun requestGeocoder(point: Point?)
         fun requestSuggest(query: String)
+        fun getBankCards(): ArrayList<BankCard>
         fun instance(): CreateRegularRidePresenter
         fun setSelectedBankCard(bankCard: BankCard)
         fun addBankCard(context: Context, fragment: Fragment)

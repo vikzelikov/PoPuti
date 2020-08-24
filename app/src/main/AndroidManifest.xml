@@ -29,7 +29,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".presentation.modules.common.profile.view.ProfileDetailView"
+            android:name=".presentation.modules.common.profile.me.view.ProfileDetailView"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -74,6 +74,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".presentation.modules.common.profile.banking.BankingView" />
 
         <service
             android:name="bonch.dev.poputi.service.passenger.PassengerRideService"

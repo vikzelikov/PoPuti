@@ -9,7 +9,7 @@ import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.OrdersView
 import bonch.dev.poputi.presentation.modules.driver.rating.view.RatingView
-import bonch.dev.poputi.presentation.modules.common.profile.view.ProfileView
+import bonch.dev.poputi.presentation.modules.common.profile.menu.view.ProfileView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment() {
@@ -128,7 +128,8 @@ class MainFragment : Fragment() {
         }
 
         if (profile == null) {
-            profile = ProfileView()
+            profile =
+                ProfileView()
         }
     }
 

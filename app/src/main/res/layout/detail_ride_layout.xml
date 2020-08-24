@@ -331,7 +331,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
                 android:drawableEnd="@drawable/ic_arrow_right"
-                android:paddingStart="70dp"
+                android:paddingStart="15dp"
                 android:paddingTop="27dp"
                 android:paddingBottom="27dp"
                 android:text="@string/add_payment"

@@ -1,13 +1,15 @@
 package bonch.dev.poputi.data.storage.common.profile
 
 import bonch.dev.poputi.App
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
 class ProfileStorage : IProfileStorage {
 
-    private val PROFILE_REALM_NAME = "profile.realm"
+    private val PROFILE_NAME = "profile.realm"
+    private val BANKING_REALM = "banking.realm"
     private val USER_ID = "USER_ID"
     private val DRIVER_ID = "DRIVER_ID"
     private val ACCESS_TOKEN = "ACCESS_TOKEN"
@@ -16,19 +18,25 @@ class ProfileStorage : IProfileStorage {
 
 
     private var realm: Realm? = null
+    private var bankingRealm: Realm? = null
 
 
     override fun initRealm() {
-        if (realm == null) {
+        if (realm == null || bankingRealm == null) {
             val context = App.appComponent.getContext()
-
             Realm.init(context)
+
             val config = RealmConfiguration.Builder()
-                .name(PROFILE_REALM_NAME)
+                .name(PROFILE_NAME)
                 .deleteRealmIfMigrationNeeded()
                 .build()
             realm = Realm.getInstance(config)
 
+            val bankingConfig = RealmConfiguration.Builder()
+                .name(BANKING_REALM)
+                .deleteRealmIfMigrationNeeded()
+                .build()
+            bankingRealm = Realm.getInstance(bankingConfig)
         }
     }
 
@@ -150,6 +158,29 @@ class ProfileStorage : IProfileStorage {
     override fun isCheckoutDriver(): Boolean {
         val pref = App.appComponent.getSharedPref()
         return pref.getBoolean(CHECKOUT_AS_DRIVER, false)
+    }
+
+
+    override fun saveBankCard(card: BankCard) {
+        bankingRealm?.executeTransactionAsync {
+            it.insert(card)
+        }
+    }
+
+
+    override fun getBankCards(): ArrayList<BankCard> {
+        val list = arrayListOf<BankCard>()
+        val realmResult = bankingRealm?.where(BankCard::class.java)?.findAll()
+        realmResult?.let { list.addAll(it) }
+        return list
+    }
+
+
+    override fun deleteBankCard(card: BankCard) {
+        val id = "id"
+        bankingRealm?.executeTransaction {
+            it.where(BankCard::class.java).equalTo(id, card.id).findAll().deleteAllFromRealm()
+        }
     }
 
 

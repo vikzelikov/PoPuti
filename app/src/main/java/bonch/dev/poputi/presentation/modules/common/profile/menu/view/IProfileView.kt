@@ -1,4 +1,4 @@
-package bonch.dev.poputi.presentation.modules.common.profile.view
+package bonch.dev.poputi.presentation.modules.common.profile.menu.view
 
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.presentation.interfaces.IBaseView

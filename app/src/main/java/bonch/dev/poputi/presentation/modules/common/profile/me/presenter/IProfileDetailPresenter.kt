@@ -1,4 +1,4 @@
-package bonch.dev.poputi.presentation.modules.common.profile.presenter
+package bonch.dev.poputi.presentation.modules.common.profile.me.presenter
 
 import android.app.Activity
 import android.widget.EditText

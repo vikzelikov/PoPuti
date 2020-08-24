@@ -14,7 +14,7 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
-import bonch.dev.poputi.presentation.modules.common.profile.view.ProfileView
+import bonch.dev.poputi.presentation.modules.common.profile.menu.view.ProfileView
 import bonch.dev.poputi.presentation.modules.common.ride.rate.view.RateRideView
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.DetailRideView
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.GetOffersView
@@ -173,7 +173,8 @@ class MainFragment : Fragment() {
         }
 
         if (profile == null) {
-            profile = ProfileView()
+            profile =
+                ProfileView()
         }
     }
 

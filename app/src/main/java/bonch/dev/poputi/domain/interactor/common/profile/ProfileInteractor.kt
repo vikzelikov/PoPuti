@@ -4,6 +4,7 @@ import android.util.Log
 import bonch.dev.poputi.data.repository.common.media.IMediaRepository
 import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.media.MediaObject
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
@@ -137,6 +138,23 @@ class ProfileInteractor : IProfileInteractor {
                 }
             } else callback(true)
         }
+    }
+
+
+    override fun saveBankCard(card: BankCard) {
+        profileStorage.saveBankCard(card)
+    }
+
+
+    override fun getBankCards(): ArrayList<BankCard> {
+        initRealm()
+
+        return profileStorage.getBankCards()
+    }
+
+
+    override fun deleteBankCard(card: BankCard) {
+        profileStorage.deleteBankCard(card)
     }
 
 

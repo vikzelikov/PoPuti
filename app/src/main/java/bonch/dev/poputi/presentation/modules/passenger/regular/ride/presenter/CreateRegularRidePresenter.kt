@@ -113,7 +113,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             parseTime(time)?.let { getView()?.setTime(it) }
             if (comment != null) getView()?.setComment(comment)
             setSelectedBankCard(
-                BankCard("google", null, null, R.drawable.ic_google_pay, true)
+                BankCard(0,"google", null, null, R.drawable.ic_google_pay, true)
             )
 
             getView()?.hideMapMarker()
@@ -617,6 +617,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
         val bankCard = data?.getParcelableExtra<BankCard>(ADD_BANK_CARD.toString())
 
         val paymentCard = BankCard(
+            0,
             bankCard?.numberCard,
             bankCard?.validUntil,
             bankCard?.cvc,
@@ -624,8 +625,20 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
         )
 
         val adapter = getView()?.getPaymentsAdapter()
+        adapter?.list?.let {
+            if (it.isNotEmpty()) {
+                paymentCard.id = it.last().id + 1
+            }
+        }
         adapter?.list?.add(paymentCard)
         adapter?.notifyDataSetChanged()
+
+        getDriverInteractor.saveBankCard(paymentCard)
+    }
+
+
+    override fun getBankCards(): ArrayList<BankCard> {
+        return getDriverInteractor.getBankCards()
     }
 
 

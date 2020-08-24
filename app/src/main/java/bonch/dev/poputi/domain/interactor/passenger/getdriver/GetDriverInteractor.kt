@@ -5,6 +5,7 @@ import bonch.dev.poputi.data.repository.common.chat.IChatRepository
 import bonch.dev.poputi.data.repository.passenger.getdriver.IGetDriverRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.passenger.getdriver.IGetDriverStorage
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.chat.MessageObject
 import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
@@ -335,6 +336,35 @@ class GetDriverInteractor : IGetDriverInteractor {
 
     override fun closeRealm() {
         getDriverStorage.closeRealm()
+    }
+
+
+    override fun saveBankCard(bankCard: BankCard) {
+        profileStorage.saveBankCard(bankCard)
+    }
+
+
+    override fun getBankCards(): ArrayList<BankCard> {
+        profileStorage.initRealm()
+
+        val list = profileStorage.getBankCards()
+        val result = arrayListOf<BankCard>()
+        list.forEach {
+            val tempCard = BankCard()
+
+            tempCard.apply {
+                id = it.id
+                numberCard = it.numberCard
+                validUntil = it.validUntil
+                cvc = it.cvc
+                img = it.img
+                isSelect = it.isSelect
+            }
+
+            result.add(tempCard)
+        }
+
+        return result
     }
 
 

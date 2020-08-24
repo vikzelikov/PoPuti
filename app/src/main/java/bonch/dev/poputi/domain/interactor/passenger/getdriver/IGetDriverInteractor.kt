@@ -1,5 +1,6 @@
 package bonch.dev.poputi.domain.interactor.passenger.getdriver
 
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
@@ -60,6 +61,10 @@ interface IGetDriverInteractor {
     fun deleteOffer(offerId: Int, callback: SuccessHandler)
 
     fun sendReason(textReason: String, callback: SuccessHandler)
+
+    fun saveBankCard(bankCard: BankCard)
+
+    fun getBankCards(): ArrayList<BankCard>
 
 
     //Cash

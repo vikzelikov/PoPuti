@@ -1,5 +1,6 @@
 package bonch.dev.poputi.domain.interactor.common.profile
 
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -27,6 +28,12 @@ interface IProfileInteractor {
     fun saveCheckoutDriver(isDriver: Boolean)
 
     fun isCheckoutDriver(): Boolean
+
+    fun saveBankCard(card: BankCard)
+
+    fun getBankCards(): ArrayList<BankCard>
+
+    fun deleteBankCard(card: BankCard)
 
     fun closeRealm()
 

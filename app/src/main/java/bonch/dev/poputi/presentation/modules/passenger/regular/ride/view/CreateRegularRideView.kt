@@ -702,6 +702,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         //add google pay
         list.add(
             BankCard(
+                0,
                 "google",
                 null,
                 null,
@@ -711,9 +712,20 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         paymentsListAdapter.list = list
 
         payments_list?.apply {
-            layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager =  LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = paymentsListAdapter
+        }
+
+        val cards = createRegularDrivePresenter.getBankCards()
+        if (cards.isNotEmpty()) {
+            cards.sortBy {
+                it.id
+            }
+
+            paymentsListAdapter.list.addAll(cards)
+            paymentsListAdapter.notifyDataSetChanged()
+
+            payments_list?.visibility = View.VISIBLE
         }
     }
 

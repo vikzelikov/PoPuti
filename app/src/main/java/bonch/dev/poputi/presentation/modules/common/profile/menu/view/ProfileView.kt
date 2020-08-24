@@ -1,4 +1,4 @@
-package bonch.dev.poputi.presentation.modules.common.profile.view
+package bonch.dev.poputi.presentation.modules.common.profile.menu.view
 
 import android.app.Activity
 import android.content.Intent
@@ -17,8 +17,8 @@ import bonch.dev.poputi.di.component.common.DaggerProfileComponent
 import bonch.dev.poputi.di.module.common.ProfileModule
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.IProfilePresenter
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
-import bonch.dev.poputi.presentation.modules.common.profile.presenter.IProfilePresenter
 import bonch.dev.poputi.route.MainRouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -105,14 +105,13 @@ class ProfileView : Fragment(), IProfileView {
 
 
     private fun setViewForPassenger() {
-        help_for_driver.visibility = View.GONE
-        about_car.visibility = View.GONE
+        about_car?.visibility = View.GONE
+        profits?.visibility = View.GONE
 
-        subtitle_item.visibility = View.VISIBLE
-        rating.visibility = View.VISIBLE
-        condition_use.visibility = View.VISIBLE
+        rating?.visibility = View.VISIBLE
+        confirm_person?.visibility = View.VISIBLE
 
-        checkout_account.text = resources.getString(R.string.becomeDriver)
+        checkout_account?.text = resources.getString(R.string.becomeDriver)
     }
 
 
@@ -126,15 +125,15 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         add_card.setOnClickListener {
-            Toast.makeText(context, "Add card", Toast.LENGTH_SHORT).show()
+            profilePresenter.addBankCard()
         }
 
         story_orders.setOnClickListener {
             Toast.makeText(context, "Story orders", Toast.LENGTH_SHORT).show()
         }
 
-        set_rating_app.setOnClickListener {
-            Toast.makeText(context, "Rating app", Toast.LENGTH_SHORT).show()
+        profits.setOnClickListener {
+            Toast.makeText(context, "Profits", Toast.LENGTH_SHORT).show()
         }
 
         change_lang.setOnClickListener {
@@ -151,10 +150,6 @@ class ProfileView : Fragment(), IProfileView {
 
         rating.setOnClickListener {
             Toast.makeText(context, "Rating", Toast.LENGTH_SHORT).show()
-        }
-
-        help_for_driver.setOnClickListener {
-            Toast.makeText(context, "Help for driver", Toast.LENGTH_SHORT).show()
         }
 
         about_car.setOnClickListener {
@@ -186,7 +181,8 @@ class ProfileView : Fragment(), IProfileView {
 
 
     override fun setProfile(profileData: Profile) {
-        name_user?.text = profileData.firstName.plus(" ").plus(profileData.lastName)
+        if (profileData.firstName != null)
+            name_user?.text = profileData.firstName.plus(" ").plus(profileData.lastName)
 
         val img = when {
             profileData.photos?.lastOrNull()?.imgUrl != null -> {
@@ -205,11 +201,10 @@ class ProfileView : Fragment(), IProfileView {
                 .error(R.drawable.ic_default_ava)
                 .into(img_user)
 
-        user_rating.text = if (profileData.rating == null) {
+        user_rating?.text = if (profileData.rating == null) {
             "0.0"
-        } else {
-            profileData.rating.toString()
-        }
+        } else profileData.rating.toString()
+
 
     }
 

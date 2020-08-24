@@ -73,6 +73,12 @@ class AddBankCardView : AppCompatActivity(),
             override fun afterTextChanged(s: Editable?) {
                 addBankCardPresenter.maskCardNumber(s)
                 isValidCard()
+
+                s?.let {
+                    if (it.toString().length == 19) {
+                        valid_until?.requestFocus()
+                    }
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -84,6 +90,12 @@ class AddBankCardView : AppCompatActivity(),
             override fun afterTextChanged(s: Editable?) {
                 addBankCardPresenter.maskValidUntil(s)
                 isValidCard()
+
+                s?.let {
+                    if (it.toString().length == 5) {
+                        cvc?.requestFocus()
+                    }
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

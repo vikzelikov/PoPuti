@@ -86,6 +86,11 @@
         android:name="bonch.dev.poputi.presentation.modules.common.chat.view.ChatView"
         android:label="chat_activity" />
 
+    <activity
+        android:id="@+id/banking"
+        android:name="bonch.dev.poputi.presentation.modules.common.profile.banking.BankingView"
+        android:label="banking_activity" />
+
 
     <fragment
         android:id="@+id/main_driver_fragment"

@@ -1,4 +1,4 @@
-package bonch.dev.poputi.presentation.modules.common.profile.view
+package bonch.dev.poputi.presentation.modules.common.profile.me.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -19,7 +19,7 @@ import bonch.dev.domain.utils.Constants
 import bonch.dev.domain.utils.Gallery
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
-import bonch.dev.poputi.presentation.modules.common.profile.presenter.IProfileDetailPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfileDetailPresenter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -27,7 +27,8 @@ import kotlinx.android.synthetic.main.profile_detail_activity.*
 import javax.inject.Inject
 
 
-class ProfileDetailView : AppCompatActivity(), IProfileDetailView {
+class ProfileDetailView : AppCompatActivity(),
+    IProfileDetailView {
 
     @Inject
     lateinit var profileDetailPresenter: IProfileDetailPresenter

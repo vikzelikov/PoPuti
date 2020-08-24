@@ -1,20 +1,20 @@
-package bonch.dev.poputi.presentation.modules.common.profile.presenter
+package bonch.dev.poputi.presentation.modules.common.profile.menu.presenter
 
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
+import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
-import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.base.BasePresenter
-import bonch.dev.presentation.modules.common.profile.ProfileComponent
-import bonch.dev.poputi.presentation.modules.common.profile.view.IProfileView
-import bonch.dev.poputi.presentation.modules.common.profile.view.ProfileDetailView
+import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
+import bonch.dev.poputi.presentation.modules.common.profile.menu.view.IProfileView
 import bonch.dev.poputi.presentation.modules.driver.signup.DriverSignupActivity
 import bonch.dev.poputi.route.MainRouter
+import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import javax.inject.Inject
 
 class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
@@ -33,28 +33,23 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
 
     override fun getProfile() {
-        var profile: Profile?
 
         val context = App.appComponent.getContext()
         if (!NetworkUtil.isNetworkConnected(context)) {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
         }
 
-        profileInteractor.initRealm()
-
         profileInteractor.getProfileRemote { profileData, _ ->
             val mainHandler = Handler(Looper.getMainLooper())
             val myRunnable = Runnable {
                 kotlin.run {
-                    profile = profileData
-                    profile = profileData
-
-                    //try to get from locate storage
-                    if (profile == null) {
-                        profile = profileInteractor.getProfileLocal()
+                    if (profileData?.firstName == null) {
+                        Handler().postDelayed({
+                            getProfile()
+                        }, 1000)
                     }
 
-                    profile?.let {
+                    profileData?.let {
                         getView()?.setProfile(it)
                     }
                 }
@@ -104,6 +99,21 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
         profileData?.let {
             getView()?.setProfile(it)
         }
+    }
+
+
+    override fun addBankCard() {
+        MainRouter.showView(R.id.banking, getView()?.getNavHost(), null)
+    }
+
+
+    override fun confirmPerson(fragment: Fragment) {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun storyOrders() {
+        TODO("Not yet implemented")
     }
 
 

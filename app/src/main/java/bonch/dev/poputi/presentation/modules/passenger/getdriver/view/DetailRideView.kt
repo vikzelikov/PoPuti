@@ -35,6 +35,29 @@ import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.Contr
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.detail_ride_layout.*
+import kotlinx.android.synthetic.main.detail_ride_layout.add_card
+import kotlinx.android.synthetic.main.detail_ride_layout.back_btn
+import kotlinx.android.synthetic.main.detail_ride_layout.cards_bottom_sheet
+import kotlinx.android.synthetic.main.detail_ride_layout.comment_back_btn
+import kotlinx.android.synthetic.main.detail_ride_layout.comment_bottom_sheet
+import kotlinx.android.synthetic.main.detail_ride_layout.comment_btn
+import kotlinx.android.synthetic.main.detail_ride_layout.comment_done
+import kotlinx.android.synthetic.main.detail_ride_layout.comment_min_text
+import kotlinx.android.synthetic.main.detail_ride_layout.comment_text
+import kotlinx.android.synthetic.main.detail_ride_layout.from_address
+import kotlinx.android.synthetic.main.detail_ride_layout.info_price
+import kotlinx.android.synthetic.main.detail_ride_layout.info_price_bottom_sheet
+import kotlinx.android.synthetic.main.detail_ride_layout.main_info_layout
+import kotlinx.android.synthetic.main.detail_ride_layout.number_card
+import kotlinx.android.synthetic.main.detail_ride_layout.offer_price
+import kotlinx.android.synthetic.main.detail_ride_layout.payment_method
+import kotlinx.android.synthetic.main.detail_ride_layout.payment_method_img
+import kotlinx.android.synthetic.main.detail_ride_layout.payments_list
+import kotlinx.android.synthetic.main.detail_ride_layout.selected_payment_method
+import kotlinx.android.synthetic.main.detail_ride_layout.show_route
+import kotlinx.android.synthetic.main.detail_ride_layout.to_address
+import kotlinx.android.synthetic.main.regular_create_ride_layout.*
+import kotlinx.android.synthetic.main.select_bank_card_activity.*
 import javax.inject.Inject
 
 
@@ -222,7 +245,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         //add google pay
         list.add(
             BankCard(
-                null,
+                0,
+                "google",
                 null,
                 null,
                 R.drawable.ic_google_pay
@@ -231,9 +255,20 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         paymentAdapter.list = list
 
         payments_list.apply {
-            layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = paymentAdapter
+        }
+
+        val cards = detailRidePresenter.getBankCards()
+        if (cards.isNotEmpty()) {
+            cards.sortBy {
+                it.id
+            }
+
+            paymentAdapter.list.addAll(cards)
+            paymentAdapter.notifyDataSetChanged()
+
+            payments_list?.visibility = View.VISIBLE
         }
     }
 
@@ -331,6 +366,9 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val img = bankCard.img
         if (img != null) {
             payment_method_img.setImageResource(img)
+        }
+        if (img == R.drawable.ic_google_pay) {
+            number_card?.text = ""
         }
 
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED

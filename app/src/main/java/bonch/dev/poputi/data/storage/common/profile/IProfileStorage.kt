@@ -1,5 +1,6 @@
 package bonch.dev.poputi.data.storage.common.profile
 
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 
 interface IProfileStorage {
@@ -29,6 +30,12 @@ interface IProfileStorage {
     fun saveCheckoutDriver(isDriver: Boolean)
 
     fun isCheckoutDriver(): Boolean
+
+    fun saveBankCard(card: BankCard)
+
+    fun getBankCards(): ArrayList<BankCard>
+
+    fun deleteBankCard(card: BankCard)
 
     fun closeRealm()
 

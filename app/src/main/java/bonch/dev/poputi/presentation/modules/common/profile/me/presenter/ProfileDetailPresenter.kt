@@ -1,4 +1,4 @@
-package bonch.dev.poputi.presentation.modules.common.profile.presenter
+package bonch.dev.poputi.presentation.modules.common.profile.me.presenter
 
 import android.app.Activity
 import android.content.Intent
@@ -23,7 +23,7 @@ import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.checkphoto.CheckPhotoView
 import bonch.dev.poputi.presentation.modules.common.media.MediaEvent
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
-import bonch.dev.poputi.presentation.modules.common.profile.view.IProfileDetailView
+import bonch.dev.poputi.presentation.modules.common.profile.me.view.IProfileDetailView
 import javax.inject.Inject
 
 

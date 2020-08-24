@@ -58,6 +58,7 @@ interface ContractPresenter {
         fun removeTickSelected()
         fun offerPriceDone(data: Intent?)
         fun instance(): DetailRidePresenter
+        fun getBankCards(): ArrayList<BankCard>
         fun setSelectedBankCard(bankCard: BankCard)
         fun checkAddressPoints(fromAddress: Address, toAddress: Address)
         fun addBankCard(context: Context, fragment: Fragment)

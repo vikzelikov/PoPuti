@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
@@ -22,7 +21,7 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.payment_item, parent, false)
+                .inflate(R.layout.bank_card_select_item, parent, false)
         )
     }
 
@@ -40,14 +39,6 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
             setTickSelected(holder.itemView)
             bankCard.isSelect = true
             createRegularDrivePresenter.setSelectedBankCard(bankCard)
-        }
-
-        if (position == 0) {
-            val lineDialog: View = holder.itemView.findViewById(R.id.line_payment)
-            val params: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1)
-            params.setMargins(30, 0, 30, 0)
-            lineDialog.layoutParams = params
         }
 
         if (bankCard.isSelect) {
