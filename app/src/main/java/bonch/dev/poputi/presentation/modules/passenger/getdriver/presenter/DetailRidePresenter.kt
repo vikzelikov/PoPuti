@@ -15,7 +15,6 @@ import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
-import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.addbanking.view.AddBankCardView
@@ -227,21 +226,23 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
                     getView()?.attachGetOffers()
 
-                    val ride = RideInfo()
-                    ride.position = rideInfo.fromAdr?.address
-                    ride.fromLat = rideInfo.fromAdr?.point?.latitude
-                    ride.fromLng = rideInfo.fromAdr?.point?.longitude
-                    ride.destination = rideInfo.toAdr?.address
-                    ride.toLat = rideInfo.toAdr?.point?.latitude
-                    ride.toLng = rideInfo.toAdr?.point?.longitude
-                    ride.price = rideInfo.price
-                    ride.comment = rideInfo.comment
+                    rideInfo.position = rideInfo.fromAdr?.address
+                    rideInfo.fromLat = rideInfo.fromAdr?.point?.latitude
+                    rideInfo.fromLng = rideInfo.fromAdr?.point?.longitude
+                    rideInfo.destination = rideInfo.toAdr?.address
+                    rideInfo.toLat = rideInfo.toAdr?.point?.latitude
+                    rideInfo.toLng = rideInfo.toAdr?.point?.longitude
+
+                    rideInfo.paymentMethod?.let {
+                        getDriverInteractor.saveBankCard(it)
+                    }
+
 
                     //save ride
-                    ActiveRide.activeRide = ride
+                    ActiveRide.activeRide = rideInfo
 
                     //create ride with SERVER
-                    getDriverInteractor.createRide(ride) { isSuccess ->
+                    getDriverInteractor.createRide(rideInfo) { isSuccess ->
 
                         getView()?.hideLoading()
 

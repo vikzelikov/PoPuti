@@ -1,5 +1,4 @@
-package bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters
-
+package bonch.dev.poputi.presentation.modules.driver.signup.banking.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,16 +8,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
-import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
+import bonch.dev.poputi.presentation.modules.driver.signup.banking.presenter.IBankingSelectPresenter
 import javax.inject.Inject
 
-
-class PaymentsAdapter @Inject constructor(private val detailRidePresenter: ContractPresenter.IDetailRidePresenter) :
-    RecyclerView.Adapter<PaymentsAdapter.ItemPostHolder>() {
+class BankingSelectAdapter @Inject constructor(private val presenter: IBankingSelectPresenter) :
+    RecyclerView.Adapter<BankingSelectAdapter.ItemPostHolder>() {
 
     var list: ArrayList<BankCard> = arrayListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ItemPostHolder {
         return ItemPostHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.bank_card_select_item, parent, false)
@@ -30,23 +32,15 @@ class PaymentsAdapter @Inject constructor(private val detailRidePresenter: Contr
 
 
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-        val post = list[position]
-        holder.bind(post)
+        val card = list[position]
+        holder.bind(card)
 
         holder.itemView.setOnClickListener {
             removeTickSelected()
 
             setTickSelected(holder.itemView)
-            post.isSelect = true
-            detailRidePresenter.setSelectedBankCard(post)
-        }
-
-        if (post.isSelect) {
-            removeTickSelected()
-
-            setTickSelected(holder.itemView)
-
-            detailRidePresenter.instance().getView()?.setSelectedBankCard(post)
+            card.isSelect = true
+            presenter.selectBankCard(card)
         }
     }
 
@@ -58,7 +52,7 @@ class PaymentsAdapter @Inject constructor(private val detailRidePresenter: Contr
 
 
     private fun removeTickSelected() {
-        detailRidePresenter.removeTickSelected()
+        presenter.removeTickSelected()
         list.forEach {
             it.isSelect = false
         }
@@ -76,12 +70,6 @@ class PaymentsAdapter @Inject constructor(private val detailRidePresenter: Contr
                 paymentImg.setImageResource(img)
                 numberCard.text = post.numberCard
             }
-
-            if (img == R.drawable.ic_google_pay) {
-                paymentImg.setImageResource(img)
-                numberCard.text = ""
-            }
         }
     }
 }
-

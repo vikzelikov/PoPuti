@@ -83,19 +83,16 @@ class PaymentsListAdapter @Inject constructor(private val createRegularDrivePres
         private val paymentImg = itemView.findViewById<ImageView>(R.id.payment_method_img)
 
         fun bind(post: BankCard) {
-            numberCard.text = post.numberCard
+            val img = post.img
 
-            if (post.img != null) {
-                val img = post.img
+            if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world) {
+                paymentImg.setImageResource(img)
+                numberCard.text = post.numberCard
+            }
 
-                if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world) {
-                    paymentImg.setImageResource(img)
-                }
-
-                if (img == R.drawable.ic_google_pay) {
-                    paymentImg.setImageResource(img)
-                    numberCard.text = ""
-                }
+            if (img == R.drawable.ic_google_pay) {
+                paymentImg.setImageResource(img)
+                numberCard.text = ""
             }
         }
     }

@@ -208,7 +208,7 @@ class DriverRideService : Service() {
             //general notification channel
             val channel = NotificationChannel(
                 CHANNEL,
-                "GENERAL_CHANNEL",
+                "Default notification",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             channel.description = "General notification channel"
@@ -219,7 +219,7 @@ class DriverRideService : Service() {
             //heads up notification channel
             val channelHeadsUp = NotificationChannel(
                 CHANNEL_HEADS_UP,
-                "HEADS_UP_CHANNEL",
+                "Important heads up notification",
                 NotificationManager.IMPORTANCE_HIGH
             )
             channel.description = "Heads up notification channel"

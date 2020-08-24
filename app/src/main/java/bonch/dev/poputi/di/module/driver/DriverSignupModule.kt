@@ -8,11 +8,11 @@ import bonch.dev.poputi.data.repository.driver.signup.ISignupRepository
 import bonch.dev.poputi.data.repository.driver.signup.SignupRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.common.profile.ProfileStorage
-import bonch.dev.poputi.data.storage.driver.signup.ISignupStorage
-import bonch.dev.poputi.data.storage.driver.signup.SignupStorage
 import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.driver.signup.ISignupInteractor
 import bonch.dev.poputi.domain.interactor.driver.signup.SignupInteractor
+import bonch.dev.poputi.presentation.modules.driver.signup.banking.presenter.BankingSelectPresenter
+import bonch.dev.poputi.presentation.modules.driver.signup.banking.presenter.IBankingSelectPresenter
 import bonch.dev.poputi.presentation.modules.driver.signup.carinfo.presenter.CarInfoPresenter
 import bonch.dev.poputi.presentation.modules.driver.signup.carinfo.presenter.ICarInfoPresenter
 import bonch.dev.poputi.presentation.modules.driver.signup.steps.presenter.ISignupStepPresenter
@@ -49,6 +49,11 @@ class DriverSignupModule {
 
     @Provides
     @CompScope
+    fun provideBankingSelectPresenter(): IBankingSelectPresenter = BankingSelectPresenter()
+
+
+    @Provides
+    @CompScope
     fun provideSignupInteractor(): ISignupInteractor = SignupInteractor()
 
 
@@ -65,11 +70,6 @@ class DriverSignupModule {
     @Provides
     @CompScope
     fun provideProfileRepository(): IProfileRepository = ProfileRepository()
-
-
-    @Provides
-    @CompScope
-    fun provideSignupStorage(): ISignupStorage = SignupStorage()
 
 
     @Provides

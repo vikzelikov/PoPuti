@@ -16,7 +16,7 @@ class CarInfoPresenter : BasePresenter<ICarInfoView>(), ICarInfoPresenter {
 
 
     override fun startSetDocs() {
-        MainRouter.showView(R.id.show_signup_step_view, getView()?.getNavHost(), null)
+        MainRouter.showView(R.id.show_banking_select, getView()?.getNavHost(), null)
     }
 
 

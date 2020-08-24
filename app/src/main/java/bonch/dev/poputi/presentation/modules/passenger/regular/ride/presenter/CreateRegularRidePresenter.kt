@@ -113,7 +113,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             parseTime(time)?.let { getView()?.setTime(it) }
             if (comment != null) getView()?.setComment(comment)
             setSelectedBankCard(
-                BankCard(0,"google", null, null, R.drawable.ic_google_pay, true)
+                BankCard(0, "google", null, null, R.drawable.ic_google_pay, true)
             )
 
             getView()?.hideMapMarker()
@@ -455,25 +455,22 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             rideInfo?.toAdr = Coordinate.toAdr
 
             if (rideInfo != null) {
-                val ride = RideInfo()
-                ride.rideId = ActiveRide.activeRide?.rideId
-                ride.position = rideInfo.fromAdr?.address
-                ride.fromLat = rideInfo.fromAdr?.point?.latitude
-                ride.fromLng = rideInfo.fromAdr?.point?.longitude
-                ride.destination = rideInfo.toAdr?.address
-                ride.toLat = rideInfo.toAdr?.point?.latitude
-                ride.toLng = rideInfo.toAdr?.point?.longitude
-                ride.price = rideInfo.price
-                ride.comment = rideInfo.comment
-                ride.statusId = StatusRide.REGULAR_RIDE.status
+                rideInfo.rideId = ActiveRide.activeRide?.rideId
+                rideInfo.position = rideInfo.fromAdr?.address
+                rideInfo.fromLat = rideInfo.fromAdr?.point?.latitude
+                rideInfo.fromLng = rideInfo.fromAdr?.point?.longitude
+                rideInfo.destination = rideInfo.toAdr?.address
+                rideInfo.toLat = rideInfo.toAdr?.point?.latitude
+                rideInfo.toLng = rideInfo.toAdr?.point?.longitude
+                rideInfo.statusId = StatusRide.REGULAR_RIDE.status
 
                 val dateInfo = getDateInfo()
-                ride.dateInfo = dateInfo
+                rideInfo.dateInfo = dateInfo
 
                 //save ride
-                ActiveRide.activeRide = ride
+                ActiveRide.activeRide = rideInfo
 
-                resultRide = ride
+                resultRide = rideInfo
             }
         }
 
@@ -488,6 +485,11 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
         val ride = getRide()
 
         if (ride != null) {
+
+            ride.paymentMethod?.let {
+                getDriverInteractor.saveBankCard(it)
+            }
+
             //create ride with SERVER
             getDriverInteractor.createRide(ride) { isSuccess ->
                 if (isSuccess) {

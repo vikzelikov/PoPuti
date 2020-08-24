@@ -6,6 +6,7 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.passenger.signup.DataSignup
 import bonch.dev.poputi.domain.interactor.passenger.signup.ISignupInteractor
 import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import bonch.dev.poputi.presentation.modules.passenger.signup.SignupComponent
@@ -29,6 +30,16 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
         getView()?.showLoading()
 
         signupInteractor.initRealm()
+
+        //todo
+        val googlePay = BankCard(
+            0,
+            "google",
+            null,
+            null,
+            R.drawable.ic_google_pay
+        )
+        signupInteractor.saveGooglePay(googlePay)
 
         //if there is data from old app version
         signupInteractor.resetProfile()

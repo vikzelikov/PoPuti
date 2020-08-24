@@ -5,6 +5,8 @@ import bonch.dev.poputi.di.module.driver.DriverSignupModule
 import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.driver.signup.SignupInteractor
 import bonch.dev.poputi.presentation.modules.driver.signup.DriverSignupActivity
+import bonch.dev.poputi.presentation.modules.driver.signup.banking.presenter.BankingSelectPresenter
+import bonch.dev.poputi.presentation.modules.driver.signup.banking.view.BankingSelectView
 import bonch.dev.poputi.presentation.modules.driver.signup.carinfo.view.CarInfoView
 import bonch.dev.poputi.presentation.modules.driver.signup.steps.presenter.SignupStepPresenter
 import bonch.dev.poputi.presentation.modules.driver.signup.steps.view.SignupStepView
@@ -21,6 +23,8 @@ interface DriverSignupComponent {
 
     fun inject(target: CarInfoView)
 
+    fun inject(target: BankingSelectView)
+
     fun inject(target: SuggestView)
 
     fun inject(target: SignupStepView)
@@ -30,6 +34,8 @@ interface DriverSignupComponent {
     fun inject(target: SignupStepPresenter)
 
     fun inject(target: TableDocsPresenter)
+
+    fun inject(target: BankingSelectPresenter)
 
     fun inject(target: SignupInteractor)
 

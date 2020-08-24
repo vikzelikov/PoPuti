@@ -3,6 +3,7 @@ package bonch.dev.poputi.domain.interactor.passenger.signup
 import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
 import bonch.dev.poputi.data.repository.passenger.signup.ISignupRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.passenger.signup.DataSignup
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -152,6 +153,11 @@ class SignupInteractor : ISignupInteractor {
     override fun resetProfile() {
         profileStorage.removeProfile()
         profileStorage.saveCheckoutDriver(false)
+    }
+
+
+    override fun saveGooglePay(bankCard: BankCard) {
+        profileStorage.saveBankCard(bankCard)
     }
 
 

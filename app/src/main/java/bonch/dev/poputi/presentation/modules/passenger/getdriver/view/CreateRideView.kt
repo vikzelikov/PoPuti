@@ -205,7 +205,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         from_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED && !checkCompleteAddresses()) {
-                    createRidePresenter.requestSuggest(from_adr.text.toString())
+                    createRidePresenter.requestSuggest(from_adr?.text.toString())
                 }
             }
 
@@ -223,7 +223,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         to_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (bottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED && !checkCompleteAddresses()) {
-                    createRidePresenter.requestSuggest(to_adr.text.toString())
+                    createRidePresenter.requestSuggest(to_adr?.text.toString())
                 }
             }
 
@@ -409,12 +409,21 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
                 center_position?.animate()
                     ?.setDuration(250L)
                     ?.translationY(-50f)
+
+                shadow_marker?.animate()
+                    ?.setDuration(150L)
+                    ?.alpha(0.6f)
+
                 isUpMoved = false
             }
         } else {
             isUpMoved = true
 
             zoomMap(cameraPosition)
+
+            shadow_marker?.animate()
+                ?.setDuration(150L)
+                ?.alpha(0.3f)
 
             center_position?.animate()
                 ?.setDuration(250L)

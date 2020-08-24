@@ -1,5 +1,6 @@
 package bonch.dev.poputi.domain.interactor.driver.signup
 
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.driver.signup.DriverData
 import bonch.dev.poputi.domain.entities.driver.signup.NewPhoto
@@ -23,6 +24,10 @@ interface ISignupInteractor {
     fun saveCheckoutDriver(isDriver: Boolean)
 
     fun isCheckoutDriver(): Boolean
+
+    fun saveBankCard(bankCard: BankCard)
+
+    fun getBankCards(): ArrayList<BankCard>
 
     fun deletePhoto(imageId: Int, callback: SuccessHandler)
 

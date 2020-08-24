@@ -162,8 +162,16 @@ class ProfileStorage : IProfileStorage {
 
 
     override fun saveBankCard(card: BankCard) {
+        val list = getBankCards()
+        list.forEach {
+            bankingRealm?.executeTransaction { bgRealm ->
+                it.isSelect = false
+                bgRealm.insertOrUpdate(card)
+            }
+        }
+
         bankingRealm?.executeTransactionAsync {
-            it.insert(card)
+            it.insertOrUpdate(card)
         }
     }
 

@@ -127,7 +127,7 @@ class PassengerRideService : Service() {
     private fun changeRideNotification(data: String) {
         val ride = Gson().fromJson(data, Ride::class.java)?.ride
 
-        if (ride != null) {
+        if (ride != null && isRunning) {
             ride.statusId?.let { idStep ->
                 val statusRide = getByValue(idStep)
 
@@ -277,7 +277,7 @@ class PassengerRideService : Service() {
             //general notification channel
             val channel = NotificationChannel(
                 CHANNEL,
-                "GENERAL_CHANNEL",
+                "Default notification",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             channel.description = "General notification channel"
@@ -288,7 +288,7 @@ class PassengerRideService : Service() {
             //heads up notification channel
             val channelHeadsUp = NotificationChannel(
                 CHANNEL_HEADS_UP,
-                "HEADS_UP_CHANNEL",
+                "Important heads up notification",
                 NotificationManager.IMPORTANCE_HIGH
             )
             channel.description = "Heads up notification channel"
@@ -296,6 +296,20 @@ class PassengerRideService : Service() {
             channelHeadsUp.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             manager?.createNotificationChannel(channelHeadsUp)
         }
+    }
+
+
+    override fun stopService(name: Intent?): Boolean {
+        isRunning = false
+        isAppClose = false
+        isChatClose = true
+
+        //remove all notification from bar
+        notificatonManager.cancelAll()
+
+        getDriverInteractor.disconnectSocket()
+
+        return super.stopService(name)
     }
 
 

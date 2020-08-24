@@ -10,12 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
-import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.PaymentsAdapter
 import kotlinx.android.synthetic.main.bank_card_item.view.*
 import javax.inject.Inject
 
 class BankingAdapter @Inject constructor(private val bankingPresenter: ContractPresenter.IBankingPresenter) :
-    RecyclerView.Adapter<PaymentsAdapter.ItemPostHolder>() {
+    RecyclerView.Adapter<BankingAdapter.ItemPostHolder>() {
 
     var list: ArrayList<BankCard> = arrayListOf()
 
@@ -24,8 +23,8 @@ class BankingAdapter @Inject constructor(private val bankingPresenter: ContractP
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): PaymentsAdapter.ItemPostHolder {
-        return PaymentsAdapter.ItemPostHolder(
+    ): ItemPostHolder {
+        return ItemPostHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.bank_card_item, parent, false)
         )
@@ -35,13 +34,13 @@ class BankingAdapter @Inject constructor(private val bankingPresenter: ContractP
     override fun getItemCount() = list.size
 
 
-    override fun onBindViewHolder(holder: PaymentsAdapter.ItemPostHolder, position: Int) {
+    override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
         val card = list[position]
         holder.bind(card)
 
         val trash = holder.itemView.trash
 
-        if (isEditMode) {
+        if (isEditMode && card.id != 0) {
             trash?.visibility = View.VISIBLE
             trash?.isClickable = true
 
@@ -90,19 +89,16 @@ class BankingAdapter @Inject constructor(private val bankingPresenter: ContractP
         private val paymentImg = itemView.findViewById<ImageView>(R.id.payment_method_img)
 
         fun bind(post: BankCard) {
-            numberCard.text = post.numberCard
+            val img = post.img
 
-            if (post.img != null) {
-                val img = post.img
+            if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world) {
+                paymentImg.setImageResource(img)
+                numberCard.text = post.numberCard
+            }
 
-                if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world || img == R.drawable.ic_google_pay) {
-                    paymentImg.setImageResource(img)
-                }
-
-                if (img == R.drawable.ic_google_pay) {
-                    paymentImg.setImageResource(img)
-                    numberCard.text = ""
-                }
+            if (img == R.drawable.ic_google_pay) {
+                paymentImg.setImageResource(img)
+                numberCard.text = ""
             }
         }
     }

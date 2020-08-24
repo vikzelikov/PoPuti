@@ -4,7 +4,7 @@ import bonch.dev.poputi.data.repository.common.media.IMediaRepository
 import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
 import bonch.dev.poputi.data.repository.driver.signup.ISignupRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
-import bonch.dev.poputi.data.storage.driver.signup.ISignupStorage
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.poputi.domain.entities.driver.signup.DriverData
@@ -26,9 +26,6 @@ class SignupInteractor : ISignupInteractor {
 
     @Inject
     lateinit var profileRepository: IProfileRepository
-
-    @Inject
-    lateinit var signupStorage: ISignupStorage
 
     @Inject
     lateinit var profileStorage: IProfileStorage
@@ -246,6 +243,35 @@ class SignupInteractor : ISignupInteractor {
 
     override fun saveDriverID(driverId: Int) {
         profileStorage.saveDriverId(driverId)
+    }
+
+
+    override fun saveBankCard(bankCard: BankCard) {
+        profileStorage.saveBankCard(bankCard)
+    }
+
+
+    override fun getBankCards(): ArrayList<BankCard> {
+        profileStorage.initRealm()
+
+        val list = profileStorage.getBankCards()
+        val result = arrayListOf<BankCard>()
+        list.forEach {
+            val tempCard = BankCard()
+
+            tempCard.apply {
+                id = it.id
+                numberCard = it.numberCard
+                validUntil = it.validUntil
+                cvc = it.cvc
+                img = it.img
+                isSelect = it.isSelect
+            }
+
+            result.add(tempCard)
+        }
+
+        return result
     }
 
 }

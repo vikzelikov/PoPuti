@@ -261,6 +261,7 @@
     <string name="selectCity">Выбор города</string>
     <string name="profits">Доходы</string>
     <string name="youHaveNoBanking">У Вас не добавлено ни одной карты</string>
+    <string name="googlePay">Google Pay</string>
 
 
 </resources>

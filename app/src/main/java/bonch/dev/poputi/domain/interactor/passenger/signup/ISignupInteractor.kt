@@ -1,5 +1,6 @@
 package bonch.dev.poputi.domain.interactor.passenger.signup
 
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 
@@ -37,6 +38,9 @@ interface ISignupInteractor {
 
 
     fun resetProfile()
+
+
+    fun saveGooglePay(bankCard: BankCard)
 
 
     fun closeRealm()

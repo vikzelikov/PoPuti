@@ -156,6 +156,11 @@ class ProfileView : Fragment(), IProfileView {
             Toast.makeText(context, "About car", Toast.LENGTH_SHORT).show()
         }
 
+        select_city.setOnClickListener {
+            Toast.makeText(context, "City", Toast.LENGTH_SHORT).show()
+        }
+
+
         checkout_account.setOnClickListener {
             profilePresenter.checkoutAccount(isForPassenger, this)
         }

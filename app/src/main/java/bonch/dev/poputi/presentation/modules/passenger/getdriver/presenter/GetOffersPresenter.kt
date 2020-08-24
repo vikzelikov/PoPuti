@@ -305,6 +305,8 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
 
     override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
         //stop getting new offers
+        PassengerRideService.isRunning = false
+
         val app = App.appComponent
         app.getApp().stopService(Intent(app.getContext(), PassengerRideService::class.java))
 

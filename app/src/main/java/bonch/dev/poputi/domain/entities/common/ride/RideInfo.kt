@@ -2,6 +2,7 @@ package bonch.dev.poputi.domain.entities.common.ride
 
 import android.os.Parcel
 import android.os.Parcelable
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.OrdersTimer
@@ -69,8 +70,6 @@ data class RideInfo(
     @Expose
     var userId: Int? = null,
 
-    val paymentMethod: Int = 0,
-
     //timer for orders (DriverView)
     var time: Int = OrdersTimer.TIME_EXPIRED_ITEM,
 
@@ -90,9 +89,10 @@ data class RideInfo(
 
     @SerializedName("schedule")
     @Expose
-    var dateInfo: DateInfo? = null
-) : Parcelable {
+    var dateInfo: DateInfo? = null,
 
+    var paymentMethod: BankCard? = null
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Int::class.java.classLoader) as? Int,
@@ -109,16 +109,11 @@ data class RideInfo(
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readInt(),
-        parcel.readInt(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readByte() != 0.toByte(),
         parcel.readParcelable(Profile::class.java.classLoader),
         parcel.readParcelable(Driver::class.java.classLoader)
     )
-
-    override fun equals(other: Any?): Boolean {
-        return rideId == (other as RideInfo).rideId
-    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(rideId)
@@ -135,17 +130,32 @@ data class RideInfo(
         parcel.writeString(city)
         parcel.writeValue(price)
         parcel.writeValue(userId)
-        parcel.writeInt(paymentMethod)
         parcel.writeInt(time)
         parcel.writeValue(distance)
         parcel.writeByte(if (isNewOrder) 1 else 0)
         parcel.writeParcelable(passenger, flags)
         parcel.writeParcelable(driver, flags)
+        parcel.writeParcelable(paymentMethod, flags)
     }
 
     override fun describeContents(): Int {
         return 0
     }
+
+    companion object CREATOR : Parcelable.Creator<RideInfo> {
+        override fun createFromParcel(parcel: Parcel): RideInfo {
+            return RideInfo(parcel)
+        }
+
+        override fun newArray(size: Int): Array<RideInfo?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return rideId == (other as RideInfo).rideId
+    }
+
 
     override fun hashCode(): Int {
         var result = rideId ?: 0
@@ -162,7 +172,6 @@ data class RideInfo(
         result = 31 * result + (city?.hashCode() ?: 0)
         result = 31 * result + (price ?: 0)
         result = 31 * result + (userId ?: 0)
-        result = 31 * result + paymentMethod
         result = 31 * result + time
         result = 31 * result + (distance ?: 0)
         result = 31 * result + isNewOrder.hashCode()
@@ -172,16 +181,10 @@ data class RideInfo(
         return result
     }
 
-    companion object CREATOR : Parcelable.Creator<RideInfo> {
-        override fun createFromParcel(parcel: Parcel): RideInfo {
-            return RideInfo(parcel)
-        }
-
-        override fun newArray(size: Int): Array<RideInfo?> {
-            return arrayOfNulls(size)
-        }
-    }
-
 
 }
+
+
+
+
 
