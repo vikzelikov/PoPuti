@@ -1,5 +1,6 @@
 package bonch.dev.poputi
 
+
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Intent
@@ -16,8 +17,11 @@ import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MainPresenter
 import bonch.dev.poputi.presentation.interfaces.IMainActivity
 import bonch.dev.poputi.presentation.interfaces.IMainPresenter
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity(), IMainActivity {
 
@@ -43,6 +47,19 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         setContentView(R.layout.activity_main)
 
         mainPresenter.navigate()
+
+
+
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    return@OnCompleteListener
+                }
+
+                val token = task.result?.token
+
+                Log.e("TOKEN", "$token")
+            })
     }
 
 

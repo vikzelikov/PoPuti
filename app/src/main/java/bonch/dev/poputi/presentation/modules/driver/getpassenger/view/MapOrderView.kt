@@ -17,7 +17,7 @@ import bonch.dev.poputi.di.component.driver.DaggerGetPassengerComponent
 import bonch.dev.poputi.di.module.driver.GetPassengerModule
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
-import bonch.dev.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.ContractPresenter
 import com.yandex.mapkit.Animation

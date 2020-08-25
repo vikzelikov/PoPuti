@@ -3,7 +3,7 @@ package bonch.dev.domain.utils
 import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.Fragment
-import bonch.dev.domain.utils.Constants.GALLERY
+import bonch.dev.poputi.domain.utils.Constants.GALLERY
 
 
 object Gallery {

@@ -142,9 +142,9 @@ class TableDocsView : Fragment(), ITableDocsView {
                                     }
                                 } else {
                                     //docs not valid
-                                    status_driver_signup.text =
+                                    status_driver_signup?.text =
                                         resources.getText(R.string.someDocsNotValid)
-                                    status_driver_signup.setTextColor(Color.parseColor("#D03131"))
+                                    status_driver_signup?.setTextColor(Color.parseColor("#D03131"))
                                     viewsTitleDocs[i]?.setTextColor(Color.parseColor("#D03131"))
                                     context?.let {
                                         viewsTicsDocs[i]?.setImageDrawable(
@@ -161,8 +161,8 @@ class TableDocsView : Fragment(), ITableDocsView {
                                 viewsTicsDocs[i]?.visibility = View.GONE
 
                                 //set deafult status
-                                status_driver_signup.text = resources.getText(R.string.weCheckDocs)
-                                status_driver_signup.setTextColor(Color.parseColor("#1152FD"))
+                                status_driver_signup?.text = resources.getText(R.string.weCheckDocs)
+                                status_driver_signup?.setTextColor(Color.parseColor("#1152FD"))
                             }
 
                             val image = if (list[i].imgDocs != null) {
@@ -353,7 +353,7 @@ class TableDocsView : Fragment(), ITableDocsView {
         return if (!tableDocsPresenter.isBlockBack()) {
             true
         } else {
-            showNotification(resources.getString(R.string.photoLoading))
+            showNotification(resources.getString(R.string.photoProfileLoading))
             false
         }
     }

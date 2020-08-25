@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 import androidx.core.content.ContextCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R

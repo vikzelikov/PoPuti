@@ -32,6 +32,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     private var activeOfferId: Int? = null
     private var activeOfferPrice: Int? = null
     private var isNextStep = false
+    private var isDrivingRoute = true
     var isStop = true
 
     private val OFFER_PRICE_TIMEOUT = 30000L
@@ -92,6 +93,7 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
     override fun subscribeOnRide() {
         isNextStep = false
         isStop = true
+        isDrivingRoute = true
 
         getPassengerInteractor.connectSocket { isSuccess ->
             if (isSuccess) {
@@ -233,8 +235,9 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
             null
         }
 
-        if (userPoint != null && fromPoint != null && map != null) {
+        if (userPoint != null && fromPoint != null && map != null && isDrivingRoute) {
             Routing().submitRequest(userPoint, fromPoint, false, map)
+            isDrivingRoute = false
         }
     }
 

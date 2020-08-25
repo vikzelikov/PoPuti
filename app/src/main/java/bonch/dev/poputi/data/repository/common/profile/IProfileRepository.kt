@@ -2,6 +2,7 @@ package bonch.dev.poputi.data.repository.common.profile
 
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
+import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 
@@ -13,5 +14,12 @@ interface IProfileRepository {
     fun savePhoto(userId: Int, token: String, photo: ProfilePhoto, callback: SuccessHandler)
 
     fun getProfile(userId: Int, token: String, callback: DataHandler<Profile?>)
+
+    fun putNewPhoto(
+        photo: NewPhoto,
+        token: String,
+        userId: Int,
+        callback: SuccessHandler
+    )
 
 }

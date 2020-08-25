@@ -12,6 +12,7 @@ import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.view.IProfileView
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyView
 import bonch.dev.poputi.presentation.modules.driver.signup.DriverSignupActivity
 import bonch.dev.poputi.route.MainRouter
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
@@ -22,7 +23,8 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     @Inject
     lateinit var profileInteractor: IProfileInteractor
 
-    private val PROFILE_DETAIL_VIEW = 11
+    val PROFILE_DETAIL_VIEW = 11
+    val CONFIRM_PERSON = 12
     private val IS_SHOW_POPUP = "IS_SHOW_POPUP"
     private val PROFILE_DATA = "PROFILE_DATA"
 
@@ -39,7 +41,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
         }
 
-        profileInteractor.getProfileRemote { profileData, _ ->
+        profileInteractor.getProfile { profileData, _ ->
             val mainHandler = Handler(Looper.getMainLooper())
             val myRunnable = Runnable {
                 kotlin.run {
@@ -108,7 +110,14 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
 
     override fun confirmPerson(fragment: Fragment) {
-        TODO("Not yet implemented")
+        val context = App.appComponent.getContext()
+        val intent = Intent(context, VerifyView::class.java)
+        fragment.startActivityForResult(intent, CONFIRM_PERSON)
+    }
+
+
+    override fun showProfits() {
+        MainRouter.showView(R.id.profits, getView()?.getNavHost(), null)
     }
 
 

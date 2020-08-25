@@ -123,19 +123,14 @@ class SignupInteractor : ISignupInteractor {
             }
         }
 
-        profileData.id = userId
-
         //local save data
-        profileStorage.saveProfile(profileData)
+        profileStorage.saveUserId(userId)
     }
 
 
     override fun saveUserId() {
-        val profileData = Profile()
         DataSignup.userId?.let {
-            profileData.id = it
-            //local save data
-            profileStorage.saveProfile(profileData)
+            profileStorage.saveUserId(it)
         }
     }
 

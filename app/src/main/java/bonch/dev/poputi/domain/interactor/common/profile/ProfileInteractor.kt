@@ -8,6 +8,9 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.media.MediaObject
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
+import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
+import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
+import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyData
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
@@ -36,17 +39,12 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun localSaveProfile(profile: Profile) {
-        profileStorage.saveProfile(profile)
-    }
-
-
     override fun removeProfileData() {
         profileStorage.removeProfile()
     }
 
 
-    override fun remoteSaveProfile(profile: Profile) {
+    override fun saveProfile(profile: Profile) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
@@ -66,7 +64,7 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun getProfileRemote(callback: DataHandler<Profile?>) {
+    override fun getProfile(callback: DataHandler<Profile?>) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
@@ -95,7 +93,7 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun loadPhoto(image: File, profile: Profile, callback: SuccessHandler) {
+    override fun uploadPhoto(image: File, profile: Profile, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
@@ -158,11 +156,6 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun getProfileLocal(): Profile? {
-        return profileStorage.getProfile()
-    }
-
-
     override fun getDriverAccess(): Boolean {
         return profileStorage.getDriverAccess()
     }
@@ -182,5 +175,80 @@ class ProfileInteractor : IProfileInteractor {
         profileStorage.closeRealm()
     }
 
+
+    /**
+     * VERIFICATION
+     * */
+    override fun verification(data: Verify, callback: SuccessHandler){
+        val token = profileStorage.getToken()
+        val userId = profileStorage.getUserId()
+
+        if (token != null && userId != -1) {
+//            profileRepository.verification(data, token, userId) { driverData, error ->
+//                if (error != null) {
+//
+//                } else if (driverData?.driver != null) {
+//                    val driverId = driverData.driver?.driverId
+//                    driverId?.let { profileStorage.saveDriverId(it) }
+//                    //ok
+//                    callback(true)
+//                }
+//            }
+        } else {
+            //error
+            callback(false)
+        }
+    }
+
+
+    override fun uploadPhoto(image: File, id: Int, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            mediaRepository.loadPhoto(token, image) { media, _ ->
+                if (media != null) {
+                    //ok
+                    try {
+                        val imageId = media.id
+
+                        VerifyData.listDocs[id].imgId = imageId
+                        VerifyData.listDocs[id].id = imageId
+
+                        callback(true)
+                    } catch (ex: IndexOutOfBoundsException) {
+                        callback(false)
+                    }
+                } else callback(false)
+            }
+        } else {
+            //error
+            callback(false)
+        }
+    }
+
+
+    override fun deletePhoto(imageId: Int, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            mediaRepository.deletePhoto(token, imageId, callback)
+        } else {
+            //error
+            callback(false)
+        }
+    }
+
+
+    override fun putNewPhoto(photo: NewPhoto, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+        val userId = profileStorage.getUserId()
+
+        if (token != null && userId != -1) {
+            profileRepository.putNewPhoto(photo, token, userId, callback)
+        } else {
+            //error
+            callback(false)
+        }
+    }
 
 }

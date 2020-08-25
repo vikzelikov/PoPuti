@@ -11,7 +11,7 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.ContractView
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
-import kotlinx.android.synthetic.main.select_bank_card_activity.*
+import kotlinx.android.synthetic.main.banking_activity.*
 import javax.inject.Inject
 
 class BankingView : AppCompatActivity(), ContractView.IBankingView {
@@ -34,7 +34,7 @@ class BankingView : AppCompatActivity(), ContractView.IBankingView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.select_bank_card_activity)
+        setContentView(R.layout.banking_activity)
 
         setListeners()
 

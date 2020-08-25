@@ -92,6 +92,12 @@
         android:label="banking_activity" />
 
 
+    <activity
+        android:id="@+id/profits"
+        android:name="bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsView"
+        android:label="profits_activity" />
+
+
     <fragment
         android:id="@+id/main_driver_fragment"
         android:name="bonch.dev.poputi.presentation.modules.driver.MainFragment"

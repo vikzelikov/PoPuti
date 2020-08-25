@@ -1,6 +1,6 @@
 package bonch.dev.poputi.di.module
 
-import bonch.dev.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.Constants
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides

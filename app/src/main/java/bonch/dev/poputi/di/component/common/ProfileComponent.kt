@@ -6,10 +6,14 @@ import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingView
+import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsView
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.ProfilePresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.view.ProfileView
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyView
 import dagger.Component
 
 @CompScope
@@ -30,6 +34,15 @@ interface ProfileComponent {
     fun inject(target: BankingView)
     fun inject(target: BankingPresenter)
 
+
+    //verification
+    fun inject(target: VerifyView)
+    fun inject(target: VerifyPresenter)
+
+
+    //profits
+    fun inject(target: ProfitsView)
+    fun inject(target: ProfitsPresenter)
 
 
     //common

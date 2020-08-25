@@ -55,8 +55,6 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
 
 
     override fun getProfile() {
-        var profile: Profile?
-
         val context = App.appComponent.getContext()
         if (!NetworkUtil.isNetworkConnected(context)) {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
@@ -65,29 +63,15 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
         profileInteractor.initRealm()
         getView()?.showLoading()
 
-        profileInteractor.getProfileRemote { profileData, _ ->
+        profileInteractor.getProfile { profileData, _ ->
             val mainHandler = Handler(Looper.getMainLooper())
             val myRunnable = Runnable {
                 kotlin.run {
-                    profile = profileData
-
-                    //try to get from locate storage
-                    if (profile == null) {
-                        profile = profileInteractor.getProfileLocal()
-                    }
-                    //todo remove it ******** пока не свяжем это с сервером
-                    val x = profileInteractor.getProfileLocal()
-                    x?.let {
-                        profile?.isCallsEnable = x.isCallsEnable
-                        profile?.isNotificationsEnable = x.isNotificationsEnable
-                    }
-                    //todo*********
-
                     getView()?.hideLoading()
 
-                    profile?.let {
+                    profileData?.let {
                         //set start data
-                        startDataProfile = profile
+                        startDataProfile = it
 
                         if (it.imgUser != null) {
                             imageUri = Uri.parse(it.imgUser)
@@ -107,11 +91,8 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
             //set phone (not allow user to change it)
             profileData.phone = startDataProfile?.phone
 
-            //local save
-            profileInteractor.localSaveProfile(profileData)
-
             //remote save
-            profileInteractor.remoteSaveProfile(profileData)
+            profileInteractor.saveProfile(profileData)
 
             //update start data
             startDataProfile = profileData
@@ -126,7 +107,7 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                     if (btm != null) {
                         val file = mediaEvent?.convertImage(btm, "photo")
                         if (file != null) {
-                            profileInteractor.loadPhoto(file, profileData) {
+                            profileInteractor.uploadPhoto(file, profileData) {
                                 isPhotoUploaded = true
                             }
                         } else isPhotoUploaded = true

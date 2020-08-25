@@ -13,7 +13,7 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
-import bonch.dev.domain.utils.Constants.API_KEY
+import bonch.dev.poputi.domain.utils.Constants.API_KEY
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity

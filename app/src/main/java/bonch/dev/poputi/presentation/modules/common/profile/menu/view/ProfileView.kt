@@ -37,7 +37,6 @@ class ProfileView : Fragment(), IProfileView {
     @Inject
     lateinit var profilePresenter: IProfilePresenter
 
-    private val PROFILE_DETAIL_VIEW = 11
     private val EXIT = -2
     private val CHECKOUT = -3
 
@@ -87,7 +86,7 @@ class ProfileView : Fragment(), IProfileView {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data != null && requestCode == PROFILE_DETAIL_VIEW && resultCode == Activity.RESULT_OK) {
+        if (data != null && requestCode == profilePresenter.instance().PROFILE_DETAIL_VIEW && resultCode == Activity.RESULT_OK) {
             profilePresenter.profileDataResult(data)
         }
 
@@ -98,6 +97,10 @@ class ProfileView : Fragment(), IProfileView {
         if (resultCode == CHECKOUT) {
             //redirect ot driver interface
             MainRouter.showView(R.id.show_main_driver_fragment, getNavHost(), null)
+        }
+
+        if (requestCode == profilePresenter.instance().CONFIRM_PERSON && resultCode == Activity.RESULT_OK) {
+            moderate_icon?.visibility = View.VISIBLE
         }
 
         super.onActivityResult(requestCode, resultCode, data)
@@ -121,7 +124,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         confirm_person.setOnClickListener {
-            Toast.makeText(context, "Confirm person", Toast.LENGTH_SHORT).show()
+            profilePresenter.confirmPerson(this)
         }
 
         add_card.setOnClickListener {
@@ -133,7 +136,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         profits.setOnClickListener {
-            Toast.makeText(context, "Profits", Toast.LENGTH_SHORT).show()
+            profilePresenter.showProfits()
         }
 
         change_lang.setOnClickListener {

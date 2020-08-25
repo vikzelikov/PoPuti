@@ -11,10 +11,12 @@ import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.IProfilePresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.ProfilePresenter
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import dagger.Module
 import dagger.Provides
 
@@ -32,6 +34,14 @@ class ProfileModule {
     @Provides
     @CompScope
     fun provideBankingPresenter(): ContractPresenter.IBankingPresenter = BankingPresenter()
+
+    @Provides
+    @CompScope
+    fun provideVerifyPresenter(): ContractPresenter.IVerifyPresenter = VerifyPresenter()
+
+    @Provides
+    @CompScope
+    fun provideProfitsPresenter(): ContractPresenter.IProfitsPresenter = ProfitsPresenter()
 
     @Provides
     @CompScope

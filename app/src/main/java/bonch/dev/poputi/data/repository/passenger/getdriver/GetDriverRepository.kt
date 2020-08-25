@@ -1,7 +1,7 @@
 package bonch.dev.poputi.data.repository.passenger.getdriver
 
 import android.util.Log
-import bonch.dev.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.passenger.GetDriverService

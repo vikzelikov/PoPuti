@@ -196,15 +196,7 @@ class SignupInteractor : ISignupInteractor {
                     callback(true)
                 } else {
                     //retry request
-                    signupRepository.putNewPhoto(photo, token, driverId) { isSuccess ->
-                        if (isSuccess) {
-                            //ok
-                            callback(true)
-                        } else {
-                            //error
-                            callback(false)
-                        }
-                    }
+                    signupRepository.putNewPhoto(photo, token, driverId, callback)
                 }
             }
         } else {

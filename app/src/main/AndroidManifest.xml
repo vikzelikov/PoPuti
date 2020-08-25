@@ -75,6 +75,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".presentation.modules.common.profile.banking.BankingView" />
+        <activity android:name=".presentation.modules.common.profile.passenger.verification.VerifyView" />
+        <activity android:name=".presentation.modules.common.profile.driver.profits.ProfitsView" />
 
         <service
             android:name="bonch.dev.poputi.service.passenger.PassengerRideService"

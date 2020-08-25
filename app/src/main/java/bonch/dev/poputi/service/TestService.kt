@@ -42,12 +42,9 @@ class TestService : FirebaseMessagingService() {
 
         DriverRideService.isRunning = false
 
-
         intentChangeRide = Intent(DriverRideService.CHANGE_RIDE_TAG)
 
         createNotificationChannel()
-
-        Log.e("TEST", "хей блять")
     }
 
 
@@ -59,17 +56,22 @@ class TestService : FirebaseMessagingService() {
         val subtitle = data?.body
 
         Log.e("TEST", "$title $subtitle")
+        p0.data.values.forEach {
+            Log.e("DATA", "${it}")
+        }
 
-        val notification = buildNotification(
-            title!!, subtitle!!,
-            getString(R.string.newMessage),
-            isSetOngoing = false,
-            isAutoCancel = true,
-            isHeadsUp = true,
-            isChat = false
-        )
+        if (title != null && subtitle != null) {
+            val notification = buildNotification(
+                title, subtitle,
+                getString(R.string.newMessage),
+                isSetOngoing = false,
+                isAutoCancel = true,
+                isHeadsUp = true,
+                isChat = false
+            )
 
-        notificatonManager.notify(1, notification)
+            notificatonManager.notify(1, notification)
+        }
     }
 
 
@@ -140,12 +142,4 @@ class TestService : FirebaseMessagingService() {
 
         return notification.build()
     }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        Log.e("TEST", "DESTROY")
-    }
-
 }

@@ -6,6 +6,7 @@ import bonch.dev.poputi.data.network.common.ProfileService
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
@@ -138,6 +139,44 @@ class ProfileRepository : IProfileRepository {
                 //Error
                 Log.e("GET_PROFILE", "${err.printStackTrace()}")
                 callback(null, err.message)
+            }
+        }
+    }
+
+
+
+    override fun putNewPhoto(
+        photo: NewPhoto,
+        token: String,
+        userId: Int,
+        callback: SuccessHandler
+    ) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.putNewPhoto(headers, userId, photo)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e(
+                            "PUT_NEW_PHOTO",
+                            "Put new photo to server failed with code: ${response.code()}"
+                        )
+                        callback(false)
+                    }
+                }
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("PUT_NEW_PHOTO", "${err.printStackTrace()}")
+                callback(false)
             }
         }
     }

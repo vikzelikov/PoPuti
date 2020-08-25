@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
-import bonch.dev.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.presentation.modules.passenger.regular.RegularDriveComponent

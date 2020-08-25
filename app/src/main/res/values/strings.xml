@@ -100,6 +100,7 @@
     <string name="backDriverDoc">обратная сторона ВУ</string>
     <string name="frontSTS">лицевая сторона СТС</string>
     <string name="backSTS">обратная сторона СТС</string>
+    <string name="shootDoc">Пожалуйста, загрузите фотографию документа</string>
     <string name="reshootDoc">Пожалуйста, загрузите новую фотографию документа</string>
     <string name="reshoot">Переснять</string>
     <string name="continue_signup">Продолжить</string>
@@ -262,6 +263,16 @@
     <string name="profits">Доходы</string>
     <string name="youHaveNoBanking">У Вас не добавлено ни одной карты</string>
     <string name="googlePay">Google Pay</string>
+    <string name="passportInfo">Паспортные данные</string>
+    <string name="attachPassportData">Сделайте селфи с паспортом и прикрепите \nскан или фото прописки</string>
+    <string name="attach">Прикрепить</string>
+    <string name="upload">Загрузить</string>
+    <string name="pleaseAttachSecondPhoto">Пожалуйста, прикрепите вторую фотографию паспорта</string>
+    <string name="withFee">С учетом комиссии</string>
+    <string name="fee">Комиссия</string>
+    <string name="order">заказ</string>
+    <string name="orderA">заказа</string>
+    <string name="orderOV">заказов</string>
 
 
 </resources>

@@ -14,7 +14,7 @@ import bonch.dev.poputi.domain.entities.driver.signup.SignupMainData.idStep
 import bonch.dev.poputi.domain.entities.driver.signup.SignupMainData.listDocs
 import bonch.dev.poputi.domain.entities.driver.signup.Step
 import bonch.dev.poputi.domain.interactor.driver.signup.ISignupInteractor
-import bonch.dev.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.checkphoto.CheckPhotoView
 import bonch.dev.poputi.presentation.modules.common.media.IMediaEvent

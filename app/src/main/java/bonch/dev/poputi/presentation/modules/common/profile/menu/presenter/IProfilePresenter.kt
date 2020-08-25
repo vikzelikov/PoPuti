@@ -20,6 +20,8 @@ interface IProfilePresenter {
 
     fun confirmPerson(fragment: Fragment)
 
+    fun showProfits()
+
     fun storyOrders()
 
     fun logout()

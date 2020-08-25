@@ -16,7 +16,7 @@ import bonch.dev.poputi.presentation.modules.driver.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.driver.signup.banking.adapters.BankingSelectAdapter
 import bonch.dev.poputi.presentation.modules.driver.signup.banking.presenter.IBankingSelectPresenter
 import kotlinx.android.synthetic.main.driver_signup_add_bank.*
-import kotlinx.android.synthetic.main.select_bank_card_activity.payments_list
+import kotlinx.android.synthetic.main.banking_activity.payments_list
 import java.lang.IndexOutOfBoundsException
 import javax.inject.Inject
 
