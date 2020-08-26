@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.text.format.DateFormat
+import android.util.Log
 import androidx.fragment.app.Fragment
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
@@ -546,6 +547,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             if (onResponseChangeRide && onResponseScheduler) {
                 getView()?.finishActivity()
             } else {
+                Log.e("AFR","${onResponseScheduler}")
                 errorResponse()
             }
 
