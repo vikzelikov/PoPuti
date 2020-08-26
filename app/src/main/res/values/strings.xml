@@ -78,6 +78,7 @@
     <string name="setRatingApp">Оцените приложение</string>
     <string name="changeLang">Сменить язык</string>
     <string name="support">Техподдержка</string>
+    <string name="support1">Служба поддержки</string>
     <string name="conditionUse">Условия пользования</string>
     <string name="logout">Выйти из профиля</string>
     <string name="email">Почта (необязательно)</string>
@@ -273,6 +274,13 @@
     <string name="order">заказ</string>
     <string name="orderA">заказа</string>
     <string name="orderOV">заказов</string>
+    <string name="aboutRide">О поездке</string>
+    <string name="totalForRide">Всего за поездку</string>
+    <string name="check">Чек</string>
+    <string name="driver">Водитель</string>
+    <string name="copy_text">Скопировать</string>
+    <string name="anyQuestion">Остались вопросы?</string>
+    <string name="copyToBuffer">Скопировано в буфер обмена</string>
 
 
 </resources>

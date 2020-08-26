@@ -22,7 +22,7 @@ interface IProfilePresenter {
 
     fun showProfits()
 
-    fun storyOrders()
+    fun showStoryOrders(isPassanger: Boolean)
 
     fun logout()
 

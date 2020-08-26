@@ -98,6 +98,12 @@
         android:label="profits_activity" />
 
 
+    <activity
+        android:id="@+id/story_passenger"
+        android:name="bonch.dev.poputi.presentation.modules.common.profile.passenger.story.view.StoryView"
+        android:label="story_activity" />
+
+
     <fragment
         android:id="@+id/main_driver_fragment"
         android:name="bonch.dev.poputi.presentation.modules.driver.MainFragment"

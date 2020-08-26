@@ -77,6 +77,8 @@
         <activity android:name=".presentation.modules.common.profile.banking.BankingView" />
         <activity android:name=".presentation.modules.common.profile.passenger.verification.VerifyView" />
         <activity android:name=".presentation.modules.common.profile.driver.profits.ProfitsView" />
+        <activity android:name=".presentation.modules.common.profile.passenger.story.view.StoryView" />
+        <activity android:name=".presentation.modules.common.profile.passenger.story.view.DetailStoryView" />
 
         <service
             android:name="bonch.dev.poputi.service.passenger.PassengerRideService"

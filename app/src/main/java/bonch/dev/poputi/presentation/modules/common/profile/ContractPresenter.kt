@@ -5,9 +5,12 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyStep
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.driver.signup.Step
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.DetailStoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.StoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 
 interface ContractPresenter {
@@ -42,6 +45,19 @@ interface ContractPresenter {
         fun backList()
         fun calcDate(isNext: Boolean?)
         fun instance(): ProfitsPresenter
+    }
+
+
+    interface IStoryPresenter {
+        fun getStory()
+        fun onClickItem(rideInfo: RideInfo)
+        fun instance(): StoryPresenter
+    }
+
+
+    interface IDetailStoryPresenter {
+        fun onReceiveRide(ride: RideInfo)
+        fun instance(): DetailStoryPresenter
     }
 
 }

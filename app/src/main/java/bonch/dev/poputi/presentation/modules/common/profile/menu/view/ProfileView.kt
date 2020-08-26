@@ -132,7 +132,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         story_orders.setOnClickListener {
-            Toast.makeText(context, "Story orders", Toast.LENGTH_SHORT).show()
+            profilePresenter.showStoryOrders(isForPassenger)
         }
 
         profits.setOnClickListener {

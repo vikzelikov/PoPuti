@@ -121,8 +121,12 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     }
 
 
-    override fun storyOrders() {
-        TODO("Not yet implemented")
+    override fun showStoryOrders(isPassanger: Boolean) {
+        if (isPassanger) {
+            MainRouter.showView(R.id.story_passenger, getView()?.getNavHost(), null)
+        } else {
+            //todo
+        }
     }
 
 
