@@ -100,7 +100,7 @@
 
     <activity
         android:id="@+id/story_passenger"
-        android:name="bonch.dev.poputi.presentation.modules.common.profile.passenger.story.view.StoryView"
+        android:name="bonch.dev.poputi.presentation.modules.common.profile.story.view.StoryView"
         android:label="story_activity" />
 
 

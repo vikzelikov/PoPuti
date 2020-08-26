@@ -71,40 +71,40 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun navigateOnSignup() {
-//        if(true) showDriverUI()
+//        if (true) hideLoading()
 //        else
         //try to get info about driver and docs
-        signupInteractor.getDriver { driver, _ ->
-            if (driver != null) {
-                hideLoading()
+            signupInteractor.getDriver { driver, _ ->
+                if (driver != null) {
+                    hideLoading()
 
-                getDriverResponse(driver)
-            } else {
-                //try to get driver with userId
-                signupInteractor.getUser { profile, _ ->
-                    val driverData = profile?.driver
+                    getDriverResponse(driver)
+                } else {
+                    //try to get driver with userId
+                    signupInteractor.getUser { profile, _ ->
+                        val driverData = profile?.driver
 
-                    if (driverData == null) {
-                        hideLoading()
-                    } else {
-                        if (driverData.isVerify) {
+                        if (driverData == null) {
                             hideLoading()
-                            showDriverUI()
-
                         } else {
-                            val driverId = driverData.driverId
-                            if (driverId != null) {
-                                signupInteractor.saveDriverID(driverId)
+                            if (driverData.isVerify) {
+                                hideLoading()
+                                showDriverUI()
 
-                                signupInteractor.getDriver { driver, _ ->
-                                    driver?.let { getDriverResponse(it) }
+                            } else {
+                                val driverId = driverData.driverId
+                                if (driverId != null) {
+                                    signupInteractor.saveDriverID(driverId)
+
+                                    signupInteractor.getDriver { driver, _ ->
+                                        driver?.let { getDriverResponse(it) }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
     }
 
 

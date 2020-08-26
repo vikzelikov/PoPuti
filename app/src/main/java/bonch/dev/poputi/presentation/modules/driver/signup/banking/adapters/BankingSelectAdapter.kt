@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.presentation.modules.driver.signup.banking.presenter.IBankingSelectPresenter
+import kotlinx.android.synthetic.main.bank_card_select_item.view.*
 import javax.inject.Inject
 
 class BankingSelectAdapter @Inject constructor(private val presenter: IBankingSelectPresenter) :
@@ -60,15 +60,56 @@ class BankingSelectAdapter @Inject constructor(private val presenter: IBankingSe
 
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val numberCard = itemView.findViewById<TextView>(R.id.number_card)
-        private val paymentImg = itemView.findViewById<ImageView>(R.id.payment_method_img)
+        private val VISA = 4
+        private val MC = 5
+        private val RUS_WORLD = 2
 
         fun bind(post: BankCard) {
-            val img = post.img
+            val hideChars = "•••• "
+            var imgCard: Int? = null
+            var numberCard = post.numberCard
 
-            if (img == R.drawable.ic_visa || img == R.drawable.ic_mastercard || img == R.drawable.ic_pay_world) {
-                paymentImg.setImageResource(img)
-                numberCard.text = post.numberCard
+            if (numberCard != null) {
+                val firstDigit = numberCard.first().minus('0')
+
+                try {
+                    numberCard = when (firstDigit) {
+                        VISA -> {
+                            imgCard = R.drawable.ic_visa
+                            hideChars + numberCard.substring(15, 19)
+                        }
+
+                        MC -> {
+                            imgCard = R.drawable.ic_mastercard
+                            hideChars + numberCard.substring(15, 19)
+                        }
+
+                        RUS_WORLD -> {
+                            imgCard = R.drawable.ic_pay_world
+                            hideChars + numberCard.substring(15, 19)
+                        }
+
+                        else -> {
+                            imgCard = null
+                            hideChars + numberCard.substring(15, 19)
+                        }
+                    }
+
+                } catch (ex: Exception) {
+
+                }
+
+                imgCard?.let {
+                    itemView.payment_method_img.setImageResource(it)
+                }
+
+                itemView.number_card.text = numberCard
+
+                if (firstDigit == 'g'.minus('0')) {
+                    itemView.payment_method_img.setImageResource(R.drawable.ic_google_pay)
+                    itemView.number_card.text = ""
+                }
+
             }
         }
     }

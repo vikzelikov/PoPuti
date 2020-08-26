@@ -33,7 +33,7 @@ interface GetDriverService : RideService {
     ): Response<Schedule>
 
 
-    @POST("/api/schedules/{id}")
+    @PUT("/api/schedules/{id}")
     suspend fun updateRideSchedule(
         @HeaderMap headers: Map<String, String>,
         @Path("id") scheduleId: Int,

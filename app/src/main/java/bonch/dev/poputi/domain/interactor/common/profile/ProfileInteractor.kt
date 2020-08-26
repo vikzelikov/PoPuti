@@ -11,6 +11,7 @@ import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyData
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
@@ -179,7 +180,7 @@ class ProfileInteractor : IProfileInteractor {
     /**
      * VERIFICATION
      * */
-    override fun verification(data: Verify, callback: SuccessHandler){
+    override fun verification(data: Verify, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
@@ -249,6 +250,27 @@ class ProfileInteractor : IProfileInteractor {
             //error
             callback(false)
         }
+    }
+
+
+    /**
+     * STORY RIDES
+     * */
+    override fun getStoryRidesPassenger(callback: DataHandler<ArrayList<RideInfo>?>) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            profileRepository.getStoryRidesPassenger(token, callback)
+        } else callback(null, "error")
+    }
+
+
+    override fun getStoryRidesDriver(callback: DataHandler<ArrayList<RideInfo>?>) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            profileRepository.getStoryRidesDriver(token, callback)
+        } else callback(null, "error")
     }
 
 }

@@ -2,15 +2,13 @@ package bonch.dev.poputi.presentation.modules.common.profile
 
 import android.app.Activity
 import android.content.Intent
-import androidx.fragment.app.Fragment
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyStep
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
-import bonch.dev.poputi.domain.entities.driver.signup.Step
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.DetailStoryPresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.StoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 
 interface ContractPresenter {
@@ -49,7 +47,7 @@ interface ContractPresenter {
 
 
     interface IStoryPresenter {
-        fun getStory()
+        fun getStory(isForPassenger: Boolean)
         fun onClickItem(rideInfo: RideInfo)
         fun instance(): StoryPresenter
     }

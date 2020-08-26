@@ -70,6 +70,10 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     lateinit var moveMapCamera: ParentHandler<Point>
     lateinit var mapView: ParentMapHandler<MapView>
 
+    private val VISA = 4
+    private val MC = 5
+    private val RUS_WORLD = 2
+
     private var arrSelectedDays = BooleanArray(7)
 
 
@@ -999,17 +1003,54 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
 
     override fun setSelectedBankCard(bankCard: BankCard) {
-        selected_payment_method?.visibility = View.VISIBLE
-        payment_method?.visibility = View.GONE
+        val hideChars = "•••• "
+        var imgCard: Int? = null
+        var numberCard = bankCard.numberCard
 
-        number_card?.text = bankCard.numberCard
-        val img = bankCard.img
-        if (img != null) {
-            payment_method_img?.setImageResource(img)
+        if (numberCard != null) {
+            val firstDigit = numberCard.first().minus('0')
+
+            try {
+                numberCard = when (firstDigit) {
+                    VISA -> {
+                        imgCard = R.drawable.ic_visa
+                        hideChars + numberCard.substring(15, 19)
+                    }
+
+                    MC -> {
+                        imgCard = R.drawable.ic_mastercard
+                        hideChars + numberCard.substring(15, 19)
+                    }
+
+                    RUS_WORLD -> {
+                        imgCard = R.drawable.ic_pay_world
+                        hideChars + numberCard.substring(15, 19)
+                    }
+
+                    else -> {
+                        imgCard = null
+                        hideChars + numberCard.substring(15, 19)
+                    }
+                }
+
+            } catch (ex: Exception) {
+
+            }
+
+            imgCard?.let {
+                payment_method_img?.setImageResource(it)
+            }
+
+            number_card?.text = numberCard
+
+            if (firstDigit == 'g'.minus('0')) {
+                payment_method_img?.setImageResource(R.drawable.ic_google_pay)
+                number_card?.text = ""
+            }
         }
-        if (img == R.drawable.ic_google_pay) {
-            number_card?.text = ""
-        }
+
+        selected_payment_method.visibility = View.VISIBLE
+        payment_method.visibility = View.GONE
 
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
 

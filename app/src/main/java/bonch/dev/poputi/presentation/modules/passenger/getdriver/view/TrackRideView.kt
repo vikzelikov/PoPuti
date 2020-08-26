@@ -343,6 +343,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         on_map_view?.visibility = View.VISIBLE
         on_map_view?.isClickable = false
         on_map_view?.alpha = 0.8f
+        on_map_view?.elevation = 20f
+        main_info_layout?.elevation = 0f
         main_coordinator?.elevation = 100f
 
         driverCancelledBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED

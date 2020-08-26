@@ -183,11 +183,10 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
         val bankCard = data?.getParcelableExtra<BankCard>(ADD_BANK_CARD.toString())
 
         val paymentCard = BankCard(
-            0,
+            1,
             bankCard?.numberCard,
             bankCard?.validUntil,
-            bankCard?.cvc,
-            bankCard?.img
+            bankCard?.cvc
         )
 
         val adapter = getView()?.getPaymentsAdapter()

@@ -79,8 +79,11 @@ class BankingView : AppCompatActivity(), ContractView.IBankingView {
         if (requestCode == bankingPresenter.instance().ADD_BANK_CARD && resultCode == Activity.RESULT_OK) {
             bankingPresenter.addBankCardDone(data)
             payments_list?.visibility = View.VISIBLE
+            doneEdit?.visibility = View.GONE
             edit?.visibility = View.VISIBLE
             text_empty_cards?.visibility = View.GONE
+
+            bankingPresenter.doneEdit()
         }
     }
 
@@ -100,6 +103,11 @@ class BankingView : AppCompatActivity(), ContractView.IBankingView {
             bankingAdapter.list = cards
             bankingAdapter.notifyDataSetChanged()
 
+            if (bankingAdapter.list.size == 1) {
+                if (bankingAdapter.list.first().numberCard == "google") {
+                    edit?.visibility = View.INVISIBLE
+                }
+            }
             payments_list?.visibility = View.VISIBLE
         } else {
             edit?.visibility = View.INVISIBLE

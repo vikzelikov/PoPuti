@@ -211,6 +211,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         on_view_cancel?.visibility = View.VISIBLE
         on_view_cancel?.isClickable = false
         on_view_cancel?.alpha = 0.8f
+        on_view_cancel?.elevation = 20f
+        main_info_layout?.elevation = 0f
 
         if (status > StatusRide.WAIT_FOR_DRIVER.status) {
             payment_sum?.text = payment.toString().plus(" ₽")

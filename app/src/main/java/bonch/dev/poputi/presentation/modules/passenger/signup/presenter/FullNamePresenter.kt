@@ -1,12 +1,12 @@
 package bonch.dev.poputi.presentation.modules.passenger.signup.presenter
 
 import androidx.fragment.app.FragmentActivity
+import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.passenger.signup.DataSignup
 import bonch.dev.poputi.domain.interactor.passenger.signup.ISignupInteractor
-import bonch.dev.domain.utils.Keyboard
-import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import bonch.dev.poputi.presentation.modules.passenger.signup.SignupComponent
@@ -36,8 +36,7 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
             0,
             "google",
             null,
-            null,
-            R.drawable.ic_google_pay
+            null
         )
         signupInteractor.saveGooglePay(googlePay)
 

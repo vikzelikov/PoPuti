@@ -123,14 +123,13 @@ class AddBankCardView : AppCompatActivity(),
     }
 
 
-    override fun addBankCardDone(imgCard: Int?, numberCard: String) {
+    override fun addBankCardDone(numberCard: String) {
         val intent = Intent()
 
         val bankCard = BankCard()
         bankCard.numberCard = numberCard
         bankCard.validUntil = valid_until.text.toString()
         bankCard.cvc = cvc.text.toString()
-        bankCard.img = imgCard
 
         intent.putExtra(ADD_BANK_CARD.toString(), bankCard)
         setResult(RESULT_OK, intent)

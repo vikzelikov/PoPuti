@@ -5,16 +5,11 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.addbanking.view.IAddBankCardView
-import java.lang.Exception
-import java.lang.IndexOutOfBoundsException
 
 class AddBankCardPresenter : BasePresenter<IAddBankCardView>(),
     IAddBankCardPresenter {
 
     private var lock = false
-    private val VISA = 4
-    private val MC = 5
-    private val RUS_WORLD = 2
 
 
     override fun maskCardNumber(s: Editable?) {
@@ -51,42 +46,8 @@ class AddBankCardPresenter : BasePresenter<IAddBankCardView>(),
     override fun addCardBank(card: String) {
         getView()?.let {
             if (it.isValidCard()) {
-                var cardNumber = card
-                val imgCard: Int?
-                val hideChars = "•••• "
 
-                try {
-                    when (cardNumber[0].toString().toInt()) {
-                        VISA -> {
-                            imgCard = R.drawable.ic_visa
-                            cardNumber = hideChars + cardNumber.substring(15, 19)
-                        }
-
-                        MC -> {
-                            imgCard = R.drawable.ic_mastercard
-                            cardNumber = hideChars + cardNumber.substring(15, 19)
-                        }
-
-                        RUS_WORLD -> {
-                            imgCard = R.drawable.ic_pay_world
-                            cardNumber = hideChars + cardNumber.substring(15, 19)
-                        }
-
-                        else -> {
-                            imgCard = null
-                            cardNumber = hideChars + cardNumber.substring(15, 19)
-                        }
-                    }
-
-                    getView()?.addBankCardDone(imgCard, cardNumber)
-
-                } catch (ex: StringIndexOutOfBoundsException) {
-
-                } catch (ex: IndexOutOfBoundsException) {
-
-                } catch (ex: Exception) {
-
-                }
+                getView()?.addBankCardDone(card)
 
             } else {
                 val context = App.appComponent.getContext()

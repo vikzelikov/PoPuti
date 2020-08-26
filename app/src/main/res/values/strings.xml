@@ -278,9 +278,11 @@
     <string name="totalForRide">Всего за поездку</string>
     <string name="check">Чек</string>
     <string name="driver">Водитель</string>
+    <string name="passenger">Пассажир</string>
     <string name="copy_text">Скопировать</string>
     <string name="anyQuestion">Остались вопросы?</string>
     <string name="copyToBuffer">Скопировано в буфер обмена</string>
+    <string name="in1">в</string>
 
 
 </resources>

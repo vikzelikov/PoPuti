@@ -6,7 +6,7 @@ interface IAddBankCardView : IBaseView {
 
     fun isValidCard(): Boolean
 
-    fun addBankCardDone(imgCard: Int?, numberCard: String)
+    fun addBankCardDone(numberCard: String)
 
     fun setHintListener()
 

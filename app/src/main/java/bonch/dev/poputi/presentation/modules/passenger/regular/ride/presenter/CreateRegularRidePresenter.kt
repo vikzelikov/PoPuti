@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.text.format.DateFormat
-import android.util.Log
 import androidx.fragment.app.Fragment
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
@@ -114,7 +113,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             parseTime(time)?.let { getView()?.setTime(it) }
             if (comment != null) getView()?.setComment(comment)
             setSelectedBankCard(
-                BankCard(0, "google", null, null, R.drawable.ic_google_pay, true)
+                BankCard(0, "google", null, null, true)
             )
 
             getView()?.hideMapMarker()
@@ -466,6 +465,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                 rideInfo.statusId = StatusRide.REGULAR_RIDE.status
 
                 val dateInfo = getDateInfo()
+                dateInfo?.id = ActiveRide.activeRide?.dateInfo?.id
                 rideInfo.dateInfo = dateInfo
 
                 //save ride
@@ -510,9 +510,8 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                         getView()?.hideLoading()
                     }
                 } else {
-                    getView()?.hideLoading()
-
                     getView()?.showNotification(res.getString(R.string.tryAgain))
+                    getView()?.hideLoading()
                 }
             }
         } else getView()?.showNotification(res.getString(R.string.someError))
@@ -547,7 +546,6 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             if (onResponseChangeRide && onResponseScheduler) {
                 getView()?.finishActivity()
             } else {
-                Log.e("AFR","${onResponseScheduler}")
                 errorResponse()
             }
 
@@ -621,11 +619,10 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
         val bankCard = data?.getParcelableExtra<BankCard>(ADD_BANK_CARD.toString())
 
         val paymentCard = BankCard(
-            0,
+            1,
             bankCard?.numberCard,
             bankCard?.validUntil,
-            bankCard?.cvc,
-            bankCard?.img
+            bankCard?.cvc
         )
 
         val adapter = getView()?.getPaymentsAdapter()

@@ -7,6 +7,7 @@ import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope
@@ -144,7 +145,6 @@ class ProfileRepository : IProfileRepository {
     }
 
 
-
     override fun putNewPhoto(
         photo: NewPhoto,
         token: String,
@@ -177,6 +177,81 @@ class ProfileRepository : IProfileRepository {
                 //Error
                 Log.e("PUT_NEW_PHOTO", "${err.printStackTrace()}")
                 callback(false)
+            }
+        }
+    }
+
+
+    override fun getStoryRidesPassenger(
+        token: String,
+        callback: DataHandler<ArrayList<RideInfo>?>
+    ) {
+        var response: Response<ArrayList<RideInfo>>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.getStoryRidesPassenger(headers)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        val story = response.body()
+                        if (story != null) callback(story, null)
+                        else callback(null, "error")
+
+                    } else {
+                        //Error
+                        Log.e(
+                            "GET_STORY_PASSENGER",
+                            "Get story from server failed with code: ${response.code()}"
+                        )
+                        callback(null, response.code().toString())
+                    }
+                }
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("GET_STORY_PASSENGER", "${err.printStackTrace()}")
+                callback(null, err.message)
+            }
+        }
+    }
+
+
+    override fun getStoryRidesDriver(token: String, callback: DataHandler<ArrayList<RideInfo>?>) {
+        var response: Response<ArrayList<RideInfo>>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.getStoryRidesDriver(headers)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        val story = response.body()
+                        if (story != null) callback(story, null)
+                        else callback(null, "error")
+
+                    } else {
+                        //Error
+                        Log.e(
+                            "GET_STORY_DRIVER",
+                            "Get story from server failed with code: ${response.code()}"
+                        )
+                        callback(null, response.code().toString())
+                    }
+                }
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("GET_STORY_DRIVER", "${err.printStackTrace()}")
+                callback(null, err.message)
             }
         }
     }

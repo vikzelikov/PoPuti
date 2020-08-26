@@ -357,7 +357,6 @@ class GetDriverInteractor : IGetDriverInteractor {
                 numberCard = it.numberCard
                 validUntil = it.validUntil
                 cvc = it.cvc
-                img = it.img
                 isSelect = it.isSelect
             }
 

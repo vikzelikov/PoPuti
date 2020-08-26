@@ -2,7 +2,6 @@ package bonch.dev.poputi.presentation.modules.common.profile.banking
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
@@ -43,11 +42,10 @@ class BankingPresenter : BasePresenter<ContractView.IBankingView>(),
         val bankCard = data?.getParcelableExtra<BankCard>(ADD_BANK_CARD.toString())
 
         val paymentCard = BankCard(
-            0,
+            1,
             bankCard?.numberCard,
             bankCard?.validUntil,
-            bankCard?.cvc,
-            bankCard?.img
+            bankCard?.cvc
         )
 
         val adapter = getView()?.getAdapter()

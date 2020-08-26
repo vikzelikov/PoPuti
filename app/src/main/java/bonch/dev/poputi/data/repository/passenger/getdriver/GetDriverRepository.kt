@@ -230,8 +230,6 @@ class GetDriverRepository : IGetDriverRepository {
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        val schedule = response.body()
-                        Log.e("TEST", "$schedule")
                         callback(true)
                     } else {
                         //Error

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.util.Log
 import androidx.core.content.ContextCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
@@ -37,10 +36,6 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         var mapObjects: MapObjectCollection? = null
         var mapObjectsDriver: MapObjectCollection? = null
         private var boundingBox: BoundingBox? = null
-    }
-
-    init {
-        drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
     }
 
 
@@ -94,6 +89,8 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         isWaypoint: Boolean,
         mapView: MapView
     ) {
+        if (drivingRouter == null)
+            drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
 
         this.mapView = mapView
         this.isWaypoint = isWaypoint
@@ -117,6 +114,49 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
 
         if (boundingBox != null) {
             enterAnimation()
+        }
+    }
+
+
+    fun submitRequestStory(
+        startLocation: Point,
+        endLocation: Point,
+        isWaypoint: Boolean,
+        mapView: MapView
+    ) {
+        if (drivingRouter == null)
+            drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
+
+        this.mapView = mapView
+        this.isWaypoint = isWaypoint
+
+        if (mapObjects == null) {
+            mapObjects = mapView.map?.mapObjects?.addCollection()
+            boundingBox = BoundingBox(
+                Point(startLocation.latitude, startLocation.longitude),
+                Point(endLocation.latitude, endLocation.longitude)
+            )
+
+            route(startLocation, endLocation)
+
+            boundingBox?.let {
+                var cameraPosition = mapView.map?.cameraPosition(it)
+
+                if (cameraPosition != null) {
+                    cameraPosition = CameraPosition(
+                        cameraPosition.target,
+                        cameraPosition.zoom - 1.5f,
+                        cameraPosition.azimuth,
+                        cameraPosition.tilt
+                    )
+
+                    mapView.map?.move(
+                        cameraPosition,
+                        Animation(Animation.Type.SMOOTH, 0f),
+                        null
+                    )
+                }
+            }
         }
     }
 

@@ -12,10 +12,10 @@ import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.Profile
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.ProfilePresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.view.ProfileView
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.DetailStoryPresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.StoryPresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.view.DetailStoryView
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.view.StoryView
+import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.story.view.DetailStoryView
+import bonch.dev.poputi.presentation.modules.common.profile.story.view.StoryView
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyView
 import dagger.Component

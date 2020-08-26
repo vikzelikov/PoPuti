@@ -2,7 +2,6 @@ package bonch.dev.poputi.presentation.modules.passenger.signup.presenter
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
@@ -80,8 +79,7 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
             0,
             "google",
             null,
-            null,
-            R.drawable.ic_google_pay
+            null
         )
         signupInteractor.saveGooglePay(googlePay)
 

@@ -16,8 +16,8 @@ import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfil
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.IProfilePresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.ProfilePresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.DetailStoryPresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.presenter.StoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import dagger.Module
 import dagger.Provides

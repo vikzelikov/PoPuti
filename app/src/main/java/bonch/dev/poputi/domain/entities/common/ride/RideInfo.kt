@@ -1,7 +1,5 @@
 package bonch.dev.poputi.domain.entities.common.ride
 
-import android.os.Parcel
-import android.os.Parcelable
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
@@ -66,6 +64,14 @@ data class RideInfo(
     @Expose
     var price: Int? = null,
 
+    @SerializedName("start_at")
+    @Expose
+    var startAt: String? = null,
+
+    @SerializedName("finish_at")
+    @Expose
+    var finishAt: String? = null,
+
     @SerializedName("user_id")
     @Expose
     var userId: Int? = null,
@@ -92,70 +98,11 @@ data class RideInfo(
     var dateInfo: DateInfo? = null,
 
     var paymentMethod: BankCard? = null
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readString(),
-        parcel.readParcelable(Address::class.java.classLoader),
-        parcel.readValue(Double::class.java.classLoader) as? Double,
-        parcel.readValue(Double::class.java.classLoader) as? Double,
-        parcel.readString(),
-        parcel.readParcelable(Address::class.java.classLoader),
-        parcel.readValue(Double::class.java.classLoader) as? Double,
-        parcel.readValue(Double::class.java.classLoader) as? Double,
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readInt(),
-        parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readByte() != 0.toByte(),
-        parcel.readParcelable(Profile::class.java.classLoader),
-        parcel.readParcelable(Driver::class.java.classLoader)
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeValue(rideId)
-        parcel.writeValue(statusId)
-        parcel.writeString(position)
-        parcel.writeParcelable(fromAdr, flags)
-        parcel.writeValue(fromLat)
-        parcel.writeValue(fromLng)
-        parcel.writeString(destination)
-        parcel.writeParcelable(toAdr, flags)
-        parcel.writeValue(toLat)
-        parcel.writeValue(toLng)
-        parcel.writeString(comment)
-        parcel.writeString(city)
-        parcel.writeValue(price)
-        parcel.writeValue(userId)
-        parcel.writeInt(time)
-        parcel.writeValue(distance)
-        parcel.writeByte(if (isNewOrder) 1 else 0)
-        parcel.writeParcelable(passenger, flags)
-        parcel.writeParcelable(driver, flags)
-        parcel.writeParcelable(paymentMethod, flags)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<RideInfo> {
-        override fun createFromParcel(parcel: Parcel): RideInfo {
-            return RideInfo(parcel)
-        }
-
-        override fun newArray(size: Int): Array<RideInfo?> {
-            return arrayOfNulls(size)
-        }
-    }
+) {
 
     override fun equals(other: Any?): Boolean {
         return rideId == (other as RideInfo).rideId
     }
-
 
     override fun hashCode(): Int {
         var result = rideId ?: 0
@@ -171,6 +118,8 @@ data class RideInfo(
         result = 31 * result + (comment?.hashCode() ?: 0)
         result = 31 * result + (city?.hashCode() ?: 0)
         result = 31 * result + (price ?: 0)
+        result = 31 * result + (startAt?.hashCode() ?: 0)
+        result = 31 * result + (finishAt?.hashCode() ?: 0)
         result = 31 * result + (userId ?: 0)
         result = 31 * result + time
         result = 31 * result + (distance ?: 0)
@@ -178,10 +127,9 @@ data class RideInfo(
         result = 31 * result + (passenger?.hashCode() ?: 0)
         result = 31 * result + (driver?.hashCode() ?: 0)
         result = 31 * result + (dateInfo?.hashCode() ?: 0)
+        result = 31 * result + (paymentMethod?.hashCode() ?: 0)
         return result
     }
-
-
 }
 
 

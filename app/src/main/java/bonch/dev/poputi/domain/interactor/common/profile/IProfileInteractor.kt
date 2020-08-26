@@ -4,6 +4,7 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import java.io.File
@@ -44,5 +45,11 @@ interface IProfileInteractor {
     fun deletePhoto(imageId: Int, callback: SuccessHandler)
 
     fun putNewPhoto(photo: NewPhoto, callback: SuccessHandler)
+
+
+    //STORY RIDES
+    fun getStoryRidesPassenger(callback: DataHandler<ArrayList<RideInfo>?>)
+
+    fun getStoryRidesDriver(callback: DataHandler<ArrayList<RideInfo>?>)
 
 }

@@ -103,7 +103,7 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
         adapter.addFragment(activeRidesView, getString(R.string.ACTIVE))
         adapter.addFragment(archiveRidesView, getString(R.string.ARCHIVE))
 
-        viewPager.adapter = adapter
+        viewPager?.adapter = adapter
     }
 
 

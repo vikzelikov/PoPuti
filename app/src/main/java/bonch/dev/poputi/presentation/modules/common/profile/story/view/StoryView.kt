@@ -1,18 +1,20 @@
-package bonch.dev.poputi.presentation.modules.common.profile.passenger.story.view
+package bonch.dev.poputi.presentation.modules.common.profile.story.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.ContractView
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.adapter.StoryAdapter
+import bonch.dev.poputi.presentation.modules.common.profile.story.adapter.StoryAdapter
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
+import com.ethanhua.skeleton.Skeleton
+import com.ethanhua.skeleton.SkeletonScreen
 import kotlinx.android.synthetic.main.story_activity.*
-import java.util.*
 import javax.inject.Inject
 
 class StoryView : AppCompatActivity(), ContractView.IStoryView {
@@ -23,6 +25,9 @@ class StoryView : AppCompatActivity(), ContractView.IStoryView {
 
     @Inject
     lateinit var storyAdapter: StoryAdapter
+
+
+    private var skeletonScreen: SkeletonScreen? = null
 
 
     init {
@@ -36,12 +41,15 @@ class StoryView : AppCompatActivity(), ContractView.IStoryView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.story_activity)
 
-        presenter.getStory()
-
         setListeners()
 
         initAdapter()
 
+        showLoading()
+
+        val key = "IS_PASSENGER"
+        val isForPassenger = intent.getBooleanExtra(key, false)
+        presenter.getStory(isForPassenger)
     }
 
 
@@ -50,31 +58,6 @@ class StoryView : AppCompatActivity(), ContractView.IStoryView {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = storyAdapter
         }
-
-        val min = 0
-        val max = 23
-
-        val r = Random()
-        val i1 = r.nextInt(max - min + 1) + min
-
-
-        val list = arrayListOf<RideInfo>()
-        for (i in 4..i1) {
-            val ride = RideInfo()
-
-            ride.position = "Улица Тверская, дом 121, подъезд 12, Санкт-Петербург"
-            ride.destination = "Улица Вокзальная, дом 13/А"
-            val rand = Random()
-            val abcd = rand.nextInt(100)
-
-            ride.price = i * abcd
-
-            list.add(ride)
-        }
-
-        storyAdapter.list?.clear()
-        storyAdapter?.list?.addAll(list)
-        storyAdapter?.notifyDataSetChanged()
     }
 
 
@@ -86,8 +69,23 @@ class StoryView : AppCompatActivity(), ContractView.IStoryView {
 
 
     override fun showDetailStory() {
+        val key = "IS_PASSENGER"
+        val isForPassenger = intent.getBooleanExtra(key, false)
+        val bundle = Bundle()
+        bundle.putBoolean(key, isForPassenger)
+
         val intent = Intent(this, DetailStoryView::class.java)
-        startActivity(intent)
+        startActivity(intent, bundle)
+    }
+
+
+    override fun showEmptyRidesText() {
+        text_empty_orders?.visibility = View.VISIBLE
+    }
+
+
+    override fun hideEmptyRidesText() {
+        text_empty_orders?.visibility = View.GONE
     }
 
 
@@ -104,12 +102,21 @@ class StoryView : AppCompatActivity(), ContractView.IStoryView {
 
 
     override fun showLoading() {
-
+        skeletonScreen = Skeleton.bind(rides_recycler)
+            .adapter(storyAdapter)
+            .load(R.layout.skeleton_story_item)
+            .count(10)
+            .show()
     }
+
 
     override fun hideLoading() {
-
+        skeletonScreen?.hide()
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        ActiveRide.activeRide = null
+    }
 }

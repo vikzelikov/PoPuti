@@ -13,7 +13,6 @@ open class BankCard(
     var numberCard: String? = null,
     var validUntil: String? = null,
     var cvc: String? = null,
-    var img: Int? = null,
     var isSelect: Boolean = false
 ) : RealmObject(), Parcelable {
     constructor(parcel: Parcel) : this(
@@ -21,7 +20,6 @@ open class BankCard(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readByte() != 0.toByte()
     )
 
@@ -30,7 +28,6 @@ open class BankCard(
         parcel.writeString(numberCard)
         parcel.writeString(validUntil)
         parcel.writeString(cvc)
-        parcel.writeValue(img)
         parcel.writeByte(if (isSelect) 1 else 0)
     }
 
@@ -58,7 +55,6 @@ open class BankCard(
         result = 31 * result + (numberCard?.hashCode() ?: 0)
         result = 31 * result + (validUntil?.hashCode() ?: 0)
         result = 31 * result + (cvc?.hashCode() ?: 0)
-        result = 31 * result + (img ?: 0)
         result = 31 * result + isSelect.hashCode()
         return result
     }

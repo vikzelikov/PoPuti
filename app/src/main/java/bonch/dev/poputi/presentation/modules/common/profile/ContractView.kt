@@ -8,7 +8,8 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.IBaseView
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingAdapter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsAdapter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.story.adapter.StoryAdapter
+import bonch.dev.poputi.presentation.modules.common.profile.story.adapter.StoryAdapter
+import com.yandex.mapkit.mapview.MapView
 
 interface ContractView {
 
@@ -43,12 +44,15 @@ interface ContractView {
 
     interface IStoryView : IBaseView {
         fun showDetailStory()
+        fun showEmptyRidesText()
+        fun hideEmptyRidesText()
         fun getAdapter(): StoryAdapter
     }
 
 
     interface IDetailStoryView : IBaseView {
-        fun setRideInfo(rideInfo: RideInfo)
+        fun getMap(): MapView?
+        fun setRideInfo(ride: RideInfo)
     }
 
 }
