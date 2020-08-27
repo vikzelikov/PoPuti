@@ -2,16 +2,11 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters
 
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Recycler
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
@@ -50,16 +45,6 @@ class AddressesAdapter @Inject constructor(private val createRidePresenter: Cont
             }, 250)
 
             false
-        }
-    }
-
-
-    fun setItem(index: Int, address: Address) {
-        try {
-            list.add(index, address)
-            notifyItemChanged(index)
-        } catch (ex: IndexOutOfBoundsException) {
-
         }
     }
 

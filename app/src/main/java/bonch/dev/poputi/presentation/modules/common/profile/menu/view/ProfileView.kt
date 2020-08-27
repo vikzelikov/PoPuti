@@ -212,8 +212,6 @@ class ProfileView : Fragment(), IProfileView {
         user_rating?.text = if (profileData.rating == null) {
             "0.0"
         } else profileData.rating.toString()
-
-
     }
 
 

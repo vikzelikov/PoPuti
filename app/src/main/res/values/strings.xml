@@ -283,6 +283,11 @@
     <string name="anyQuestion">Остались вопросы?</string>
     <string name="copyToBuffer">Скопировано в буфер обмена</string>
     <string name="in1">в</string>
+    <string name="comments">Комментарии</string>
+    <string name="sort">Сортировка</string>
+    <string name="do15ordersForCalcRating">Выполните 15 заказов для расчета\n первоначального рейтинга</string>
+    <string name="warningLowRating">Если Ваш рейтинг снизится до 3.9, мы будем вынужден заблокировать сервис</string>
+    <string name="warning">Предупреждение</string>
 
 
 </resources>

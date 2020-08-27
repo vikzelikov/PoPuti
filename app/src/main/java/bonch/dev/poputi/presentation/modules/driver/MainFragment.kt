@@ -2,15 +2,19 @@ package bonch.dev.poputi.presentation.modules.driver
 
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
+import bonch.dev.poputi.presentation.modules.common.profile.menu.view.ProfileView
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.OrdersView
 import bonch.dev.poputi.presentation.modules.driver.rating.view.RatingView
-import bonch.dev.poputi.presentation.modules.common.profile.menu.view.ProfileView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.android.synthetic.main.main_driver_fragment.*
 
 class MainFragment : Fragment() {
 
@@ -20,6 +24,9 @@ class MainFragment : Fragment() {
 
     private var active: Fragment? = null
     private var fm: FragmentManager? = null
+
+    private var infoBottomSheet: BottomSheetBehavior<*>? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +51,13 @@ class MainFragment : Fragment() {
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setRatingUI()
     }
 
 
@@ -83,10 +97,10 @@ class MainFragment : Fragment() {
             val rating = ratingView
             val profile = profile
 
-            if(active != null){
+            if (active != null) {
                 when (item.itemId) {
                     R.id.orders -> {
-                        if(orders != null){
+                        if (orders != null) {
                             fm?.beginTransaction()?.hide(active)?.show(orders)?.commit()
                             item.isChecked = true
                             this.active = ordersView
@@ -94,15 +108,17 @@ class MainFragment : Fragment() {
                     }
 
                     R.id.rating -> {
-                        if(rating != null){
+                        if (rating != null) {
                             fm?.beginTransaction()?.hide(active)?.show(rating)?.commit()
                             item.isChecked = true
                             this.active = ratingView
+
+                            ratingView?.getRating()
                         }
                     }
 
                     R.id.profile -> {
-                        if(profile != null){
+                        if (profile != null) {
                             fm?.beginTransaction()?.hide(active)?.show(profile)?.commit()
                             item.isChecked = true
                             this.active = profile
@@ -119,8 +135,7 @@ class MainFragment : Fragment() {
         fm = (activity as MainActivity).supportFragmentManager
 
         if (ordersView == null) {
-            ordersView =
-                OrdersView()
+            ordersView = OrdersView()
         }
 
         if (ratingView == null) {
@@ -128,8 +143,35 @@ class MainFragment : Fragment() {
         }
 
         if (profile == null) {
-            profile =
-                ProfileView()
+            profile = ProfileView()
+        }
+    }
+
+
+    private fun setRatingUI() {
+        infoBottomSheet = BottomSheetBehavior.from<View>(info_bottom_sheet)
+
+        infoBottomSheet?.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                on_view_bottom_sheet?.alpha = slideOffset * 0.8f
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    on_view_bottom_sheet?.visibility = View.GONE
+                } else {
+                    on_view_bottom_sheet?.visibility = View.VISIBLE
+                }
+            }
+        })
+
+
+        ratingView?.infoBottomSheet = infoBottomSheet as BottomSheetBehavior<*>
+
+        on_view_bottom_sheet.setOnClickListener {
+            infoBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 

@@ -19,6 +19,21 @@ open class Review(
 
     @SerializedName("rating")
     @Expose
-    var rating: Int? = null
+    var rating: Int? = null,
 
+    @SerializedName("author")
+    @Expose
+    var author: Author? = null
+
+)
+
+
+open class Author(
+    @SerializedName("first_name")
+    @Expose
+    var firstName: String? = null,
+
+    @SerializedName("last_name")
+    @Expose
+    var lastName: String? = null
 )
