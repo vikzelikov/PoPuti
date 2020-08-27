@@ -99,6 +99,8 @@ class ArchiveRidesPresenter : BasePresenter<ContractView.IArchiveRidesView>(),
                 getView()?.getAdapter()?.list?.let { list ->
                     if (list.isEmpty()) getView()?.showTextEmptyRides()
                 }
+
+                regularRidesInteractor.deleteRide(it){}
             }
         }
     }

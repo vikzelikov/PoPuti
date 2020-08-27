@@ -71,4 +71,16 @@ class RegularRidesInteractor : IRegularRidesInteractor {
             callback(false)
         }
     }
+
+
+    override fun deleteRide(rideId: Int, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            regularRidesRepository.deleteRide(rideId, token, callback)
+
+        } else {
+            callback(false)
+        }
+    }
 }

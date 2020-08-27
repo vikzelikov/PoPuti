@@ -25,4 +25,11 @@ interface RegularRidesService {
         @Path("id") rideId: Int,
         @Field("status_id") statusId: Int
     ): Response<*>
+
+
+    @DELETE("/api/rides/{id}")
+    suspend fun deleteRide(
+        @HeaderMap headers: Map<String, String>,
+        @Path("id") rideId: Int
+    ): Response<*>
 }

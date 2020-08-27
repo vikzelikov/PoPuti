@@ -22,7 +22,6 @@ class RegularRidesRepository : IRegularRidesRepository {
         .create(RegularRidesService::class.java)
 
 
-
     override fun getActiveRides(token: String, callback: DataHandler<ArrayList<RideInfo>?>) {
         var response: Response<ArrayList<RideInfo>?>
 
@@ -141,6 +140,43 @@ class RegularRidesRepository : IRegularRidesRepository {
             } catch (err: Exception) {
                 //Error
                 Log.e("UPDATE_RIDE", "${err.printStackTrace()}")
+                callback(false)
+            }
+        }
+    }
+
+
+    override fun deleteRide(
+        rideId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.deleteRide(headers, rideId)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        //Success
+                        callback(true)
+                    } else {
+                        //Error
+                        Log.e(
+                            "DELETE_RIDE",
+                            "Delete ride on server failed with code: ${response.code()}"
+                        )
+                        callback(false)
+                    }
+                }
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("DELETE_RIDE", "${err.printStackTrace()}")
                 callback(false)
             }
         }

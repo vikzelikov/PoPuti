@@ -17,4 +17,6 @@ interface IRegularRidesRepository {
         token: String,
         callback: SuccessHandler
     )
+
+    fun deleteRide(rideId: Int, token: String, callback: SuccessHandler)
 }

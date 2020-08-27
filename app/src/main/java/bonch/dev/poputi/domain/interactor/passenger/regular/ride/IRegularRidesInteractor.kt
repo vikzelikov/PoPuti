@@ -15,4 +15,7 @@ interface IRegularRidesInteractor {
 
     fun updateRideStatus(status: StatusRide, rideId: Int, callback: SuccessHandler)
 
+
+    fun deleteRide(rideId: Int, callback: SuccessHandler)
+
 }
