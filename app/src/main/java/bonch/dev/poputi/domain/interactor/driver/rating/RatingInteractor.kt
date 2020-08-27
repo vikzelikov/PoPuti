@@ -1,7 +1,7 @@
 package bonch.dev.poputi.domain.interactor.driver.rating
 
 import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
-import bonch.dev.poputi.data.repository.driver.rating.IRatingRepository
+import bonch.dev.poputi.data.repository.common.rate.IRateRideRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.rate.Review
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class RatingInteractor : IRatingInteractor {
 
     @Inject
-    lateinit var ratingRepository: IRatingRepository
+    lateinit var ratingRepository: IRateRideRepository
 
 
     @Inject

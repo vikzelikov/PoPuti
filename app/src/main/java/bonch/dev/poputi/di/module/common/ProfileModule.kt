@@ -4,6 +4,8 @@ import bonch.dev.poputi.data.repository.common.media.IMediaRepository
 import bonch.dev.poputi.data.repository.common.media.MediaRepository
 import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
 import bonch.dev.poputi.data.repository.common.profile.ProfileRepository
+import bonch.dev.poputi.data.repository.common.rate.IRateRideRepository
+import bonch.dev.poputi.data.repository.common.rate.RateRideRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.common.profile.ProfileStorage
 import bonch.dev.poputi.di.scope.CompScope
@@ -16,9 +18,10 @@ import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfil
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.IProfilePresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.ProfilePresenter
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.RatingPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import dagger.Module
 import dagger.Provides
 
@@ -56,6 +59,10 @@ class ProfileModule {
 
     @Provides
     @CompScope
+    fun provideRatingPresenter(): ContractPresenter.IRatingPresenter = RatingPresenter()
+
+    @Provides
+    @CompScope
     fun provideProfileInteractor(): IProfileInteractor = ProfileInteractor()
 
     @Provides
@@ -69,5 +76,9 @@ class ProfileModule {
     @Provides
     @CompScope
     fun provideMediaRepository(): IMediaRepository = MediaRepository()
+
+    @Provides
+    @CompScope
+    fun providesRateRideRepository(): IRateRideRepository = RateRideRepository()
 
 }

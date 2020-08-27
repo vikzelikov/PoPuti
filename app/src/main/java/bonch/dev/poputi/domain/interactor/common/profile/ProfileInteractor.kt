@@ -3,6 +3,7 @@ package bonch.dev.poputi.domain.interactor.common.profile
 import android.util.Log
 import bonch.dev.poputi.data.repository.common.media.IMediaRepository
 import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
+import bonch.dev.poputi.data.repository.common.rate.IRateRideRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.media.MediaObject
@@ -11,6 +12,7 @@ import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyData
+import bonch.dev.poputi.domain.entities.common.rate.Review
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -28,6 +30,9 @@ class ProfileInteractor : IProfileInteractor {
 
     @Inject
     lateinit var mediaRepository: IMediaRepository
+
+    @Inject
+    lateinit var ratingRepository: IRateRideRepository
 
 
     init {
@@ -270,6 +275,19 @@ class ProfileInteractor : IProfileInteractor {
 
         if (token != null) {
             profileRepository.getStoryRidesDriver(token, callback)
+        } else callback(null, "error")
+    }
+
+
+    /**
+     * RATING PASSENGER
+     * */
+    override fun getRating(callback: DataHandler<ArrayList<Review>?>) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            ratingRepository.getRating(token, callback)
+
         } else callback(null, "error")
     }
 

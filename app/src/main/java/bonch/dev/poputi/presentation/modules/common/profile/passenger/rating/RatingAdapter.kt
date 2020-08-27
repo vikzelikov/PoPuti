@@ -1,4 +1,4 @@
-package bonch.dev.poputi.presentation.modules.driver.rating.adapter
+package bonch.dev.poputi.presentation.modules.common.profile.passenger.rating
 
 import android.view.LayoutInflater
 import android.view.View
@@ -110,7 +110,7 @@ class RatingAdapter @Inject constructor() : RecyclerView.Adapter<RatingAdapter.I
                 5 -> {
                     getStar().forEach { it.visibility = View.VISIBLE }
 
-                    getDisableStar().forEach {it.visibility = View.INVISIBLE}
+                    getDisableStar().forEach { it.visibility = View.INVISIBLE }
                 }
             }
         }

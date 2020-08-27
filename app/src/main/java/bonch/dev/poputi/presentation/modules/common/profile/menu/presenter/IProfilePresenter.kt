@@ -22,6 +22,8 @@ interface IProfilePresenter {
 
     fun showProfits()
 
+    fun showRating()
+
     fun showStoryOrders(isPassanger: Boolean)
 
     fun logout()

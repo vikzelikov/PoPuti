@@ -2,70 +2,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+    <LinearLayout
+        android:id="@+id/back_btn"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:elevation="0dp"
-        android:fitsSystemWindows="true"
-        android:theme="@style/Theme.MyAppTheme">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="1dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:fitsSystemWindows="true"
-            app:collapsedTitleGravity="center"
-            app:contentScrim="@android:color/white"
-            app:expandedTitleGravity="center|center_horizontal"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
+            android:layout_marginTop="1dp"
+            android:paddingStart="15dp"
+            android:paddingTop="18dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="18dp"
+            android:src="@drawable/ic_back_arrow" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@android:color/white"
-                app:titleTextColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp"
+            android:text="@string/rating"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/info_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="80dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/img_driver"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_default_ava" />
 
                 <TextView
                     android:id="@+id/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="200dp"
+                    android:layout_height="33dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="15dp"
                     android:fontFamily="@font/roboto"
                     android:gravity="center"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
                     android:textColor="@android:color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/car_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/roboto"
-                    android:gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -76,8 +80,8 @@
 
                     <TextView
                         android:id="@+id/user_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="33dp"
                         android:drawableStart="@drawable/ic_big_star"
                         android:drawablePadding="12dp"
                         android:fontFamily="@font/roboto"
@@ -135,41 +139,86 @@
 
 
             </LinearLayout>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrolling"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comments_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never" />
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="40dp" />
 
             <TextView
                 android:id="@+id/text_empty"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="80dp"
-                android:gravity="center"
+                android:gravity="center_horizontal"
                 android:text="@string/do15ordersForCalcRating"
                 android:textColor="#60000000"
                 android:textSize="14sp"
                 android:visibility="gone" />
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/info_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_corners_layout"
+        android:elevation="60dp"
+        android:orientation="vertical"
+        app:behavior_peekHeight="0dp"
+        app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_bottom_sheet_arrow" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/roboto"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/warning"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/roboto"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/warningLowRating"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+
+    <View
+        android:id="@+id/on_view_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@android:color/black"
+        android:elevation="50dp"
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -131,6 +131,11 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     }
 
 
+    override fun showRating() {
+        MainRouter.showView(R.id.rating_passenger, getView()?.getNavHost(), null)
+    }
+
+
     override fun logout() {
         MainRouter.showView(R.id.show_phone, getView()?.getNavHost(), null)
     }

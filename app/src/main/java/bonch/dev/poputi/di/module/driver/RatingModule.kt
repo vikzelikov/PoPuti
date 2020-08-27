@@ -2,8 +2,8 @@ package bonch.dev.poputi.di.module.driver
 
 import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
 import bonch.dev.poputi.data.repository.common.profile.ProfileRepository
-import bonch.dev.poputi.data.repository.driver.rating.IRatingRepository
-import bonch.dev.poputi.data.repository.driver.rating.RatingRepository
+import bonch.dev.poputi.data.repository.common.rate.IRateRideRepository
+import bonch.dev.poputi.data.repository.common.rate.RateRideRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.common.profile.ProfileStorage
 import bonch.dev.poputi.di.scope.CompScope
@@ -29,7 +29,7 @@ class RatingModule {
 
     @Provides
     @CompScope
-    fun provideRatingRepository(): IRatingRepository = RatingRepository()
+    fun providesRateRideRepository(): IRateRideRepository = RateRideRepository()
 
 
     @Provides

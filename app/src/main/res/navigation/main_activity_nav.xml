@@ -103,6 +103,11 @@
         android:name="bonch.dev.poputi.presentation.modules.common.profile.story.view.StoryView"
         android:label="story_activity" />
 
+    <activity
+        android:id="@+id/rating_passenger"
+        android:name="bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.RatingView"
+        android:label="rating_activity" />
+
 
     <fragment
         android:id="@+id/main_driver_fragment"

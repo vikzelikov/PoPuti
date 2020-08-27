@@ -152,7 +152,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         rating.setOnClickListener {
-            Toast.makeText(context, "Rating", Toast.LENGTH_SHORT).show()
+            profilePresenter.showRating()
         }
 
         about_car.setOnClickListener {

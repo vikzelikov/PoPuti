@@ -56,4 +56,10 @@ interface RideService {
     ): Response<RideInfo>
 
 
+    @GET("/api/users/me/reviews")
+    suspend fun getRating(
+        @HeaderMap headers: Map<String, String>
+    ): Response<ArrayList<Review>>
+
+
 }
