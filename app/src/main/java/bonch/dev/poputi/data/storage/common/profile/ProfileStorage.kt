@@ -1,25 +1,27 @@
 package bonch.dev.poputi.data.storage.common.profile
 
+import android.util.Log
 import bonch.dev.poputi.App
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
 class ProfileStorage : IProfileStorage {
 
     private val BANKING_REALM = "banking.realm"
+    private val CITY_REALM = "mycity.realm"
     private val USER_ID = "USER_ID"
     private val DRIVER_ID = "DRIVER_ID"
     private val ACCESS_TOKEN = "ACCESS_TOKEN"
-    private val DRIVER_ACCESS = "DRIVER_ACCESS"
     private val CHECKOUT_AS_DRIVER = "CHECKOUT_AS_DRIVER"
 
-
     private var bankingRealm: Realm? = null
+    private var cityRealm: Realm? = null
 
 
     override fun initRealm() {
-        if (bankingRealm == null) {
+        if (bankingRealm == null || cityRealm == null) {
             val context = App.appComponent.getContext()
             Realm.init(context)
 
@@ -28,6 +30,12 @@ class ProfileStorage : IProfileStorage {
                 .deleteRealmIfMigrationNeeded()
                 .build()
             bankingRealm = Realm.getInstance(bankingConfig)
+
+            val cityConfig = RealmConfiguration.Builder()
+                .name(CITY_REALM)
+                .deleteRealmIfMigrationNeeded()
+                .build()
+            cityRealm = Realm.getInstance(cityConfig)
         }
     }
 
@@ -76,22 +84,8 @@ class ProfileStorage : IProfileStorage {
         editor.remove(ACCESS_TOKEN)
         editor.remove(USER_ID)
         editor.remove(DRIVER_ID)
-        editor.remove(DRIVER_ACCESS)
         editor.remove(CHECKOUT_AS_DRIVER)
         editor.apply()
-    }
-
-
-    override fun saveDriverAccess() {
-        val editor = App.appComponent.getSharedPref().edit()
-        editor.putBoolean(DRIVER_ACCESS, true)
-        editor.apply()
-    }
-
-
-    override fun getDriverAccess(): Boolean {
-        val pref = App.appComponent.getSharedPref()
-        return pref.getBoolean(DRIVER_ACCESS, false)
     }
 
 
@@ -136,6 +130,22 @@ class ProfileStorage : IProfileStorage {
         bankingRealm?.executeTransaction {
             it.where(BankCard::class.java).equalTo(id, card.id).findAll().deleteAllFromRealm()
         }
+    }
+
+
+    override fun saveMyCity(address: Address) {
+        Log.i("CITY_UPDATE","${address.address}")
+        bankingRealm?.executeTransaction {
+            address.id = 0
+            it.insertOrUpdate(address)
+        }
+    }
+
+
+    override fun getMyCity(): Address? {
+        initRealm()
+
+        return bankingRealm?.where(Address::class.java)?.findFirst()
     }
 
 

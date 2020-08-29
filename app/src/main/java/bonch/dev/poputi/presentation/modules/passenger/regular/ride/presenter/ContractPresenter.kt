@@ -9,8 +9,8 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.user_location.UserLocationLayer
-import java.util.ArrayList
+import com.yandex.mapkit.map.CameraPosition
+import java.util.*
 
 interface ContractPresenter {
 
@@ -24,8 +24,9 @@ interface ContractPresenter {
         fun instance(): MapCreateRegRidePresenter
         fun attachCreateRegularDrive(fm: FragmentManager)
         fun getBitmap(drawableId: Int): Bitmap?
-        fun getUserLocation(): UserLocationLayer?
-        fun requestGeocoder(point: Point?)
+        fun getUserLocation(): Point?
+        fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean)
+        fun saveMyCity(address: Address)
         fun onObjectUpdate()
         fun onBackPressed()
     }

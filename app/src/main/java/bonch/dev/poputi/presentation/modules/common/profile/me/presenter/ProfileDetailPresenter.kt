@@ -17,8 +17,8 @@ import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
-import bonch.dev.domain.utils.Camera
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.Camera
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.checkphoto.CheckPhotoView
 import bonch.dev.poputi.presentation.modules.common.media.MediaEvent

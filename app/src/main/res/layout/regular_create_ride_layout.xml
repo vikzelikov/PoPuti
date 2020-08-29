@@ -27,6 +27,16 @@
         android:paddingBottom="55dp"
         android:src="@drawable/ic_map_marker" />
 
+
+    <ImageView
+        android:id="@+id/shadow_marker"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_centerInParent="true"
+        android:alpha="0.6"
+        android:paddingStart="2dp"
+        android:src="@drawable/ic_shadow_marker" />
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -411,9 +421,9 @@
                 android:id="@+id/add_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:drawableEnd="@drawable/ic_arrow_right"
-                android:layout_marginStart="15dp"
                 android:paddingTop="27dp"
                 android:paddingBottom="27dp"
                 android:text="@string/add_payment"

@@ -40,9 +40,7 @@ class GetDriverInteractor : IGetDriverInteractor {
 
     //NETWORK
     override fun requestGeocoder(point: Point, callback: GeocoderHandler) {
-        getDriverRepository.requestGeocoder(point) { address, responsePoint ->
-            callback(address, responsePoint)
-        }
+        getDriverRepository.requestGeocoder(point, callback)
     }
 
 

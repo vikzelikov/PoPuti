@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyStep
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.RatingPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
@@ -64,6 +66,15 @@ interface ContractPresenter {
         fun getRating()
         fun getProfile()
         fun instance(): RatingPresenter
+    }
+
+
+    interface ISelectCityPresenter {
+        fun loadSuggest()
+        fun clearSuggest()
+        fun filterList(q: String)
+        fun instance(): SelectCityPresenter
+        fun suggestDone(address: Address)
     }
 
 }

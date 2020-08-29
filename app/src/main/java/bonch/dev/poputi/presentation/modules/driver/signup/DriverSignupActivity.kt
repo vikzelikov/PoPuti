@@ -121,7 +121,6 @@ class DriverSignupActivity : AppCompatActivity() {
 
     private fun showDriverUI() {
         signupInteractor.saveCheckoutDriver(true)
-        signupInteractor.saveDriverAccess()
 
         setResult(CHECKOUT)
 

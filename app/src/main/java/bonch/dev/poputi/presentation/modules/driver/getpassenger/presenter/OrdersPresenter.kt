@@ -1,6 +1,7 @@
 package bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
@@ -8,6 +9,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
+import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.ContractView
@@ -49,13 +51,20 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     override fun selectOrder(order: RideInfo) {
         if (!isBlock) {
             getView()?.getFragment()?.context?.let {
-                //set active ride
-                ActiveRide.activeRide = order
 
-                val intent = Intent(it, MapOrderView::class.java)
+                Geo.showAlertEnable(it as Activity)
 
-                //show detail order
-                getView()?.getFragment()?.startActivityForResult(intent, 1)
+                Geo.isEnabled(it)?.let { enable ->
+                    if (enable) {
+                        //set active ride
+                        ActiveRide.activeRide = order
+
+                        val intent = Intent(it, MapOrderView::class.java)
+
+                        //show detail order
+                        getView()?.getFragment()?.startActivityForResult(intent, 1)
+                    }
+                }
             }
 
             isBlock = true

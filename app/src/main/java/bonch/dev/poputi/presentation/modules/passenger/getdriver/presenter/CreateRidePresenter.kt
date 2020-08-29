@@ -7,6 +7,7 @@ import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
+import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
@@ -65,8 +66,18 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
     override fun requestGeocoder(point: Point?) {
         if (!isBlockRequest && point != null) {
             //send request and set block for several seconds
-            getDriverInteractor.requestGeocoder(point) { address, responsePoint ->
-                responseGeocoder(address, responsePoint)
+            getDriverInteractor.requestGeocoder(point) { address ->
+                address.point?.let {
+                    responseGeocoder(address.address, Point(it.latitude, it.longitude))
+                }
+
+                //callback city
+                getView()?.getMyCityCall()?.let {
+                    val a = Address()
+                    a.address = address.description
+                    a.point = address.point
+                    it(a)
+                }
             }
             isBlockRequest = true
         }
@@ -122,7 +133,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
             if (!isBlockRequest) {
                 val cashRequest = getDriverInteractor.getCashRequest(query)
 
-                if (!cashRequest.isNullOrEmpty()) {
+                if (!cashRequest.isNullOrEmpty() && !Geo.isPreferCityGeo) {
                     //set in view
                     val adapter = getView()?.getAddressesAdapter()
                     adapter?.list?.clear()
@@ -131,7 +142,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                     isBlockRequest = true
 
                 } else {
-                    getDriverInteractor.requestSuggest(query, getUserPoint()) {
+                    getDriverInteractor.requestSuggest(query, getView()?.getUserLocation()) {
                         responseSuggest(it)
                     }
                 }
@@ -222,17 +233,14 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
 
     override fun showMyPosition() {
-        val userPoint = getUserPoint()
+        Geo.isPreferCityGeo = false
+        Geo.isRequestMyPosition = true
+
+        val userPoint = getView()?.getUserLocation()
 
         if (userPoint != null) {
             getView()?.moveCamera(userPoint)
         }
-    }
-
-
-    private fun getUserPoint(): Point? {
-        val userLocation = getView()?.getUserLocationLayer()
-        return userLocation?.cameraPosition()?.target
     }
 
 
@@ -244,7 +252,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                 override fun run() {
                     isBlockRequest = false
                     if (fromAdr == null)
-                        requestGeocoder(getUserPoint())
+                        requestGeocoder(getView()?.getUserLocation())
                     blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER)
                 }
             }, 0)

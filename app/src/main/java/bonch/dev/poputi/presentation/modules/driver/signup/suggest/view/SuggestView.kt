@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.poputi.R
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.driver.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.driver.signup.suggest.adapters.SuggestAdapter
 import bonch.dev.poputi.presentation.modules.driver.signup.suggest.presenter.ISuggestPresenter

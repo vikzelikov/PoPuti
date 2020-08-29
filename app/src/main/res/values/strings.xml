@@ -288,6 +288,12 @@
     <string name="do15ordersForCalcRating">Выполните 15 заказов для расчета\n первоначального рейтинга</string>
     <string name="warningLowRating">Если Ваш рейтинг снизится до 3.9, мы будем вынужден заблокировать сервис</string>
     <string name="warning">Предупреждение</string>
+    <string name="selectCityHint">Выберите город</string>
+    <string name="yes">Да</string>
+    <string name="not">Нет</string>
+    <string name="yourCity">Ваш город</string>
+    <string name="notDetectYourCity">Не удалось определить Ваш город</string>
+    <string name="selectCityT">Выбрать город</string>
 
 
 </resources>

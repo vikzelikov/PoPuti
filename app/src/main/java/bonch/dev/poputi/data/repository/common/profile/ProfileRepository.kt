@@ -1,11 +1,11 @@
 package bonch.dev.poputi.data.repository.common.profile
 
 import android.util.Log
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.common.ProfileService
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
-import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
@@ -255,5 +255,4 @@ class ProfileRepository : IProfileRepository {
             }
         }
     }
-
 }

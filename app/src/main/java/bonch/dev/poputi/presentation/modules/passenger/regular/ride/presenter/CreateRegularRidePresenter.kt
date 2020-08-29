@@ -12,6 +12,7 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
+import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.view.OfferPriceView
@@ -163,8 +164,18 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
     override fun requestGeocoder(point: Point?) {
         if (!isBlockGeocoder && !isBlockRequest && point != null) {
             //send request and set block for several seconds
-            getDriverInteractor.requestGeocoder(point) { address, responsePoint ->
-                responseGeocoder(address, responsePoint)
+            getDriverInteractor.requestGeocoder(point) { address ->
+                address.point?.let {
+                    responseGeocoder(address.address, Point(it.latitude, it.longitude))
+                }
+
+                //callback city
+                getView()?.getMyCityCall()?.let {
+                    val a = Address()
+                    a.address = address.description
+                    a.point = address.point
+                    it(a)
+                }
             }
             isBlockRequest = true
         }
@@ -216,7 +227,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
             if (!isBlockRequest) {
                 val cashRequest = getDriverInteractor.getCashRequest(query)
 
-                if (!cashRequest.isNullOrEmpty()) {
+                if (!cashRequest.isNullOrEmpty() && !Geo.isPreferCityGeo) {
                     //set in view
                     val adapter = getView()?.getAddressesAdapter()
                     adapter?.list?.clear()
@@ -401,6 +412,9 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     override fun showMyPosition() {
+        Geo.isPreferCityGeo = false
+        Geo.isRequestMyPosition = true
+
         val userPoint = getUserPoint()
 
         if (userPoint != null) {
@@ -410,8 +424,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     private fun getUserPoint(): Point? {
-        val userLocation = getView()?.getUserLocationLayer()
-        return userLocation?.cameraPosition()?.target
+        return getView()?.getUserLocation()
     }
 
 

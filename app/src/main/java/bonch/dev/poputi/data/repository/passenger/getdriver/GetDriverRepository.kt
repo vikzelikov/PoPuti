@@ -1,8 +1,6 @@
 package bonch.dev.poputi.data.repository.passenger.getdriver
 
 import android.util.Log
-import bonch.dev.poputi.domain.utils.Constants
-import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.passenger.GetDriverService
 import bonch.dev.poputi.data.repository.common.ride.Autocomplete
@@ -13,6 +11,8 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.Schedule
+import bonch.dev.poputi.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -46,14 +46,13 @@ class GetDriverRepository : IGetDriverRepository {
 
     init {
         geocoder = Geocoder()
+        autocomplete = Autocomplete()
     }
 
 
     //Geocoder
     override fun requestGeocoder(point: Point, callback: GeocoderHandler) {
-        geocoder?.request(point) { address, responsePoint ->
-            callback(address, responsePoint)
-        }
+        geocoder?.request(point, callback)
     }
 
 
@@ -63,15 +62,7 @@ class GetDriverRepository : IGetDriverRepository {
         userLocationPoint: Point?,
         callback: SuggestHandler
     ) {
-        if (autocomplete == null) {
-            autocomplete = Autocomplete(
-                userLocationPoint
-            )
-        }
-
-        autocomplete?.requestSuggest(query) { suggest ->
-            callback(suggest)
-        }
+        autocomplete?.requestSuggest(query, userLocationPoint, callback)
     }
 
 
@@ -88,8 +79,8 @@ class GetDriverRepository : IGetDriverRepository {
                 val headers = NetworkUtil.getHeaders(token)
 
                 if (rideInfo.comment == null) rideInfo.comment = ""
-                if (rideInfo.city == null) rideInfo.city = "Cанкт-Петербург"
-                //todo
+                if (rideInfo.city == null) rideInfo.city = "-"
+
                 response = service.createRide(
                     headers,
                     rideInfo

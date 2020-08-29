@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.Permissions

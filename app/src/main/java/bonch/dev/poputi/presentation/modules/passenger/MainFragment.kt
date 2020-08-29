@@ -1,10 +1,15 @@
 package bonch.dev.poputi.presentation.modules.passenger
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -12,8 +17,12 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
-import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
+import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
+import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.view.ProfileView
 import bonch.dev.poputi.presentation.modules.common.ride.rate.view.RateRideView
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.DetailRideView
@@ -24,6 +33,7 @@ import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.Regular
 import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.geometry.Point
 import kotlinx.android.synthetic.main.main_passenger_fragment.*
 
 
@@ -41,6 +51,9 @@ class MainFragment : Fragment() {
     private var trackRideView: TrackRideView? = null
 
     private var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>? = null
+
+    private var isShowErrorPopup = true
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,6 +81,9 @@ class MainFragment : Fragment() {
         navView.setOnNavigationItemSelectedListener(null)
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
+        val profileInteractor: IProfileInteractor = ProfileInteractor()
+        Geo.selectedCity = profileInteractor.getMyCity()
+
         return root
     }
 
@@ -75,7 +91,14 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        detectCity()
+
         setEditRegularRideUI()
+
+        Handler().postDelayed({
+            if (isShowErrorPopup && Geo.selectedCity == null)
+                showPopupError()
+        }, 12000)
     }
 
 
@@ -192,6 +215,12 @@ class MainFragment : Fragment() {
         } else {
             nav_view?.visibility = View.VISIBLE
             mapCreateRide?.attachCreateRide()
+
+            profile?.changeGeoMap = {
+                it.point?.let { point ->
+                    mapCreateRide?.moveCamera(Point(point.latitude, point.longitude))
+                }
+            }
         }
     }
 
@@ -224,7 +253,9 @@ class MainFragment : Fragment() {
             )
             ?.commit()
 
-        get_offers_center_text?.alpha = 0.0f
+        get_offers_center_text?.post {
+            get_offers_center_text?.alpha = 0.0f
+        }
         checkoutNavView(false)
     }
 
@@ -239,10 +270,10 @@ class MainFragment : Fragment() {
         registerReceivers()
 
         //pass callback
-        childFragment.locationLayer = { mapCreateRide?.getUserLocation() }
+        childFragment.userPoint = { mapCreateRide?.getUserLocation() }
         childFragment.mapView = { mapCreateRide?.getMap() }
         childFragment.nextFragment = { attachTrackRide() }
-        childFragment.cancelRide = { cancelRide(it) }
+        childFragment.cancelRide = { cancelRide() }
         childFragment.onGetOfferFail = { attachGetOffers() }
         childFragment.notification = { showNotification(it) }
         childFragment.offerText = get_offers_center_text
@@ -272,7 +303,7 @@ class MainFragment : Fragment() {
         //pass callback
         childFragment.mapView = { mapCreateRide?.getMap() }
         childFragment.nextFragment = { attachRateRide() }
-        childFragment.cancelRide = { cancelRide(it) }
+        childFragment.cancelRide = { cancelRide() }
 
         mapCreateRide?.fadeMap()
 
@@ -344,12 +375,7 @@ class MainFragment : Fragment() {
     }
 
 
-    private fun cancelRide(reason: ReasonCancel) {
-//        if (reason == ReasonCancel.DRIVER_CANCEL || reason == ReasonCancel.WAIT_LONG) {
-//            attachDetailRide()
-//        } else {
-//            attachCreateRide()
-//        }
+    private fun cancelRide() {
         attachDetailRide()
     }
 
@@ -406,6 +432,123 @@ class MainFragment : Fragment() {
 
         on_view.setOnClickListener {
             editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
+
+    private fun detectCity() {
+        val address = Geo.selectedCity
+
+        if (address == null) {
+            mapCreateRide?.myCityCallbackMain = { city ->
+                city.address?.let {
+
+                    isShowErrorPopup = false
+
+                    showPopup(city)
+
+                    yes.setOnClickListener {
+                        Geo.selectedCity = city
+
+                        ProfileInteractor().saveMyCity(city)
+
+                        hidePopup()
+                    }
+
+                    not.setOnClickListener {
+                        val intent = Intent(context, SelectCityView::class.java)
+                        this.startActivityForResult(intent, Geo.SELECT_CITY)
+                    }
+                }
+
+                mapCreateRide?.myCityCallbackMain = null
+
+            }
+
+        } else isShowErrorPopup = false
+
+        select.setOnClickListener {
+            val intent = Intent(context, SelectCityView::class.java)
+            this.startActivityForResult(intent, Geo.SELECT_CITY)
+        }
+
+        info_my_city.setOnClickListener { }
+    }
+
+
+    private fun showPopup(city: Address) {
+        on_view.visibility = View.VISIBLE
+        on_view.alpha = 0.8f
+        info_my_city.visibility = View.VISIBLE
+        val a =
+            AnimationUtils.loadAnimation(
+                info_my_city.context,
+                R.anim.offer_slide_in_top
+            )
+        info_my_city.startAnimation(a)
+
+        city_text_view?.text = getString(R.string.yourCity)
+            .plus(" ")
+            .plus(city.address)
+            .plus("?")
+    }
+
+
+    private fun showPopupError() {
+        on_view.visibility = View.VISIBLE
+        on_view.alpha = 0.8f
+        info_my_city.visibility = View.VISIBLE
+        val a =
+            AnimationUtils.loadAnimation(
+                info_my_city.context,
+                R.anim.offer_slide_in_top
+            )
+        info_my_city.startAnimation(a)
+
+        yes?.visibility = View.GONE
+        not?.visibility = View.GONE
+        select?.visibility = View.VISIBLE
+
+        city_text_view?.text = getString(R.string.notDetectYourCity)
+    }
+
+
+    private fun hidePopup() {
+        on_view.visibility = View.GONE
+        on_view.alpha = 0f
+
+        info_my_city?.animate()
+            ?.setDuration(200L)
+            ?.translationY(100f)
+            ?.alpha(0.0f)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    info_my_city?.visibility = View.GONE
+                }
+            })
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == Geo.SELECT_CITY && resultCode == Activity.RESULT_OK) {
+            Geo.selectedCity?.let {
+                it.point?.let { point ->
+
+                    hidePopup()
+
+                    mapCreateRide?.moveCamera(
+                        Point(
+                            point.latitude,
+                            point.longitude
+                        )
+                    )
+                }
+
+                it.address?.let { city -> profile?.setMyCity(city) }
+            }
         }
     }
 }

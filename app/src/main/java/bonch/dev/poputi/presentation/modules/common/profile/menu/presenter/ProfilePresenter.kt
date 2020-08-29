@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.Profile
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
+import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
+import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityView
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.view.IProfileView
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyView
@@ -117,6 +120,13 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     }
 
 
+    override fun showSelectCity(fragment: Fragment) {
+        val context = App.appComponent.getContext()
+        val intent = Intent(context, SelectCityView::class.java)
+        fragment.startActivityForResult(intent, Geo.SELECT_CITY)
+    }
+
+
     override fun showProfits() {
         MainRouter.showView(R.id.profits, getView()?.getNavHost(), null)
     }
@@ -143,6 +153,11 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
     override fun instance(): ProfilePresenter {
         return this
+    }
+
+
+    override fun getMyCity(): Address? {
+        return profileInteractor.getMyCity()
     }
 
 

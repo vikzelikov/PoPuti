@@ -3,7 +3,6 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -15,7 +14,6 @@ import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
 
 interface ContractPresenter {
 
@@ -24,7 +22,9 @@ interface ContractPresenter {
         fun getBitmap(drawableId: Int): Bitmap?
         fun attachCreateRide(fm: FragmentManager)
         fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean)
-        fun getUserLocation(): UserLocationLayer?
+        fun getUserLocation(): Point?
+        fun saveMyCity(address: Address)
+        fun getMyCity(): Address?
         fun onObjectUpdate()
     }
 

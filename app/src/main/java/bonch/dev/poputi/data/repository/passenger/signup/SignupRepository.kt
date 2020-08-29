@@ -5,7 +5,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.passenger.SignupService
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.passenger.signup.Token
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope

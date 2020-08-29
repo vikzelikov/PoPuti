@@ -1,13 +1,11 @@
 package bonch.dev.poputi.presentation.modules.passenger.signup.presenter
 
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.passenger.signup.DataSignup
 import bonch.dev.poputi.domain.interactor.passenger.signup.ISignupInteractor
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.passenger.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.passenger.signup.view.ContractView

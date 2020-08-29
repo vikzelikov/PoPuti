@@ -2,7 +2,7 @@ package bonch.dev.poputi.presentation.modules.driver.rating.presenter
 
 import android.os.Handler
 import android.os.Looper
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.interactor.driver.rating.IRatingInteractor

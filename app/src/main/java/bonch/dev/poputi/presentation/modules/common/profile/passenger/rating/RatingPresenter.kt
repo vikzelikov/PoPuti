@@ -1,7 +1,7 @@
 package bonch.dev.poputi.presentation.modules.common.profile.passenger.rating
 
 import android.os.Handler
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor

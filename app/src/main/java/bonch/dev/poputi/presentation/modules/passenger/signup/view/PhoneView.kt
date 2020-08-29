@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,11 +21,9 @@ import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.passenger.DaggerPassengerSignupComponent
 import bonch.dev.poputi.di.module.passenger.PassengerSignupModule
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.passenger.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.passenger.signup.presenter.ContractPresenter
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.iid.FirebaseInstanceId
 import com.redmadrobot.inputmask.MaskedTextChangedListener.Companion.installOn
 import com.redmadrobot.inputmask.MaskedTextChangedListener.ValueListener
 import kotlinx.android.synthetic.main.phone_signup_fragment.*

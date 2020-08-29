@@ -5,6 +5,7 @@ import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
 import bonch.dev.poputi.domain.entities.common.rate.Review
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -22,8 +23,6 @@ interface IProfileInteractor {
     fun getProfile(callback: DataHandler<Profile?>)
 
     fun uploadPhoto(image: File, profile: Profile, callback: SuccessHandler)
-
-    fun getDriverAccess(): Boolean
 
     fun saveCheckoutDriver(isDriver: Boolean)
 
@@ -56,5 +55,11 @@ interface IProfileInteractor {
 
     //RATING
     fun getRating(callback: DataHandler<ArrayList<Review>?>)
+
+
+    //SELECT CITY
+    fun saveMyCity(address: Address)
+
+    fun getMyCity(): Address?
 
 }

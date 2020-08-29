@@ -10,11 +10,15 @@ import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
+import bonch.dev.poputi.App
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
+import bonch.dev.poputi.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.modules.passenger.regular.RegularDriveComponent
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.ContractPresenter
 import com.yandex.mapkit.Animation
@@ -45,6 +49,10 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
     private lateinit var mapView: MapView
     private var userLocationLayer: UserLocationLayer? = null
     private var handlerAnimation: Handler? = null
+    private var myCityCallback: ParentHandler<Address>? = null
+
+    private var isAllowFirstZoom = false
+    private var isAllowZoom = false
 
 
     init {
@@ -73,6 +81,24 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
         mapView.map?.apply {
             val alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP)
             logo.setAlignment(alignment)
+        }
+
+        Geo.showAlertEnable(this)
+
+        map?.post {
+            Handler().postDelayed({
+                isAllowFirstZoom = true
+
+                Geo.isEnabled(App.appComponent.getContext())?.let {
+                    if (it) {
+                        Geo.selectedCity?.point?.let { point ->
+                            moveCamera(Point(point.latitude, point.longitude))
+
+                            Geo.isPreferCityGeo = true
+                        }
+                    }
+                }
+            }, 1000)
         }
 
         setListeners()
@@ -121,25 +147,73 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
             userLocationLayer?.resetAnchor()
         }
 
-        if ((p2 == CameraUpdateSource.GESTURES && p3)) {
-            mapCreateDrivePresenter.requestGeocoder(Point(p1.target.latitude, p1.target.longitude))
+        if ((p2 == CameraUpdateSource.GESTURES && p3) || Coordinate.fromAdr == null) {
+            isAllowZoom = true
+            mapCreateDrivePresenter.requestGeocoder(p1, false)
+
+        } else if (p2 == CameraUpdateSource.GESTURES) {
+            isAllowZoom = false
+            mapCreateDrivePresenter.requestGeocoder(p1, true)
         }
+
+        if (Geo.isRequestMyPosition && p3) {
+
+            mapCreateDrivePresenter.requestGeocoder(p1, false)
+
+            //update city
+            myCityCallback = { city ->
+                mapCreateDrivePresenter.saveMyCity(city)
+
+                myCityCallback = null
+            }
+
+            Geo.isRequestMyPosition = false
+        }
+
+        mapCreateDrivePresenter.onObjectUpdate()
     }
 
 
-    override fun getUserLocation(): UserLocationLayer? {
-        return userLocationLayer
+    override fun getUserLocation(): Point? {
+        return if (Geo.isPreferCityGeo || userLocationLayer?.cameraPosition()?.target == null) {
+            val p = Geo.selectedCity?.point
+
+            if (p != null) Point(p.latitude, p.longitude)
+            else null
+
+        } else userLocationLayer?.cameraPosition()?.target
     }
 
 
-    override fun getMap(): MapView {
-        return mapView
+    override fun getMap() = mapView
+
+
+    override fun zoomMap(cameraPosition: CameraPosition) {
+        val point = cameraPosition.target
+        val zoom = cameraPosition.zoom + 0.05
+
+        if (isAllowFirstZoom && isAllowZoom) {
+            map?.post {
+                mapView.map?.move(
+                    CameraPosition(
+                        point,
+                        zoom.toFloat(),
+                        cameraPosition.azimuth,
+                        cameraPosition.tilt
+                    ),
+                    Animation(Animation.Type.SMOOTH, 0.3f),
+                    null
+                )
+            }
+
+            isAllowZoom = false
+        }
     }
 
 
     override fun moveCamera(point: Point) {
         mapView.map?.move(
-            CameraPosition(point, 35.0f, 0.0f, 0.0f),
+            CameraPosition(point, 17.0f, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 1f),
             null
         )
@@ -182,9 +256,7 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
     }
 
 
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
-        mapCreateDrivePresenter.onObjectUpdate()
-    }
+    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
 
 
     private fun setUserLocation() {
@@ -307,6 +379,9 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
     override fun pressBack() {
         super.onBackPressed()
     }
+
+
+    override fun getMyCityCall(): ParentHandler<Address>? = myCityCallback
 
 
     override fun onBackPressed() {

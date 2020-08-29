@@ -16,7 +16,7 @@ import bonch.dev.poputi.di.component.common.DaggerCommonComponent
 import bonch.dev.poputi.di.module.common.CommonModule
 import bonch.dev.poputi.domain.entities.common.chat.Message
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.common.CommonComponent
 import bonch.dev.poputi.presentation.modules.common.chat.adapters.ChatAdapter
 import bonch.dev.poputi.presentation.modules.common.chat.presenter.IChatPresenter

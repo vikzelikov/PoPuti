@@ -13,6 +13,7 @@ import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
@@ -60,6 +61,10 @@ class ProfileModule {
     @Provides
     @CompScope
     fun provideRatingPresenter(): ContractPresenter.IRatingPresenter = RatingPresenter()
+
+    @Provides
+    @CompScope
+    fun provideSelectCityPresenter(): ContractPresenter.ISelectCityPresenter = SelectCityPresenter()
 
     @Provides
     @CompScope

@@ -19,8 +19,6 @@ interface ISignupInteractor {
 
     fun getUser(callback: DataHandler<Profile?>)
 
-    fun saveDriverAccess()
-
     fun saveCheckoutDriver(isDriver: Boolean)
 
     fun isCheckoutDriver(): Boolean

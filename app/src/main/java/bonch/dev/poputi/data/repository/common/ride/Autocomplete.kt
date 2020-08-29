@@ -9,7 +9,7 @@ import com.yandex.runtime.Error
 import java.util.*
 import kotlin.math.min
 
-class Autocomplete(userLocationPoint: Point?) : SuggestSession.SuggestListener {
+class Autocomplete : SuggestSession.SuggestListener {
 
     private val MAX_COUNT_SUGGEST = 7
 
@@ -20,30 +20,37 @@ class Autocomplete(userLocationPoint: Point?) : SuggestSession.SuggestListener {
     private val suggestResult: ArrayList<Address> = arrayListOf()
     lateinit var callback: SuggestHandler
 
-    private var BOUNDING_BOX = userLocationPoint?.let {
-        BoundingBox(
-            Point(it.latitude, it.longitude),
-            Point(it.latitude, it.longitude)
-        )
-    }
+    private var BOUNDING_BOX: BoundingBox? = null
 
-    private val SUGGEST_OPTIONS = SuggestOptions(
-        SuggestType.GEO.value or SuggestType.BIZ.value or SuggestType.TRANSIT.value,
-        userLocationPoint,
-        false
-    )
+    private var SUGGEST_OPTIONS: SuggestOptions? = null
 
 
     override fun onError(error: Error) {}
 
 
-    fun requestSuggest(query: String, callback: SuggestHandler) {
-        this.callback = callback
-        val box = BOUNDING_BOX
+    fun requestSuggest(query: String, userPoint: Point?, callback: SuggestHandler) {
+        userPoint?.let {
+            if (BOUNDING_BOX == null)
+                BOUNDING_BOX = BoundingBox(
+                    Point(userPoint.latitude, userPoint.longitude),
+                    Point(userPoint.latitude, userPoint.longitude)
+                )
 
-        if (box != null) {
-            val suggestSession: SuggestSession = searchManager.createSuggestSession()
-            suggestSession.suggest(query, box, SUGGEST_OPTIONS, this)
+            if (SUGGEST_OPTIONS == null)
+                SUGGEST_OPTIONS = SuggestOptions(
+                    SuggestType.GEO.value or SuggestType.BIZ.value or SuggestType.TRANSIT.value,
+                    userPoint,
+                    false
+                )
+
+            this.callback = callback
+            val box = BOUNDING_BOX
+            val options = SUGGEST_OPTIONS
+
+            if (box != null && options != null) {
+                val suggestSession: SuggestSession = searchManager.createSuggestSession()
+                suggestSession.suggest(query, box, options, this)
+            }
         }
     }
 

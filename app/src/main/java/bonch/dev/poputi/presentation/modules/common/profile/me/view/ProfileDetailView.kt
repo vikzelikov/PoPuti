@@ -14,10 +14,10 @@ import androidx.navigation.NavController
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.Profile
-import bonch.dev.domain.utils.Camera
+import bonch.dev.poputi.domain.utils.Camera
 import bonch.dev.poputi.domain.utils.Constants
-import bonch.dev.domain.utils.Gallery
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Gallery
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfileDetailPresenter
 import com.bumptech.glide.Glide

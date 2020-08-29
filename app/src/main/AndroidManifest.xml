@@ -80,6 +80,7 @@
         <activity android:name="bonch.dev.poputi.presentation.modules.common.profile.story.view.StoryView" />
         <activity android:name="bonch.dev.poputi.presentation.modules.common.profile.story.view.DetailStoryView" />
         <activity android:name=".presentation.modules.common.profile.passenger.rating.RatingView" />
+        <activity android:name=".presentation.modules.common.profile.city.SelectCityView" />
 
         <service
             android:name="bonch.dev.poputi.service.passenger.PassengerRideService"

@@ -13,6 +13,7 @@ import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyData
 import bonch.dev.poputi.domain.entities.common.rate.Review
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -162,11 +163,6 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun getDriverAccess(): Boolean {
-        return profileStorage.getDriverAccess()
-    }
-
-
     override fun saveCheckoutDriver(isDriver: Boolean) {
         profileStorage.saveCheckoutDriver(isDriver)
     }
@@ -289,6 +285,19 @@ class ProfileInteractor : IProfileInteractor {
             ratingRepository.getRating(token, callback)
 
         } else callback(null, "error")
+    }
+
+
+    /**
+     * RATING PASSENGER
+     * */
+    override fun saveMyCity(address: Address) {
+        profileStorage.saveMyCity(address)
+    }
+
+
+    override fun getMyCity(): Address? {
+        return profileStorage.getMyCity()
     }
 
 }

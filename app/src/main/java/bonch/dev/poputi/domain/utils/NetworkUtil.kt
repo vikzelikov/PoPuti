@@ -1,4 +1,4 @@
-package bonch.dev.domain.utils
+package bonch.dev.poputi.domain.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

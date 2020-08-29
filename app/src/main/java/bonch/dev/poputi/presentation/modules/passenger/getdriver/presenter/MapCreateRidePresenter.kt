@@ -7,11 +7,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
+import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.CreateRideView
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.user_location.UserLocationLayer
 
 
 class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
@@ -25,11 +28,14 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
         val childFragment = CreateRideView()
 
         //pass callback
-        childFragment.locationLayer = { getUserLocation() }
+        childFragment.userPoint = { getView()?.getUserLocation() }
         childFragment.moveMapCamera = { getView()?.moveCamera(it) }
         childFragment.attachDetalRide = { getView()?.attachDetailRide() }
         childFragment.mapView = { getView()?.getMap() }
         childFragment.zoomMap = { getView()?.zoomMap(it) }
+        childFragment.myCityCallback = {
+            getView()?.getMyCityCall()?.let { call -> call(it) }
+        }
 
         this.childCreateRide = childFragment
         fm.beginTransaction()
@@ -39,7 +45,7 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
     }
 
 
-    override fun getUserLocation(): UserLocationLayer? {
+    override fun getUserLocation(): Point? {
         return getView()?.getUserLocation()
     }
 
@@ -76,5 +82,18 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
         drawable.draw(canvas)
 
         return bitmap
+    }
+
+
+    override fun saveMyCity(address: Address) {
+        //bad code
+        Geo.selectedCity = address
+        return ProfileInteractor().saveMyCity(address)
+    }
+
+
+    override fun getMyCity(): Address? {
+        //bad code
+        return ProfileInteractor().getMyCity()
     }
 }

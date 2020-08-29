@@ -7,21 +7,22 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.poputi.presentation.interfaces.IBaseView
+import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.AddressesAdapter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.OffersAdapter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.PaymentsAdapter
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
 
 interface ContractView {
 
     interface IMapCreateRideView : IBaseView {
         fun correctMapView()
         fun getFM(): FragmentManager?
-        fun getUserLocation(): UserLocationLayer?
+        fun getUserLocation(): Point?
         fun zoomMap(cameraPosition: CameraPosition)
+        fun getMyCityCall(): ParentHandler<Address>?
         fun zoomMapDistance(cameraPosition: CameraPosition)
         fun moveCamera(point: Point)
         fun getMap(): MapView
@@ -31,7 +32,6 @@ interface ContractView {
     }
 
 
-
     interface ICreateRideView : IBaseView {
         fun getAddressesAdapter(): AddressesAdapter
         fun setAddressView(isFrom: Boolean, address: String)
@@ -39,8 +39,9 @@ interface ContractView {
         fun onSlideBottomSheet(bottomSheet: View, slideOffset: Float)
         fun onClickItem(address: Address, isFromMapSearch: Boolean)
         fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean)
-        fun getUserLocationLayer(): UserLocationLayer?
+        fun getUserLocation(): Point?
         fun onStateChangedBottomSheet(newState: Int)
+        fun getMyCityCall(): ParentHandler<Address>?
         fun expandedBottomSheet(isFrom: Boolean)
         fun onBackPressed(): Boolean
         fun moveCamera(point: Point)
@@ -86,7 +87,7 @@ interface ContractView {
         fun getExpiredTimeConfirm()
         fun onBackPressed(): Boolean
         fun getAdapter(): OffersAdapter
-        fun getUserLocationLayer(): UserLocationLayer?
+        fun getUserLocation(): Point?
         fun checkoutBackground(isShow: Boolean)
         fun getRecyclerView(): RecyclerView?
         fun hideConfirmAccept()

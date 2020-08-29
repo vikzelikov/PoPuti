@@ -13,7 +13,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MainPresenter
 import bonch.dev.poputi.presentation.interfaces.IMainActivity
 import bonch.dev.poputi.presentation.interfaces.IMainPresenter

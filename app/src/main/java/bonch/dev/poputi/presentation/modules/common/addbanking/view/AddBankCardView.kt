@@ -14,9 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
-import bonch.dev.domain.utils.Keyboard
-import bonch.dev.domain.utils.Keyboard.hideKeyboard
-import bonch.dev.domain.utils.Keyboard.showKeyboard
+import bonch.dev.poputi.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard.hideKeyboard
+import bonch.dev.poputi.domain.utils.Keyboard.showKeyboard
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.common.addbanking.presenter.IAddBankCardPresenter
 import kotlinx.android.synthetic.main.add_bank_card_activity.*

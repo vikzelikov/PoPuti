@@ -9,4 +9,6 @@ interface IProfileView : IBaseView {
 
     fun isPassanger(): Boolean
 
+    fun setMyCity(address: String)
+
 }

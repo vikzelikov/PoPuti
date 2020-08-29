@@ -1,5 +1,7 @@
 package bonch.dev.poputi.presentation.modules.passenger.regular.ride.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -21,7 +23,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
@@ -29,6 +30,8 @@ import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.utils.ChangeOpacity
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
@@ -38,9 +41,25 @@ import bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters.Pay
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.ContractPresenter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.regular_create_ride_layout.*
+import kotlinx.android.synthetic.main.regular_create_ride_layout.address_map_marker_btn
+import kotlinx.android.synthetic.main.regular_create_ride_layout.address_map_marker_layout
+import kotlinx.android.synthetic.main.regular_create_ride_layout.address_map_text
+import kotlinx.android.synthetic.main.regular_create_ride_layout.addresses_list
+import kotlinx.android.synthetic.main.regular_create_ride_layout.back_btn
+import kotlinx.android.synthetic.main.regular_create_ride_layout.bottom_sheet_addresses
+import kotlinx.android.synthetic.main.regular_create_ride_layout.bottom_sheet_arrow
+import kotlinx.android.synthetic.main.regular_create_ride_layout.btn_map_from
+import kotlinx.android.synthetic.main.regular_create_ride_layout.btn_map_to
+import kotlinx.android.synthetic.main.regular_create_ride_layout.center_position
+import kotlinx.android.synthetic.main.regular_create_ride_layout.circle_marker
+import kotlinx.android.synthetic.main.regular_create_ride_layout.from_adr
+import kotlinx.android.synthetic.main.regular_create_ride_layout.from_cross
+import kotlinx.android.synthetic.main.regular_create_ride_layout.main_addresses_layout
+import kotlinx.android.synthetic.main.regular_create_ride_layout.to_adr
+import kotlinx.android.synthetic.main.regular_create_ride_layout.to_cross
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -66,9 +85,14 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     private var timeBottomSheet: BottomSheetBehavior<*>? = null
     private var mainInfoBottomSheet: BottomSheetBehavior<*>? = null
 
-    lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
+    var myCityCallback: ParentHandler<Address>? = null
+    var userPoint: ParentMapHandler<Point?>? = null
+
     lateinit var moveMapCamera: ParentHandler<Point>
+    lateinit var zoomMap: ParentHandler<CameraPosition>
     lateinit var mapView: ParentMapHandler<MapView>
+
+    private var isUpMoved = true
 
     private val VISA = 4
     private val MC = 5
@@ -206,6 +230,10 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
             hideMainInfoLayout()
 
             createRegularDrivePresenter.showMyPosition()
+
+            (activity as? MapCreateRegularRide)?.let {
+                Geo.showAlertEnable(it)
+            }
         }
 
         show_my_position_c.setOnClickListener {
@@ -213,6 +241,10 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
             hideMainInfoLayout()
 
             createRegularDrivePresenter.showMyPosition()
+
+            (activity as? MapCreateRegularRide)?.let {
+                Geo.showAlertEnable(it)
+            }
         }
 
         comment_back_btn.setOnClickListener {
@@ -268,8 +300,8 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     private fun setListenersAdr() {
         from_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    createRegularDrivePresenter.requestSuggest(from_adr.text.toString())
+                if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED && !checkCompleteAddresses()) {
+                    createRegularDrivePresenter.requestSuggest(from_adr?.text.toString())
                 }
             }
 
@@ -286,8 +318,8 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
         to_adr.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    createRegularDrivePresenter.requestSuggest(to_adr.text.toString())
+                if (addressesBottomSheet?.state == BottomSheetBehavior.STATE_EXPANDED && !checkCompleteAddresses()) {
+                    createRegularDrivePresenter.requestSuggest(to_adr?.text.toString())
                 }
             }
 
@@ -301,6 +333,14 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
                 }
             }
         })
+    }
+
+
+    private fun checkCompleteAddresses(): Boolean {
+        return if (Coordinate.fromAdr != null && Coordinate.toAdr != null) {
+            hideKeyboard()
+            true
+        } else false
     }
 
 
@@ -702,7 +742,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
     private fun initBankingAdapter() {
         payments_list?.apply {
-            layoutManager =  LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = paymentsListAdapter
         }
 
@@ -719,7 +759,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         }
 
         cards.forEach {
-            if(it.isSelect) setSelectedBankCard(it)
+            if (it.isSelect) setSelectedBankCard(it)
         }
     }
 
@@ -953,10 +993,50 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     }
 
 
-    override fun requestGeocoder(point: Point?) {
+    override fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean) {
         hideMainInfoLayout()
 
-        createRegularDrivePresenter.requestGeocoder(point)
+        if (isUp) {
+            if (isUpMoved) {
+                center_position?.animate()
+                    ?.setDuration(250L)
+                    ?.translationY(-50f)
+
+                shadow_marker?.animate()
+                    ?.setDuration(150L)
+                    ?.alpha(0.6f)
+
+                isUpMoved = false
+            }
+        } else {
+            isUpMoved = true
+
+            zoomMap(cameraPosition)
+
+            shadow_marker?.animate()
+                ?.setDuration(150L)
+                ?.alpha(0.3f)
+
+            center_position?.animate()
+                ?.setDuration(250L)
+                ?.translationY(0f)
+                ?.setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
+
+                        center_position?.let {
+                            if (it.translationY == 0.0f) {
+                                createRegularDrivePresenter.requestGeocoder(
+                                    Point(
+                                        cameraPosition.target.latitude,
+                                        cameraPosition.target.longitude
+                                    )
+                                )
+                            }
+                        }
+                    }
+                })
+        }
     }
 
 
@@ -1203,7 +1283,9 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     override fun getNavHost(): NavController? = null
 
 
-    override fun getUserLocationLayer(): UserLocationLayer? = locationLayer()
+    override fun getUserLocation(): Point? {
+        return userPoint?.let { it() }
+    }
 
 
     override fun getMap(): MapView? = mapView()
@@ -1340,6 +1422,9 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
         return returnDP
     }
+
+
+    override fun getMyCityCall(): ParentHandler<Address>? = myCityCallback
 
 
     override fun onDestroy() {

@@ -1,20 +1,21 @@
-package bonch.dev.poputi.presentation.modules.driver.signup.suggest.adapters
+package bonch.dev.poputi.presentation.modules.common.profile.city
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
-import bonch.dev.poputi.presentation.modules.driver.signup.suggest.presenter.ISuggestPresenter
+import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import kotlinx.android.synthetic.main.string_suggest_item.view.*
 import javax.inject.Inject
 
+class SelectCityAdapter @Inject constructor(
+    private var presenter: ContractPresenter.ISelectCityPresenter
+) : RecyclerView.Adapter<SelectCityAdapter.ItemPostHolder>() {
 
-class SuggestAdapter @Inject constructor(
-    private var suggestPresenter: ISuggestPresenter
-) : RecyclerView.Adapter<SuggestAdapter.ItemPostHolder>() {
-
-    var list: ArrayList<String> = arrayListOf()
+    var list: ArrayList<Address> = arrayListOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
@@ -28,17 +29,18 @@ class SuggestAdapter @Inject constructor(
     override fun getItemCount() = list.size
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
-        val suggestText = list[position]
-        holder.bind(suggestText)
+        val address = list[position]
+        holder.bind(address)
 
         holder.itemView.setOnClickListener {
-            suggestPresenter.suggestDone(suggestText)
+            presenter.suggestDone(address)
         }
 
 
         holder.itemView.setOnTouchListener { _, _ ->
-            suggestPresenter.instance().getView()?.hideKeyboard()
+            presenter.instance().getView()?.hideKeyboard()
             false
         }
 
@@ -46,11 +48,8 @@ class SuggestAdapter @Inject constructor(
 
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        fun bind(post: String) {
-            itemView.text_suggest.text = post
+        fun bind(post: Address) {
+            itemView.text_suggest.text = post.address
         }
     }
-
 }
-

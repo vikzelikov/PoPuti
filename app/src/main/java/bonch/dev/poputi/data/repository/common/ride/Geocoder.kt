@@ -1,11 +1,12 @@
 package bonch.dev.poputi.data.repository.common.ride
 
+import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
 import bonch.dev.poputi.presentation.interfaces.GeocoderHandler
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 import java.util.*
-import kotlin.NoSuchElementException
 
 
 class Geocoder : Session.SearchListener {
@@ -44,7 +45,20 @@ class Geocoder : Session.SearchListener {
             } catch (ex: StringIndexOutOfBoundsException) {
             }
 
-            callback(address, this.point)
+            val city = response.collection.children.firstOrNull()?.obj
+                ?.metadataContainer
+                ?.getItem(ToponymObjectMetadata::class.java)
+                ?.address
+                ?.components
+                ?.firstOrNull { it.kinds.contains(com.yandex.mapkit.search.Address.Component.Kind.LOCALITY) }
+                ?.name
+
+            val addr = Address()
+            addr.address = address
+            addr.point = AddressPoint(point.latitude, point.longitude)
+            addr.description = city
+
+            callback(addr)
         } catch (ex: NoSuchElementException) {
         }
 

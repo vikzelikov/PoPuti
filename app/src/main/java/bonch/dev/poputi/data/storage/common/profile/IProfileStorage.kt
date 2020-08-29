@@ -1,7 +1,7 @@
 package bonch.dev.poputi.data.storage.common.profile
 
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
-import bonch.dev.poputi.domain.entities.common.profile.Profile
+import bonch.dev.poputi.domain.entities.common.ride.Address
 
 interface IProfileStorage {
 
@@ -21,13 +21,13 @@ interface IProfileStorage {
 
     fun getDriverId(): Int
 
-    fun saveDriverAccess()
-
-    fun getDriverAccess(): Boolean
-
     fun saveCheckoutDriver(isDriver: Boolean)
 
     fun isCheckoutDriver(): Boolean
+
+    fun saveMyCity(address: Address)
+
+    fun getMyCity(): Address?
 
     fun saveBankCard(card: BankCard)
 

@@ -6,6 +6,8 @@ import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingView
+import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityView
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsView
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
@@ -64,6 +66,12 @@ interface ProfileComponent {
     //rating
     fun inject(target: RatingView)
     fun inject(target: RatingPresenter)
+
+
+    //select city
+    fun inject(target: SelectCityView)
+    fun inject(target: SelectCityPresenter)
+
 
     //common
     fun inject(target: ProfileInteractor)

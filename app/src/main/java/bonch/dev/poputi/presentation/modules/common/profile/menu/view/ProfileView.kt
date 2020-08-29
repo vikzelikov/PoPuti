@@ -16,10 +16,13 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerProfileComponent
 import bonch.dev.poputi.di.module.common.ProfileModule
 import bonch.dev.poputi.domain.entities.common.profile.Profile
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.domain.utils.Keyboard
+import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.IProfilePresenter
-import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import bonch.dev.poputi.route.MainRouter
+import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.profile_fragment.*
@@ -36,6 +39,8 @@ class ProfileView : Fragment(), IProfileView {
 
     @Inject
     lateinit var profilePresenter: IProfilePresenter
+
+    var changeGeoMap: ParentHandler<Address>? = null
 
     private val EXIT = -2
     private val CHECKOUT = -3
@@ -80,6 +85,10 @@ class ProfileView : Fragment(), IProfileView {
 
         setListeners()
 
+        profilePresenter.getMyCity()?.address?.let {
+            setMyCity(it)
+        }
+
         if (isForPassenger)
             setViewForPassenger()
     }
@@ -101,6 +110,14 @@ class ProfileView : Fragment(), IProfileView {
 
         if (requestCode == profilePresenter.instance().CONFIRM_PERSON && resultCode == Activity.RESULT_OK) {
             moderate_icon?.visibility = View.VISIBLE
+        }
+
+        if (requestCode == Geo.SELECT_CITY && resultCode == Activity.RESULT_OK) {
+            Geo.selectedCity?.let {
+                changeGeoMap?.let { geo -> geo(it) }
+
+                it.address?.let { city -> setMyCity(city) }
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data)
@@ -160,7 +177,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         select_city.setOnClickListener {
-            Toast.makeText(context, "City", Toast.LENGTH_SHORT).show()
+            profilePresenter.showSelectCity(this)
         }
 
 
@@ -225,6 +242,12 @@ class ProfileView : Fragment(), IProfileView {
         activity?.let {
             Keyboard.hideKeyboard(it, profile_container)
         }
+    }
+
+
+    override fun setMyCity(address: String) {
+        subtitle_city?.text = address
+        subtitle_city?.visibility = View.VISIBLE
     }
 
 

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
-import bonch.dev.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.data.repository.common.ride.SearchPlace
@@ -16,12 +15,15 @@ import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.addbanking.view.AddBankCardView
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
+import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 import javax.inject.Inject
@@ -231,6 +233,7 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                     rideInfo.destination = rideInfo.toAdr?.address
                     rideInfo.toLat = rideInfo.toAdr?.point?.latitude
                     rideInfo.toLng = rideInfo.toAdr?.point?.longitude
+                    rideInfo.city = Geo.selectedCity?.address
 
                     rideInfo.paymentMethod?.let {
                         getDriverInteractor.saveBankCard(it)
@@ -254,7 +257,17 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
                                     ActiveRide.activeRide = null
 
-                                    getView()?.createRideFail()
+                                    Handler().postDelayed({
+                                        getView()?.createRideFail()
+                                    }, 1000)
+
+                                    val app = App.appComponent
+                                    app.getApp().stopService(
+                                        Intent(
+                                            app.getContext(),
+                                            PassengerRideService::class.java
+                                        )
+                                    )
                                 }
                             }
                             mainHandler.post(myRunnable)

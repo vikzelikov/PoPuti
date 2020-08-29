@@ -19,8 +19,8 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.driver.signup.SignupMainData
 import bonch.dev.poputi.domain.entities.driver.signup.Step
-import bonch.dev.domain.utils.Camera
-import bonch.dev.domain.utils.Gallery
+import bonch.dev.poputi.domain.utils.Camera
+import bonch.dev.poputi.domain.utils.Gallery
 import bonch.dev.poputi.presentation.modules.driver.signup.DriverSignupActivity
 import bonch.dev.poputi.presentation.modules.driver.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.driver.signup.tabledocs.presenter.ITableDocsPresenter

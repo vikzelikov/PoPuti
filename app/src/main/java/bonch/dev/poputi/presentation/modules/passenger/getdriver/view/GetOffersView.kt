@@ -16,11 +16,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.common.ride.*
+import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
+import bonch.dev.poputi.domain.entities.common.ride.Offer
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
@@ -33,8 +36,8 @@ import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.get_offers_layout.*
 import javax.inject.Inject
 
@@ -53,13 +56,13 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
     private var confirmGetBottomSheet: BottomSheetBehavior<*>? = null
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
-    lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var nextFragment: ParentEmptyHandler
     lateinit var onGetOfferFail: ParentEmptyHandler
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var cancelRide: ParentHandler<ReasonCancel>
     lateinit var notification: ParentHandler<String>
     lateinit var offerText: TextView
+    var userPoint: ParentMapHandler<Point?>? = null
 
     private var isAllowSlide = true
 
@@ -532,8 +535,8 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
     }
 
 
-    override fun getUserLocationLayer(): UserLocationLayer? {
-        return locationLayer()
+    override fun getUserLocation(): Point? {
+        return userPoint?.let { it() }
     }
 
 

@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.driver.signup.DriverData
 import bonch.dev.poputi.domain.entities.driver.signup.SignupMainData
-import bonch.dev.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.driver.signup.DriverSignupActivity
 import bonch.dev.poputi.presentation.modules.driver.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.driver.signup.carinfo.presenter.ICarInfoPresenter

@@ -37,5 +37,15 @@
     </style>
 
 
+    <style name="DialogLight" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 
 </resources>

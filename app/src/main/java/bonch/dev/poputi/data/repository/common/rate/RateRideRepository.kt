@@ -4,7 +4,7 @@ import android.util.Log
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.common.RideService
 import bonch.dev.poputi.domain.entities.common.rate.Review
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope

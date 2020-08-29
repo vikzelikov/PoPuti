@@ -5,14 +5,15 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.IBaseView
+import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters.ActiveRidesAdapter
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters.AddressesListAdapter
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters.ArchiveRidesAdapter
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters.PaymentsListAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
 
 interface ContractView {
 
@@ -24,8 +25,10 @@ interface ContractView {
 
 
     interface IMapCreateRegularDrive : IBaseView {
-        fun getUserLocation(): UserLocationLayer?
+        fun getUserLocation(): Point?
         fun getMap(): MapView
+        fun zoomMap(cameraPosition: CameraPosition)
+        fun getMyCityCall(): ParentHandler<Address>?
         fun moveCamera(point: Point)
         fun pressBack()
     }
@@ -45,16 +48,17 @@ interface ContractView {
         fun getBottomSheet(bottomSheetBehavior: BottomSheetBehavior<*>)
         fun onClickItem(address: Address, isFromMapSearch: Boolean)
         fun expandedBottomSheet(isFrom: Boolean, isShowKeyboard: Boolean)
+        fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean)
         fun getAddressesAdapter(): AddressesListAdapter
         fun getPaymentsAdapter(): PaymentsListAdapter
-        fun getUserLocationLayer(): UserLocationLayer?
         fun addressesMapViewChanged(isFrom: Boolean)
         fun setDays(arrSelectedDays: BooleanArray)
         fun removeAddressesView(isFrom: Boolean)
-        fun requestGeocoder(point: Point?)
+        fun getMyCityCall(): ParentHandler<Address>?
         fun setComment(comment: String)
         fun getActualFocus(): Boolean?
         fun isDataComplete(): Boolean
+        fun getUserLocation(): Point?
         fun moveCamera(point: Point)
         fun onBackPressed(): Boolean
         fun getDays(): BooleanArray

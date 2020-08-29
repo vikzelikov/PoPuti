@@ -2,6 +2,7 @@ package bonch.dev.poputi.presentation.modules.common.profile.menu.presenter
 
 import android.content.Intent
 import androidx.fragment.app.Fragment
+import bonch.dev.poputi.domain.entities.common.ride.Address
 
 
 interface IProfilePresenter {
@@ -20,11 +21,15 @@ interface IProfilePresenter {
 
     fun confirmPerson(fragment: Fragment)
 
+    fun showSelectCity(fragment: Fragment)
+
     fun showProfits()
 
     fun showRating()
 
     fun showStoryOrders(isPassanger: Boolean)
+
+    fun getMyCity(): Address?
 
     fun logout()
 

@@ -141,11 +141,6 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
-    override fun saveDriverAccess() {
-        profileStorage.saveDriverAccess()
-    }
-
-
     override fun isCheckoutDriver(): Boolean {
         return profileStorage.isCheckoutDriver()
     }

@@ -8,6 +8,7 @@ import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyStep
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.IBaseView
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingAdapter
+import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityAdapter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsAdapter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.RatingAdapter
 import bonch.dev.poputi.presentation.modules.common.profile.story.adapter.StoryAdapter
@@ -63,6 +64,12 @@ interface ContractView {
         fun hideEmptyText()
         fun setProfile(profile: Profile)
         fun getAdapter(): RatingAdapter
+    }
+
+
+    interface ISelectCityView : IBaseView {
+        fun suggestDone(textSuggest: String)
+        fun getAdapter():SelectCityAdapter
     }
 
 }

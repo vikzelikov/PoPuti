@@ -15,9 +15,9 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerCommonComponent
 import bonch.dev.poputi.di.module.common.CommonModule
-import bonch.dev.domain.utils.Keyboard
-import bonch.dev.domain.utils.Keyboard.hideKeyboard
-import bonch.dev.domain.utils.Keyboard.showKeyboard
+import bonch.dev.poputi.domain.utils.Keyboard
+import bonch.dev.poputi.domain.utils.Keyboard.hideKeyboard
+import bonch.dev.poputi.domain.utils.Keyboard.showKeyboard
 import bonch.dev.poputi.presentation.modules.common.CommonComponent
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.presenter.IOfferPricePresenter
 import kotlinx.android.synthetic.main.offer_price_activity.*

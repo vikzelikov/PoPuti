@@ -2,7 +2,7 @@ package bonch.dev.poputi.data.repository.driver.getpassenger
 
 import android.util.Log
 import bonch.dev.poputi.domain.utils.Constants
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.driver.GetPassangerService
 import bonch.dev.poputi.domain.entities.common.ride.Offer

@@ -20,12 +20,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.utils.ChangeOpacity
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
@@ -38,7 +39,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.create_ride_layout.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -57,11 +57,12 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     private val shape = GradientDrawable()
     private val corners = floatArrayOf(24f, 24f, 24f, 24f, 0f, 0f, 0f, 0f)
 
-    lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
     lateinit var moveMapCamera: ParentHandler<Point>
     lateinit var attachDetalRide: ParentEmptyHandler
     lateinit var zoomMap: ParentHandler<CameraPosition>
     lateinit var mapView: ParentMapHandler<MapView>
+    var myCityCallback: ParentHandler<Address>? = null
+    var userPoint: ParentMapHandler<Point?>? = null
 
     private var isUpMoved = true
 
@@ -129,6 +130,10 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     @SuppressLint("ClickableViewAccessibility")
     override fun setListeners() {
         my_pos.setOnClickListener {
+            (activity as? MainActivity)?.let {
+                Geo.showAlertEnable(it)
+            }
+
             createRidePresenter.showMyPosition()
         }
 
@@ -525,8 +530,8 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     }
 
 
-    override fun getUserLocationLayer(): UserLocationLayer? {
-        return locationLayer()
+    override fun getUserLocation(): Point? {
+        return userPoint?.let { it() }
     }
 
 
@@ -617,6 +622,9 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
         }
     }
+
+
+    override fun getMyCityCall(): ParentHandler<Address>? = myCityCallback
 
 
     override fun nextFragment() {

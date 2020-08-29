@@ -14,8 +14,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import bonch.dev.domain.utils.Camera
-import bonch.dev.domain.utils.Gallery
+import bonch.dev.poputi.domain.utils.Camera
+import bonch.dev.poputi.domain.utils.Gallery
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.media.Photo

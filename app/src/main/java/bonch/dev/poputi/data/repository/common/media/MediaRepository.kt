@@ -5,7 +5,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.common.MediaService
 import bonch.dev.poputi.domain.entities.common.media.Media
 import bonch.dev.poputi.domain.entities.common.media.MediaObject
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import kotlinx.coroutines.CoroutineScope

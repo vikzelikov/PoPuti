@@ -13,16 +13,19 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
-import bonch.dev.poputi.domain.utils.Constants.API_KEY
-import bonch.dev.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.poputi.di.module.passenger.GetDriverModule
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
+import bonch.dev.poputi.domain.utils.Constants.API_KEY
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
+import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import com.yandex.mapkit.Animation
@@ -56,9 +59,12 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     lateinit var navigateUser: ParentEmptyHandler
     private var userLocationLayer: UserLocationLayer? = null
 
+    var myCityCallbackMain: ParentHandler<Address>? = null
+    private var myCityCallback: ParentHandler<Address>? = null
+    private var myCityCallbackDetect: ParentHandler<Address>? = null
+
     private var isAllowFirstZoom = false
     private var isAllowZoom = false
-
 
     init {
         initDI()
@@ -103,6 +109,16 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             logo.setAlignment(alignment)
         }
 
+        (activity as? MainActivity)?.let {
+            Geo.showAlertEnable(it)
+        }
+
+        Geo.selectedCity = mapPresenter.getMyCity()
+
+        Geo.isEnabled(App.appComponent.getContext())?.let {
+            if (it) setListenerUserPosition()
+        }
+
         return root
     }
 
@@ -118,6 +134,22 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             }
 
             navigateUser()
+        }
+
+        Geo.isEnabled(App.appComponent.getContext())?.let {
+            if (!it) {
+                Geo.selectedCity?.point?.let { point ->
+                    moveCamera(Point(point.latitude, point.longitude))
+
+                    Geo.isPreferCityGeo = true
+                }
+            }
+        }
+
+        map?.post {
+            Handler().postDelayed({
+                isAllowFirstZoom = true
+            }, 3000)
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -154,14 +186,32 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
         if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
             isAllowZoom = true
-//            zoomMap(p1)
             mapPresenter.requestGeocoder(p1, false)
 
         } else if (p2 == CameraUpdateSource.GESTURES) {
-            mapPresenter.requestGeocoder(p1, true)
-
             isAllowZoom = false
+            mapPresenter.requestGeocoder(p1, true)
         }
+
+        if (Geo.isRequestMyPosition && p3) {
+
+            mapPresenter.requestGeocoder(p1, false)
+
+            //update city
+            myCityCallback = { city ->
+                myCityCallbackMain?.let { it(city) }
+                myCityCallbackDetect?.let { it(city) }
+
+                mapPresenter.saveMyCity(city)
+
+                myCityCallback = null
+            }
+
+            Geo.isRequestMyPosition = false
+        }
+
+        mapPresenter.onObjectUpdate()
+
     }
 
 
@@ -196,15 +246,12 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         )
 
         userLocationView.accuracyCircle.fillColor = Color.TRANSPARENT
+
+        Geo.isRequestMyPosition = true
     }
 
 
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
-        Handler().postDelayed({
-            isAllowFirstZoom = true
-        }, 3000)
-        mapPresenter.onObjectUpdate()
-    }
+    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
 
 
     private fun setUserLocation() {
@@ -222,7 +269,15 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     }
 
 
-    override fun getUserLocation() = userLocationLayer
+    override fun getUserLocation(): Point? {
+        return if (Geo.isPreferCityGeo || userLocationLayer?.cameraPosition()?.target == null) {
+            val p = Geo.selectedCity?.point
+
+            if (p != null) Point(p.latitude, p.longitude)
+            else null
+
+        } else userLocationLayer?.cameraPosition()?.target
+    }
 
 
     override fun correctMapView() {
@@ -245,11 +300,18 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         val zoom = cameraPosition.zoom + 0.05
 
         if (isAllowFirstZoom && isAllowZoom) {
-            mapView.map?.move(
-                CameraPosition(point, zoom.toFloat(), cameraPosition.azimuth, cameraPosition.tilt),
-                Animation(Animation.Type.SMOOTH, 0.3f),
-                null
-            )
+            map?.post {
+                mapView.map?.move(
+                    CameraPosition(
+                        point,
+                        zoom.toFloat(),
+                        cameraPosition.azimuth,
+                        cameraPosition.tilt
+                    ),
+                    Animation(Animation.Type.SMOOTH, 0.3f),
+                    null
+                )
+            }
 
             isAllowZoom = false
         }
@@ -349,6 +411,26 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         mapPresenter.instance().detachView()
         super.onDestroy()
     }
+
+
+    private fun setListenerUserPosition() {
+        myCityCallbackDetect = { city ->
+            if (city.address != Geo.selectedCity?.address) {
+                Geo.selectedCity?.point?.let {
+                    Geo.isRequestMyPosition = true
+                    Geo.isPreferCityGeo = true
+
+                    val cityPoint = Point(it.latitude, it.longitude)
+                    moveCamera(cityPoint)
+                }
+            }
+
+            myCityCallbackDetect = null
+        }
+    }
+
+
+    override fun getMyCityCall(): ParentHandler<Address>? = myCityCallback
 
 
     override fun getNavHost(): NavController? {

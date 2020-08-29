@@ -7,11 +7,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
+import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.ContractView
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.CreateRegularRideView
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.user_location.UserLocationLayer
+import com.yandex.mapkit.map.CameraPosition
 
 class MapCreateRegRidePresenter : BasePresenter<ContractView.IMapCreateRegularDrive>(),
     ContractPresenter.IMapCreateRegDrivePresenter {
@@ -25,9 +28,13 @@ class MapCreateRegRidePresenter : BasePresenter<ContractView.IMapCreateRegularDr
         val childFragment = CreateRegularRideView()
 
         //pass callback
-        childFragment.locationLayer = { getUserLocation() }
+        childFragment.userPoint = { getView()?.getUserLocation() }
         childFragment.moveMapCamera = { getView()?.moveCamera(it) }
         childFragment.mapView = { getView()?.getMap() }
+        childFragment.zoomMap = { getView()?.zoomMap(it) }
+        childFragment.myCityCallback = {
+            getView()?.getMyCityCall()?.let { call -> call(it) }
+        }
 
         this.childCreateRegularDrive = childFragment
         fm.beginTransaction()
@@ -41,13 +48,13 @@ class MapCreateRegRidePresenter : BasePresenter<ContractView.IMapCreateRegularDr
     }
 
 
-    override fun getUserLocation(): UserLocationLayer? {
+    override fun getUserLocation(): Point? {
         return getView()?.getUserLocation()
     }
 
 
-    override fun requestGeocoder(point: Point?) {
-        childCreateRegularDrive?.requestGeocoder(point)
+    override fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean) {
+        childCreateRegularDrive?.requestGeocoder(cameraPosition, isUp)
     }
 
 
@@ -91,5 +98,11 @@ class MapCreateRegRidePresenter : BasePresenter<ContractView.IMapCreateRegularDr
         return this
     }
 
+
+    override fun saveMyCity(address: Address) {
+        //bad code
+        Geo.selectedCity = address
+        return ProfileInteractor().saveMyCity(address)
+    }
 
 }

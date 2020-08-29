@@ -11,7 +11,7 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.chat.Message
 import bonch.dev.poputi.domain.entities.common.chat.MessageObject
 import bonch.dev.poputi.domain.interactor.common.chat.IChatInteractor
-import bonch.dev.domain.utils.NetworkUtil
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.CommonComponent
 import bonch.dev.poputi.presentation.modules.common.chat.view.IChatView

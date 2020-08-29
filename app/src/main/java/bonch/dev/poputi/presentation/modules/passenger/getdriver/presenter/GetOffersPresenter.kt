@@ -377,8 +377,7 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
 
 
     private fun getUserPoint(): Point? {
-        val userLocation = getView()?.getUserLocationLayer()
-        return userLocation?.cameraPosition()?.target
+        return getView()?.getUserLocation()
     }
 
 
