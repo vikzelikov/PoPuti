@@ -5,6 +5,8 @@
     <string name="mobile_phone">Мобильный телефон</string>
     <string name="next">Далее</string>
 
+    <string name="eula">https://poputi.bonch.dev/eula</string>
+
     <string name="terms_cooperation">Нажимая «Далее», я соглашаюсь с
         <a href="https://poputi.bonch.dev/eula">Пользовательским соглашением</a>, а также с обработкой моей персональной информации на условиях <a href="https://poputi.bonch.dev/policy">Политики конфиденциальности</a>
     </string>
@@ -77,6 +79,7 @@
     <string name="storyOrders">История заказов</string>
     <string name="setRatingApp">Оцените приложение</string>
     <string name="changeLang">Сменить язык</string>
+    <string name="selectLang">Выбор языка</string>
     <string name="support">Техподдержка</string>
     <string name="support1">Служба поддержки</string>
     <string name="conditionUse">Условия пользования</string>
@@ -294,6 +297,7 @@
     <string name="yourCity">Ваш город</string>
     <string name="notDetectYourCity">Не удалось определить Ваш город</string>
     <string name="selectCityT">Выбрать город</string>
+    <string name="enableGeo">Пожалуйста, включите на устройстве геолокацию</string>
 
 
 </resources>

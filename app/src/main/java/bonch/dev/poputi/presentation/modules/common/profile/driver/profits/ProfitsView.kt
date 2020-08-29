@@ -41,6 +41,8 @@ class ProfitsView : AppCompatActivity(), ContractView.IProfitsView {
 
         initAdapter()
 
+        presenter.getRides()
+
         presenter.calcDate(null)
         calcTotalProfit()
         calcCountOrders()

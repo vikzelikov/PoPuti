@@ -2,6 +2,7 @@ package bonch.dev.poputi.presentation.modules.common.profile.passenger.verificat
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -196,7 +197,12 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
 
         save.setOnClickListener {
             if (VerifyData.listDocs.size == 2) {
-                onBackPressed()
+                if (presenter.isBlockBack()) {
+                    showNotification(resources.getString(R.string.photoProfileLoading))
+                } else {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
             } else {
                 infoBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
             }

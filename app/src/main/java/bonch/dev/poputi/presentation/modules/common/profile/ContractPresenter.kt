@@ -10,10 +10,12 @@ import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPrese
 import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarInfoPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.language.ChangeLangPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.RatingPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.support.SupportPresenter
 
 interface ContractPresenter {
 
@@ -45,6 +47,7 @@ interface ContractPresenter {
     interface IProfitsPresenter {
         fun nextList()
         fun backList()
+        fun getRides()
         fun calcDate(isNext: Boolean?)
         fun instance(): ProfitsPresenter
     }
@@ -82,6 +85,16 @@ interface ContractPresenter {
     interface ICarInfoPresenter {
         fun getCarInfo()
         fun instance(): CarInfoPresenter
+    }
+
+
+    interface IChangeLangPresenter {
+        fun instance(): ChangeLangPresenter
+    }
+
+
+    interface ISupportPresenter {
+        fun instance(): SupportPresenter
     }
 
 }

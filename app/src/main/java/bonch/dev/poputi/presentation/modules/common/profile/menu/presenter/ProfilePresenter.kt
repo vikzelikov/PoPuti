@@ -5,15 +5,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
-import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityView
+import bonch.dev.poputi.presentation.modules.common.profile.language.ChangeLangView
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.view.IProfileView
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyView
@@ -29,6 +30,8 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
     val PROFILE_DETAIL_VIEW = 11
     val CONFIRM_PERSON = 12
+    val CHANGE_LANG = 14
+    val LANG = "LANG"
     private val IS_SHOW_POPUP = "IS_SHOW_POPUP"
     private val PROFILE_DATA = "PROFILE_DATA"
 
@@ -141,6 +144,13 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     }
 
 
+    override fun changeLang(fragment: Fragment) {
+        val context = App.appComponent.getContext()
+        val intent = Intent(context, ChangeLangView::class.java)
+        fragment.startActivityForResult(intent, CHANGE_LANG)
+    }
+
+
     override fun showRating() {
         MainRouter.showView(R.id.rating_passenger, getView()?.getNavHost(), null)
     }
@@ -148,6 +158,11 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
     override fun showCarInfo() {
         MainRouter.showView(R.id.car_info_driver, getView()?.getNavHost(), null)
+    }
+
+
+    override fun showSupport() {
+        MainRouter.showView(R.id.support, getView()?.getNavHost(), null)
     }
 
 

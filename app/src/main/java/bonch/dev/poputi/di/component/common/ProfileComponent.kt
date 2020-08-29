@@ -12,6 +12,8 @@ import bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarIn
 import bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarInfoView
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsView
+import bonch.dev.poputi.presentation.modules.common.profile.language.ChangeLangPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.language.ChangeLangView
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.ProfilePresenter
@@ -24,6 +26,8 @@ import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.Deta
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.view.DetailStoryView
 import bonch.dev.poputi.presentation.modules.common.profile.story.view.StoryView
+import bonch.dev.poputi.presentation.modules.common.profile.support.SupportPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.support.SupportView
 import dagger.Component
 
 @CompScope
@@ -78,6 +82,16 @@ interface ProfileComponent {
     //car info
     fun inject(target: CarInfoView)
     fun inject(target: CarInfoPresenter)
+
+
+    //change lang
+    fun inject(target: ChangeLangView)
+    fun inject(target: ChangeLangPresenter)
+
+
+    //support
+    fun inject(target: SupportView)
+    fun inject(target: SupportPresenter)
 
 
     //common

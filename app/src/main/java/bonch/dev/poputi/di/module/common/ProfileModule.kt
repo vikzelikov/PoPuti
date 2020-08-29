@@ -16,6 +16,7 @@ import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPrese
 import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarInfoPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.language.ChangeLangPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.IProfilePresenter
@@ -24,6 +25,7 @@ import bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.Rat
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.support.SupportPresenter
 import dagger.Module
 import dagger.Provides
 
@@ -70,6 +72,14 @@ class ProfileModule {
     @Provides
     @CompScope
     fun provideCarInfoPresenter(): ContractPresenter.ICarInfoPresenter = CarInfoPresenter()
+
+    @Provides
+    @CompScope
+    fun provideChangeLangPresenter(): ContractPresenter.IChangeLangPresenter = ChangeLangPresenter()
+
+    @Provides
+    @CompScope
+    fun provideSupportPresenter(): ContractPresenter.ISupportPresenter = SupportPresenter()
 
     @Provides
     @CompScope

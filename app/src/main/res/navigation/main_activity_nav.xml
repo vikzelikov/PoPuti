@@ -114,6 +114,12 @@
         android:label="car_info_driver_activity" />
 
 
+    <activity
+        android:id="@+id/support"
+        android:name="bonch.dev.poputi.presentation.modules.common.profile.support.SupportView"
+        android:label="support_activity" />
+
+
     <fragment
         android:id="@+id/main_driver_fragment"
         android:name="bonch.dev.poputi.presentation.modules.driver.MainFragment"

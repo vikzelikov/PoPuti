@@ -2,23 +2,24 @@ package bonch.dev.poputi.presentation.modules.driver.getpassenger.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.driver.DaggerGetPassengerComponent
 import bonch.dev.poputi.di.module.driver.GetPassengerModule
+import bonch.dev.poputi.domain.utils.Geo
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.adapters.OrdersAdapter
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.ContractPresenter
-import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.OrdersTimer
 import kotlinx.android.synthetic.main.orders_view_fragment.*
 import javax.inject.Inject
 
@@ -74,8 +75,13 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
         setListeners()
 
-        //observable on searching orders
-        OrdersTimer.startTimer(ordersAdapter)
+        (activity as? MainActivity)?.let { mainActivity ->
+            Geo.showAlertEnable(mainActivity)
+        }
+
+        Geo.isEnabled(App.appComponent.getContext())?.let {
+            if (!it) showEnableGeoText()
+        }
     }
 
 
@@ -94,9 +100,26 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
                 }
         }
 
-        ordersPresenter.initOrders()
+        startListenerGeo()
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+
+    private fun startListenerGeo() {
+        val context = App.appComponent.getContext()
+
+        Geo.isEnabled(context)?.let {
+            if (it) {
+                hideEnableGeoText()
+
+                ordersPresenter.initOrders()
+            } else {
+                Handler().postDelayed({
+                    startListenerGeo()
+                }, 3000)
+            }
+        }
     }
 
 
@@ -117,9 +140,9 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
 
     override fun showRecycler() {
-        orders_progress_bar.visibility = View.GONE
-        text_search_orders.visibility = View.GONE
-        orders_recycler.visibility = View.VISIBLE
+        orders_progress_bar?.visibility = View.GONE
+        text_search_orders?.visibility = View.GONE
+        orders_recycler?.visibility = View.VISIBLE
     }
 
 
@@ -160,6 +183,18 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
     override fun showNotification(text: String) {
         (activity as? MainActivity)?.showNotification(text)
+    }
+
+
+    private fun showEnableGeoText() {
+        enable_geo?.visibility = View.VISIBLE
+        orders_progress_bar?.visibility = View.GONE
+    }
+
+
+    private fun hideEnableGeoText() {
+        enable_geo?.visibility = View.GONE
+        showOrdersLoading()
     }
 
 

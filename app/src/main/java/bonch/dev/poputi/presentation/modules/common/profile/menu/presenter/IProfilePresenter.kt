@@ -23,7 +23,11 @@ interface IProfilePresenter {
 
     fun showSelectCity(fragment: Fragment)
 
+    fun changeLang(fragment: Fragment)
+
     fun showProfits()
+
+    fun showSupport()
 
     fun showRating()
 

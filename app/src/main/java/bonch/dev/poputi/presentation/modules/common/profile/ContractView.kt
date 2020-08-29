@@ -79,4 +79,14 @@ interface ContractView {
         fun setCarInfo(driver: DriverData)
     }
 
+
+    interface IChangeLangView : IBaseView {
+
+    }
+
+
+    interface ISupportView : IBaseView {
+
+    }
+
 }

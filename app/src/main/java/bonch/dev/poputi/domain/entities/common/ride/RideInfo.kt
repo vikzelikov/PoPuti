@@ -3,7 +3,6 @@ package bonch.dev.poputi.domain.entities.common.ride
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.passenger.regular.ride.DateInfo
-import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.OrdersTimer
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -76,9 +75,6 @@ data class RideInfo(
     @Expose
     var userId: Int? = null,
 
-    //timer for orders (DriverView)
-    var time: Int = OrdersTimer.TIME_EXPIRED_ITEM,
-
     //distance (driver - passenger) for orders (DriverView)
     var distance: Int? = null,
 
@@ -121,7 +117,6 @@ data class RideInfo(
         result = 31 * result + (startAt?.hashCode() ?: 0)
         result = 31 * result + (finishAt?.hashCode() ?: 0)
         result = 31 * result + (userId ?: 0)
-        result = 31 * result + time
         result = 31 * result + (distance ?: 0)
         result = 31 * result + isNewOrder.hashCode()
         result = 31 * result + (passenger?.hashCode() ?: 0)

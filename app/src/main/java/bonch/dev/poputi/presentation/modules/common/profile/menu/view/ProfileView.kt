@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import bonch.dev.poputi.App
@@ -120,6 +119,10 @@ class ProfileView : Fragment(), IProfileView {
             }
         }
 
+        if (requestCode == profilePresenter.instance().CHANGE_LANG && resultCode == Activity.RESULT_OK) {
+            data?.getBooleanExtra(profilePresenter.instance().LANG, false)
+        }
+
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -157,15 +160,16 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         change_lang.setOnClickListener {
-            Toast.makeText(context, "Change lang", Toast.LENGTH_SHORT).show()
+            profilePresenter.changeLang(this)
         }
 
         support.setOnClickListener {
-            Toast.makeText(context, "Support", Toast.LENGTH_SHORT).show()
+            profilePresenter.showSupport()
         }
 
         condition_use.setOnClickListener {
-            Toast.makeText(context, "Conditions user", Toast.LENGTH_SHORT).show()
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.eula)))
+            startActivity(browserIntent)
         }
 
         rating.setOnClickListener {
