@@ -8,11 +8,12 @@ import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarInfoPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.RatingPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.DetailStoryPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.story.presenter.StoryPresenter
-import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 
 interface ContractPresenter {
 
@@ -75,6 +76,12 @@ interface ContractPresenter {
         fun filterList(q: String)
         fun instance(): SelectCityPresenter
         fun suggestDone(address: Address)
+    }
+
+
+    interface ICarInfoPresenter {
+        fun getCarInfo()
+        fun instance(): CarInfoPresenter
     }
 
 }

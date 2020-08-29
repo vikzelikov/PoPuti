@@ -146,6 +146,11 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     }
 
 
+    override fun showCarInfo() {
+        MainRouter.showView(R.id.car_info_driver, getView()?.getNavHost(), null)
+    }
+
+
     override fun logout() {
         MainRouter.showView(R.id.show_phone, getView()?.getNavHost(), null)
     }

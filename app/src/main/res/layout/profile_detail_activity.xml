@@ -319,7 +319,7 @@
                             android:textSize="16sp" />
 
                         <androidx.appcompat.widget.SwitchCompat
-                            android:checked="true"
+                            android:checked="false"
                             android:id="@+id/notifications_switch"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

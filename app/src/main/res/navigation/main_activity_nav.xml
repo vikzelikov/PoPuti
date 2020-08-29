@@ -108,6 +108,11 @@
         android:name="bonch.dev.poputi.presentation.modules.common.profile.passenger.rating.RatingView"
         android:label="rating_activity" />
 
+    <activity
+        android:id="@+id/car_info_driver"
+        android:name="bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarInfoView"
+        android:label="car_info_driver_activity" />
+
 
     <fragment
         android:id="@+id/main_driver_fragment"

@@ -8,6 +8,8 @@ import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingPrese
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingView
 import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityView
+import bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarInfoPresenter
+import bonch.dev.poputi.presentation.modules.common.profile.driver.carinfo.CarInfoView
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.driver.profits.ProfitsView
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.ProfileDetailPresenter
@@ -71,6 +73,11 @@ interface ProfileComponent {
     //select city
     fun inject(target: SelectCityView)
     fun inject(target: SelectCityPresenter)
+
+
+    //car info
+    fun inject(target: CarInfoView)
+    fun inject(target: CarInfoPresenter)
 
 
     //common

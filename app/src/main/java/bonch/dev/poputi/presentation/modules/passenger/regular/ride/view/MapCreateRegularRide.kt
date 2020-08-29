@@ -10,7 +10,6 @@ import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import bonch.dev.poputi.App
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
@@ -89,14 +88,10 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
             Handler().postDelayed({
                 isAllowFirstZoom = true
 
-                Geo.isEnabled(App.appComponent.getContext())?.let {
-                    if (it) {
-                        Geo.selectedCity?.point?.let { point ->
-                            moveCamera(Point(point.latitude, point.longitude))
+                Geo.selectedCity?.point?.let { point ->
+                    moveCamera(Point(point.latitude, point.longitude))
 
-                            Geo.isPreferCityGeo = true
-                        }
-                    }
+                    Geo.isPreferCityGeo = true
                 }
             }, 1000)
         }

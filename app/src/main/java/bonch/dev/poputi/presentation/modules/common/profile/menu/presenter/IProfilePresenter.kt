@@ -27,6 +27,8 @@ interface IProfilePresenter {
 
     fun showRating()
 
+    fun showCarInfo()
+
     fun showStoryOrders(isPassanger: Boolean)
 
     fun getMyCity(): Address?

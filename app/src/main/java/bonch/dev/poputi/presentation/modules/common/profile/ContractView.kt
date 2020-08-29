@@ -5,7 +5,9 @@ import android.widget.TextView
 import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyStep
+import bonch.dev.poputi.domain.entities.common.ride.Driver
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.entities.driver.signup.DriverData
 import bonch.dev.poputi.presentation.interfaces.IBaseView
 import bonch.dev.poputi.presentation.modules.common.profile.banking.BankingAdapter
 import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityAdapter
@@ -69,7 +71,12 @@ interface ContractView {
 
     interface ISelectCityView : IBaseView {
         fun suggestDone(textSuggest: String)
-        fun getAdapter():SelectCityAdapter
+        fun getAdapter(): SelectCityAdapter
+    }
+
+
+    interface ICarInfoView : IBaseView {
+        fun setCarInfo(driver: DriverData)
     }
 
 }

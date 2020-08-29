@@ -173,7 +173,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         about_car.setOnClickListener {
-            Toast.makeText(context, "About car", Toast.LENGTH_SHORT).show()
+            profilePresenter.showCarInfo()
         }
 
         select_city.setOnClickListener {
