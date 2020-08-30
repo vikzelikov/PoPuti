@@ -48,7 +48,7 @@ class RatingPresenter : BasePresenter<ContractView.IRatingView>(),
                 getView()?.showEmptyText()
 
             } else {
-                if (rating.size < 15) {
+                if (rating.size < 2) {
                     getView()?.showEmptyText()
 
                 } else {

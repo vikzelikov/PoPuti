@@ -1,6 +1,5 @@
 package bonch.dev.poputi.presentation.modules.driver.rating.view
 
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -96,16 +95,19 @@ class RatingView : Fragment(), IRatingView {
         if (profile.firstName != null)
             name?.text = profile.firstName.plus(" ").plus(profile.lastName)
 
-        val img = when {
+        var img = when {
             profile.photos?.lastOrNull()?.imgUrl != null -> {
-                profile.photos?.sortBy { it.id }
+                profile.photos?.sortBy {
+                    it.id
+                }
                 profile.photos?.lastOrNull()?.imgUrl
             }
-            profile.imgUser != null -> {
-                Uri.parse(profile.imgUser)
-            }
+
             else -> null
         }
+
+        if (profile.imgUser != null)
+            img = profile.imgUser
 
         if (img != null)
             Glide.with(img_driver.context).load(img)
