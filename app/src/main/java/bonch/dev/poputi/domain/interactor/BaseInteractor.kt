@@ -5,6 +5,7 @@ import bonch.dev.poputi.data.repository.common.ride.IRideRepository
 import bonch.dev.poputi.data.repository.passenger.signup.ISignupRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.data.storage.passenger.getdriver.IGetDriverStorage
+import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import javax.inject.Inject
@@ -29,11 +30,11 @@ class BaseInteractor : IBaseInteractor {
     }
 
 
-    override fun validateAccount(callback: DataHandler<Int?>) {
+    override fun validateAccount(callback: DataHandler<Profile?>) {
         val token = profileStorage.getToken()
         if (token != null) {
             signupRepository.getUserId(token, callback)
-        } else callback(-1, null)
+        } else callback(null, null)
     }
 
 
@@ -79,4 +80,12 @@ class BaseInteractor : IBaseInteractor {
         return profileStorage.isCheckoutDriver()
     }
 
+
+    override fun updateFirebaseToken(firebaseToken: String) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            signupRepository.updateFirebaseToken(firebaseToken, token)
+        }
+    }
 }

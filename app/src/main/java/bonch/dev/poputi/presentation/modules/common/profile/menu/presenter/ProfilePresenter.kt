@@ -7,6 +7,7 @@ import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
@@ -48,22 +49,27 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
         }
 
-        profileInteractor.getProfile { profileData, _ ->
-            val mainHandler = Handler(Looper.getMainLooper())
-            val myRunnable = Runnable {
-                kotlin.run {
-                    if (profileData?.firstName == null) {
-                        Handler().postDelayed({
-                            getProfile()
-                        }, 1000)
-                    }
+        val p = CacheProfile.profile
 
-                    profileData?.let {
-                        getView()?.setProfile(it)
+        if (p != null) getView()?.setProfile(p)
+        else {
+            profileInteractor.getProfile { profileData, _ ->
+                val mainHandler = Handler(Looper.getMainLooper())
+                val myRunnable = Runnable {
+                    kotlin.run {
+                        if (profileData?.firstName == null) {
+                            Handler().postDelayed({
+                                getProfile()
+                            }, 1000)
+                        }
+
+                        profileData?.let {
+                            getView()?.setProfile(it)
+                        }
                     }
                 }
+                mainHandler.post(myRunnable)
             }
-            mainHandler.post(myRunnable)
         }
     }
 

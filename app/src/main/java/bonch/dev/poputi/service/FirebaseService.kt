@@ -18,7 +18,7 @@ import bonch.dev.poputi.service.driver.DriverRideService
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-class TestService : FirebaseMessagingService() {
+class FirebaseService : FirebaseMessagingService() {
 
 
     private val context = App.appComponent.getContext()

@@ -78,7 +78,7 @@ class SignupRepository : ISignupRepository {
     }
 
 
-    override fun getUserId(token: String, callback: DataHandler<Int?>) {
+    override fun getUserId(token: String, callback: DataHandler<Profile?>) {
         var response: Response<Profile>
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -96,13 +96,13 @@ class SignupRepository : ISignupRepository {
                             //Success
                             val id = response.body()?.id
 
-                            if (id != null) callback(id, null)
-                            else callback(-1, "${response.body()}")
+                            if (id != null) callback(response.body(), null)
+                            else callback(Profile(-1), "${response.body()}")
                         }
 
                         HttpURLConnection.HTTP_UNAUTHORIZED -> {
                             //go to signup
-                            callback(-1, "${response.body()}")
+                            callback(Profile(-1), "${response.body()}")
                         }
 
                         else -> {
@@ -116,6 +116,30 @@ class SignupRepository : ISignupRepository {
                 //Error
                 Log.e("GET_USER_ID", "${err.printStackTrace()}")
                 callback(null, err.message)
+            }
+        }
+    }
+
+
+    override fun updateFirebaseToken(firebaseToken: String, token: String) {
+        var response: Response<*>
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                response = service.updateFirebaseToken(headers, token)
+
+                withContext(Dispatchers.Main) {
+                    if (!response.isSuccessful) {
+                        //Error
+                        Log.e("UPDATE_FB_TOKEN", "${response.code()}")
+                    }
+                }
+            } catch (err: Exception) {
+                //Error
+                Log.e("UPDATE_FB_TOKEN", "${err.printStackTrace()}")
             }
         }
     }

@@ -74,16 +74,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.modules.common.profile.banking.BankingView" />
-        <activity android:name=".presentation.modules.common.profile.passenger.verification.VerifyView" />
-        <activity android:name=".presentation.modules.common.profile.driver.profits.ProfitsView" />
-        <activity android:name=".presentation.modules.common.profile.story.view.StoryView" />
-        <activity android:name=".presentation.modules.common.profile.story.view.DetailStoryView" />
-        <activity android:name=".presentation.modules.common.profile.passenger.rating.RatingView" />
-        <activity android:name=".presentation.modules.common.profile.city.SelectCityView" />
-        <activity android:name=".presentation.modules.common.profile.driver.carinfo.CarInfoView" />
-        <activity android:name=".presentation.modules.common.profile.language.ChangeLangView" />
-        <activity android:name=".presentation.modules.common.profile.support.SupportView" />
+        <activity
+            android:name=".presentation.modules.common.profile.banking.BankingView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.passenger.verification.VerifyView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.driver.profits.ProfitsView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.story.view.StoryView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.story.view.DetailStoryView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.passenger.rating.RatingView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.city.SelectCityView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.driver.carinfo.CarInfoView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.language.ChangeLangView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.profile.support.SupportView"
+            android:screenOrientation="portrait" />
 
         <service
             android:name="bonch.dev.poputi.service.passenger.PassengerRideService"
@@ -97,13 +117,23 @@
 
 
         <service
-            android:name="bonch.dev.poputi.service.TestService"
+            android:name="bonch.dev.poputi.service.FirebaseService"
             android:exported="true"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorBlue" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_system_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="CHANNEL_HEADS_UP" />
 
 
     </application>

@@ -77,26 +77,13 @@ class SignupInteractor : ISignupInteractor {
 
 
     override fun getUserId(token: String, callback: SuccessHandler) {
-        signupRepository.getUserId(token) { id: Int?, error: String? ->
-            when {
-                error != null -> {
-                    //retry request
-                    signupRepository.getUserId(token) { userId: Int?, _: String? ->
-                        if (userId != null) {
-                            DataSignup.userId = userId
-                            callback(true)
+        signupRepository.getUserId(token) { profile: Profile?, _: String? ->
+            if(profile?.id != null){
+                DataSignup.userId = profile.id
+                callback(true)
+            }else{
+                callback(false)
 
-                        } else callback(false)
-                    }
-                }
-                id != null -> {
-                    DataSignup.userId = id
-                    callback(true)
-
-                }
-                else -> {
-                    callback(false)
-                }
             }
         }
     }

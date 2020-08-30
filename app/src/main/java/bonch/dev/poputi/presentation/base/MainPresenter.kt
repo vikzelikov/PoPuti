@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.navigation.get
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.interactor.IBaseInteractor
@@ -13,8 +14,10 @@ import bonch.dev.poputi.presentation.interfaces.IMainPresenter
 import bonch.dev.poputi.presentation.modules.common.ride.rate.view.RateRideView
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.MapOrderView
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.OrdersView
-import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.*
-import bonch.dev.poputi.route.MainRouter
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.CreateRideView
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.DetailRideView
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.GetOffersView
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.TrackRideView
 import javax.inject.Inject
 
 
@@ -41,12 +44,11 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         val accessToken = baseInteractor.getToken()
         val idUser = baseInteractor.getUserId()
 
-        Log.e("TEST", "$accessToken")
-
+        Log.e("TOKEN", "$accessToken")
 
         if (accessToken != null && idUser != -1) {
-            baseInteractor.validateAccount { userId, _ ->
-                when (userId) {
+            baseInteractor.validateAccount { profile, _ ->
+                when (profile?.id) {
                     -1 -> {
                         getView()?.hideFullLoading()
                         showSignup()
@@ -57,6 +59,9 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                     }
 
                     else -> {
+                        //save profile
+                        CacheProfile.profile = profile
+
                         val rideId = baseInteractor.getRideId()
                         val ride = ActiveRide.activeRide
 
@@ -91,7 +96,6 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
                     }
                 }
             }
-
         } else {
             getView()?.hideFullLoading()
             showSignup()
@@ -138,6 +142,11 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
     private fun showSignup() {
         getView()?.getNavHost()?.navigate(R.id.phone_view)
+    }
+
+
+    override fun updateFirebaseToken(firebaseToken: String) {
+        baseInteractor.updateFirebaseToken(firebaseToken)
     }
 
 

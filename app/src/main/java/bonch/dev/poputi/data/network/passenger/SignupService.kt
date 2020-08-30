@@ -12,11 +12,24 @@ interface SignupService {
     @POST("/api/auth")
     suspend fun getCode(@Field("phone") phone: String): Response<*>
 
+
     @FormUrlEncoded
     @POST("/api/auth/login")
-    suspend fun checkCode(@Field("phone") phone: String, @Field("code") code: String): Response<Token>
+    suspend fun checkCode(
+        @Field("phone") phone: String,
+        @Field("code") code: String
+    ): Response<Token>
+
 
     @GET("/api/auth/check")
     suspend fun getUserId(@HeaderMap headers: Map<String, String>): Response<Profile>
+
+
+    @FormUrlEncoded
+    @POST("api/users/me/add_device")
+    suspend fun updateFirebaseToken(
+        @HeaderMap headers: Map<String, String>,
+        @Field("token") token: String
+    ): Response<*>
 
 }

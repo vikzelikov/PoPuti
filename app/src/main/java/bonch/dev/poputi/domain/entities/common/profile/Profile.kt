@@ -100,3 +100,10 @@ open class ProfilePhoto(
     @Expose
     var imgId: IntArray? = intArrayOf()
 )
+
+
+
+object CacheProfile {
+    var profile: Profile? = null
+}
+

@@ -5,6 +5,7 @@ import android.os.Looper
 import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.interactor.driver.rating.IRatingInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.driver.rating.RatingComponent
@@ -28,25 +29,29 @@ class RatingPresenter : BasePresenter<IRatingView>(), IRatingPresenter {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
         }
 
-        interactor.getProfile { profileData, _ ->
-            val mainHandler = Handler(Looper.getMainLooper())
-            val myRunnable = Runnable {
-                kotlin.run {
-                    if (profileData?.firstName == null) {
-                        Handler().postDelayed({
-                            getProfile()
-                        }, 1000)
-                    }
+        val p = CacheProfile.profile
 
-                    profileData?.let {
-                        getView()?.setProfile(it)
+        if (p != null) getView()?.setProfile(p)
+        else {
+            interactor.getProfile { profileData, _ ->
+                val mainHandler = Handler(Looper.getMainLooper())
+                val myRunnable = Runnable {
+                    kotlin.run {
+                        if (profileData?.firstName == null) {
+                            Handler().postDelayed({
+                                getProfile()
+                            }, 1000)
+                        }
+
+                        profileData?.let {
+                            getView()?.setProfile(it)
+                        }
                     }
                 }
+                mainHandler.post(myRunnable)
             }
-            mainHandler.post(myRunnable)
         }
     }
-
 
     override fun getRating() {
         interactor.getRating { rating, _ ->

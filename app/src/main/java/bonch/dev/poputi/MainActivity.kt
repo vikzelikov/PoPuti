@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -48,17 +47,16 @@ class MainActivity : AppCompatActivity(), IMainActivity {
 
         mainPresenter.navigate()
 
-
-
+        //Firebase connect
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     return@OnCompleteListener
                 }
 
-                val token = task.result?.token
-
-                Log.e("TOKEN", "$token")
+                task.result?.token?.let {
+                    mainPresenter.updateFirebaseToken(it)
+                }
             })
     }
 
