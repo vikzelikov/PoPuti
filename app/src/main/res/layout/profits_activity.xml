@@ -73,8 +73,8 @@
 
             <TextView
                 android:id="@+id/day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="25dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto"
                 android:textColor="@android:color/black"
@@ -82,18 +82,21 @@
 
             <TextView
                 android:id="@+id/total_profit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="120dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/roboto"
                 android:textColor="@android:color/black"
                 android:textSize="40sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/with_fee"
+                android:layout_width="150dp"
+                android:layout_height="23dp"
                 android:layout_marginBottom="20dp"
                 android:alpha="0.5"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/roboto"
                 android:text="@string/withFee"
                 android:textColor="@android:color/black"
@@ -108,9 +111,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
             android:background="@drawable/bg_back_btn"
+            android:clickable="false"
             android:elevation="12dp"
             android:padding="13dp"
-            android:src="@drawable/ic_right_arrow" />
+            android:src="@drawable/ic_right_arrow"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

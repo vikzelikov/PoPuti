@@ -10,7 +10,10 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import kotlinx.android.synthetic.main.order_profits_item.view.*
+import java.lang.Exception
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 class ProfitsAdapter @Inject constructor(private val presenter: ContractPresenter.IProfitsPresenter) :
@@ -19,7 +22,7 @@ class ProfitsAdapter @Inject constructor(private val presenter: ContractPresente
 
     var list: ArrayList<RideInfo> = arrayListOf()
 
-    var isLeft = true
+    var isLeft: Boolean? = null
 
     var lastPosition = -1
 
@@ -43,8 +46,10 @@ class ProfitsAdapter @Inject constructor(private val presenter: ContractPresente
 
         holder.itemView.setOnClickListener { }
 
-        val anim = if (isLeft) R.anim.slide_in_left else R.anim.slide_in_right
-        setAnimation(holder.itemView, anim, position)
+        isLeft?.let {
+            val anim = if (it) R.anim.slide_in_left else R.anim.slide_in_right
+            setAnimation(holder.itemView, anim, position)
+        }
     }
 
 
@@ -63,7 +68,28 @@ class ProfitsAdapter @Inject constructor(private val presenter: ContractPresente
             itemView.from.text = ride.position
             itemView.to.text = ride.destination
             itemView.price.text = ride.price.toString().plus(" ₽")
-            itemView.time.text = "12:34"
+
+            try {
+                val startAt = ride.startAt
+                val calendar = Calendar.getInstance()
+
+                if (startAt != null) {
+                    val parseDate = presenter.instance().format.parse(startAt)
+                    parseDate?.let {
+                        calendar.time = parseDate
+                        var hours = calendar.get(Calendar.HOUR_OF_DAY).toString()
+                        if (hours.length == 1) hours = "0".plus(hours)
+
+                        var min = calendar.get(Calendar.MINUTE).toString()
+                        if (min.length == 1) min = "0".plus(min)
+
+                        itemView.time.text = hours
+                            .plus(":")
+                            .plus(min)
+                    }
+                }
+            } catch (ex: Exception) {
+            }
 
             val fee = ride.price?.times(presenter.instance().FEE)
             val output = ((fee?.times(100.0))?.roundToInt() ?: 0) / 100.0

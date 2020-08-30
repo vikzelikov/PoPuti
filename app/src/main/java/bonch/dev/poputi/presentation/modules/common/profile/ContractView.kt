@@ -39,6 +39,8 @@ interface ContractView {
 
     interface IProfitsView : IBaseView {
         fun getAdapter(): ProfitsAdapter
+        fun showButton(isLeft: Boolean)
+        fun hideButton(isLeft: Boolean)
         fun setDate(time: String)
         fun calcCountOrders()
         fun calcTotalProfit()

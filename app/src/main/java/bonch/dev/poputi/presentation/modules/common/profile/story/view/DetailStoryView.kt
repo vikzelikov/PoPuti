@@ -3,6 +3,7 @@ package bonch.dev.poputi.presentation.modules.common.profile.story.view
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,6 +15,7 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.ContractView
+import bonch.dev.poputi.presentation.modules.common.profile.support.SupportView
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
@@ -121,10 +123,16 @@ class DetailStoryView : AppCompatActivity(), ContractView.IDetailStoryView {
                         Calendar.LONG, Locale("ru")
                     )
 
+                    var hours = calendar.get(Calendar.HOUR_OF_DAY).toString()
+                    if (hours.length == 1) hours = "0".plus(hours)
+
+                    var min = calendar.get(Calendar.MINUTE).toString()
+                    if (min.length == 1) min = "0".plus(min)
+
                     date?.text = "$day"
                         .plus(" $mounth")
                         .plus(", ${getString(R.string.in1)} ")
-                        .plus("${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}")
+                        .plus("$hours:$min")
 
                     if (finishAt != null) {
                         val dateFinishAt = format.parse(finishAt)
@@ -164,7 +172,8 @@ class DetailStoryView : AppCompatActivity(), ContractView.IDetailStoryView {
         }
 
         support.setOnClickListener {
-
+            val intent = Intent(this, SupportView::class.java)
+            startActivity(intent)
         }
 
         copy_phone.setOnClickListener {

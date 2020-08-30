@@ -24,12 +24,12 @@ object Geo {
 
     var isRequestMyPosition = false
 
-    private var googleApiClient: GoogleApiClient? = null
-
     var selectedCity: Address? = null
 
-    const val SELECT_CITY = 13
+    private var googleApiClient: GoogleApiClient? = null
+
     private const val REQUESTLOCATION = 199
+    const val SELECT_CITY = 13
 
     fun isEnabled(context: Context): Boolean? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

@@ -51,6 +51,10 @@ class StoryPresenter : BasePresenter<ContractView.IStoryView>(),
                     resultStory.add(it)
             }
 
+            resultStory.sortByDescending {
+                it.rideId
+            }
+
             getView()?.hideLoading()
 
             if (resultStory.isNotEmpty()) {

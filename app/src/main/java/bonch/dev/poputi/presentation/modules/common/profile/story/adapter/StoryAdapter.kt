@@ -58,6 +58,14 @@ class StoryAdapter @Inject constructor(private val presenter: ContractPresenter.
                     parseDate?.let {
                         val calendar = Calendar.getInstance(Locale("ru"))
                         calendar.time = it
+
+                        var hours = calendar.get(Calendar.HOUR_OF_DAY).toString()
+                        if (hours.length == 1) hours = "0".plus(hours)
+
+                        var min = calendar.get(Calendar.MINUTE).toString()
+                        if (min.length == 1) min = "0".plus(min)
+
+
                         val day = calendar.get(Calendar.DAY_OF_MONTH)
                         val mounth = calendar.getDisplayName(
                             Calendar.MONTH,
@@ -67,7 +75,7 @@ class StoryAdapter @Inject constructor(private val presenter: ContractPresenter.
                         itemView.date.text = "$day"
                             .plus(" $mounth")
                             .plus(", ${itemView.context.getString(R.string.in1)} ")
-                            .plus("${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}")
+                            .plus("$hours:$min")
 
                     }
                 }
