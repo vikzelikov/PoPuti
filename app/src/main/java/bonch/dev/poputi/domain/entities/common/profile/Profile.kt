@@ -51,48 +51,7 @@ open class Profile(
     @SerializedName("driver")
     @Expose
     var driver: DriverData? = null
-
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readInt(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readValue(Float::class.java.classLoader) as? Float,
-        parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte(),
-        parcel.readString()
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
-        parcel.writeString(firstName)
-        parcel.writeString(lastName)
-        parcel.writeString(phone)
-        parcel.writeString(email)
-        parcel.writeString(city)
-        parcel.writeValue(rating)
-        parcel.writeByte(if (isCallsEnable) 1 else 0)
-        parcel.writeByte(if (isNotificationsEnable) 1 else 0)
-        parcel.writeString(imgUser)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<Profile> {
-        override fun createFromParcel(parcel: Parcel): Profile {
-            return Profile(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Profile?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
+)
 
 
 open class ProfilePhoto(

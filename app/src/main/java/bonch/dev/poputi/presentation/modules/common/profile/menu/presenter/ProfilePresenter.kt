@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
-import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.utils.Geo
@@ -34,7 +33,6 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     val CHANGE_LANG = 14
     val LANG = "LANG"
     private val IS_SHOW_POPUP = "IS_SHOW_POPUP"
-    private val PROFILE_DATA = "PROFILE_DATA"
 
 
     init {
@@ -108,11 +106,6 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
         if (isShowPopup) {
             val res = App.appComponent.getContext().resources
             getView()?.showNotification(res.getString(R.string.dataSaved))
-        }
-
-        val profileData = data.getParcelableExtra<Profile>(PROFILE_DATA)
-        profileData?.let {
-            getView()?.setProfile(it)
         }
     }
 

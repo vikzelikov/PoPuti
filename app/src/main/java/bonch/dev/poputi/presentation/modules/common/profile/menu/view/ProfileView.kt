@@ -14,6 +14,7 @@ import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerProfileComponent
 import bonch.dev.poputi.di.module.common.ProfileModule
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.utils.Geo
@@ -96,6 +97,8 @@ class ProfileView : Fragment(), IProfileView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == profilePresenter.instance().PROFILE_DETAIL_VIEW && resultCode == Activity.RESULT_OK) {
             profilePresenter.profileDataResult(data)
+
+            CacheProfile.profile?.let { setProfile(it) }
         }
 
         if (resultCode == EXIT) {
@@ -213,16 +216,19 @@ class ProfileView : Fragment(), IProfileView {
         if (profileData.firstName != null)
             name_user?.text = profileData.firstName.plus(" ").plus(profileData.lastName)
 
-        val img = when {
+        var img = when {
             profileData.photos?.lastOrNull()?.imgUrl != null -> {
-                profileData.photos?.sortBy { it.id }
+                profileData.photos?.sortBy {
+                    it.id
+                }
                 profileData.photos?.lastOrNull()?.imgUrl
             }
-            profileData.imgUser != null -> {
-                Uri.parse(profileData.imgUser)
-            }
+
             else -> null
         }
+
+        if (profileData.imgUser != null)
+            img = profileData.imgUser
 
         if (img != null)
             Glide.with(img_user.context).load(img)

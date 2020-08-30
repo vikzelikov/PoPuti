@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,13 +12,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.utils.Camera
 import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.domain.utils.Gallery
 import bonch.dev.poputi.domain.utils.Keyboard
-import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfileDetailPresenter
+import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -39,7 +39,6 @@ class ProfileDetailView : AppCompatActivity(),
 
     private val PROFILE_CHECK_PHOTO = 12
     private val IS_SHOW_POPUP = "IS_SHOW_POPUP"
-    private val PROFILE_DATA = "PROFILE_DATA"
     private val EXIT = -2
 
 
@@ -61,6 +60,7 @@ class ProfileDetailView : AppCompatActivity(),
         setBottomSheet()
 
         setListeners()
+
     }
 
 
@@ -99,23 +99,26 @@ class ProfileDetailView : AppCompatActivity(),
         profileData.isNotificationsEnable = notifications_switch.isChecked
         profileData.isCallsEnable = calls_switch.isChecked
 
+        profileData.photos = CacheProfile.profile?.photos
+
         return profileData
     }
 
 
     override fun setProfile(profileData: Profile) {
-        val img = when {
+        var img = when {
             profileData.photos?.lastOrNull()?.imgUrl != null -> {
                 profileData.photos?.sortBy {
                     it.id
                 }
                 profileData.photos?.lastOrNull()?.imgUrl
             }
-            profileData.imgUser != null -> {
-                Uri.parse(profileData.imgUser)
-            }
+
             else -> null
         }
+
+        if (profileData.imgUser != null)
+            img = profileData.imgUser
 
         if (img != null)
             Glide.with(img_user.context).load(img)
@@ -264,7 +267,6 @@ class ProfileDetailView : AppCompatActivity(),
 
     override fun setDataIntent(isShowPopup: Boolean, profileData: Profile?) {
         val intent = Intent()
-        intent.putExtra(PROFILE_DATA, profileData)
         intent.putExtra(IS_SHOW_POPUP, isShowPopup)
         setResult(RESULT_OK, intent)
     }
@@ -403,7 +405,6 @@ class ProfileDetailView : AppCompatActivity(),
         profileDetailPresenter.instance().imageUri = null
         profileDetailPresenter.instance().tempImageUri = null
         profileDetailPresenter.instance().detachView()
-        profileDetailPresenter.onDestroy()
         super.onDestroy()
     }
 }

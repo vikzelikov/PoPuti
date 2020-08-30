@@ -24,6 +24,4 @@ interface IProfileDetailPresenter {
 
     fun logout()
 
-    fun onDestroy()
-
 }

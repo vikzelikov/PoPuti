@@ -15,6 +15,7 @@ import android.widget.TextView
 import bonch.dev.poputi.App
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.utils.Camera
@@ -60,28 +61,41 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
         }
 
-        profileInteractor.initRealm()
-        getView()?.showLoading()
+        val p = CacheProfile.profile
 
-        profileInteractor.getProfile { profileData, _ ->
-            val mainHandler = Handler(Looper.getMainLooper())
-            val myRunnable = Runnable {
-                kotlin.run {
-                    getView()?.hideLoading()
+        if (p != null) {
+            //set start data
+            startDataProfile = p
 
-                    profileData?.let {
-                        //set start data
-                        startDataProfile = it
+            if (p.imgUser != null) {
+                imageUri = Uri.parse(p.imgUser)
+            }
 
-                        if (it.imgUser != null) {
-                            imageUri = Uri.parse(it.imgUser)
+            getView()?.setProfile(p)
+
+        } else {
+            getView()?.showLoading()
+
+            profileInteractor.getProfile { profileData, _ ->
+                val mainHandler = Handler(Looper.getMainLooper())
+                val myRunnable = Runnable {
+                    kotlin.run {
+                        getView()?.hideLoading()
+
+                        profileData?.let {
+                            //set start data
+                            startDataProfile = it
+
+                            if (it.imgUser != null) {
+                                imageUri = Uri.parse(it.imgUser)
+                            }
+
+                            getView()?.setProfile(it)
                         }
-
-                        getView()?.setProfile(it)
                     }
                 }
+                mainHandler.post(myRunnable)
             }
-            mainHandler.post(myRunnable)
         }
     }
 
@@ -96,6 +110,9 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
 
             //update start data
             startDataProfile = profileData
+
+            //update cache profile
+            CacheProfile.profile = profileData
 
             //load photo
             imageUri?.let {
@@ -275,11 +292,6 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
 
     override fun instance(): ProfileDetailPresenter {
         return this
-    }
-
-
-    override fun onDestroy() {
-        profileInteractor.closeRealm()
     }
 
 }
