@@ -74,7 +74,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         showSkeletonAnim()
 
@@ -220,19 +220,19 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         driver_say_to_cancel.setOnClickListener {
             reasonID = ReasonCancel.DRIVER_CANCEL
-            textReason = driver_say_to_cancel.text.toString()
+            textReason = driver_say_to_cancel?.text?.toString()
             getConfirmCancel()
         }
 
         wait_long.setOnClickListener {
             reasonID = ReasonCancel.WAIT_LONG
-            textReason = wait_long.text.toString()
+            textReason = wait_long?.text?.toString()
             getConfirmCancel()
         }
 
         mistake_order.setOnClickListener {
             reasonID = ReasonCancel.MISTAKE_ORDER
-            textReason = mistake_order.text.toString()
+            textReason = mistake_order?.text?.toString()
             getConfirmCancel()
         }
 
@@ -242,7 +242,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         }
 
         comment_done.setOnClickListener {
-            trackRidePresenter.cancelDoneOtherReason(comment_text.text.toString())
+            trackRidePresenter.cancelDoneOtherReason(comment_text?.text?.toString())
         }
 
         show_route.setOnClickListener {
@@ -322,15 +322,17 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private fun getOtherReasonComment() {
         commentBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        if (!comment_text.isFocused) {
-            comment_text.requestFocus()
-            //set a little timer to open keyboard
-            Handler().postDelayed({
-                val activity = activity as? MainActivity
-                activity?.let {
-                    Keyboard.showKeyboard(activity)
-                }
-            }, 200)
+        comment_text?.let {
+            if (!comment_text.isFocused) {
+                comment_text.requestFocus()
+                //set a little timer to open keyboard
+                Handler().postDelayed({
+                    val activity = activity as? MainActivity
+                    activity?.let {
+                        Keyboard.showKeyboard(activity)
+                    }
+                }, 200)
+            }
         }
     }
 
@@ -353,7 +355,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
     private fun onSlideCancelReason(slideOffset: Float) {
         if (slideOffset > 0 && isAllowSlide) {
-            on_map_view.alpha = slideOffset * 0.8f
+            on_map_view?.alpha = slideOffset * 0.8f
         }
     }
 
@@ -361,11 +363,11 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private fun onChangedStateCancelReason(newState: Int) {
         if (isAllowSlide) {
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                on_map_view.visibility = View.GONE
-                comment_text.clearFocus()
+                on_map_view?.visibility = View.GONE
+                comment_text?.clearFocus()
             } else {
                 confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-                on_map_view.visibility = View.VISIBLE
+                on_map_view?.visibility = View.VISIBLE
             }
         }
     }
@@ -386,14 +388,14 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         if (isAllowSlide) {
             if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                 hideKeyboard()
-                comment_text.clearFocus()
+                comment_text?.clearFocus()
             }
 
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                comment_text.clearFocus()
+                comment_text?.clearFocus()
             } else {
                 confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-                on_map_view.visibility = View.VISIBLE
+                on_map_view?.visibility = View.VISIBLE
             }
         }
     }
@@ -551,10 +553,10 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
                     setInfoDriver(driver)
 
-                    imgDriver.hide()
-                    driverName.hide()
-                    carNumber.hide()
-                    carName.hide()
+                    imgDriver?.hide()
+                    driverName?.hide()
+                    carNumber?.hide()
+                    carName?.hide()
 
                     handler?.removeCallbacksAndMessages(null)
                     handler = null

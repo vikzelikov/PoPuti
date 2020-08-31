@@ -71,7 +71,7 @@ class RatingView : Fragment(), IRatingView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         setListeners()
 
@@ -109,7 +109,7 @@ class RatingView : Fragment(), IRatingView {
         if (profile.imgUser != null)
             img = profile.imgUser
 
-        if (img != null)
+        if (img != null && img_driver != null)
             Glide.with(img_driver.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .error(R.drawable.ic_default_ava)

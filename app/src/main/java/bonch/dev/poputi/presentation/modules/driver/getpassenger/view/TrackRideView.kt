@@ -18,13 +18,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
-import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.driver.getpassenger.ReasonCancel
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MBottomSheet
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
@@ -79,7 +79,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         trackRidePresenter.receiveOrder(ActiveRide.activeRide)
 
@@ -225,20 +225,20 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
 
     override fun showEndRideAnim() {
-        seekBar.visibility = View.GONE
-        text_step_seekbar.visibility = View.GONE
+        seekBar?.visibility = View.GONE
+        text_step_seekbar?.visibility = View.GONE
 
-        view_end_ride.visibility = View.VISIBLE
-        progress_bar_end_ride.visibility = View.VISIBLE
+        view_end_ride?.visibility = View.VISIBLE
+        progress_bar_end_ride?.visibility = View.VISIBLE
     }
 
 
     override fun hideEndRideAnim() {
-        seekBar.visibility = View.VISIBLE
-        text_step_seekbar.visibility = View.VISIBLE
+        seekBar?.visibility = View.VISIBLE
+        text_step_seekbar?.visibility = View.VISIBLE
 
-        view_end_ride.visibility = View.GONE
-        progress_bar_end_ride.visibility = View.GONE
+        view_end_ride?.visibility = View.GONE
+        progress_bar_end_ride?.visibility = View.GONE
     }
 
 
@@ -279,31 +279,31 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         change_mind.setOnClickListener {
             reasonID = ReasonCancel.CHANGE_MIND
-            textReason = change_mind.text.toString()
+            textReason = change_mind?.text?.toString()
             getConfirmCancel(reasonID)
         }
 
         force_majeure.setOnClickListener {
             reasonID = ReasonCancel.FORCE_MAJEURE
-            textReason = force_majeure.text.toString()
+            textReason = force_majeure?.text?.toString()
             getConfirmCancel(reasonID)
         }
 
         passenger_with_child.setOnClickListener {
             reasonID = ReasonCancel.PASSENGER_WITH_CHILD
-            textReason = passenger_with_child.text.toString()
+            textReason = passenger_with_child?.text?.toString()
             getConfirmCancel(reasonID)
         }
 
         passenger_error.setOnClickListener {
             reasonID = ReasonCancel.PASSENGER_ERROR
-            textReason = passenger_error.text.toString()
+            textReason = passenger_error?.text?.toString()
             getConfirmCancel(reasonID)
         }
 
         passenger_go_out.setOnClickListener {
             reasonID = ReasonCancel.PASSENGER_GO_OUT
-            textReason = passenger_go_out.text.toString()
+            textReason = passenger_go_out?.text?.toString()
             getConfirmCancel(reasonID)
         }
 
@@ -313,7 +313,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         }
 
         comment_done.setOnClickListener {
-            trackRidePresenter.cancelDoneOtherReason(comment_text.text.toString())
+            trackRidePresenter.cancelDoneOtherReason(comment_text?.text?.toString())
         }
 
         cancel.setOnClickListener {
@@ -414,35 +414,35 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         when (status) {
             StatusRide.WAIT_FOR_DRIVER -> {
-                change_mind.visibility = View.VISIBLE
-                force_majeure.visibility = View.VISIBLE
-                passenger_with_child.visibility = View.GONE
-                passenger_error.visibility = View.GONE
-                passenger_go_out.visibility = View.GONE
+                change_mind?.visibility = View.VISIBLE
+                force_majeure?.visibility = View.VISIBLE
+                passenger_with_child?.visibility = View.GONE
+                passenger_error?.visibility = View.GONE
+                passenger_go_out?.visibility = View.GONE
             }
 
             StatusRide.WAIT_FOR_PASSANGER -> {
-                change_mind.visibility = View.VISIBLE
-                force_majeure.visibility = View.VISIBLE
-                passenger_with_child.visibility = View.VISIBLE
-                passenger_error.visibility = View.VISIBLE
-                passenger_go_out.visibility = View.VISIBLE
+                change_mind?.visibility = View.VISIBLE
+                force_majeure?.visibility = View.VISIBLE
+                passenger_with_child?.visibility = View.VISIBLE
+                passenger_error?.visibility = View.VISIBLE
+                passenger_go_out?.visibility = View.VISIBLE
             }
 
             StatusRide.IN_WAY -> {
-                change_mind.visibility = View.GONE
-                force_majeure.visibility = View.VISIBLE
-                passenger_with_child.visibility = View.VISIBLE
-                passenger_error.visibility = View.VISIBLE
-                passenger_go_out.visibility = View.GONE
+                change_mind?.visibility = View.GONE
+                force_majeure?.visibility = View.VISIBLE
+                passenger_with_child?.visibility = View.VISIBLE
+                passenger_error?.visibility = View.VISIBLE
+                passenger_go_out?.visibility = View.GONE
             }
 
             else -> {
-                change_mind.visibility = View.VISIBLE
-                force_majeure.visibility = View.VISIBLE
-                passenger_with_child.visibility = View.VISIBLE
-                passenger_error.visibility = View.VISIBLE
-                passenger_go_out.visibility = View.VISIBLE
+                change_mind?.visibility = View.VISIBLE
+                force_majeure?.visibility = View.VISIBLE
+                passenger_with_child?.visibility = View.VISIBLE
+                passenger_error?.visibility = View.VISIBLE
+                passenger_go_out?.visibility = View.VISIBLE
             }
         }
 
@@ -455,41 +455,41 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         when (reasonId) {
             ReasonCancel.CHANGE_MIND -> {
-                title_confirm_cancel.visibility = View.GONE
-                subtitle_cancel.visibility = View.GONE
-                subtitle_confirm_cancel.visibility = View.VISIBLE
-                subtitle_confirm_cancel.text = getString(R.string.change_mind_text)
-                cancel.text = getString(R.string.cancel)
+                title_confirm_cancel?.visibility = View.GONE
+                subtitle_cancel?.visibility = View.GONE
+                subtitle_confirm_cancel?.visibility = View.VISIBLE
+                subtitle_confirm_cancel?.text = getString(R.string.change_mind_text)
+                cancel?.text = getString(R.string.cancel)
             }
 
             ReasonCancel.FORCE_MAJEURE -> {
-                title_confirm_cancel.visibility = View.GONE
-                subtitle_cancel.visibility = View.GONE
-                subtitle_confirm_cancel.visibility = View.VISIBLE
-                subtitle_confirm_cancel.text = getString(R.string.force_majeure_text)
-                cancel.text = getString(R.string.YesCancel)
+                title_confirm_cancel?.visibility = View.GONE
+                subtitle_cancel?.visibility = View.GONE
+                subtitle_confirm_cancel?.visibility = View.VISIBLE
+                subtitle_confirm_cancel?.text = getString(R.string.force_majeure_text)
+                cancel?.text = getString(R.string.YesCancel)
             }
 
             ReasonCancel.PASSENGER_WITH_CHILD -> {
-                title_confirm_cancel.visibility = View.VISIBLE
-                subtitle_cancel.visibility = View.GONE
-                subtitle_confirm_cancel.visibility = View.GONE
-                cancel.text = getString(R.string.cancel)
+                title_confirm_cancel?.visibility = View.VISIBLE
+                subtitle_cancel?.visibility = View.GONE
+                subtitle_confirm_cancel?.visibility = View.GONE
+                cancel?.text = getString(R.string.cancel)
             }
 
             ReasonCancel.PASSENGER_ERROR -> {
-                title_confirm_cancel.visibility = View.VISIBLE
-                subtitle_cancel.visibility = View.GONE
-                subtitle_confirm_cancel.visibility = View.GONE
-                cancel.text = getString(R.string.cancel)
+                title_confirm_cancel?.visibility = View.VISIBLE
+                subtitle_cancel?.visibility = View.GONE
+                subtitle_confirm_cancel?.visibility = View.GONE
+                cancel?.text = getString(R.string.cancel)
             }
 
             ReasonCancel.PASSENGER_GO_OUT -> {
-                title_confirm_cancel.visibility = View.GONE
-                subtitle_cancel.visibility = View.VISIBLE
-                subtitle_confirm_cancel.visibility = View.VISIBLE
-                subtitle_confirm_cancel.text = getString(R.string.passenger_go_out_text)
-                cancel.text = getString(R.string.cancel)
+                title_confirm_cancel?.visibility = View.GONE
+                subtitle_cancel?.visibility = View.VISIBLE
+                subtitle_confirm_cancel?.visibility = View.VISIBLE
+                subtitle_confirm_cancel?.text = getString(R.string.passenger_go_out_text)
+                cancel?.text = getString(R.string.cancel)
             }
 
             ReasonCancel.OTHER_REASON -> {
@@ -500,7 +500,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
 
         if (isShowConfirm) {
             confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
-            main_coordinator.elevation = 0f
+            main_coordinator?.elevation = 0f
         }
     }
 
@@ -514,15 +514,17 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private fun getOtherReasonComment() {
         commentBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        if (!comment_text.isFocused) {
-            comment_text.requestFocus()
-            //set a little timer to open keyboard
-            Handler().postDelayed({
-                val activity = activity as? MapOrderView
-                activity?.let {
-                    Keyboard.showKeyboard(activity)
-                }
-            }, 200)
+        comment_text?.let {
+            if (!comment_text.isFocused) {
+                comment_text?.requestFocus()
+                //set a little timer to open keyboard
+                Handler().postDelayed({
+                    val activity = activity as? MapOrderView
+                    activity?.let {
+                        Keyboard.showKeyboard(activity)
+                    }
+                }, 200)
+            }
         }
     }
 
@@ -579,8 +581,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private fun onChangedStateCancelReason(newState: Int) {
         if (isAllowSlide) {
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                on_view_cancel.visibility = View.GONE
-                comment_text.clearFocus()
+                on_view_cancel?.visibility = View.GONE
+                comment_text?.clearFocus()
             } else {
                 confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
                 on_view_cancel?.visibility = View.VISIBLE
@@ -593,9 +595,9 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         if (isAllowSlide) {
             try {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    main_coordinator.elevation = 100f
+                    main_coordinator?.elevation = 100f
                 } else {
-                    main_coordinator.elevation = 65f
+                    main_coordinator?.elevation = 65f
                 }
             } catch (ex: java.lang.Exception) {
             }
@@ -607,14 +609,14 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         if (isAllowSlide) {
             if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                 hideKeyboard()
-                comment_text.clearFocus()
+                comment_text?.clearFocus()
             }
 
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                comment_text.clearFocus()
+                comment_text?.clearFocus()
             } else {
                 confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-                on_view_cancel.visibility = View.VISIBLE
+                on_view_cancel?.visibility = View.VISIBLE
             }
         }
     }

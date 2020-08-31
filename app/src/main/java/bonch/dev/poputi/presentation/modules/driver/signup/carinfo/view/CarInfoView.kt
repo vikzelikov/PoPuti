@@ -46,7 +46,7 @@ class CarInfoView : Fragment(), ICarInfoView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         setHintListener()
 
@@ -62,20 +62,20 @@ class CarInfoView : Fragment(), ICarInfoView {
             val textSuggest = data.getStringExtra(STRING_DATA)
 
             if (isCarNameSuggest) {
-                car_name.text = textSuggest
-                car_name.setTextColor(Color.parseColor("#000000"))
+                car_name?.text = textSuggest
+                car_name?.setTextColor(Color.parseColor("#000000"))
 
                 //show next step
-                car_model.text = resources.getString(R.string.carModel)
-                car_model.setTextColor(Color.parseColor("#60000000"))
-                car_model.visibility = View.VISIBLE
-                car_number_layout.visibility = View.GONE
+                car_model?.text = resources.getString(R.string.carModel)
+                car_model?.setTextColor(Color.parseColor("#60000000"))
+                car_model?.visibility = View.VISIBLE
+                car_number_layout?.visibility = View.GONE
             } else {
-                car_model.text = textSuggest
-                car_model.setTextColor(Color.parseColor("#000000"))
+                car_model?.text = textSuggest
+                car_model?.setTextColor(Color.parseColor("#000000"))
 
                 //show next step
-                car_number_layout.visibility = View.VISIBLE
+                car_number_layout?.visibility = View.VISIBLE
             }
         }
     }
@@ -115,8 +115,8 @@ class CarInfoView : Fragment(), ICarInfoView {
 
 
     private fun setHintListener() {
-        car_number.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            car_number_layout.isHintEnabled = hasFocus
+        car_number?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            car_number_layout?.isHintEnabled = hasFocus
         }
     }
 
@@ -124,9 +124,9 @@ class CarInfoView : Fragment(), ICarInfoView {
     override fun getData(): DriverData {
         val car = DriverData()
 
-        car.carName = car_name.text.toString().trim()
-        car.carModel = car_model.text.toString().trim()
-        car.carNumber = car_number.text.toString().trim()
+        car.carName = car_name?.text?.toString()?.trim()
+        car.carModel = car_model?.text?.toString()?.trim()
+        car.carNumber = car_number?.text?.toString()?.trim()
 
         return car
     }
@@ -134,11 +134,11 @@ class CarInfoView : Fragment(), ICarInfoView {
 
     private fun isCarInfoEntered(): Boolean {
         var result = false
-        val carNumber = car_number.text.toString().trim()
+        val carNumber = car_number?.text?.toString()?.trim()
 
-        if (car_name.text.toString().trim().isNotEmpty() &&
-            car_model.text.toString().trim().isNotEmpty() &&
-            carNumber.isNotEmpty() && carNumber.length in 4..8
+        if (!car_name?.text?.toString()?.trim().isNullOrEmpty() &&
+            !car_model?.text?.toString()?.trim().isNullOrEmpty() &&
+            !carNumber.isNullOrEmpty() && carNumber.length in 4..8
         ) {
             changeBtnEnable(true)
             result = true
@@ -153,9 +153,9 @@ class CarInfoView : Fragment(), ICarInfoView {
 
     override fun changeBtnEnable(enable: Boolean) {
         if (enable) {
-            next_btn.setBackgroundResource(R.drawable.bg_btn_blue)
+            next_btn?.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
-            next_btn.setBackgroundResource(R.drawable.bg_btn_gray)
+            next_btn?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
 

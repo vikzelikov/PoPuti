@@ -157,12 +157,12 @@ class OffersAdapter @Inject constructor(val getOffersPresenter: ContractPresente
         var offerItemTimer: OfferItemTimer? = null
 
         fun bind(offer: Offer) {
-            itemView.driver_name.text = offer.driver?.firstName
-            itemView.car_name.text =
+            itemView.driver_name?.text = offer.driver?.firstName
+            itemView.car_name?.text =
                 offer.driver?.car?.name?.plus(" ")?.plus(offer.driver?.car?.model)
-            itemView.price.text = offer.price.toString().plus(" ₽")
+            itemView.price?.text = offer.price.toString().plus(" ₽")
 
-            itemView.driver_rating.text = if (offer.driver?.rating == null) {
+            itemView.driver_rating?.text = if (offer.driver?.rating == null) {
                 "0.0"
             } else {
                 offer.driver?.rating.toString()
@@ -173,12 +173,14 @@ class OffersAdapter @Inject constructor(val getOffersPresenter: ContractPresente
             if (photo == null) {
                 photo = R.drawable.ic_default_ava
             }
-            Glide.with(itemView.context).load(photo)
-                .apply(RequestOptions().centerCrop().circleCrop())
-                .error(R.drawable.ic_default_ava)
-                .into(itemView.img_driver)
+            itemView.img_driver?.let {
+                Glide.with(itemView.context).load(photo)
+                    .apply(RequestOptions().centerCrop().circleCrop())
+                    .error(R.drawable.ic_default_ava)
+                    .into(itemView.img_driver)
+            }
 
-            itemView.reject_driver.setOnClickListener {
+            itemView.reject_driver?.setOnClickListener {
                 offerItemTimer?.cancel()
                 rejectOffer(adapterPosition, true)
             }

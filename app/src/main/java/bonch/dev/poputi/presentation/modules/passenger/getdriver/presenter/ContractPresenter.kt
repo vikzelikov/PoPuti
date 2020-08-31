@@ -73,7 +73,7 @@ interface ContractPresenter {
         fun instance(): GetOffersPresenter
         fun backFragment(reasonID: ReasonCancel)
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
-        fun cancelDoneOtherReason(comment: String)
+        fun cancelDoneOtherReason(comment: String?)
         fun timeExpired(textReason: String)
         fun getOffers(): ArrayList<Offer>
         fun deleteOffer(offerId: Int)
@@ -96,7 +96,7 @@ interface ContractPresenter {
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun backFragment(reasonID: ReasonCancel)
         fun showChat(context: Context, fragment: Fragment)
-        fun cancelDoneOtherReason(comment: String)
+        fun cancelDoneOtherReason(comment: String?)
         fun getByValue(status: Int?): StatusRide?
         fun instance(): TrackRidePresenter
         fun getTaxMoney(): Int

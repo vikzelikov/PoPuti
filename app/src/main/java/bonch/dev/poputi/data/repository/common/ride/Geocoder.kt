@@ -11,19 +11,22 @@ import java.util.*
 
 class Geocoder : Session.SearchListener {
 
-
     lateinit var callback: GeocoderHandler
     lateinit var point: Point
     private var searchSession: Session? = null
-    private var searchManager: SearchManager =
-        SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    private var searchManager: SearchManager? = null
+
     private val searchOptions = SearchOptions()
 
     fun request(point: Point, callback: GeocoderHandler) {
+        if (searchManager == null) {
+            searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+        }
+
         this.point = point
         this.callback = callback
 
-        searchSession = searchManager.submit(
+        searchSession = searchManager?.submit(
             point,
             16,
             searchOptions,

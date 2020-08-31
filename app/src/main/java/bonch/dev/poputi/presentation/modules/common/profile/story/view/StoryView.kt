@@ -38,7 +38,7 @@ class StoryView : AppCompatActivity(), ContractView.IStoryView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.story_activity)
 
         setListeners()

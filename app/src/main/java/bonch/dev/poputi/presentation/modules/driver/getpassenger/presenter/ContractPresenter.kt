@@ -54,7 +54,7 @@ interface ContractPresenter {
         fun showChat(context: Context, fragment: Fragment)
         fun tickTimerWaitPassanger(sec: Long, isPaidWating: Boolean)
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
-        fun cancelDoneOtherReason(comment: String)
+        fun cancelDoneOtherReason(comment: String?)
         fun changeState(step: StatusRide, isRestoreRide: Boolean)
         fun stopService()
         fun clearRide()

@@ -36,12 +36,12 @@ class SuggestView : AppCompatActivity(), ISuggestView {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.signup_car_info_suggest)
 
         initAdapter()
 
-        car_info_input.requestFocus()
+        car_info_input?.requestFocus()
 
         val isCarNameSuggest = intent.getBooleanExtra(BOOL_DATA, true)
         val carName = intent.getStringExtra(STRING_DATA)
@@ -53,24 +53,24 @@ class SuggestView : AppCompatActivity(), ISuggestView {
 
 
     override fun setListeners() {
-        car_info_input.addTextChangedListener(object : TextWatcher {
+        car_info_input?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                suggestPresenter.filterList(car_info_input.text.toString())
+                car_info_input?.text?.let { suggestPresenter.filterList(it.toString()) }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.isNotEmpty()) {
-                    cross.visibility = View.VISIBLE
+                    cross?.visibility = View.VISIBLE
                 } else {
-                    cross.visibility = View.GONE
+                    cross?.visibility = View.GONE
                 }
             }
         })
 
         cross.setOnClickListener {
-            car_info_input.setText("")
+            car_info_input?.setText("")
         }
 
 

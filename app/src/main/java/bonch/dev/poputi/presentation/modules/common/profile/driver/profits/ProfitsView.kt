@@ -45,7 +45,7 @@ class ProfitsView : AppCompatActivity(), ContractView.IProfitsView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.profits_activity)
 
         initAdapter()

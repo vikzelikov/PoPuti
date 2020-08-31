@@ -31,8 +31,8 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
     }
 
 
-    override fun checkCode(phone: String?, code: String) {
-        if (isCodeEnter() && phone != null) {
+    override fun checkCode(phone: String?, code: String?) {
+        if (isCodeEnter() && phone != null && code != null) {
 
             getView()?.showLoading()
 

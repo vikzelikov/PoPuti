@@ -31,7 +31,7 @@ class CarInfoView : AppCompatActivity(), ContractView.ICarInfoView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.car_info_activity)
 
         showLoading()

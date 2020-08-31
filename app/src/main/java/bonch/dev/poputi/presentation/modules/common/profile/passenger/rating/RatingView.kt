@@ -41,7 +41,7 @@ class RatingView : AppCompatActivity(), ContractView.IRatingView {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.rating_passenger_activity)
 
         setListeners()

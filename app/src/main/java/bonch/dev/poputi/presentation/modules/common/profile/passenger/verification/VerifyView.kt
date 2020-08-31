@@ -53,7 +53,7 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.verify_activity)
 
         showSkeletonAnim()

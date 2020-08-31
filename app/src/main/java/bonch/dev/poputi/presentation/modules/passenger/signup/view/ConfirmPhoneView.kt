@@ -56,14 +56,14 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
             code_edit_text.requestFocus()
         }, 300)
 
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
     }
 
 
     override fun setListeners() {
         val activity = activity as? MainActivity
 
-        show_phone.text = getString(R.string.showPhone).plus(" ").plus(DataSignup.phone)
+        show_phone?.text = getString(R.string.showPhone).plus(" ").plus(DataSignup.phone)
 
         retry_send.setOnClickListener {
             activity?.let {
@@ -95,26 +95,26 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
     }
 
 
-    override fun getCode(): String {
-        return code_edit_text.text.toString().trim()
+    override fun getCode(): String? {
+        return code_edit_text?.text?.toString()?.trim()
     }
 
 
     override fun showError() {
-        error_code.visibility = View.VISIBLE
+        error_code?.visibility = View.VISIBLE
     }
 
 
     override fun hideError() {
-        error_code.visibility = View.INVISIBLE
+        error_code?.visibility = View.INVISIBLE
     }
 
 
     override fun changeBtnEnable(enable: Boolean) {
         if (enable) {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_blue)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_gray)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
 
         hideError()

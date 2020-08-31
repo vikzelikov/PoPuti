@@ -39,9 +39,6 @@ class ChatView : AppCompatActivity(), IChatView {
     private var handlerAnimation: Handler? = null
 
 
-    private val IS_DRIVER = "IS_DRIVER"
-
-
     init {
         initDI()
 
@@ -64,7 +61,7 @@ class ChatView : AppCompatActivity(), IChatView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.chat_activity)
 
         val app = App.appComponent.getApp()
@@ -103,17 +100,19 @@ class ChatView : AppCompatActivity(), IChatView {
         photos?.sortBy { it.id }
         var photo: Any? = photos?.lastOrNull()?.imgUrl
         if (photo == null) photo = R.drawable.ic_default_ava
-        Glide.with(img.context).load(photo)
-            .apply(RequestOptions().centerCrop().circleCrop())
-            .error(R.drawable.ic_default_ava)
-            .into(img)
 
+        img?.let {
+            Glide.with(img.context).load(photo)
+                .apply(RequestOptions().centerCrop().circleCrop())
+                .error(R.drawable.ic_default_ava)
+                .into(img)
+        }
     }
 
 
     override fun setListeners() {
         send_message.setOnClickListener {
-            val message = message_text_edit.text.toString().trim()
+            val message = message_text_edit?.text?.toString()?.trim()
             chatPresenter.sendMessage(message)
         }
 

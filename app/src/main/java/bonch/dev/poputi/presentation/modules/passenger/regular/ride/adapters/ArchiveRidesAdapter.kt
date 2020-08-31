@@ -73,13 +73,13 @@ class ArchiveRidesAdapter @Inject constructor(private val archiveRidesPresenter:
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(ride: RideInfo) {
-            itemView.from.text = ride.position
-            itemView.to.text = ride.destination
-            itemView.price.text = ride.price.toString().plus(" ₽")
-            itemView.date.text = getDays(ride.dateInfo)
+            itemView.from?.text = ride.position
+            itemView.to?.text = ride.destination
+            itemView.price?.text = ride.price?.toString()?.plus(" ₽")
+            itemView.date?.text = getDays(ride.dateInfo)
 
             val time = ride.dateInfo?.time
-            itemView.time.text = parseTime(time)
+            itemView.time?.text = parseTime(time)
         }
 
 
@@ -124,9 +124,13 @@ class ArchiveRidesAdapter @Inject constructor(private val archiveRidesPresenter:
                             val calendar = GregorianCalendar.getInstance()
                             calendar.time = date
 
-                            resultTime = calendar[Calendar.HOUR_OF_DAY].toString()
-                                .plus(":")
-                                .plus(calendar[Calendar.MINUTE])
+                            var hours = calendar.get(Calendar.HOUR_OF_DAY).toString()
+                            if (hours.length == 1) hours = "0".plus(hours)
+
+                            var min = calendar.get(Calendar.MINUTE).toString()
+                            if (min.length == 1) min = "0".plus(min)
+
+                            resultTime = hours.plus(":") .plus(min)
 
                         }
                     } catch (e: Exception) {

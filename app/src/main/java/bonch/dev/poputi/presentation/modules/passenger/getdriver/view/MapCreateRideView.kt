@@ -152,7 +152,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             }, 3000)
         }
 
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
     }
 
 

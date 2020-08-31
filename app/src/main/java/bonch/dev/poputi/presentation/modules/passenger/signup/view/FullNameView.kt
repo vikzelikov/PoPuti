@@ -54,26 +54,26 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
 
         Keyboard.setMovingButtonListener(view, true)
 
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
     }
 
 
     override fun setHintListener() {
         first_name.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            first_name_layout.isHintEnabled = hasFocus
+            first_name_layout?.isHintEnabled = hasFocus
         }
 
         last_name.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            last_name_layout.isHintEnabled = hasFocus
+            last_name_layout?.isHintEnabled = hasFocus
         }
     }
 
-    override fun getFirstName(): String {
-        return first_name.text.toString().trim()
+    override fun getFirstName(): String? {
+        return first_name.text?.toString()?.trim()
     }
 
-    override fun getLastName(): String {
-        return last_name.text.toString().trim()
+    override fun getLastName(): String? {
+        return last_name?.text?.toString()?.trim()
     }
 
 
@@ -121,8 +121,8 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
     override fun getProfileData(): Profile {
         val profileData = Profile()
         profileData.apply {
-            firstName = first_name.text.toString().trim()
-            lastName = last_name.text.toString().trim()
+            firstName = first_name?.text?.toString()?.trim()
+            lastName = last_name?.text?.toString()?.trim()
         }
 
         return profileData
@@ -131,9 +131,9 @@ class FullNameView : Fragment(), ContractView.IFullNameView {
 
     override fun changeBtnEnable(enable: Boolean) {
         if (enable) {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_blue)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_gray)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
 

@@ -65,7 +65,7 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
 

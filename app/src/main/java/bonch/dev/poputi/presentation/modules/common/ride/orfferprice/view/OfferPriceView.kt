@@ -1,6 +1,5 @@
 package bonch.dev.poputi.presentation.modules.common.ride.orfferprice.view
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -21,7 +20,6 @@ import bonch.dev.poputi.domain.utils.Keyboard.showKeyboard
 import bonch.dev.poputi.presentation.modules.common.CommonComponent
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.presenter.IOfferPricePresenter
 import kotlinx.android.synthetic.main.offer_price_activity.*
-import java.lang.NumberFormatException
 import javax.inject.Inject
 
 class OfferPriceView : AppCompatActivity(), IOfferPriceView {
@@ -54,7 +52,7 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.offer_price_activity)
 
         //set listener to move button in relation to keyboard on/off
@@ -84,16 +82,12 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
 
         price.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val intent = Intent()
                 val price = priceEditText.text.toString().split('₽')[0].trim()
                 val averagePrice = offerPricePresenter.getAveragePrice()
                 try {
                     if (price.length < 7 && price.isNotEmpty() && price.toInt() > 0) {
-                        hideKeyboard()
-                        intent.putExtra(OFFER_PRICE.toString(), price.toInt())
-                        intent.putExtra(AVERAGE_PRICE, averagePrice)
-                        setResult(RESULT_OK, intent)
-                        finish()
+
+                        doneOfferPrice(price, averagePrice)
 
                         return@OnEditorActionListener true
                     }
@@ -105,16 +99,15 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
         })
 
         offerBtn.setOnClickListener {
-            val intent = Intent()
-            val price = priceEditText.text.toString().split('₽')[0].trim()
+            val price = priceEditText?.text?.toString()?.split('₽')?.first()?.trim()
             val averagePrice = offerPricePresenter.getAveragePrice()
             try {
-                if (price.length < 7 && price.isNotEmpty() && price.toInt() > 0) {
-                    hideKeyboard()
-                    intent.putExtra(OFFER_PRICE.toString(), price.toInt())
-                    intent.putExtra(AVERAGE_PRICE, averagePrice)
-                    setResult(RESULT_OK, intent)
-                    finish()
+                price?.let {
+                    if (price.length < 7 && price.isNotEmpty() && price.toInt() > 0) {
+
+                        doneOfferPrice(price, averagePrice)
+
+                    }
                 }
             } catch (ex: NumberFormatException) {
             }
@@ -138,18 +131,18 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
 
     override fun setAveragePrice(averagePrice: Int?) {
         if (averagePrice == null) {
-            average_price.visibility = View.GONE
+            average_price?.visibility = View.GONE
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            average_price.text = Html.fromHtml(
+            average_price?.text = Html.fromHtml(
                 resources.getString(R.string.offer_price_average_price)
                     .plus(" <b>$averagePrice ${resources.getString(R.string.rub)}</b>"),
                 Html.FROM_HTML_MODE_COMPACT
             )
 
         } else {
-            average_price.text = Html.fromHtml(
+            average_price?.text = Html.fromHtml(
                 resources.getString(R.string.offer_price_average_price)
                     .plus(" <b>$averagePrice ${resources.getString(R.string.rub)}</b>")
             )
@@ -168,7 +161,7 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
         val str = s.toString().split('₽')
 
         if (str.size > 1 && str[1].isNotEmpty()) {
-            price.setText(str[0].substring(0, str[0].length - 1))
+            price?.setText(str[0].substring(0, str[0].length - 1))
         }
 
         if (str[0].trim().isEmpty()) {
@@ -176,23 +169,32 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
         }
 
         if (s.length > 1) {
-            price.setSelection(price.text.length - 2)
+            price?.setSelection(price.text.length - 2)
         }
 
         if (s.isNotEmpty() && str[0].trim().toInt() > 0) {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_blue)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_gray)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
 
 
     override fun touchPriceEditText() {
         try {
-            price.setSelection(price.text.length - 2)
+            price?.text?.let { price?.setSelection(it.length - 2) }
         } catch (ex: IndexOutOfBoundsException) {
             ex.printStackTrace()
         }
+    }
+
+
+    private fun doneOfferPrice(price: String, averagePrice: Int?) {
+        hideKeyboard()
+        intent.putExtra(OFFER_PRICE.toString(), price.toInt())
+        intent.putExtra(AVERAGE_PRICE, averagePrice)
+        setResult(RESULT_OK, intent)
+        finish()
     }
 
 

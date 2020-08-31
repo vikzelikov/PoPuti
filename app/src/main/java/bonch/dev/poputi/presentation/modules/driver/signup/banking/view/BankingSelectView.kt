@@ -47,7 +47,7 @@ class BankingSelectView : Fragment(), IBankingSelectView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         setListeners()
 
@@ -121,9 +121,11 @@ class BankingSelectView : Fragment(), IBankingSelectView {
 
         if (childCount != null) {
             for (i in 0 until childCount) {
-                val holder = payments_list.getChildViewHolder(payments_list.getChildAt(i))
-                val tick = holder.itemView.findViewById<ImageView>(R.id.tick)
-                tick.setImageResource(R.drawable.ic_tick)
+                payments_list?.let {
+                    val holder = payments_list.getChildViewHolder(payments_list.getChildAt(i))
+                    val tick = holder.itemView.findViewById<ImageView>(R.id.tick)
+                    tick?.setImageResource(R.drawable.ic_tick)
+                }
             }
         }
     }

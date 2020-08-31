@@ -46,7 +46,7 @@ class SignupStepView : Fragment(), ISignupStepView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         val stepData = signupStepPresenter.getStepData(SignupMainData.idStep)
         setDataStep(stepData)
@@ -64,10 +64,10 @@ class SignupStepView : Fragment(), ISignupStepView {
 
 
     override fun setDataStep(stepData: SignupStep) {
-        title_step_signup.text = stepData.title
-        subtitle_step_signup.text = stepData.subtitle
-        description_docs_signup.text = stepData.descriptionDocs
-        img_step_signup.setImageResource(stepData.imgDocs)
+        title_step_signup?.text = stepData.title
+        subtitle_step_signup?.text = stepData.subtitle
+        description_docs_signup?.text = stepData.descriptionDocs
+        img_step_signup?.setImageResource(stepData.imgDocs)
     }
 
 

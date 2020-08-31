@@ -144,10 +144,10 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
-    override fun cancelDoneOtherReason(comment: String) {
+    override fun cancelDoneOtherReason(comment: String?) {
         val res = App.appComponent.getContext().resources
 
-        if (comment.trim().isEmpty()) {
+        if (comment?.trim().isNullOrEmpty()) {
             getView()?.showNotification(res.getString(R.string.writeYourProblemComment))
         } else {
             val textReason = "OTHER_REASON: ".plus(comment)

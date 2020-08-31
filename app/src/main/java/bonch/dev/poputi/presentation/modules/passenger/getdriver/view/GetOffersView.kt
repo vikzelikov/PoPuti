@@ -84,7 +84,7 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         //change status
         ActiveRide.activeRide?.statusId = StatusRide.SEARCH.status
@@ -110,18 +110,18 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
 
     private fun receiveUserData(ride: RideInfo?) {
         ride?.let {
-            from_address.text = ride.position
-            to_address.text = ride.destination
+            from_address?.text = ride.position
+            to_address?.text = ride.destination
 
             if (ride.price != null) {
-                offer_price.text = ride.price.toString()
+                offer_price?.text = ride.price.toString()
             }
 
             val comment = ride.comment
             if (comment.isNullOrEmpty()) {
-                comment_btn.visibility = View.GONE
+                comment_btn?.visibility = View.GONE
             } else {
-                comment_min_text.text = ride.comment
+                comment_min_text?.text = ride.comment
             }
         }
     }
@@ -138,19 +138,19 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
 
         change_mind.setOnClickListener {
             reasonID = ReasonCancel.CHANGE_MIND
-            textReason = change_mind.text.toString()
+            textReason = change_mind?.text?.toString()
             getConfirmCancel()
         }
 
         wait_long.setOnClickListener {
             reasonID = ReasonCancel.WAIT_LONG
-            textReason = wait_long.text.toString()
+            textReason = wait_long?.text?.toString()
             getConfirmCancel()
         }
 
         mistake_order.setOnClickListener {
             reasonID = ReasonCancel.MISTAKE_ORDER
-            textReason = mistake_order.text.toString()
+            textReason = mistake_order?.text?.toString()
             getConfirmCancel()
         }
 
@@ -160,7 +160,7 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
         }
 
         comment_done.setOnClickListener {
-            getOffersPresenter.cancelDoneOtherReason(comment_text.text.toString())
+            getOffersPresenter.cancelDoneOtherReason(comment_text?.text?.toString())
         }
 
         cancel.setOnClickListener {
@@ -251,11 +251,11 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
     private fun setConfirmAcceptData(offerPrice: Offer?) {
         //set data in BottomSheet for confirm or cancel
         offerPrice?.let { offer ->
-            bs_driver_name.text = offer.driver?.firstName
-            bs_car_name.text = offer.driver?.car?.name?.plus(" ")?.plus(offer.driver?.car?.model)
-            bs_price.text = offer.price.toString().plus(" ₽")
+            bs_driver_name?.text = offer.driver?.firstName
+            bs_car_name?.text = offer.driver?.car?.name?.plus(" ")?.plus(offer.driver?.car?.model)
+            bs_price?.text = offer.price.toString().plus(" ₽")
 
-            bs_driver_rating.text = if (offer.driver?.rating == null) {
+            bs_driver_rating?.text = if (offer.driver?.rating == null) {
                 "0.0"
             } else {
                 offer.driver?.rating.toString()
@@ -266,10 +266,12 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
             if (photo == null) {
                 photo = R.drawable.ic_default_ava
             }
-            Glide.with(bs_img_driver.context).load(photo)
-                .apply(RequestOptions().centerCrop().circleCrop())
-                .error(R.drawable.ic_default_ava)
-                .into(bs_img_driver)
+            bs_img_driver?.let{
+                Glide.with(bs_img_driver.context).load(photo)
+                    .apply(RequestOptions().centerCrop().circleCrop())
+                    .error(R.drawable.ic_default_ava)
+                    .into(bs_img_driver)
+            }
         }
     }
 
@@ -309,11 +311,11 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
         if (isAllowSlide) {
             if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                 hideKeyboard()
-                comment_text.clearFocus()
+                comment_text?.clearFocus()
             }
 
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                comment_text.clearFocus()
+                comment_text?.clearFocus()
             } else {
                 confirmCancelBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
                 on_view_cancel?.visibility = View.VISIBLE
@@ -341,15 +343,17 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
     private fun getOtherReasonComment() {
         commentBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        if (!comment_text.isFocused) {
-            comment_text.requestFocus()
-            //set a little timer to open keyboard
-            Handler().postDelayed({
-                val activity = activity as? MainActivity
-                activity?.let {
-                    Keyboard.showKeyboard(activity)
-                }
-            }, 200)
+        comment_text?.let {
+            if (!comment_text.isFocused) {
+                comment_text?.requestFocus()
+                //set a little timer to open keyboard
+                Handler().postDelayed({
+                    val activity = activity as? MainActivity
+                    activity?.let {
+                        Keyboard.showKeyboard(activity)
+                    }
+                }, 200)
+            }
         }
     }
 
@@ -407,13 +411,13 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
 
         if (!offersAdapter.list.isNullOrEmpty()) checkoutBackground(false)
 
-        driver_list.apply {
+        driver_list?.apply {
             layoutManager =
                 WrapContentLinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = offersAdapter
         }
 
-        driver_list.visibility = View.VISIBLE
+        driver_list?.visibility = View.VISIBLE
     }
 
 

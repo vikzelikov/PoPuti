@@ -48,7 +48,7 @@ class DetailStoryView : AppCompatActivity(), ContractView.IDetailStoryView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
 
         //init map
         MapKitFactory.setApiKey(Constants.API_KEY)
@@ -101,7 +101,7 @@ class DetailStoryView : AppCompatActivity(), ContractView.IDetailStoryView {
 
             man_name?.text = ride.passenger?.firstName
                 ?.plus(" ")
-                ?.plus(ride.driver?.lastName)
+                ?.plus(ride.passenger.lastName)
 
             phone?.text = ride.passenger?.phone
         }
@@ -141,11 +141,11 @@ class DetailStoryView : AppCompatActivity(), ContractView.IDetailStoryView {
                             val finish = dateFinishAt.time
                             val delta = (finish - start) / 1000
 
-                            val hours = delta / 3600
-                            val mins = 1 + (delta - hours * 3600) / 60
+                            val hoursD = delta / 3600
+                            val mins = 1 + (delta - hoursD * 3600) / 60
 
-                            if (hours > 0) {
-                                time_in_way?.text = "$hours"
+                            if (hoursD > 0) {
+                                time_in_way?.text = "$hoursD"
                                     .plus(" ч ")
                                     .plus("$mins")
                                     .plus(" мин в пути")
@@ -178,7 +178,7 @@ class DetailStoryView : AppCompatActivity(), ContractView.IDetailStoryView {
 
         copy_phone.setOnClickListener {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-            val phone = phone.text.toString()
+            val phone = phone?.text?.toString()
             val clip = ClipData.newPlainText("Phone", phone)
             clipboard?.setPrimaryClip(clip)
 

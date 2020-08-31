@@ -65,9 +65,9 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
         val root = inflater.inflate(R.layout.phone_signup_fragment, container, false)
 
         //active links
-        val terms = root.terms
-        terms.movementMethod = LinkMovementMethod.getInstance()
-        removeUnderline(terms)
+        val terms = root?.terms
+        terms?.movementMethod = LinkMovementMethod.getInstance()
+        terms?.let { removeUnderline(terms) }
 
         return root
     }
@@ -79,24 +79,8 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
         (activity as? MainActivity)?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         setPhoneMask()
-//
-//
-//        FirebaseInstanceId.getInstance().instanceId
-//            .addOnCompleteListener(OnCompleteListener { task ->
-//                if (!task.isSuccessful) {
-//                    Log.e("TEST", "getInstanceId failed", task.exception)
-//                    return@OnCompleteListener
-//                }
-//
-//                // Get new Instance ID token
-//                val token = task.result?.token
-//
-//                // Log and toast
-//                test.setText(token)
-//            })
 
-
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
     }
 
 
@@ -120,13 +104,13 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
 
     override fun setListeners() {
         btn_done.setOnClickListener {
-            val phone = phone_number.text.toString().trim()
+            val phone = phone_number?.text?.toString()?.trim()
 
             hideKeyboard()
 
             Handler().postDelayed({
                 //wait for keyboard hide
-                phonePresenter.getCode(phone)
+                phone?.let { phonePresenter.getCode(phone) }
             }, 300)
         }
 
@@ -145,16 +129,16 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
 
     override fun changeBtnEnable(enable: Boolean) {
         if (enable) {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_blue)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_gray)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
 
 
     override fun setPhoneMask() {
-        phone_number.inputType = InputType.TYPE_CLASS_NUMBER
-        phone_number.keyListener = DigitsKeyListener.getInstance("1234567890+-() ")
+        phone_number?.inputType = InputType.TYPE_CLASS_NUMBER
+        phone_number?.keyListener = DigitsKeyListener.getInstance("1234567890+-() ")
 
         val listener =
             installOn(

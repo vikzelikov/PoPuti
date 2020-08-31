@@ -124,6 +124,14 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
         } else {
             isBlockGeocoder = false
             isOnRouting = false
+
+            Handler().postDelayed({
+                Geo.selectedCity?.point?.let { point ->
+                    getView()?.moveCamera(Point(point.latitude, point.longitude))
+
+                    Geo.isPreferCityGeo = true
+                }
+            }, 1000)
         }
     }
 

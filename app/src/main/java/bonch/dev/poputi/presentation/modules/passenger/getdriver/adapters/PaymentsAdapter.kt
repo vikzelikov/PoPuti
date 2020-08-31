@@ -106,14 +106,14 @@ class PaymentsAdapter @Inject constructor(private val detailRidePresenter: Contr
                 }
 
                 imgCard?.let {
-                    itemView.payment_method_img.setImageResource(it)
+                    itemView.payment_method_img?.setImageResource(it)
                 }
 
-                itemView.number_card.text = numberCard
+                itemView.number_card?.text = numberCard
 
                 if (firstDigit == 'g'.minus('0')) {
-                    itemView.payment_method_img.setImageResource(R.drawable.ic_google_pay)
-                    itemView.number_card.text = ""
+                    itemView.payment_method_img?.setImageResource(R.drawable.ic_google_pay)
+                    itemView.number_card?.text = ""
                 }
 
             }

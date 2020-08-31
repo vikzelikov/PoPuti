@@ -15,7 +15,7 @@ class CheckPhotoView : AppCompatActivity() {
     private val TITLE = "TITLE"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.check_photo_activity)
 
         val photo = Uri.parse(intent.getStringExtra(PHOTO))
@@ -34,9 +34,9 @@ class CheckPhotoView : AppCompatActivity() {
 
     private fun setTitle(title: String?) {
         if (title == null) {
-            title_check_photo.visibility = View.GONE
+            title_check_photo?.visibility = View.GONE
         } else {
-            title_check_photo.text = title
+            title_check_photo?.text = title
         }
     }
 

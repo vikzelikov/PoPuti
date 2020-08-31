@@ -69,8 +69,8 @@ class ChatPresenter : BasePresenter<IChatView>(), IChatPresenter {
     }
 
 
-    override fun sendMessage(text: String) {
-        if (text.isNotEmpty()) {
+    override fun sendMessage(text: String?) {
+        if (text != null && text.isNotBlank()) {
             val message = Message()
             message.text = text
             message.isSender = true

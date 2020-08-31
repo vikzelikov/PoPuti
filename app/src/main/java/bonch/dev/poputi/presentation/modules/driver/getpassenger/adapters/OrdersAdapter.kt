@@ -84,23 +84,26 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
     inner class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(post: RideInfo) {
-            itemView.passanger_name.text = post.passenger?.firstName
-            itemView.from_order.text = post.position
-            itemView.to_order.text = post.destination
-            itemView.order_price.text = post.price.toString().plus(" ₽")
+            itemView.passanger_name?.text = post.passenger?.firstName
+            itemView.from_order?.text = post.position
+            itemView.to_order?.text = post.destination
+            itemView.order_price?.text = post.price?.toString()?.plus(" ₽")
 
             val rating = post.passenger?.rating?.toString()
-            if (rating != null) itemView.passanger_rating.text = rating
-            else itemView.passanger_rating.text = "0.0"
+            if (rating != null) itemView.passanger_rating?.text = rating
+            else itemView.passanger_rating?.text = "0.0"
 
             //todo TEST
             post.passenger?.photos?.sortBy { it.id }
             var photo: Any? = post.passenger?.photos?.lastOrNull()?.imgUrl
             if (photo == null) photo = R.drawable.ic_default_ava
-            Glide.with(itemView.context).load(photo)
-                .apply(RequestOptions().centerCrop().circleCrop())
-                .error(R.drawable.ic_default_ava)
-                .into(itemView.img_passanger)
+
+            itemView.img_passanger?.let {
+                Glide.with(itemView.img_passanger.context).load(photo)
+                    .apply(RequestOptions().centerCrop().circleCrop())
+                    .error(R.drawable.ic_default_ava)
+                    .into(itemView.img_passanger)
+            }
 
             showDistance(post)
 
@@ -131,10 +134,10 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
         private fun showDistance(post: RideInfo) {
             val d = post.distance
             if (d != null) {
-                itemView.user_distance.text = formatDistance(d)
+                itemView.user_distance?.text = formatDistance(d)
             } else {
                 //hide in case error
-                itemView.user_distance.visibility = View.GONE
+                itemView.user_distance?.visibility = View.GONE
             }
         }
 

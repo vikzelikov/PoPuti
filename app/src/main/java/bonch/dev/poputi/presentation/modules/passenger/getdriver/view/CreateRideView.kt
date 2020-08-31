@@ -88,7 +88,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         createRidePresenter.getCashSuggest()
 
@@ -116,7 +116,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         layoutParams.height = height - 300
         bottom_sheet_addresses.layoutParams = layoutParams
 
-        addresses_list.apply {
+        addresses_list?.apply {
             layoutManager = WrapContentLinearLayoutManager(
                 context,
                 LinearLayoutManager.VERTICAL,
@@ -336,14 +336,14 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
         if (isFrom) {
             to_adr?.let {
-                if (to_adr.isFocused) {
+                if (it.isFocused) {
                     createRidePresenter.clearSuggest()
                 }
             }
 
             if (!isBlockSelection) {
                 from_adr?.requestFocus()
-                from_adr?.setSelection(from_adr.text.length)
+                from_adr?.text?.length?.let { from_adr?.setSelection(it) }
 
                 if (from_adr_box?.visibility == View.VISIBLE) {
                     expandedBottomSheetEvent()
@@ -376,9 +376,9 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
             if (!isBlockSelection) {
                 to_adr?.requestFocus()
-                to_adr?.setSelection(to_adr.text.length)
+                to_adr?.text?.length?.let { to_adr?.setSelection(it) }
 
-                if (to_adr_box.visibility == View.VISIBLE) {
+                if (to_adr_box?.visibility == View.VISIBLE) {
                     expandedBottomSheetEvent()
                 }
 
@@ -521,11 +521,11 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         if (isFromMapSearch) {
             Coordinate.fromAdr = address
             from_adr?.setText(address.address)
-            from_adr?.setSelection(from_adr.text.length)
+            from_adr?.text?.length?.let { from_adr?.setSelection(it) }
         } else {
             Coordinate.toAdr = address
             to_adr?.setText(address.address)
-            to_adr?.setSelection(to_adr.text.length)
+            to_adr?.text?.length?.let { to_adr?.setSelection(it) }
         }
     }
 

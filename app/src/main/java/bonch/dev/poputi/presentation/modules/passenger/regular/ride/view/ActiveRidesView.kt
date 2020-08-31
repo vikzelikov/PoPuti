@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,13 +39,13 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
 
 
     private lateinit var layoutManagerRides: LinearLayoutManager
-    lateinit var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>
-    lateinit var edit: TextView
-    lateinit var archive: TextView
-    lateinit var restore: TextView
-    lateinit var delete: TextView
-    lateinit var onView: View
-    lateinit var progressBarOpenRide: ProgressBar
+    var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>? = null
+    var edit: TextView? = null
+    var archive: TextView? = null
+    var restore: TextView? = null
+    var delete: TextView? = null
+    var onView: View? = null
+    var progressBarOpenRide: ProgressBar? = null
 
     lateinit var setArchiveRide: ParentHandler<RideInfo>
     lateinit var openActivity: ParentEmptyHandler
@@ -69,7 +68,7 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         activeRidesPresenter.getActiveRides()
 
@@ -80,14 +79,14 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
 
 
     override fun setListeners() {
-        edit.setOnClickListener {
+        edit?.setOnClickListener {
             activeRidesPresenter.edit()
         }
 
-        archive.setOnClickListener {
+        archive?.setOnClickListener {
             activeRidesPresenter.archive()
 
-            editRegularRideBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+            editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
@@ -122,12 +121,12 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
 
 
     override fun onClickItem() {
-        edit.visibility = View.VISIBLE
-        archive.visibility = View.VISIBLE
-        restore.visibility = View.GONE
-        delete.visibility = View.GONE
+        edit?.visibility = View.VISIBLE
+        archive?.visibility = View.VISIBLE
+        restore?.visibility = View.GONE
+        delete?.visibility = View.GONE
 
-        editRegularRideBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+        editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 
@@ -203,37 +202,37 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                edit.alpha = 1.0f
-                edit.animate()
+                edit?.alpha = 1.0f
+                edit?.animate()
                     ?.alpha(0.0f)
                     ?.setDuration(180)
                     ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
-                            edit.visibility = View.INVISIBLE
+                            edit?.visibility = View.INVISIBLE
                         }
                     })
 
-                archive.alpha = 1.0f
-                archive.animate()
+                archive?.alpha = 1.0f
+                archive?.animate()
                     ?.alpha(0.0f)
                     ?.setDuration(180)
                     ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
-                            archive.visibility = View.INVISIBLE
+                            archive?.visibility = View.INVISIBLE
                         }
                     })
 
-                progressBarOpenRide.alpha = 0.0f
-                progressBarOpenRide.animate()
+                progressBarOpenRide?.alpha = 0.0f
+                progressBarOpenRide?.animate()
                     ?.alpha(1.0f)
                     ?.setDuration(150)
                     ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
-                            progressBarOpenRide.visibility = View.VISIBLE
+                            progressBarOpenRide?.visibility = View.VISIBLE
                         }
                     })
 
-                onView.isClickable = false
+                onView?.isClickable = false
             }
         }
 
@@ -245,13 +244,13 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                edit.visibility = View.VISIBLE
-                edit.alpha = 1f
-                archive.visibility = View.VISIBLE
-                archive.alpha = 1f
-                progressBarOpenRide.visibility = View.GONE
-                progressBarOpenRide.alpha = 0f
-                onView.isClickable = true
+                edit?.visibility = View.VISIBLE
+                edit?.alpha = 1f
+                archive?.visibility = View.VISIBLE
+                archive?.alpha = 1f
+                progressBarOpenRide?.visibility = View.GONE
+                progressBarOpenRide?.alpha = 0f
+                onView?.isClickable = true
             }
         }
 
@@ -286,7 +285,7 @@ class ActiveRidesView : Fragment(), ContractView.IActiveRidesView {
     override fun onResume() {
         super.onResume()
 
-        editRegularRideBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+        editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
 
         hideLoadingOpenRide()
     }

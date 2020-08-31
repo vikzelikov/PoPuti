@@ -79,7 +79,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         onViewCreatedAnimation()
 
@@ -139,8 +139,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         }
 
         comment_done.setOnClickListener {
-            val comment = comment_text.text.toString().trim()
-            comment_min_text.text = comment
+            val comment = comment_text?.text?.toString()?.trim()
+            comment_min_text?.text = comment
 
             commentDone()
         }
@@ -172,8 +172,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
 
     override fun setAddresses(fromAddress: String, toAddress: String) {
-        from_address.text = fromAddress
-        to_address.text = toAddress
+        from_address?.text = fromAddress
+        to_address?.text = toAddress
     }
 
 
@@ -221,7 +221,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
 
     private fun initBankingAdapter() {
-        payments_list.apply {
+        payments_list?.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = paymentAdapter
         }
@@ -250,7 +250,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
                     comment_text?.text?.toString()?.trim()
                 }
             }
-            val price = offer_price.text.toString().toInt()
+            val price = offer_price?.text?.toString()?.toInt()
 
             rideInfo.comment = comment
             rideInfo.price = price
@@ -269,7 +269,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun isDataComplete(): Boolean {
         var isComplete = false
 
-        if (selected_payment_method.visibility == View.VISIBLE && checkPrice()) {
+        if (selected_payment_method?.visibility == View.VISIBLE && checkPrice()) {
             isComplete = true
         }
 
@@ -298,30 +298,30 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     private fun changeBtnEnable(isEnable: Boolean) {
         if (isEnable) {
             get_driver_btn?.isClickable = true
-            get_driver_btn.setBackgroundResource(R.drawable.bg_btn_blue)
+            get_driver_btn?.setBackgroundResource(R.drawable.bg_btn_blue)
         } else {
             get_driver_btn?.isClickable = false
-            get_driver_btn.setBackgroundResource(R.drawable.bg_btn_gray)
+            get_driver_btn?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
     }
 
 
     override fun offerPriceDone(price: Int, averagePrice: Int) {
-        offer_price.textSize = 22f
-        getDP(15)?.let { offer_price.setPadding(0, 5, 0, it) }
-        offer_price.setTextColor(Color.parseColor("#000000"))
-        offer_price.typeface = Typeface.DEFAULT_BOLD
+        offer_price?.textSize = 22f
+        getDP(15)?.let { offer_price?.setPadding(0, 5, 0, it) }
+        offer_price?.setTextColor(Color.parseColor("#000000"))
+        offer_price?.typeface = Typeface.DEFAULT_BOLD
 
         if (averagePrice <= price) {
-            info_price.visibility = View.GONE
+            info_price?.visibility = View.GONE
         } else {
-            info_price.visibility = View.VISIBLE
+            info_price?.visibility = View.VISIBLE
         }
 
         try {
-            offer_price.text = price.toString()
+            offer_price?.text = price.toString()
         } catch (ex: NumberFormatException) {
-            offer_price.text = "0"
+            offer_price?.text = "0"
         }
 
         //change btn enabled in case completed detail info
@@ -376,8 +376,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
             }
         }
 
-        selected_payment_method.visibility = View.VISIBLE
-        payment_method.visibility = View.GONE
+        selected_payment_method?.visibility = View.VISIBLE
+        payment_method?.visibility = View.GONE
 
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
 
@@ -389,15 +389,17 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun commentEditStart() {
         commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        if (!comment_text.isFocused) {
-            comment_text.requestFocus()
-            //set a little timer to open keyboard
-            Handler().postDelayed({
-                val activity = activity as? MainActivity
-                activity?.let {
-                    Keyboard.showKeyboard(activity)
-                }
-            }, 200)
+        comment_text?.let{
+            if (!it.isFocused) {
+                comment_text?.requestFocus()
+                //set a little timer to open keyboard
+                Handler().postDelayed({
+                    val activity = activity as? MainActivity
+                    activity?.let {
+                        Keyboard.showKeyboard(activity)
+                    }
+                }, 200)
+            }
         }
     }
 
@@ -414,7 +416,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
 
     override fun onSlideBottomSheet(slideOffset: Float) {
         if (slideOffset > 0 && slideOffset < 1) {
-            on_map_view.alpha = slideOffset * 0.8f
+            on_map_view?.alpha = slideOffset * 0.8f
         }
     }
 
@@ -438,16 +440,18 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val childCount = payments_list.childCount
 
         for (i in 0 until childCount) {
-            val holder = payments_list.getChildViewHolder(payments_list.getChildAt(i))
-            val tick = holder.itemView.findViewById<ImageView>(R.id.tick)
-            tick.setImageResource(R.drawable.ic_tick)
+            payments_list?.let{
+                val holder = payments_list?.getChildViewHolder(it.getChildAt(i))
+                val tick = holder?.itemView?.findViewById<ImageView>(R.id.tick)
+                tick?.setImageResource(R.drawable.ic_tick)
+            }
         }
     }
 
 
     override fun hideAllBottomSheet() {
         hideKeyboard()
-        comment_text.clearFocus()
+        comment_text?.clearFocus()
 
         commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -560,8 +564,8 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                get_driver_btn.isClickable = false
-                get_driver_btn.isFocusable = false
+                get_driver_btn?.isClickable = false
+                get_driver_btn?.isFocusable = false
             }
         }
 

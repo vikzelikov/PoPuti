@@ -69,7 +69,7 @@ class TableDocsView : Fragment(), ITableDocsView {
 
         setListeners()
 
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
     }
 
 
@@ -244,16 +244,16 @@ class TableDocsView : Fragment(), ITableDocsView {
 
     private fun onSlideBottomSheet(slideOffset: Float) {
         if (slideOffset > 0) {
-            on_view_table.alpha = slideOffset * 0.8f
+            on_view_table?.alpha = slideOffset * 0.8f
         }
     }
 
 
     private fun onStateChangedBottomSheet(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view_table.visibility = View.GONE
+            on_view_table?.visibility = View.GONE
         } else {
-            on_view_table.visibility = View.VISIBLE
+            on_view_table?.visibility = View.VISIBLE
         }
     }
 
@@ -363,7 +363,7 @@ class TableDocsView : Fragment(), ITableDocsView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                val photo: Pair<View, View> = when (idDoc) {
+                val photo: Pair<View?, View?> = when (idDoc) {
                     Step.USER_PHOTO -> Pair(loading_passport, passport)
                     Step.PASSPORT_PHOTO -> Pair(loading_passport, passport)
                     Step.SELF_PHOTO_PASSPORT -> Pair(loading_self_passport, self_passport)
@@ -374,8 +374,8 @@ class TableDocsView : Fragment(), ITableDocsView {
                     Step.STS_DOC_BACK -> Pair(loading_sts_back, sts_back)
                 }
 
-                photo.first.visibility = View.VISIBLE
-                photo.second.alpha = 0.7f
+                photo.first?.visibility = View.VISIBLE
+                photo.second?.alpha = 0.7f
             }
         }
 

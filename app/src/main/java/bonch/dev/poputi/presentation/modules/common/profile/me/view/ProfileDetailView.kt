@@ -50,7 +50,7 @@ class ProfileDetailView : AppCompatActivity(),
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.profile_detail_activity)
 
         profileDetailPresenter.instance().imageUri = null
@@ -126,17 +126,17 @@ class ProfileDetailView : AppCompatActivity(),
                 .error(R.drawable.ic_default_ava)
                 .into(img_user)
 
-        phone_number.text = profileData.phone
-        first_name.setText(profileData.firstName)
-        last_name.setText(profileData.lastName)
-        email.setText(profileData.email)
-        notifications_switch.isChecked = profileData.isNotificationsEnable
-        calls_switch.isChecked = profileData.isCallsEnable
+        phone_number?.text = profileData.phone
+        first_name?.setText(profileData.firstName)
+        last_name?.setText(profileData.lastName)
+        email?.setText(profileData.email)
+        notifications_switch?.isChecked = profileData.isNotificationsEnable
+        calls_switch?.isChecked = profileData.isCallsEnable
 
         if (profileData.rating == null) {
-            user_rating.text = "0.0"
+            user_rating?.text = "0.0"
         } else {
-            user_rating.text = profileData.rating.toString()
+            user_rating?.text = profileData.rating.toString()
         }
     }
 
@@ -235,9 +235,9 @@ class ProfileDetailView : AppCompatActivity(),
     private fun onSlideBottomSheet(slideOffset: Float) {
         if (slideOffset > 0) {
             if (slideOffset * 0.8f > 0.8) {
-                on_view_profile.alpha = 0.8f
+                on_view_profile?.alpha = 0.8f
             } else {
-                on_view_profile.alpha = slideOffset * 0.8f
+                on_view_profile?.alpha = slideOffset * 0.8f
             }
         }
     }
@@ -245,19 +245,19 @@ class ProfileDetailView : AppCompatActivity(),
 
     private fun onStateChangedBottomSheet(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view_profile.visibility = View.GONE
+            on_view_profile?.visibility = View.GONE
         } else {
-            on_view_profile.visibility = View.VISIBLE
+            on_view_profile?.visibility = View.VISIBLE
         }
     }
 
 
     override fun isDataNamesComplete(): Boolean {
         var isComplete = false
-        val firstNameText = first_name.text.toString().trim()
-        val lastNameText = last_name.text.toString().trim()
+        val firstNameText = first_name?.text?.toString()?.trim()
+        val lastNameText = last_name?.text?.toString()?.trim()
 
-        if (firstNameText.isNotEmpty() && lastNameText.isNotEmpty()) {
+        if (!firstNameText.isNullOrEmpty() && !lastNameText.isNullOrEmpty()) {
             isComplete = true
         }
 
@@ -283,9 +283,12 @@ class ProfileDetailView : AppCompatActivity(),
                 //set new photo
                 profileDetailPresenter.instance().imageUri = tempImageUri
 
-                Glide.with(img_user.context).load(tempImageUri)
-                    .apply(RequestOptions().centerCrop().circleCrop())
-                    .into(img_user)
+                img_user?.let {
+                    Glide.with(img_user.context).load(tempImageUri)
+                        .apply(RequestOptions().centerCrop().circleCrop())
+                        .into(img_user)
+                }
+
             } else {
                 //before check photo
                 if (requestCode == Constants.GALLERY) {
@@ -310,17 +313,17 @@ class ProfileDetailView : AppCompatActivity(),
             kotlin.run {
                 val view = notification
 
-                view.text = text
+                view?.text = text
                 handlerAnimation?.removeCallbacksAndMessages(null)
                 handlerAnimation = Handler()
-                view.translationY = 0.0f
-                view.alpha = 0.0f
+                view?.translationY = 0.0f
+                view?.alpha = 0.0f
 
-                view.animate()
-                    .setDuration(500L)
-                    .translationY(100f)
-                    .alpha(1.0f)
-                    .setListener(object : AnimatorListenerAdapter() {
+                view?.animate()
+                    ?.setDuration(500L)
+                    ?.translationY(100f)
+                    ?.alpha(1.0f)
+                    ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
                             handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
@@ -349,10 +352,10 @@ class ProfileDetailView : AppCompatActivity(),
     private fun hideNotifications() {
         val view = notification
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(-100f)
-            .alpha(0.0f)
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(-100f)
+            ?.alpha(0.0f)
     }
 
 
@@ -381,21 +384,21 @@ class ProfileDetailView : AppCompatActivity(),
 
 
     override fun showLoading() {
-        progress_bar_btn.visibility = View.VISIBLE
-        on_view.visibility = View.VISIBLE
+        progress_bar_btn?.visibility = View.VISIBLE
+        on_view?.visibility = View.VISIBLE
     }
 
 
     override fun hideLoading() {
-        progress_bar_btn.visibility = View.GONE
-        on_view.alpha = 0.7f
-        on_view.animate()
-            .alpha(0f)
-            .setDuration(500)
-            .setListener(object : AnimatorListenerAdapter() {
+        progress_bar_btn?.visibility = View.GONE
+        on_view?.alpha = 0.7f
+        on_view?.animate()
+            ?.alpha(0f)
+            ?.setDuration(500)
+            ?.setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     //go to the next screen
-                    on_view.visibility = View.GONE
+                    on_view?.visibility = View.GONE
                 }
             })
     }

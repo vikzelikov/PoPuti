@@ -17,8 +17,8 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.domain.utils.Keyboard.hideKeyboard
 import bonch.dev.poputi.domain.utils.Keyboard.showKeyboard
-import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.common.addbanking.presenter.IAddBankCardPresenter
+import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import kotlinx.android.synthetic.main.add_bank_card_activity.*
 import javax.inject.Inject
 
@@ -45,7 +45,7 @@ class AddBankCardView : AppCompatActivity(),
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.add_bank_card_activity)
 
         Keyboard.setMovingButtonListener(this.rootLinearLayout, false)
@@ -61,7 +61,7 @@ class AddBankCardView : AppCompatActivity(),
 
     override fun setListeners() {
         btn_done.setOnClickListener {
-            addBankCardPresenter.addCardBank(card_number.text.toString())
+            addBankCardPresenter.addCardBank(card_number?.text?.toString())
         }
 
         back_btn.setOnClickListener {
@@ -115,7 +115,7 @@ class AddBankCardView : AppCompatActivity(),
 
         cvc.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                addBankCardPresenter.addCardBank(card_number.text.toString())
+                addBankCardPresenter.addCardBank(card_number?.text?.toString())
                 return@OnEditorActionListener true
             }
             false
@@ -128,8 +128,8 @@ class AddBankCardView : AppCompatActivity(),
 
         val bankCard = BankCard()
         bankCard.numberCard = numberCard
-        bankCard.validUntil = valid_until.text.toString()
-        bankCard.cvc = cvc.text.toString()
+        bankCard.validUntil = valid_until?.text?.toString()
+        bankCard.cvc = cvc?.text?.toString()
 
         intent.putExtra(ADD_BANK_CARD.toString(), bankCard)
         setResult(RESULT_OK, intent)
@@ -142,11 +142,11 @@ class AddBankCardView : AppCompatActivity(),
     override fun isValidCard(): Boolean {
         var isValid = false
 
-        if (isValidNumberCard() && cvc.text.length == 3 && isValidUntil()) {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_blue)
+        if (isValidNumberCard() && cvc?.text?.length == 3 && isValidUntil()) {
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_blue)
             isValid = true
         } else {
-            btn_done.setBackgroundResource(R.drawable.bg_btn_gray)
+            btn_done?.setBackgroundResource(R.drawable.bg_btn_gray)
         }
 
         return isValid
@@ -156,7 +156,7 @@ class AddBankCardView : AppCompatActivity(),
     private fun isValidNumberCard(): Boolean {
         var isVaild = false
         try {
-            val firstDigit = card_number.text.toString()[0] - '0'
+            val firstDigit = card_number?.text?.toString()?.first()?.minus('0')
             isVaild = ((firstDigit == VISA || firstDigit == RUS_WORLD || firstDigit == MC)
                     && card_number.text.length == 19)
         } catch (ex: StringIndexOutOfBoundsException) {
@@ -176,16 +176,15 @@ class AddBankCardView : AppCompatActivity(),
         var isVaild = false
 
         try {
-            if (valid_until.text.substring(0, 2).toInt() in 1..12
-                && valid_until.text.substring(3, 5).toInt() >= 20
-            ) {
+            valid_until?.text?.let {
+                if (valid_until?.text?.substring(0, 2)?.toInt() in 1..12
+                    && it.substring(3, 5).toInt() >= 20
+                ) {
 
-                isVaild = true
+                    isVaild = true
 
+                }
             }
-        } catch (ex: StringIndexOutOfBoundsException) {
-
-        } catch (ex: NumberFormatException) {
 
         } catch (ex: Exception) {
 
@@ -196,16 +195,16 @@ class AddBankCardView : AppCompatActivity(),
 
 
     override fun setHintListener() {
-        card_number.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            card_number_layout.isHintEnabled = hasFocus
+        card_number?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            card_number_layout?.isHintEnabled = hasFocus
         }
 
-        valid_until.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            valid_until_layout.isHintEnabled = hasFocus
+        valid_until?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            valid_until_layout?.isHintEnabled = hasFocus
         }
 
-        cvc.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            cvc_layout.isHintEnabled = hasFocus
+        cvc?.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            cvc_layout?.isHintEnabled = hasFocus
         }
     }
 
@@ -219,11 +218,11 @@ class AddBankCardView : AppCompatActivity(),
         view.translationY = 0.0f
         view.alpha = 0.0f
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(100f)
-            .alpha(1.0f)
-            .setListener(object : AnimatorListenerAdapter() {
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(100f)
+            ?.alpha(1.0f)
+            ?.setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
                     handlerAnimation?.postDelayed({ hideNotifications() }, 2000)
@@ -235,10 +234,10 @@ class AddBankCardView : AppCompatActivity(),
     private fun hideNotifications() {
         val view = general_notification
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(-100f)
-            .alpha(0.0f)
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(-100f)
+            ?.alpha(0.0f)
     }
 
 

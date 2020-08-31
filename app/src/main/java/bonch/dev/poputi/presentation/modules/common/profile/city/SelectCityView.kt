@@ -37,7 +37,7 @@ class SelectCityView : AppCompatActivity(), ContractView.ISelectCityView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null )
         setContentView(R.layout.select_city_activity)
 
         setListeners()

@@ -33,11 +33,11 @@ class ArchiveRidesView : Fragment(), ContractView.IArchiveRidesView {
     lateinit var archiveRidesAdapter: ArchiveRidesAdapter
 
     private lateinit var layoutManagerRides: LinearLayoutManager
-    lateinit var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>
-    lateinit var edit: TextView
-    lateinit var archive: TextView
-    lateinit var restore: TextView
-    lateinit var delete: TextView
+    var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>? = null
+    var edit: TextView? = null
+    var archive: TextView? = null
+    var restore: TextView? = null
+    var delete: TextView? = null
 
     lateinit var setActiveRide: ParentHandler<RideInfo>
 
@@ -59,7 +59,7 @@ class ArchiveRidesView : Fragment(), ContractView.IArchiveRidesView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         archiveRidesPresenter.getArchiveRides()
 
@@ -70,16 +70,16 @@ class ArchiveRidesView : Fragment(), ContractView.IArchiveRidesView {
 
 
     override fun setListeners() {
-        restore.setOnClickListener {
+        restore?.setOnClickListener {
             archiveRidesPresenter.restore()
 
-            editRegularRideBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+            editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
-        delete.setOnClickListener {
+        delete?.setOnClickListener {
             archiveRidesPresenter.delete()
 
-            editRegularRideBottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+            editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
@@ -107,12 +107,12 @@ class ArchiveRidesView : Fragment(), ContractView.IArchiveRidesView {
 
 
     override fun onClickItem() {
-        edit.visibility = View.GONE
-        archive.visibility = View.GONE
-        restore.visibility = View.VISIBLE
-        delete.visibility = View.VISIBLE
+        edit?.visibility = View.GONE
+        archive?.visibility = View.GONE
+        restore?.visibility = View.VISIBLE
+        delete?.visibility = View.VISIBLE
 
-        editRegularRideBottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+        editRegularRideBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
 

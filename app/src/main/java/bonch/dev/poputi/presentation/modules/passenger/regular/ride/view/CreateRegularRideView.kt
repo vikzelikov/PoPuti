@@ -118,7 +118,7 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         initBankingAdapter()
 
@@ -1129,8 +1129,8 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
             }
         }
 
-        selected_payment_method.visibility = View.VISIBLE
-        payment_method.visibility = View.GONE
+        selected_payment_method?.visibility = View.VISIBLE
+        payment_method?.visibility = View.GONE
 
         cardsBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
 
@@ -1339,10 +1339,10 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                save_ride.text = ""
-                save_ride.isClickable = false
-                save_ride.isFocusable = false
-                progress_bar_btn.visibility = View.VISIBLE
+                save_ride?.text = ""
+                save_ride?.isClickable = false
+                save_ride?.isFocusable = false
+                progress_bar_btn?.visibility = View.VISIBLE
             }
         }
 
@@ -1354,10 +1354,10 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                save_ride.text = getString(R.string.saveC)
-                save_ride.isClickable = true
-                save_ride.isFocusable = true
-                progress_bar_btn.visibility = View.GONE
+                save_ride?.text = getString(R.string.saveC)
+                save_ride?.isClickable = true
+                save_ride?.isFocusable = true
+                progress_bar_btn?.visibility = View.GONE
             }
         }
 

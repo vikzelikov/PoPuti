@@ -85,7 +85,7 @@ class RateRideView : Fragment(), IRateRideView {
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        super.onActivityCreated(null)
 
         onViewCreatedAnimation()
 
@@ -121,18 +121,18 @@ class RateRideView : Fragment(), IRateRideView {
                 if (activeRide.price != null)
                     price_for_ride?.text = activeRide.price.toString().plus(" ₽")
 
-                plus_wating_fee.visibility = View.VISIBLE
-                wating_fee.visibility = View.VISIBLE
+                plus_wating_fee?.visibility = View.VISIBLE
+                wating_fee?.visibility = View.VISIBLE
 
                 //todo get waiting fee
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    wating_fee.text = Html.fromHtml(
+                    wating_fee?.text = Html.fromHtml(
                         ("<b>21 ₽</b> ${resources.getString(R.string.forWatingPassanger)}"),
                         Html.FROM_HTML_MODE_COMPACT
                     )
 
                 } else {
-                    wating_fee.text = Html.fromHtml(
+                    wating_fee?.text = Html.fromHtml(
                         ("<b>21 ₽</b> ${resources.getString(R.string.forWatingPassanger)}")
                     )
                 }
@@ -144,21 +144,21 @@ class RateRideView : Fragment(), IRateRideView {
 
 
     private fun setListenerRatingBar() {
-        rating_bar.onRatingBarChangeListener =
+        rating_bar?.onRatingBarChangeListener =
             OnRatingBarChangeListener { _, rating, _ ->
                 if (rating < 3) {
                     status_rating.text = resources.getString(R.string.whatHappens)
-                    comment_text_label.visibility = View.VISIBLE
+                    comment_text_label?.visibility = View.VISIBLE
                 } else {
-                    comment_text_label.visibility = View.GONE
+                    comment_text_label?.visibility = View.GONE
                 }
 
                 if (rating == 4.0f || rating == 3.0f) {
-                    status_rating.text = resources.getString(R.string.good)
+                    status_rating?.text = resources.getString(R.string.good)
                 }
 
                 if (rating == 5.0f) {
-                    status_rating.text = resources.getString(R.string.perfect)
+                    status_rating?.text = resources.getString(R.string.perfect)
                 }
             }
     }
@@ -166,8 +166,9 @@ class RateRideView : Fragment(), IRateRideView {
 
     override fun setListeners() {
         send.setOnClickListener {
-            val rating = rating_bar.rating.toInt()
-            rateRidePresenter.rateDone(rating, comment_text.text.toString())
+            rating_bar?.rating?.toInt()?.let {
+                rateRidePresenter.rateDone(it, comment_text?.text?.toString())
+            }
         }
 
         close.setOnClickListener {
@@ -179,8 +180,8 @@ class RateRideView : Fragment(), IRateRideView {
         }
 
         comment_done.setOnClickListener {
-            val comment = comment_text.text.toString().trim()
-            comment_text_label.text = comment
+            val comment = comment_text?.text?.toString()?.trim()
+            comment_text_label?.text = comment
 
             commentDone()
         }
@@ -193,7 +194,7 @@ class RateRideView : Fragment(), IRateRideView {
 
     private fun commentDone() {
         commentBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
-        comment_text.clearFocus()
+        comment_text?.clearFocus()
         hideKeyboard()
     }
 
@@ -245,27 +246,29 @@ class RateRideView : Fragment(), IRateRideView {
     private fun getComment() {
         commentBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        if (!comment_text.isFocused) {
-            comment_text.requestFocus()
-            //set a little timer to open keyboard
-            Handler().postDelayed({
-                //for passanger
-                (activity as? MainActivity)?.let {
-                    Keyboard.showKeyboard(it)
-                }
+        comment_text?.let {
+            if (!comment_text.isFocused) {
+                comment_text?.requestFocus()
+                //set a little timer to open keyboard
+                Handler().postDelayed({
+                    //for passanger
+                    (activity as? MainActivity)?.let {
+                        Keyboard.showKeyboard(it)
+                    }
 
-                //for driver
-                (activity as? MapOrderView)?.let {
-                    Keyboard.showKeyboard(it)
-                }
-            }, 200)
+                    //for driver
+                    (activity as? MapOrderView)?.let {
+                        Keyboard.showKeyboard(it)
+                    }
+                }, 200)
+            }
         }
     }
 
 
     private fun onSlideCancelReason(slideOffset: Float) {
         if (slideOffset > 0) {
-            on_view.alpha = slideOffset * 0.8f
+            on_view?.alpha = slideOffset * 0.8f
         }
     }
 
@@ -273,15 +276,15 @@ class RateRideView : Fragment(), IRateRideView {
     private fun onChangedStateCancelReason(newState: Int) {
         if (newState == BottomSheetBehavior.STATE_DRAGGING) {
             hideKeyboard()
-            comment_text.clearFocus()
+            comment_text?.clearFocus()
         }
 
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            on_view.visibility = View.GONE
-            main_info_layout.elevation = 30f
+            on_view?.visibility = View.GONE
+            main_info_layout?.elevation = 30f
         } else {
-            on_view.visibility = View.VISIBLE
-            main_info_layout.elevation = 0f
+            on_view?.visibility = View.VISIBLE
+            main_info_layout?.elevation = 0f
         }
     }
 

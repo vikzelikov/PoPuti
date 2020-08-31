@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,7 +63,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         //in case passenger cancel the ride
         detailOrderPresenter.subscribeOnRide()
@@ -127,7 +126,7 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
             val price = data?.getIntExtra(1.toString(), 0)
             if (price != null) {
                 detailOrderPresenter.offerPriceDone(price)
-                show_animation.visibility = View.VISIBLE
+                show_animation?.visibility = View.VISIBLE
                 showOfferPriceLoading()
             } else {
                 hideOfferPrice(true)

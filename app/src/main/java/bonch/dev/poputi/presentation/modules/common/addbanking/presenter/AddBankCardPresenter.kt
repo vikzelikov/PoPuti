@@ -43,11 +43,11 @@ class AddBankCardPresenter : BasePresenter<IAddBankCardView>(),
     }
 
 
-    override fun addCardBank(card: String) {
+    override fun addCardBank(card: String?) {
         getView()?.let {
             if (it.isValidCard()) {
 
-                getView()?.addBankCardDone(card)
+                card?.let { getView()?.addBankCardDone(card) }
 
             } else {
                 val context = App.appComponent.getContext()

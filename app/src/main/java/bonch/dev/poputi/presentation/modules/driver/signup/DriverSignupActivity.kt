@@ -54,7 +54,7 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.driver_signup_activity)
 
         showLoading()
@@ -149,17 +149,17 @@ class DriverSignupActivity : AppCompatActivity() {
         val myRunnable = Runnable {
             kotlin.run {
                 val view = general_notification
-                view.text = text
+                view?.text = text
                 handlerAnimation?.removeCallbacksAndMessages(null)
                 handlerAnimation = Handler()
-                view.translationY = 0.0f
-                view.alpha = 0.0f
+                view?.translationY = 0.0f
+                view?.alpha = 0.0f
 
-                view.animate()
-                    .setDuration(500L)
-                    .translationY(100f)
-                    .alpha(1.0f)
-                    .setListener(object : AnimatorListenerAdapter() {
+                view?.animate()
+                    ?.setDuration(500L)
+                    ?.translationY(100f)
+                    ?.alpha(1.0f)
+                    ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             super.onAnimationEnd(animation)
                             handlerAnimation?.postDelayed({ hideNotifications() }, 1000)
@@ -188,10 +188,10 @@ class DriverSignupActivity : AppCompatActivity() {
     private fun hideNotifications() {
         val view = general_notification
 
-        view.animate()
-            .setDuration(500L)
-            .translationY(-100f)
-            .alpha(0.0f)
+        view?.animate()
+            ?.setDuration(500L)
+            ?.translationY(-100f)
+            ?.alpha(0.0f)
     }
 
 
@@ -199,9 +199,9 @@ class DriverSignupActivity : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                on_view.alpha = 1.0f
-                progress_bar_btn.visibility = View.VISIBLE
-                on_view.visibility = View.VISIBLE
+                on_view?.alpha = 1.0f
+                progress_bar_btn?.visibility = View.VISIBLE
+                on_view?.visibility = View.VISIBLE
             }
         }
 
@@ -213,15 +213,15 @@ class DriverSignupActivity : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                progress_bar_btn.visibility = View.GONE
-                on_view.alpha = 1.0f
-                on_view.animate()
-                    .alpha(0f)
-                    .setDuration(500)
-                    .setListener(object : AnimatorListenerAdapter() {
+                progress_bar_btn?.visibility = View.GONE
+                on_view?.alpha = 1.0f
+                on_view?.animate()
+                    ?.alpha(0f)
+                    ?.setDuration(500)
+                    ?.setListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationEnd(animation: Animator?) {
                             //go to the next screen
-                            on_view.visibility = View.GONE
+                            on_view?.visibility = View.GONE
                         }
                     })
             }

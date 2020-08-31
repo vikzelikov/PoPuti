@@ -51,9 +51,9 @@ class AddressesAdapter @Inject constructor(private val createRidePresenter: Cont
 
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(post: Address) {
-            itemView.address.text = post.address
+            itemView.address?.text = post.address
 
-            itemView.city.text = if (post.description.isNullOrEmpty()) {
+            itemView.city?.text = if (post.description.isNullOrEmpty()) {
                 "Место"//todo
             } else {
                 post.description

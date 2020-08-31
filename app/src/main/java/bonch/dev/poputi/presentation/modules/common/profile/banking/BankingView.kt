@@ -33,7 +33,7 @@ class BankingView : AppCompatActivity(), ContractView.IBankingView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.banking_activity)
 
         setListeners()

@@ -13,9 +13,7 @@ class Autocomplete : SuggestSession.SuggestListener {
 
     private val MAX_COUNT_SUGGEST = 7
 
-    private val searchManager: SearchManager = SearchFactory.getInstance().createSearchManager(
-        SearchManagerType.COMBINED
-    )
+    private var searchManager: SearchManager? = null
 
     private val suggestResult: ArrayList<Address> = arrayListOf()
     lateinit var callback: SuggestHandler
@@ -30,6 +28,10 @@ class Autocomplete : SuggestSession.SuggestListener {
 
     fun requestSuggest(query: String, userPoint: Point?, callback: SuggestHandler) {
         userPoint?.let {
+            if (searchManager == null) {
+                searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+            }
+
             if (BOUNDING_BOX == null)
                 BOUNDING_BOX = BoundingBox(
                     Point(userPoint.latitude, userPoint.longitude),
@@ -48,8 +50,8 @@ class Autocomplete : SuggestSession.SuggestListener {
             val options = SUGGEST_OPTIONS
 
             if (box != null && options != null) {
-                val suggestSession: SuggestSession = searchManager.createSuggestSession()
-                suggestSession.suggest(query, box, options, this)
+                val suggestSession = searchManager?.createSuggestSession()
+                suggestSession?.suggest(query, box, options, this)
             }
         }
     }

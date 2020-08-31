@@ -46,9 +46,9 @@ class StoryAdapter @Inject constructor(private val presenter: ContractPresenter.
 
     inner class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(ride: RideInfo) {
-            itemView.from.text = ride.position
-            itemView.to.text = ride.destination
-            itemView.price.text = ride.price?.toString()?.plus(" ₽")
+            itemView.from?.text = ride.position
+            itemView.to?.text = ride.destination
+            itemView.price?.text = ride.price?.toString()?.plus(" ₽")
 
             try {
                 val time = ride.startAt
@@ -72,7 +72,7 @@ class StoryAdapter @Inject constructor(private val presenter: ContractPresenter.
                             Calendar.LONG, Locale("ru")
                         )
 
-                        itemView.date.text = "$day"
+                        itemView.date?.text = "$day"
                             .plus(" $mounth")
                             .plus(", ${itemView.context.getString(R.string.in1)} ")
                             .plus("$hours:$min")

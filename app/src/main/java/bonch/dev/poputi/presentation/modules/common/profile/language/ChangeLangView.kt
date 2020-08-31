@@ -25,7 +25,7 @@ class ChangeLangView : AppCompatActivity(), ContractView.IChangeLangView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.change_lang_activity)
 
         setListeners()

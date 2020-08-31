@@ -25,7 +25,7 @@ class SupportView : AppCompatActivity(), ContractView.ISupportView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         setContentView(R.layout.support_activity)
 
         setListeners()

@@ -1,5 +1,6 @@
 package bonch.dev.poputi.presentation.modules.driver.signup.suggest.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class SuggestAdapter @Inject constructor(
     override fun getItemCount() = list.size
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
         val suggestText = list[position]
         holder.bind(suggestText)
@@ -48,7 +50,7 @@ class SuggestAdapter @Inject constructor(
     class ItemPostHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(post: String) {
-            itemView.text_suggest.text = post
+            itemView.text_suggest?.text = post
         }
     }
 

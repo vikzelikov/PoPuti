@@ -17,7 +17,7 @@ interface ContractPresenter {
         fun instance(): ConfirmPhonePresenter
         fun startTimerRetrySend(activity: MainActivity)
         fun isCodeEnter(): Boolean
-        fun checkCode(phone: String?, code: String)
+        fun checkCode(phone: String?, code: String?)
         fun setViewTimer()
         fun timerFinish()
         fun onResponseCheckCode(isCorrect: Boolean)

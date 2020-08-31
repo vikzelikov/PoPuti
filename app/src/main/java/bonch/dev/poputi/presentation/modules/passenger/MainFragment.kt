@@ -89,7 +89,7 @@ class MainFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         detectCity()
 
@@ -196,8 +196,7 @@ class MainFragment : Fragment() {
         }
 
         if (profile == null) {
-            profile =
-                ProfileView()
+            profile = ProfileView()
         }
     }
 
@@ -213,7 +212,7 @@ class MainFragment : Fragment() {
                 attachTrackRide()
             }
         } else {
-            nav_view?.visibility = View.VISIBLE
+            checkoutNavView(true)
             mapCreateRide?.attachCreateRide()
 
             profile?.changeGeoMap = {
@@ -233,9 +232,7 @@ class MainFragment : Fragment() {
 
         //pass callback
         childFragment.backHandler = {
-            nav_view?.visibility = View.VISIBLE
-            nav_view?.isClickable = true
-            nav_view?.isFocusable = true
+            checkoutNavView(true)
             ride_frame_container?.visibility = View.GONE
             mapCreateRide?.attachCreateRide()
         }
@@ -447,15 +444,17 @@ class MainFragment : Fragment() {
 
                     showPopup(city)
 
-                    yes.setOnClickListener {
+                    yes?.setOnClickListener {
                         Geo.selectedCity = city
 
                         ProfileInteractor().saveMyCity(city)
 
+                        city.address?.let { city -> profile?.setMyCity(city) }
+
                         hidePopup()
                     }
 
-                    not.setOnClickListener {
+                    not?.setOnClickListener {
                         val intent = Intent(context, SelectCityView::class.java)
                         this.startActivityForResult(intent, Geo.SELECT_CITY)
                     }
@@ -467,25 +466,25 @@ class MainFragment : Fragment() {
 
         } else isShowErrorPopup = false
 
-        select.setOnClickListener {
+        select?.setOnClickListener {
             val intent = Intent(context, SelectCityView::class.java)
             this.startActivityForResult(intent, Geo.SELECT_CITY)
         }
 
-        info_my_city.setOnClickListener { }
+        info_my_city?.setOnClickListener { }
     }
 
 
     private fun showPopup(city: Address) {
-        on_view.visibility = View.VISIBLE
-        on_view.alpha = 0.8f
-        info_my_city.visibility = View.VISIBLE
+        on_view?.visibility = View.VISIBLE
+        on_view?.alpha = 0.8f
+        info_my_city?.visibility = View.VISIBLE
         val a =
             AnimationUtils.loadAnimation(
                 info_my_city.context,
                 R.anim.offer_slide_in_top
             )
-        info_my_city.startAnimation(a)
+        info_my_city?.startAnimation(a)
 
         city_text_view?.text = getString(R.string.yourCity)
             .plus(" ")
@@ -495,15 +494,15 @@ class MainFragment : Fragment() {
 
 
     private fun showPopupError() {
-        on_view.visibility = View.VISIBLE
-        on_view.alpha = 0.8f
-        info_my_city.visibility = View.VISIBLE
+        on_view?.visibility = View.VISIBLE
+        on_view?.alpha = 0.8f
+        info_my_city?.visibility = View.VISIBLE
         val a =
             AnimationUtils.loadAnimation(
                 info_my_city.context,
                 R.anim.offer_slide_in_top
             )
-        info_my_city.startAnimation(a)
+        info_my_city?.startAnimation(a)
 
         yes?.visibility = View.GONE
         not?.visibility = View.GONE

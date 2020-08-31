@@ -35,13 +35,13 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
     @Inject
     lateinit var regularDrivePresenter: ContractPresenter.IRegularDrivePresenter
 
-    lateinit var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>
-    lateinit var edit: TextView
-    lateinit var archive: TextView
-    lateinit var restore: TextView
-    lateinit var delete: TextView
-    lateinit var onView: View
-    lateinit var progressBarOpenRide: ProgressBar
+    var editRegularRideBottomSheet: BottomSheetBehavior<RelativeLayout>? = null
+    var edit: TextView? = null
+    var archive: TextView? = null
+    var restore: TextView? = null
+    var delete: TextView? = null
+    var onView: View? = null
+    var progressBarOpenRide: ProgressBar? = null
 
     private lateinit var activeRidesView: ActiveRidesView
     private lateinit var archiveRidesView: ArchiveRidesView
@@ -82,7 +82,7 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, null)
 
         setListeners()
 
