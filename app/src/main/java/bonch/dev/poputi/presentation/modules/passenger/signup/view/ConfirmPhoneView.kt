@@ -27,7 +27,6 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
     lateinit var confirmPhonePresenter: ContractPresenter.IConfirmPhonePresenter
 
 
-
     init {
         SignupComponent.passengerSignupComponent?.inject(this)
 
@@ -53,7 +52,7 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
 
         Keyboard.showKeyboard(activity as MainActivity)
         Handler().postDelayed({
-            code_edit_text.requestFocus()
+            code_edit_text?.requestFocus()
         }, 300)
 
         super.onViewCreated(view, null)
@@ -185,6 +184,11 @@ class ConfirmPhoneView : Fragment(), ContractView.IConfirmView {
 
     override fun setSoftInput() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
+
+
+    override fun hideRetryCode() {
+        retry_send?.visibility = View.GONE
     }
 
 

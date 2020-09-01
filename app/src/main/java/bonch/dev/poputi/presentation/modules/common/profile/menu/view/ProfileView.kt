@@ -230,7 +230,7 @@ class ProfileView : Fragment(), IProfileView {
         if (profileData.imgUser != null)
             img = profileData.imgUser
 
-        if (img != null)
+        if (img != null && img_user != null)
             Glide.with(img_user.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .error(R.drawable.ic_default_ava)

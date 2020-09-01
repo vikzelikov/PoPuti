@@ -156,7 +156,7 @@ class PhoneView : Fragment(), ContractView.IPhoneView {
             )
 
 
-        phone_number.hint = listener.placeholder()
+        phone_number?.hint = listener.placeholder()
     }
 
 

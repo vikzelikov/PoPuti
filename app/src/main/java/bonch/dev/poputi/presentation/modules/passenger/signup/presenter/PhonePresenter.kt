@@ -1,7 +1,5 @@
 package bonch.dev.poputi.presentation.modules.passenger.signup.presenter
 
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
@@ -29,19 +27,9 @@ class PhonePresenter : BasePresenter<ContractView.IPhoneView>(), ContractPresent
             val res = App.appComponent.getContext().resources
 
             if (RetrySendTimer.seconds == null || RetrySendTimer.seconds == 0L) {
-//                signupInteractor.sendSms(phone) { isSuccess ->
-//                    if (!isSuccess) {
-//                        val mainHandler = Handler(Looper.getMainLooper())
-//                        val myRunnable = Runnable {
-//                            kotlin.run {
-//                                getView()?.showNotification(res.getString(R.string.errorSystem))
-//                            }
-//                        }
-//                        mainHandler.post(myRunnable)
-//                    }
-//                }
 
                 MainRouter.showView(R.id.show_confirm_phone_view, getView()?.getNavHost(), null)
+
             } else {
                 val error = "${res?.getString(R.string.waitFor)}" +
                         " ${RetrySendTimer.seconds}" +

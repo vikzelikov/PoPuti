@@ -5,7 +5,9 @@ import android.os.CountDownTimer
 object RetrySendTimer {
 
     var startTime = 15000L
+    const val maxInterval = 60000L
     private const val interval = 1000L
+    private const val intervalB = 15000L
     private var sendTimer: SendTimer? = null
     var seconds: Long? = null
 
@@ -17,9 +19,13 @@ object RetrySendTimer {
     }
 
 
-    fun increaseStartTime(interval: Long, presenter: ContractPresenter.IConfirmPhonePresenter) {
-        startTime += interval
-        sendTimer = SendTimer(startTime, RetrySendTimer.interval, presenter)
+    fun increaseStartTime(presenter: ContractPresenter.IConfirmPhonePresenter): Boolean {
+        return if (startTime +  intervalB >= maxInterval) false
+        else {
+            startTime += intervalB
+            sendTimer = SendTimer(startTime, interval, presenter)
+            true
+        }
     }
 
 

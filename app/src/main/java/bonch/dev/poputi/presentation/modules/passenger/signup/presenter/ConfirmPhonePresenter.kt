@@ -3,12 +3,12 @@ package bonch.dev.poputi.presentation.modules.passenger.signup.presenter
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.FragmentActivity
-import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.passenger.signup.DataSignup
 import bonch.dev.poputi.domain.interactor.passenger.signup.ISignupInteractor
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.passenger.signup.SignupComponent
 import bonch.dev.poputi.presentation.modules.passenger.signup.view.ContractView
@@ -22,12 +22,24 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
     lateinit var signupInteractor: ISignupInteractor
 
 
-    private val maxInterval = 60000L
-    private val interval = 15000L
-
-
     init {
         SignupComponent.passengerSignupComponent?.inject(this)
+    }
+
+
+    private fun sendCode(phone: String) {
+//        signupInteractor.sendSms(phone) { isSuccess ->
+//            if (!isSuccess) {
+//                val mainHandler = Handler(Looper.getMainLooper())
+//                val myRunnable = Runnable {
+//                    kotlin.run {
+//                        val res = App.appComponent.getContext().resources
+//                        getView()?.showNotification(res.getString(R.string.errorSystem))
+//                    }
+//                }
+//                mainHandler.post(myRunnable)
+//            }
+//        }
     }
 
 
@@ -127,14 +139,25 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
 
     override fun startTimerRetrySend(activity: MainActivity) {
         if (RetrySendTimer.seconds == null) {
+
+            DataSignup.phone?.let { sendCode(it) }
+
             RetrySendTimer.getInstance(this)?.start()
 
-        } else if (RetrySendTimer.startTime < maxInterval) {
+        } else if (RetrySendTimer.startTime < RetrySendTimer.maxInterval) {
 
             if (RetrySendTimer.seconds == 0L) {
+
                 RetrySendTimer.getInstance(this)?.cancel()
-                RetrySendTimer.increaseStartTime(interval, this)
-                RetrySendTimer.getInstance(this)?.start()
+                DataSignup.phone?.let { sendCode(it) }
+
+                if (RetrySendTimer.increaseStartTime(this)) {
+                    RetrySendTimer.getInstance(this)?.start()
+
+                } else {
+                    RetrySendTimer.startTime += RetrySendTimer.maxInterval
+                    getView()?.hideRetryCode()
+                }
             }
 
         } else {
