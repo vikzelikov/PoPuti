@@ -19,13 +19,13 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
@@ -389,7 +389,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun commentEditStart() {
         commentBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
-        comment_text?.let{
+        comment_text?.let {
             if (!it.isFocused) {
                 comment_text?.requestFocus()
                 //set a little timer to open keyboard
@@ -440,7 +440,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         val childCount = payments_list.childCount
 
         for (i in 0 until childCount) {
-            payments_list?.let{
+            payments_list?.let {
                 val holder = payments_list?.getChildViewHolder(it.getChildAt(i))
                 val tick = holder?.itemView?.findViewById<ImageView>(R.id.tick)
                 tick?.setImageResource(R.drawable.ic_tick)

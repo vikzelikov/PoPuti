@@ -13,6 +13,7 @@ interface ContractView {
     interface IOrdersView : IBaseView {
         fun getAdapter(): OrdersAdapter
         fun getFragment(): Fragment
+        fun stopSearchOrders()
         fun showOrdersLoading()
         fun showRecycler()
     }

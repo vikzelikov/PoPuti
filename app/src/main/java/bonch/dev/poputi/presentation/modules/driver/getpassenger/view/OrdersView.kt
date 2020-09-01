@@ -208,6 +208,11 @@ class OrdersView : Fragment(), ContractView.IOrdersView {
     }
 
 
+    override fun stopSearchOrders() {
+        ordersPresenter.stopSearchOrders()
+    }
+
+
     override fun onDestroy() {
         ordersPresenter.instance().detachView()
         super.onDestroy()

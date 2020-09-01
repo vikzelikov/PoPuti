@@ -11,4 +11,6 @@ interface IProfileView : IBaseView {
 
     fun setMyCity(address: String)
 
+    fun stopSearchOrders()
+
 }

@@ -1,7 +1,5 @@
 package bonch.dev.poputi.domain.entities.common.profile
 
-import android.os.Parcel
-import android.os.Parcelable
 import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.driver.signup.DriverData
 import com.google.gson.annotations.Expose
@@ -40,7 +38,7 @@ open class Profile(
     @Expose
     var isCallsEnable: Boolean = false,
 
-    var isNotificationsEnable: Boolean = false,
+    var isNotificationsEnable: Boolean = true,
 
     var imgUser: String? = null,
 

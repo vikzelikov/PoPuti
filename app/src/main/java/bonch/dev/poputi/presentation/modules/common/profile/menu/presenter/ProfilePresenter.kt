@@ -62,6 +62,8 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                         }
 
                         profileData?.let {
+                            CacheProfile.profile = it
+
                             getView()?.setProfile(it)
                         }
                     }
@@ -93,6 +95,8 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                     getView()?.getNavHost(),
                     null
                 )
+
+                getView()?.stopSearchOrders()
             }
         } else {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))

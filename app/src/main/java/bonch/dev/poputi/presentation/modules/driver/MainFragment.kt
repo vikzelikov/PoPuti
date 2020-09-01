@@ -58,6 +58,8 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, null)
 
         setRatingUI()
+
+        searchOrdersController()
     }
 
 
@@ -173,6 +175,11 @@ class MainFragment : Fragment() {
         on_view_bottom_sheet.setOnClickListener {
             infoBottomSheet?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+    }
+
+
+    private fun searchOrdersController() {
+        profile?.stopSearch = { ordersView?.stopSearchOrders() }
     }
 
 }

@@ -308,6 +308,16 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     }
 
 
+    override fun stopSearchOrders() {
+        blockHandler?.removeCallbacksAndMessages(null)
+        userPositionHandler?.removeCallbacksAndMessages(null)
+        mainHandler?.removeCallbacksAndMessages(null)
+        blockHandler = null
+        userPositionHandler = null
+        mainHandler = null
+    }
+
+
     override fun instance(): OrdersPresenter {
         return this
     }

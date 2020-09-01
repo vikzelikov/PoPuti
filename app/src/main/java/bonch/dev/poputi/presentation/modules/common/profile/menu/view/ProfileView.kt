@@ -19,6 +19,7 @@ import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.domain.utils.Keyboard
+import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.modules.common.profile.menu.presenter.IProfilePresenter
 import bonch.dev.poputi.route.MainRouter
@@ -41,6 +42,7 @@ class ProfileView : Fragment(), IProfileView {
     lateinit var profilePresenter: IProfilePresenter
 
     var changeGeoMap: ParentHandler<Address>? = null
+    var stopSearch: ParentEmptyHandler? = null
 
     private val EXIT = -2
     private val CHECKOUT = -3
@@ -258,6 +260,11 @@ class ProfileView : Fragment(), IProfileView {
     override fun setMyCity(address: String) {
         subtitle_city?.text = address
         subtitle_city?.visibility = View.VISIBLE
+    }
+
+
+    override fun stopSearchOrders() {
+        stopSearch?.let { it() }
     }
 
 
