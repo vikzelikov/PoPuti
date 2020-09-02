@@ -2,6 +2,7 @@ package bonch.dev.poputi.presentation.modules.common.profile.menu.presenter
 
 import android.content.Intent
 import androidx.fragment.app.Fragment
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.ride.Address
 
 
@@ -36,6 +37,8 @@ interface IProfilePresenter {
     fun showStoryOrders(isPassanger: Boolean)
 
     fun getMyCity(): Address?
+
+    fun checkModerateVerification(photos: Array<Photo>)
 
     fun logout()
 

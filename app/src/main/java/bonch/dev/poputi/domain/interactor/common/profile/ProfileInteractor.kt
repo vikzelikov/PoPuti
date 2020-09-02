@@ -9,9 +9,6 @@ import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.media.MediaObject
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
-import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
-import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
-import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyData
 import bonch.dev.poputi.domain.entities.common.rate.Review
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
@@ -100,28 +97,28 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun uploadPhoto(image: File, profile: Profile, callback: SuccessHandler) {
+    override fun uploadPhoto(image: File, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
         if (token != null && userId != -1) {
-            mediaRepository.loadPhoto(token, image) { media, error ->
-                when {
-                    error != null -> {
-                        //Retry request
-                        mediaRepository.loadPhoto(token, image) { mediaObj, _ ->
-                            if (mediaObj != null) {
-                                remoteSaveProfile(mediaObj, token, userId, callback)
-                            } else callback(false)
-                        }
-                    }
-                    media != null -> {
-                        remoteSaveProfile(media, token, userId, callback)
-                    }
-                    else -> callback(false)
-                }
+            mediaRepository.loadPhoto(token, image) { media, _ ->
+                if (media != null) remoteSaveProfile(media, token, userId, callback)
+                else callback(false)
             }
         } else callback(false)
+    }
+
+
+    override fun deletePhoto(imageId: Int, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            mediaRepository.deletePhoto(token, imageId, callback)
+        } else {
+            //error
+            callback(false)
+        }
     }
 
 
@@ -135,14 +132,7 @@ class ProfileInteractor : IProfileInteractor {
         photo.apply {
             imgId = intArrayOf(media.id)
         }
-        profileRepository.savePhoto(userId, token, photo) { isSuccess ->
-            if (!isSuccess) {
-                //Retry request
-                profileRepository.savePhoto(userId, token, photo) {
-                    callback(true)
-                }
-            } else callback(true)
-        }
+        profileRepository.savePhoto(userId, token, photo, callback)
     }
 
 
@@ -175,82 +165,6 @@ class ProfileInteractor : IProfileInteractor {
 
     override fun closeRealm() {
         profileStorage.closeRealm()
-    }
-
-
-    /**
-     * VERIFICATION
-     * */
-    override fun verification(data: Verify, callback: SuccessHandler) {
-        val token = profileStorage.getToken()
-        val userId = profileStorage.getUserId()
-
-        if (token != null && userId != -1) {
-//            profileRepository.verification(data, token, userId) { driverData, error ->
-//                if (error != null) {
-//
-//                } else if (driverData?.driver != null) {
-//                    val driverId = driverData.driver?.driverId
-//                    driverId?.let { profileStorage.saveDriverId(it) }
-//                    //ok
-//                    callback(true)
-//                }
-//            }
-        } else {
-            //error
-            callback(false)
-        }
-    }
-
-
-    override fun uploadPhoto(image: File, id: Int, callback: SuccessHandler) {
-        val token = profileStorage.getToken()
-
-        if (token != null) {
-            mediaRepository.loadPhoto(token, image) { media, _ ->
-                if (media != null) {
-                    //ok
-                    try {
-                        val imageId = media.id
-
-                        VerifyData.listDocs[id].imgId = imageId
-                        VerifyData.listDocs[id].id = imageId
-
-                        callback(true)
-                    } catch (ex: IndexOutOfBoundsException) {
-                        callback(false)
-                    }
-                } else callback(false)
-            }
-        } else {
-            //error
-            callback(false)
-        }
-    }
-
-
-    override fun deletePhoto(imageId: Int, callback: SuccessHandler) {
-        val token = profileStorage.getToken()
-
-        if (token != null) {
-            mediaRepository.deletePhoto(token, imageId, callback)
-        } else {
-            //error
-            callback(false)
-        }
-    }
-
-
-    override fun putNewPhoto(photo: NewPhoto, callback: SuccessHandler) {
-        val token = profileStorage.getToken()
-        val userId = profileStorage.getUserId()
-
-        if (token != null && userId != -1) {
-            profileRepository.putNewPhoto(photo, token, userId, callback)
-        } else {
-            //error
-            callback(false)
-        }
     }
 
 
@@ -296,6 +210,10 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
+
+    /**
+     * CITY DETECT
+     * */
     override fun getMyCity(): Address? {
         return profileStorage.getMyCity()
     }

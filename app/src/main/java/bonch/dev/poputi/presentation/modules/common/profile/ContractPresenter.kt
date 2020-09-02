@@ -31,10 +31,8 @@ interface ContractPresenter {
 
 
     interface IVerifyPresenter {
-        fun sortDocs()
-        fun loadPhoto()
         fun checkVerification()
-        fun createVerification()
+        fun verification()
         fun instance(): VerifyPresenter
         fun onActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?)
         fun getCamera(activity: Activity)

@@ -113,7 +113,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         if (requestCode == profilePresenter.instance().CONFIRM_PERSON && resultCode == Activity.RESULT_OK) {
-            moderate_icon?.visibility = View.VISIBLE
+            showModerateIcon()
         }
 
         if (requestCode == Geo.SELECT_CITY && resultCode == Activity.RESULT_OK) {
@@ -241,6 +241,12 @@ class ProfileView : Fragment(), IProfileView {
         user_rating?.text = if (profileData.rating == null) {
             "0.0"
         } else profileData.rating.toString()
+
+
+        profileData.photos?.let {
+            profilePresenter.checkModerateVerification(it)
+        }
+
     }
 
 
@@ -260,6 +266,11 @@ class ProfileView : Fragment(), IProfileView {
     override fun setMyCity(address: String) {
         subtitle_city?.text = address
         subtitle_city?.visibility = View.VISIBLE
+    }
+
+
+    override fun showModerateIcon() {
+        moderate_icon?.visibility = View.VISIBLE
     }
 
 

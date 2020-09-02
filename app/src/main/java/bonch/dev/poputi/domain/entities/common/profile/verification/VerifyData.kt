@@ -6,5 +6,4 @@ object VerifyData {
     var idStep: VerifyStep = VerifyStep.SELF_PHOTO_PASSPORT
     var imgUri: String? = null
     var listDocs: ArrayList<Photo> = arrayListOf()
-    var verify: Verify? = null
 }

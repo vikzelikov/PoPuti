@@ -225,7 +225,7 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
                 )
                 mapView?.map?.move(
                     cameraPosition,
-                    Animation(Animation.Type.SMOOTH, 1.1f),
+                    Animation(Animation.Type.SMOOTH, 0.9f),
                     null
                 )
             }

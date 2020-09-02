@@ -100,6 +100,12 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
 
         from_adr?.setText(Coordinate.fromAdr?.address)
         Coordinate.toAdr = null
+
+        mapView()?.map?.cameraPosition?.let {
+            Handler().postDelayed({
+                requestGeocoder(it, false)
+            }, 1000)
+        }
     }
 
 

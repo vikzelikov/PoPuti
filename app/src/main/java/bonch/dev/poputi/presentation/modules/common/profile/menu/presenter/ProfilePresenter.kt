@@ -7,7 +7,9 @@ import android.os.Looper
 import androidx.fragment.app.Fragment
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
+import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyStep
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.utils.Geo
@@ -17,6 +19,7 @@ import bonch.dev.poputi.presentation.modules.common.profile.city.SelectCityView
 import bonch.dev.poputi.presentation.modules.common.profile.language.ChangeLangView
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.ProfileDetailView
 import bonch.dev.poputi.presentation.modules.common.profile.menu.view.IProfileView
+import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.passenger.verification.VerifyView
 import bonch.dev.poputi.presentation.modules.driver.signup.DriverSignupActivity
 import bonch.dev.poputi.route.MainRouter
@@ -100,6 +103,25 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
             }
         } else {
             getView()?.showNotification(context.resources.getString(R.string.checkInternet))
+        }
+    }
+
+
+    override fun checkModerateVerification(photos: Array<Photo>) {
+        val list = arrayListOf<Photo>()
+
+        photos.forEach {
+            if (it.imgName == VerifyPresenter.getTitlePhoto(VerifyStep.SELF_PHOTO_PASSPORT) && it.isVerify == 0) {
+                list.add(it)
+            }
+
+            if (it.imgName == VerifyPresenter.getTitlePhoto(VerifyStep.PASSPORT_ADDRESS_PHOTO) && it.isVerify == 0) {
+                list.add(it)
+            }
+
+            if (list.size == 2) {
+                getView()?.showModerateIcon()
+            }
         }
     }
 

@@ -1,8 +1,8 @@
 package bonch.dev.poputi.data.network.common
 
+import bonch.dev.poputi.domain.entities.common.media.Media
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
-import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import retrofit2.Response
 import retrofit2.http.*
@@ -22,7 +22,7 @@ interface ProfileService {
         @HeaderMap headers: Map<String, String>,
         @Path("id") id: Int,
         @Body photo: ProfilePhoto
-    ): Response<*>
+    ): Response<Media>
 
 
     @GET("/api/users/{id}")
@@ -30,14 +30,6 @@ interface ProfileService {
         @HeaderMap headers: Map<String, String>,
         @Path("id") id: Int
     ): Response<Profile>
-
-
-    @PUT("/api/users/{id}")
-    suspend fun putNewPhoto(
-        @HeaderMap headers: Map<String, String>,
-        @Path("id") driverId: Int,
-        @Body photo: NewPhoto
-    ): Response<*>
 
 
     @GET("/api/users/me/passenger_history")

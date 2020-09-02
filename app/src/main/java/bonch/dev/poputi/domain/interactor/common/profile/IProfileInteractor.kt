@@ -2,8 +2,6 @@ package bonch.dev.poputi.domain.interactor.common.profile
 
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
 import bonch.dev.poputi.domain.entities.common.profile.Profile
-import bonch.dev.poputi.domain.entities.common.profile.verification.NewPhoto
-import bonch.dev.poputi.domain.entities.common.profile.verification.Verify
 import bonch.dev.poputi.domain.entities.common.rate.Review
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
@@ -22,7 +20,7 @@ interface IProfileInteractor {
 
     fun getProfile(callback: DataHandler<Profile?>)
 
-    fun uploadPhoto(image: File, profile: Profile, callback: SuccessHandler)
+    fun uploadPhoto(image: File, callback: SuccessHandler)
 
     fun saveCheckoutDriver(isDriver: Boolean)
 
@@ -38,13 +36,7 @@ interface IProfileInteractor {
 
 
     //VERIFICATION
-    fun verification(data: Verify, callback: SuccessHandler)
-
-    fun uploadPhoto(image: File, id: Int, callback: SuccessHandler)
-
     fun deletePhoto(imageId: Int, callback: SuccessHandler)
-
-    fun putNewPhoto(photo: NewPhoto, callback: SuccessHandler)
 
 
     //STORY RIDES

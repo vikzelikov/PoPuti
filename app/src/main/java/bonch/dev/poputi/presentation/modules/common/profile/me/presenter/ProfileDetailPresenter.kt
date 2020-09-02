@@ -124,7 +124,7 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                     if (btm != null) {
                         val file = mediaEvent?.convertImage(btm, "photo")
                         if (file != null) {
-                            profileInteractor.uploadPhoto(file, profileData) {
+                            profileInteractor.uploadPhoto(file) {
                                 isPhotoUploaded = true
                             }
                         } else isPhotoUploaded = true

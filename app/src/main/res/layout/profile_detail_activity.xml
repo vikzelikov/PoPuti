@@ -506,15 +506,16 @@
         </LinearLayout>
 
 
-        <View
-            android:id="@+id/on_view_profile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@android:color/black"
-            android:visibility="gone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <View
+        android:id="@+id/on_view_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@android:color/black"
+        android:visibility="gone" />
 
 
     <View

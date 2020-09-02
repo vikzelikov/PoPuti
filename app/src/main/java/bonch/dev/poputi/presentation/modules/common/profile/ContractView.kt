@@ -24,6 +24,7 @@ interface ContractView {
 
 
     interface IVerifyView : IBaseView {
+        fun resetView()
         fun showFullLoading()
         fun hideFullLoading()
         fun setPhoto(step: VerifyStep, img: String)

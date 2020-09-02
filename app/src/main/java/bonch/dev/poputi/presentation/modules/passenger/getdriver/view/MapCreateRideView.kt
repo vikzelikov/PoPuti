@@ -324,7 +324,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
         mapView.map?.move(
             CameraPosition(point, zoom, cameraPosition.azimuth, cameraPosition.tilt),
-            Animation(Animation.Type.SMOOTH, 1.1f),
+            Animation(Animation.Type.SMOOTH, 0.9f),
             null
         )
     }

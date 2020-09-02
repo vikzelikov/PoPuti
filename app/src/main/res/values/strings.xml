@@ -268,7 +268,8 @@
     <string name="youHaveNoBanking">У Вас не добавлено ни одной карты</string>
     <string name="googlePay">Google Pay</string>
     <string name="passportInfo">Паспортные данные</string>
-    <string name="attachPassportData">Сделайте селфи с паспортом и прикрепите \nскан или фото прописки</string>
+    <string name="attachPassportData">Сделайте селфи с паспортом</string>
+    <string name="attachPassportData1">Прикрепите скан или фото прописки</string>
     <string name="attach">Прикрепить</string>
     <string name="upload">Загрузить</string>
     <string name="pleaseAttachSecondPhoto">Пожалуйста, прикрепите вторую фотографию паспорта</string>

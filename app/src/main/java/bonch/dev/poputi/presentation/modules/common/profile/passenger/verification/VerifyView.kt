@@ -15,13 +15,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import bonch.dev.poputi.domain.utils.Camera
-import bonch.dev.poputi.domain.utils.Gallery
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyData
 import bonch.dev.poputi.domain.entities.common.profile.verification.VerifyStep
+import bonch.dev.poputi.domain.utils.Camera
+import bonch.dev.poputi.domain.utils.Gallery
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.ContractView
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
@@ -56,15 +56,13 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
         super.onCreate(null)
         setContentView(R.layout.verify_activity)
 
+        showFullLoading()
+
         showSkeletonAnim()
 
         presenter.resetData()
 
         presenter.checkVerification()
-
-        presenter.createVerification()
-
-        presenter.loadPhoto()
 
         setBottomSheet()
 
@@ -108,15 +106,17 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
 
                 if (step == VerifyStep.SELF_PHOTO_PASSPORT) {
                     Glide.with(self_passport_min.context).load(img).into(self_passport_min)
-                    self_passport_min?.visibility = View.VISIBLE
 
+                    self_passport_min?.visibility = View.VISIBLE
                     save?.visibility = View.VISIBLE
+                    subtitle1?.text = getString(R.string.attachPassportData1)
 
                 } else if (step == VerifyStep.PASSPORT_ADDRESS_PHOTO) {
                     Glide.with(address_passport_min.context).load(img).into(address_passport_min)
-                    address_passport_min?.visibility = View.VISIBLE
 
+                    address_passport_min?.visibility = View.VISIBLE
                     attach?.visibility = View.GONE
+                    subtitle1?.visibility = View.GONE
                 }
             }
         }
@@ -133,6 +133,9 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
         val viewsTicsDocs = getTicsDocs()
 
         val arrTics = arrayListOf<Int>()
+
+        default_container?.visibility = View.GONE
+        result_container?.visibility = View.VISIBLE
 
         if (list.isNotEmpty()) {
             try {
@@ -200,8 +203,11 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
                 if (presenter.isBlockBack()) {
                     showNotification(resources.getString(R.string.photoProfileLoading))
                 } else {
-                    setResult(Activity.RESULT_OK)
-                    finish()
+
+                    Thread(Runnable {
+                        presenter.verification()
+                    }).start()
+
                 }
             } else {
                 infoBottomSheet?.state = BottomSheetBehavior.STATE_EXPANDED
@@ -233,6 +239,16 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
         ok_btn.setOnClickListener {
             hideAllBottomSheet()
         }
+    }
+
+
+    override fun resetView() {
+        attach?.visibility = View.VISIBLE
+        subtitle1?.visibility = View.VISIBLE
+        subtitle1?.text = getString(R.string.attachPassportData)
+
+        self_passport_min?.visibility = View.GONE
+        address_passport_min?.visibility = View.GONE
     }
 
 
@@ -417,7 +433,7 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
 
     override fun getImgDocs(): Array<ImageView?> {
         return arrayOf(
-            passport_photo,
+            self_passport,
             passport_address_photo
         )
     }
@@ -425,7 +441,7 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
 
     override fun getTitleDocs(): Array<TextView?> {
         return arrayOf(
-            text_passport,
+            text_self_passport,
             text_passport_address
         )
     }
@@ -433,7 +449,7 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
 
     override fun getTicsDocs(): Array<ImageView?> {
         return arrayOf(
-            status_passport,
+            status_self_passport,
             status_passport_address
         )
     }
@@ -445,8 +461,8 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
             kotlin.run {
                 val photo: Pair<View, View> = when (idDoc) {
                     VerifyStep.SELF_PHOTO_PASSPORT -> Pair(
-                        loading_passport,
-                        passport_photo
+                        loading_self_passport,
+                        self_passport
                     )
                     VerifyStep.PASSPORT_ADDRESS_PHOTO -> Pair(
                         loading_passport_address,
@@ -467,7 +483,7 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
         val mainHandler = Handler(Looper.getMainLooper())
         val myRunnable = Runnable {
             kotlin.run {
-                loading_passport?.visibility = View.GONE
+                loading_self_passport?.visibility = View.GONE
                 loading_passport_address?.visibility = View.GONE
 
                 getImgDocs().forEach { it?.alpha = 1.0f }
@@ -546,6 +562,7 @@ class VerifyView : AppCompatActivity(), ContractView.IVerifyView {
 
 
     override fun finishVerification() {
+        setResult(Activity.RESULT_OK)
         finish()
     }
 

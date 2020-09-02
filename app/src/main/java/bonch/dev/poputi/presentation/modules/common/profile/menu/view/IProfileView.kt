@@ -13,4 +13,6 @@ interface IProfileView : IBaseView {
 
     fun stopSearchOrders()
 
+    fun showModerateIcon()
+
 }

@@ -147,7 +147,7 @@
             android:layout_width="128dp"
             android:layout_height="37dp"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:background="@drawable/bg_btn_blue"
             android:fontFamily="@font/roboto"
             android:shadowColor="@color/colorBlue"
@@ -180,7 +180,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/loading_passport"
+                android:id="@+id/loading_self_passport"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:elevation="10dp"
@@ -197,7 +197,7 @@
 
 
             <ImageView
-                android:id="@+id/passport_photo"
+                android:id="@+id/self_passport"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 android:layout_marginStart="10dp"
@@ -206,7 +206,7 @@
                 android:scaleType="centerCrop" />
 
             <ImageView
-                android:id="@+id/status_passport"
+                android:id="@+id/status_self_passport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -215,13 +215,13 @@
 
 
             <TextView
-                android:id="@+id/text_passport"
+                android:id="@+id/text_self_passport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/passport_photo"
+                android:layout_below="@id/self_passport"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
-                android:text="@string/passport"
+                android:text="@string/selfWithPassport"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
