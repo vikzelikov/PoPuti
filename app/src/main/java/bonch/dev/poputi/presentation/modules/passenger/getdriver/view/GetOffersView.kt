@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
@@ -261,13 +262,20 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
                 offer.driver?.rating.toString()
             }
 
-            offer.driver?.photos?.sortBy { it.id }
-            var photo: Any? = offer.driver?.photos?.lastOrNull()?.imgUrl
-            if (photo == null) {
-                photo = R.drawable.ic_default_ava
+            val listPhotos = arrayListOf<Photo>()
+            offer.driver?.photos?.forEach {
+                if (it.imgName == "photo") listPhotos.add(it)
+            }
+            val img = when {
+                listPhotos.lastOrNull()?.imgUrl != null -> {
+                    listPhotos.sortBy { it.id }
+                    listPhotos.lastOrNull()?.imgUrl
+                }
+
+                else -> null
             }
             bs_img_driver?.let{
-                Glide.with(bs_img_driver.context).load(photo)
+                Glide.with(bs_img_driver.context).load(img)
                     .apply(RequestOptions().centerCrop().circleCrop())
                     .error(R.drawable.ic_default_ava)
                     .into(bs_img_driver)

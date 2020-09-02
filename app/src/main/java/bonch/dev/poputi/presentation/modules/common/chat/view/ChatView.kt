@@ -15,6 +15,7 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerCommonComponent
 import bonch.dev.poputi.di.module.common.CommonModule
 import bonch.dev.poputi.domain.entities.common.chat.Message
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.modules.common.CommonComponent
@@ -97,10 +98,18 @@ class ChatView : AppCompatActivity(), IChatView {
         val photos = if (isDriver) ActiveRide.activeRide?.driver?.photos
         else ActiveRide.activeRide?.driver?.photos
 
-        photos?.sortBy { it.id }
-        var photo: Any? = photos?.lastOrNull()?.imgUrl
-        if (photo == null) photo = R.drawable.ic_default_ava
+        val listPhotos = arrayListOf<Photo>()
+        photos?.forEach {
+            if (it.imgName == "photo") listPhotos.add(it)
+        }
+        val photo = when {
+            listPhotos.lastOrNull()?.imgUrl != null -> {
+                listPhotos.sortBy { it.id }
+                listPhotos.lastOrNull()?.imgUrl
+            }
 
+            else -> null
+        }
         img?.let {
             Glide.with(img.context).load(photo)
                 .apply(RequestOptions().centerCrop().circleCrop())

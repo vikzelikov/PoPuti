@@ -12,6 +12,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.driver.DaggerRatingComponent
 import bonch.dev.poputi.di.module.driver.RatingModule
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.rate.Review
 import bonch.dev.poputi.presentation.modules.driver.rating.RatingComponent
@@ -95,12 +96,14 @@ class RatingView : Fragment(), IRatingView {
         if (profile.firstName != null)
             name?.text = profile.firstName.plus(" ").plus(profile.lastName)
 
+        val listPhotos = arrayListOf<Photo>()
+        profile.photos?.forEach {
+            if (it.imgName == "photo") listPhotos.add(it)
+        }
         var img = when {
-            profile.photos?.lastOrNull()?.imgUrl != null -> {
-                profile.photos?.sortBy {
-                    it.id
-                }
-                profile.photos?.lastOrNull()?.imgUrl
+            listPhotos.lastOrNull()?.imgUrl != null -> {
+                listPhotos.sortBy { it.id }
+                listPhotos.lastOrNull()?.imgUrl
             }
 
             else -> null

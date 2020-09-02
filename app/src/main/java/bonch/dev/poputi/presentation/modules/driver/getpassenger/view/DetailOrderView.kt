@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
@@ -91,12 +92,20 @@ class DetailOrderView : Fragment(), ContractView.IDetailOrderView {
         if (rating != null) passanger_rating?.text = rating
         else passanger_rating?.text = "0.0"
 
-        //todo TEST
-        order.passenger?.photos?.sortBy { it.id }
-        var photo: Any? = order.passenger?.photos?.lastOrNull()?.imgUrl
-        if (photo == null) photo = R.drawable.ic_default_ava
+        val listPhotos = arrayListOf<Photo>()
+        order.passenger?.photos?.forEach {
+            if (it.imgName == "photo") listPhotos.add(it)
+        }
+        val img = when {
+            listPhotos.lastOrNull()?.imgUrl != null -> {
+                listPhotos.sortBy { it.id }
+                listPhotos.lastOrNull()?.imgUrl
+            }
+
+            else -> null
+        }
         img_passanger?.let{
-            Glide.with(it.context).load(photo)
+            Glide.with(it.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .error(R.drawable.ic_default_ava)
                 .into(it)

@@ -14,6 +14,7 @@ import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerProfileComponent
 import bonch.dev.poputi.di.module.common.ProfileModule
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.ride.Address
@@ -218,12 +219,14 @@ class ProfileView : Fragment(), IProfileView {
         if (profileData.firstName != null)
             name_user?.text = profileData.firstName.plus(" ").plus(profileData.lastName)
 
+        val listPhotos = arrayListOf<Photo>()
+        profileData.photos?.forEach {
+            if (it.imgName == "photo") listPhotos.add(it)
+        }
         var img = when {
-            profileData.photos?.lastOrNull()?.imgUrl != null -> {
-                profileData.photos?.sortBy {
-                    it.id
-                }
-                profileData.photos?.lastOrNull()?.imgUrl
+            listPhotos.lastOrNull()?.imgUrl != null -> {
+                listPhotos.sortBy { it.id }
+                listPhotos.lastOrNull()?.imgUrl
             }
 
             else -> null

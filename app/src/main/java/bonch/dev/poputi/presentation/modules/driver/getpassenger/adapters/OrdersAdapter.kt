@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.presenter.ContractPresenter
 import com.bumptech.glide.Glide
@@ -93,13 +94,20 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
             if (rating != null) itemView.passanger_rating?.text = rating
             else itemView.passanger_rating?.text = "0.0"
 
-            //todo TEST
-            post.passenger?.photos?.sortBy { it.id }
-            var photo: Any? = post.passenger?.photos?.lastOrNull()?.imgUrl
-            if (photo == null) photo = R.drawable.ic_default_ava
+            val listPhotos = arrayListOf<Photo>()
+            post.passenger?.photos?.forEach {
+                if (it.imgName == "photo") listPhotos.add(it)
+            }
+            val img = when {
+                listPhotos.lastOrNull()?.imgUrl != null -> {
+                    listPhotos.sortBy { it.id }
+                    listPhotos.lastOrNull()?.imgUrl
+                }
 
+                else -> null
+            }
             itemView.img_passanger?.let {
-                Glide.with(itemView.img_passanger.context).load(photo)
+                Glide.with(itemView.img_passanger.context).load(img)
                     .apply(RequestOptions().centerCrop().circleCrop())
                     .error(R.drawable.ic_default_ava)
                     .into(itemView.img_passanger)

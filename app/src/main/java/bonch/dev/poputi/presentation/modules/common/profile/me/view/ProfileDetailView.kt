@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.utils.Camera
@@ -106,12 +107,14 @@ class ProfileDetailView : AppCompatActivity(),
 
 
     override fun setProfile(profileData: Profile) {
+        val listPhotos = arrayListOf<Photo>()
+        profileData.photos?.forEach {
+            if (it.imgName == "photo") listPhotos.add(it)
+        }
         var img = when {
-            profileData.photos?.lastOrNull()?.imgUrl != null -> {
-                profileData.photos?.sortBy {
-                    it.id
-                }
-                profileData.photos?.lastOrNull()?.imgUrl
+            listPhotos.lastOrNull()?.imgUrl != null -> {
+                listPhotos.sortBy { it.id }
+                listPhotos.lastOrNull()?.imgUrl
             }
 
             else -> null
@@ -120,7 +123,7 @@ class ProfileDetailView : AppCompatActivity(),
         if (profileData.imgUser != null)
             img = profileData.imgUser
 
-        if (img != null)
+        if (img != null && img_user != null)
             Glide.with(img_user.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .error(R.drawable.ic_default_ava)

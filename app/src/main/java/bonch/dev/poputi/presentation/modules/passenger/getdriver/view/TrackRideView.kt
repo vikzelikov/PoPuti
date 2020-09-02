@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Driver
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
@@ -96,10 +97,20 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         car_number?.text = driver.car?.number
         car_name?.text = driver.car?.name?.plus(" ")?.plus(driver.car?.model)
 
-        var photo: Any? = driver.photos?.lastOrNull()?.imgUrl
-        if (photo == null) photo = R.drawable.ic_default_ava
+        val listPhotos = arrayListOf<Photo>()
+        driver.photos?.forEach {
+            if (it.imgName == "photo") listPhotos.add(it)
+        }
+        val img = when {
+            listPhotos.lastOrNull()?.imgUrl != null -> {
+                listPhotos.sortBy { it.id }
+                listPhotos.lastOrNull()?.imgUrl
+            }
+
+            else -> null
+        }
         img_driver?.let {
-            Glide.with(it.context).load(photo)
+            Glide.with(it.context).load(img)
                 .apply(RequestOptions().centerCrop().circleCrop())
                 .error(R.drawable.ic_default_ava)
                 .into(it)

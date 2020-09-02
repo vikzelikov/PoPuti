@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.media.Photo
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.OfferItemTimer
@@ -168,13 +169,20 @@ class OffersAdapter @Inject constructor(val getOffersPresenter: ContractPresente
                 offer.driver?.rating.toString()
             }
 
-            offer.driver?.photos?.sortBy { it.id }
-            var photo: Any? = offer.driver?.photos?.lastOrNull()?.imgUrl
-            if (photo == null) {
-                photo = R.drawable.ic_default_ava
+            val listPhotos = arrayListOf<Photo>()
+            offer.driver?.photos?.forEach {
+                if (it.imgName == "photo") listPhotos.add(it)
+            }
+            val img = when {
+                listPhotos.lastOrNull()?.imgUrl != null -> {
+                    listPhotos.sortBy { it.id }
+                    listPhotos.lastOrNull()?.imgUrl
+                }
+
+                else -> null
             }
             itemView.img_driver?.let {
-                Glide.with(itemView.context).load(photo)
+                Glide.with(itemView.context).load(img)
                     .apply(RequestOptions().centerCrop().circleCrop())
                     .error(R.drawable.ic_default_ava)
                     .into(itemView.img_driver)
