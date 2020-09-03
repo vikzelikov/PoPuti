@@ -321,15 +321,23 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
 
 
     private fun cancelRideListener(reasonID: ReasonCancel, textReason: String) {
-        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) { isSuccess ->
-            if (!isSuccess) {
-                Handler().postDelayed({
-                    cancelDone(reasonID, textReason)
-                }, 500)
+        getDriverInteractor.sendReason(textReason) { isSuccess ->
+            if (isSuccess) {
+                getDriverInteractor.updateRideStatus(StatusRide.CANCEL) { isSucc ->
+                    if (!isSucc) {
+                        Handler().postDelayed({
+                            cancelRideListener(reasonID, textReason)
+                        }, 300)
+                    }
+                }
+            } else {
+                if (!isSuccess) {
+                    Handler().postDelayed({
+                        cancelRideListener(reasonID, textReason)
+                    }, 300)
+                }
             }
         }
-
-        getDriverInteractor.sendReason(textReason) {}
 
         ActiveRide.activeRide = null
         getDriverInteractor.removeRideId()

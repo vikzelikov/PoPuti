@@ -249,11 +249,24 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
-        //cancel ride remote
-        getPassengerInteractor.updateRideStatus(StatusRide.CANCEL) {}
-
         //send cancel reason
-        getPassengerInteractor.sendReason(textReason) {}
+        getPassengerInteractor.sendReason(textReason) { isSuccess ->
+            if (isSuccess) {
+                getPassengerInteractor.updateRideStatus(StatusRide.CANCEL) { isSucc ->
+                    if (!isSucc) {
+                        Handler().postDelayed({
+                            cancelDone(reasonID, textReason)
+                        }, 300)
+                    }
+                }
+            } else {
+                if (!isSuccess) {
+                    Handler().postDelayed({
+                        cancelDone(reasonID, textReason)
+                    }, 300)
+                }
+            }
+        }
 
         stopService()
         clearRide()

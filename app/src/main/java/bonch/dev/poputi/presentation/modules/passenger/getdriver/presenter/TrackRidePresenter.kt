@@ -117,11 +117,13 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun cancelDone(reasonID: ReasonCancel, textReason: String) {
         clearData()
 
-        //cancel ride remote
-        getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
-
         //send cancel reason
-        getDriverInteractor.sendReason(textReason) {}
+        getDriverInteractor.sendReason(textReason) { isSuccess ->
+            if (isSuccess) {
+                //cancel ride remote
+                getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
+            }
+        }
 
         if (reasonID == ReasonCancel.MISTAKE_ORDER || reasonID == ReasonCancel.OTHER_REASON) {
             Coordinate.toAdr = null
