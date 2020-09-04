@@ -74,46 +74,43 @@ class DriverSignupActivity : AppCompatActivity() {
 //        if (true) hideLoading()
 //        else
         //try to get info about driver and docs
-            signupInteractor.getDriver { driver, _ ->
-                if (driver != null) {
-                    hideLoading()
+        signupInteractor.getDriver { driver, _ ->
+            if (driver != null) {
+                hideLoading()
 
-                    getDriverResponse(driver)
-                } else {
-                    //try to get driver with userId
-                    signupInteractor.getUser { profile, _ ->
-                        val driverData = profile?.driver
+                getDriverResponse(driver)
+            } else {
+                //try to get driver with userId
+                signupInteractor.getUser { profile, _ ->
+                    val driverData = profile?.driver
 
-                        if (driverData == null) {
-                            hideLoading()
-                        } else {
-                            if (driverData.isVerify) {
-                                hideLoading()
-                                showDriverUI()
+                    if (driverData == null) {
+                        hideLoading()
+                    } else {
+                        if (driverData.isVerify) showDriverUI()
+                        else {
+                            val driverId = driverData.driverId
+                            if (driverId != null) {
+                                signupInteractor.saveDriverID(driverId)
 
-                            } else {
-                                val driverId = driverData.driverId
-                                if (driverId != null) {
-                                    signupInteractor.saveDriverID(driverId)
-
-                                    signupInteractor.getDriver { driver, _ ->
-                                        driver?.let { getDriverResponse(it) }
-                                    }
+                                signupInteractor.getDriver { driver, _ ->
+                                    driver?.let { getDriverResponse(it) }
                                 }
                             }
                         }
                     }
                 }
             }
+        }
     }
 
 
     private fun getDriverResponse(driver: DriverData) {
-        hideLoading()
-
         if (driver.isVerify) {
             showDriverUI()
         } else {
+            hideLoading()
+
             showTableDocsView(driver)
         }
     }

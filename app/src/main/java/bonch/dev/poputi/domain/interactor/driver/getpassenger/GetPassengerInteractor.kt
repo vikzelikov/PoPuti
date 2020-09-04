@@ -151,6 +151,14 @@ class GetPassengerInteractor : IGetPassengerInteractor {
         }
     }
 
+    override fun updateRideStatus(rideId: Int, status: StatusRide, callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            getPassengerRepository.updateRideStatus(status, rideId, token, callback)
+        }
+    }
+
 
     override fun setDriverInRide(callback: SuccessHandler) {
         val userId = profileStorage.getUserId()

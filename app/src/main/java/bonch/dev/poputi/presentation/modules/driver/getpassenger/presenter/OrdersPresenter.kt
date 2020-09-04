@@ -6,10 +6,10 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import bonch.dev.poputi.App
-import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Ride
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
@@ -45,11 +45,12 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     private var isGettingLocation = false
 
     private val UPDATE_INTERVAL = 10 * 1000.toLong()
-    private val FASTEST_INTERVAL: Long = 2000
+    private val FASTEST_INTERVAL = 2000L
 
     private var mLocationRequest: LocationRequest? = null
     var userPosition: Point? = null
     var isUserGeoAccess = false
+
 
     init {
         GetPassengerComponent.getPassengerComponent?.inject(this)
@@ -314,9 +315,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                     if (calendar.time.time - time > 300 * 1000) {
 
                         rideInfo.rideId?.let {
-                            getPassengerInteractor.cancelRide(
-                                App.appComponent.getApp().getString(R.string.mistake_order), it
-                            )
+                            getPassengerInteractor.updateRideStatus(it, StatusRide.CANCEL) {}
                         }
 
                         result = false
@@ -338,8 +337,6 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     }
 
 
-    override fun instance(): OrdersPresenter {
-        return this
-    }
+    override fun instance() = this
 
 }
