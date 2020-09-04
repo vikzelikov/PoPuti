@@ -6,10 +6,10 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import bonch.dev.poputi.App
+import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Ride
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
-import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
@@ -36,8 +36,8 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     @Inject
     lateinit var getPassengerInteractor: IGetPassengerInteractor
 
-    private val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-    private val calendar = Calendar.getInstance()
+    private val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale("ru"))
+    private val calendar = Calendar.getInstance(Locale("ru"))
 
     private var blockHandler: Handler? = null
     private var userPositionHandler: Handler? = null
@@ -311,11 +311,13 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
             try {
                 val parseDate = format.parse(createdAt)
                 parseDate?.let {
-                    val time = parseDate.time
-                    if (calendar.time.time - time > 300 * 1000) {
+                    val time = parseDate.time + 3 * 60 * 60 * 1000
 
+                    if (calendar.time.time - time > 400 * 1000) {
                         rideInfo.rideId?.let {
-                            getPassengerInteractor.updateRideStatus(it, StatusRide.CANCEL) {}
+                            getPassengerInteractor.cancelRide(
+                                App.appComponent.getContext().getString(R.string.mistake_order), it
+                            )
                         }
 
                         result = false

@@ -18,14 +18,20 @@ import bonch.dev.poputi.domain.entities.driver.getpassenger.ReasonCancel
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.chat.view.ChatView
+import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.GetPassengerComponent
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.ContractView
 import bonch.dev.poputi.service.driver.DriverRideService
 import com.google.gson.Gson
+import com.yandex.mapkit.geometry.Point
+import java.util.*
 import javax.inject.Inject
 
 class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     ContractPresenter.ITrackRidePresenter {
+
+    @Inject
+    lateinit var routing: Routing
 
     @Inject
     lateinit var getPassengerInteractor: IGetPassengerInteractor
@@ -33,8 +39,10 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     private var timer: WaitingTimer? = null
 
     private val IS_DRIVER = "IS_DRIVER"
+    val CHAT_REQUEST = 9
 
     private var isRegistered = false
+    private var isDrivingRoute = true
 
 
     init {
@@ -140,6 +148,26 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         if (order != null) {
             //set UI
             getView()?.setOrder(order)
+
+            val map = getView()?.getMap()
+            val fromLat = order.fromLat
+            val fromLng = order.fromLng
+            val toLat = order.toLat
+            val toLng = order.toLng
+
+            //check
+            val fromPoint = if (fromLat != null && fromLng != null) Point(fromLat, fromLng)
+            else null
+
+            //check
+            val toPoint = if (toLat != null && toLng != null) Point(toLat, toLng)
+            else null
+
+            //set directions
+            if (fromPoint != null && toPoint != null && map != null) {
+                //set routes
+                routing.submitRequest(fromPoint, toPoint, true, map)
+            }
         } else {
             getView()?.showNotification(res.getString(R.string.errorSystem))
         }
@@ -203,11 +231,14 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
                 if (isRestoreRide) {
                     val waitTimestamp = getPassengerInteractor.getWaitTimestamp()
                     if (waitTimestamp != -1L) {
-                        var waitingTime = (System.currentTimeMillis() - waitTimestamp) / 1000
+                        val nowTime = Calendar.getInstance(Locale("ru")).time.time
+                        var waitingTime = (nowTime - waitTimestamp) / 1000
 
                         if (waitingTime > WaitingTimer.WAIT_TIMER) {
                             timer?.isPaidWaiting = true
                             waitingTime -= WaitingTimer.WAIT_TIMER
+                        } else {
+                            waitingTime = WaitingTimer.WAIT_TIMER - waitingTime
                         }
 
                         timer?.waitingTime = waitingTime
@@ -242,6 +273,12 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     override fun tickTimerWaitPassanger(sec: Long, isPaidWating: Boolean) {
         getView()?.tickTimerWaitPassenger(sec, isPaidWating)
+    }
+
+
+    private fun getUserPoint(): Point? {
+        val userLocation = getView()?.getUserLocationLayer()
+        return userLocation?.cameraPosition()?.target
     }
 
 
@@ -284,6 +321,25 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     }
 
 
+    override fun onObjectUpdate() {
+        //app accessed user geo
+        val userPoint = getUserPoint()
+        val map = getView()?.getMap()
+        val fromLat = ActiveRide.activeRide?.fromLat
+        val fromLng = ActiveRide.activeRide?.fromLng
+        val fromPoint = if (fromLat != null && fromLng != null) {
+            Point(fromLat, fromLng)
+        } else {
+            null
+        }
+
+        if (userPoint != null && fromPoint != null && map != null && isDrivingRoute) {
+            Routing().submitRequest(userPoint, fromPoint, false, map)
+            isDrivingRoute = false
+        }
+    }
+
+
     override fun clearRide() {
         getPassengerInteractor.removeRideId()
         ActiveRide.activeRide = null
@@ -295,7 +351,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun showChat(context: Context, fragment: Fragment) {
         val intent = Intent(context, ChatView::class.java)
         intent.putExtra(IS_DRIVER, true)
-        fragment.startActivity(intent)
+        fragment.startActivityForResult(intent, CHAT_REQUEST)
 
         Handler().postDelayed({
             getView()?.checkoutIconChat(false)

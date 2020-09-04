@@ -52,7 +52,7 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
         childFragment.mapView = { getView()?.getMap() }
         childFragment.nextFragment = { attachRateRide(it) }
         childFragment.finishActivity = { getView()?.finishMapActivity() }
-
+        childFragment.locationLayer = { getView()?.getUserLocation() }
 
         this.childTrackRide = childFragment
         fm.beginTransaction()
@@ -108,6 +108,7 @@ class MapOrderPresenter : BasePresenter<ContractView.IMapOrderView>(),
 
     override fun onObjectUpdate() {
         childDetailOrder?.onObjectUpdate()
+        childTrackRide?.onObjectUpdate()
     }
 
 

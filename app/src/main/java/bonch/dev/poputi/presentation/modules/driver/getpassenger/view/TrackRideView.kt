@@ -37,6 +37,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.user_location.UserLocationLayer
 import kotlinx.android.synthetic.main.track_order_ride_layout.*
 import java.util.*
 import javax.inject.Inject
@@ -59,6 +60,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var nextFragment: ParentHandler<FragmentManager>
     lateinit var finishActivity: ParentEmptyHandler
+    lateinit var locationLayer: ParentMapHandler<UserLocationLayer>
 
 
     init {
@@ -96,6 +98,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         var status = trackRidePresenter.getByValue(ActiveRide.activeRide?.statusId)
         if (status == null) status = StatusRide.SEARCH
         trackRidePresenter.changeState(status, true)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == trackRidePresenter.instance().CHAT_REQUEST) {
+            checkoutIconChat(false)
+        }
     }
 
 
@@ -606,8 +617,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             try {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     main_coordinator?.elevation = 100f
+                    main_info_layout?.elevation = 30f
+                    on_view_cancel?.elevation = 40f
                 } else {
                     main_coordinator?.elevation = 65f
+                    main_info_layout?.elevation = 0f
+                    on_view_cancel?.elevation = 75f
                 }
             } catch (ex: java.lang.Exception) {
             }
@@ -679,6 +694,16 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         } catch (ex: java.lang.Exception) {
 
         }
+    }
+
+
+    override fun getUserLocationLayer(): UserLocationLayer? {
+        return locationLayer()
+    }
+
+
+    override fun onObjectUpdate() {
+        trackRidePresenter.onObjectUpdate()
     }
 
 

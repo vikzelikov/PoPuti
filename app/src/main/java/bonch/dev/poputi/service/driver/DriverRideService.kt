@@ -1,11 +1,13 @@
 package bonch.dev.poputi.service.driver
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
@@ -17,7 +19,9 @@ import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.GetPassengerInteractor
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.poputi.presentation.modules.common.chat.view.ChatView
+import com.google.android.gms.location.*
 import com.google.gson.Gson
+import com.yandex.mapkit.geometry.Point
 
 class DriverRideService : Service() {
 
@@ -27,7 +31,12 @@ class DriverRideService : Service() {
 
     private lateinit var intentChangeRide: Intent
     private lateinit var intentChat: Intent
+    private var mLocationRequest: LocationRequest? = null
     private lateinit var getPassengerInteractor: IGetPassengerInteractor
+
+    private val UPDATE_INTERVAL = 10 * 1000.toLong()
+    private val FASTEST_INTERVAL = 2000L
+    private var userPosition: Point? = null
 
     private val CHANNEL_HEADS_UP = "CHANNEL_HEADS_UP"
     private val CHANNEL = "CHANNEL"
@@ -53,6 +62,8 @@ class DriverRideService : Service() {
         intentChat = Intent(CHAT_TAG)
 
         createNotificationChannel()
+
+        startLocationUpdates()
 
         //connect to socket
         getPassengerInteractor.connectSocket { isSuccess ->
@@ -239,5 +250,43 @@ class DriverRideService : Service() {
         notificatonManager.cancelAll()
 
         getPassengerInteractor.disconnectSocket()
+    }
+
+
+    //we already checked geo permission
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        mLocationRequest = LocationRequest()
+        mLocationRequest?.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest?.interval = UPDATE_INTERVAL
+        mLocationRequest?.fastestInterval = FASTEST_INTERVAL
+
+        val builder = LocationSettingsRequest.Builder()
+
+        mLocationRequest?.let {
+            builder.addLocationRequest(it)
+            val locationSettingsRequest = builder.build()
+
+            val settingsClient = LocationServices.getSettingsClient(App.appComponent.getContext())
+            settingsClient.checkLocationSettings(locationSettingsRequest)
+
+            LocationServices
+                .getFusedLocationProviderClient(App.appComponent.getContext())
+                .requestLocationUpdates(
+                    mLocationRequest, object : LocationCallback() {
+                        override fun onLocationResult(locationResult: LocationResult) {
+                            val location = locationResult.lastLocation
+                            val lat = location?.latitude
+                            val lng = location?.longitude
+
+                            if (lat != null && lng != null) {
+                                Log.e("UPDATE", "${lat}")
+                                userPosition = Point(lat, lng)
+                            }
+                        }
+                    },
+                    Looper.myLooper()
+                )
+        }
     }
 }

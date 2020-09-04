@@ -83,6 +83,7 @@ interface ContractPresenter {
         fun startSearchAnimation()
         fun registerReceivers()
         fun confirmAccept()
+        fun mainTimer()
     }
 
 

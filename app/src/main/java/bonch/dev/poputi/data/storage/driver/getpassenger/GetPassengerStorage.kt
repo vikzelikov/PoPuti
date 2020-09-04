@@ -1,6 +1,7 @@
 package bonch.dev.poputi.data.storage.driver.getpassenger
 
 import bonch.dev.poputi.App
+import java.util.*
 
 class GetPassengerStorage : IGetPassengerStorage {
 
@@ -35,7 +36,7 @@ class GetPassengerStorage : IGetPassengerStorage {
         val pref = App.appComponent.getSharedPref()
         val editor = pref.edit()
 
-        val waitingTime = System.currentTimeMillis()
+        val waitingTime = Calendar.getInstance(Locale("ru")).time.time
         editor.putLong(WAITING_TIME, waitingTime)
         editor.apply()
     }

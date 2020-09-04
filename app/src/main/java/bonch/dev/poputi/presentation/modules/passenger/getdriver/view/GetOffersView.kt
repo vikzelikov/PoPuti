@@ -90,6 +90,7 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
         //change status
         ActiveRide.activeRide?.statusId = StatusRide.SEARCH.status
 
+
         //check offers from server
         if (!PassengerRideService.isRunning) getOffersPresenter.checkOnOffers()
 
@@ -102,6 +103,8 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
         receiveUserData(ActiveRide.activeRide)
 
         initializeAdapter()
+
+        getOffersPresenter.mainTimer()
 
         setBottomSheet()
 
@@ -308,8 +311,12 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
         if (isAllowSlide) {
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                 get_driver_coordinator?.elevation = 100f
+                main_info_layout?.elevation = 30f
+                on_view_cancel?.elevation = 40f
             } else {
                 get_driver_coordinator?.elevation = 65f
+                main_info_layout?.elevation = 0f
+                on_view_cancel?.elevation = 75f
             }
         }
     }

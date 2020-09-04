@@ -92,6 +92,15 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == trackRidePresenter.instance().CHAT_REQUEST) {
+            checkoutIconChat(false)
+        }
+    }
+
+
     override fun setInfoDriver(driver: Driver) {
         driver_name?.text = driver.firstName
         car_number?.text = driver.car?.number
@@ -388,8 +397,12 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         if (isAllowSlide) {
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                 main_coordinator?.elevation = 100f
+                main_info_layout?.elevation = 30f
+                on_map_view?.elevation = 40f
             } else {
                 main_coordinator?.elevation = 65f
+                main_info_layout?.elevation = 0f
+                on_map_view?.elevation = 75f
             }
         }
     }

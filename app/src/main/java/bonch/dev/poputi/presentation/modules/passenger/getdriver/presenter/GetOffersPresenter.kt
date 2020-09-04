@@ -139,6 +139,34 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
     }
 
 
+    override fun mainTimer() {
+        getView()?.getAdapter()?.let {
+            if (OffersMainTimer.getInstance() == null)
+                OffersMainTimer.getInstance(it)?.start()
+        }
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale("ru"))
+        val calendar = Calendar.getInstance(Locale("ru"))
+        val createdAt = ActiveRide.activeRide?.createdAt
+
+        if (createdAt != null) {
+            try {
+                val parseDate = format.parse(createdAt)
+                parseDate?.let {
+                    val time = parseDate.time + 3 * 60 * 60 * 1000
+
+                    if (calendar.time.time - time > 300 * 1000) {
+                        requestCancelRide(
+                            App.appComponent.getContext().getString(R.string.mistake_order)
+                        )
+                    }
+                }
+            } catch (ex: ParseException) {
+            }
+        }
+    }
+
+
     private fun getOfferDone(isAcceptByPassenger: Boolean) {
         val res = App.appComponent.getContext().resources
 
@@ -215,8 +243,7 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
     }
 
 
-    private fun getByValue(status: Int) =
-        StatusRide.values().firstOrNull { it.status == status }
+    private fun getByValue(status: Int) = StatusRide.values().firstOrNull { it.status == status }
 
 
     private fun setNewOffer(offer: Offer) {
@@ -311,13 +338,25 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
 
         ActiveRide.activeRide?.let { restoreRide(it) }
 
-        ActiveRide.activeRide?.rideId?.let {
-            getDriverInteractor.cancelRide(textReason, it)
-        }
+        requestCancelRide(textReason)
 
         clearData()
         ActiveRide.activeRide = null
         getDriverInteractor.removeRideId()
+    }
+
+
+    private fun requestCancelRide(textReason: String) {
+        val rideId = ActiveRide.activeRide?.rideId
+        if (rideId != null) {
+            ActiveRide.activeRide?.rideId?.let {
+                getDriverInteractor.cancelRide(textReason, it)
+            }
+        } else {
+            Handler().postDelayed({
+                requestCancelRide(textReason)
+            }, 300)
+        }
     }
 
 
@@ -385,9 +424,8 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
         val toLat = ride.toLat
         val toLng = ride.toLng
 
-        val fromPoint =
-            if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
-            else null
+        val fromPoint = if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
+        else null
 
         val toPoint = if (toLat != null && toLng != null) AddressPoint(toLat, toLng)
         else null

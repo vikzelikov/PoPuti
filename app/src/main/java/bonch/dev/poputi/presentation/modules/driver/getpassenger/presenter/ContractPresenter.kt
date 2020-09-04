@@ -58,6 +58,7 @@ interface ContractPresenter {
         fun cancelDone(reasonID: ReasonCancel, textReason: String)
         fun cancelDoneOtherReason(comment: String?)
         fun changeState(step: StatusRide, isRestoreRide: Boolean)
+        fun onObjectUpdate()
         fun stopService()
         fun clearRide()
         fun nextStep()

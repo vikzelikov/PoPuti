@@ -469,7 +469,7 @@
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
-                android:paddingBottom="27dp"
+                android:paddingBottom="17dp"
                 android:text="@string/passenger_go_out"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
@@ -481,7 +481,7 @@
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:fontFamily="@font/roboto"
                 android:paddingTop="17dp"
-                android:paddingBottom="27dp"
+                android:paddingBottom="30dp"
                 android:text="@string/otherReason"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
@@ -561,7 +561,9 @@
             android:layout_width="match_parent"
             android:layout_height="450dp"
             android:background="@drawable/bg_corners_layout"
+            android:clickable="true"
             android:elevation="30dp"
+            android:focusable="true"
             android:orientation="vertical"
             app:behavior_peekHeight="0dp"
             app:layout_behavior="bonch.dev.poputi.presentation.base.MBottomSheet">
@@ -735,8 +737,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0"
-        android:elevation="40dp"
         android:background="@android:color/black"
+        android:elevation="40dp"
         android:visibility="gone" />
 
 </RelativeLayout>

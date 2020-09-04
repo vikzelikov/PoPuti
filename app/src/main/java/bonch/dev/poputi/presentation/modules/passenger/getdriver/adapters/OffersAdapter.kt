@@ -24,11 +24,6 @@ class OffersAdapter @Inject constructor(val getOffersPresenter: ContractPresente
     var list: ArrayList<Offer> = arrayListOf()
 
 
-    init {
-        if (OffersMainTimer.getInstance() == null)
-            OffersMainTimer.getInstance(this)?.start()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemPostHolder {
         return ItemPostHolder(
             LayoutInflater.from(parent.context)

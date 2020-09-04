@@ -14,6 +14,7 @@ import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
 import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.base.BasePresenter
+import bonch.dev.poputi.presentation.modules.common.chat.view.ChatView
 import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.view.ContractView
@@ -31,6 +32,9 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     @Inject
     lateinit var routing: Routing
+
+    val CHAT_REQUEST = 9
+
 
     init {
         GetDriverComponent.getDriverComponent?.inject(this)
@@ -180,7 +184,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun showChat(context: Context, fragment: Fragment) {
-        MainRouter.showView(R.id.chat_activity, getView()?.getNavHost(), null)
+        val intent = Intent(context, ChatView::class.java)
+        fragment.startActivityForResult(intent, CHAT_REQUEST)
 
         Handler().postDelayed({
             getView()?.checkoutIconChat(false)
