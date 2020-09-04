@@ -71,6 +71,10 @@ data class RideInfo(
     @Expose
     var finishAt: String? = null,
 
+    @SerializedName("created_at")
+    @Expose
+    var createdAt: String? = null,
+
     @SerializedName("user_id")
     @Expose
     var userId: Int? = null,
@@ -116,6 +120,7 @@ data class RideInfo(
         result = 31 * result + (price ?: 0)
         result = 31 * result + (startAt?.hashCode() ?: 0)
         result = 31 * result + (finishAt?.hashCode() ?: 0)
+        result = 31 * result + (createdAt?.hashCode() ?: 0)
         result = 31 * result + (userId ?: 0)
         result = 31 * result + (distance ?: 0)
         result = 31 * result + isNewOrder.hashCode()

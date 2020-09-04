@@ -1,5 +1,6 @@
 package bonch.dev.poputi.domain.interactor.driver.getpassenger
 
+import android.os.Handler
 import android.util.Log
 import bonch.dev.poputi.data.repository.common.chat.IChatRepository
 import bonch.dev.poputi.data.repository.driver.getpassenger.IGetPassengerRepository
@@ -36,6 +37,32 @@ class GetPassengerInteractor : IGetPassengerInteractor {
     }
 
 
+    override fun connectSocketOrders(callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            getPassengerRepository.connectSocketOrders(token) { isSuccess ->
+                if (isSuccess) {
+                    callback(true)
+                } else {
+                    //retry connect
+                    getPassengerRepository.connectSocketOrders(token, callback)
+                }
+            }
+        } else callback(false)
+    }
+
+
+    override fun subscribeOnGetOrders(callback: DataHandler<String?>) {
+        getPassengerRepository.subscribeOnGetOrders(callback)
+    }
+
+
+    override fun subscribeOnDeleteOrder(callback: DataHandler<String?>) {
+        getPassengerRepository.subscribeOnDeleteOrder(callback)
+    }
+
+
     override fun connectSocket(callback: SuccessHandler) {
         val rideId = ActiveRide.activeRide?.rideId
         val token = profileStorage.getToken()
@@ -50,11 +77,6 @@ class GetPassengerInteractor : IGetPassengerInteractor {
                 }
             }
         } else callback(false)
-    }
-
-
-    override fun subscribeOnGetOffers(callback: DataHandler<String?>) {
-        getPassengerRepository.subscribeOnGetOffers(callback)
     }
 
 
@@ -211,16 +233,30 @@ class GetPassengerInteractor : IGetPassengerInteractor {
     }
 
 
-    override fun sendReason(textReason: String, callback: SuccessHandler) {
+    override fun cancelRide(textReason: String, rideId: Int) {
         val token = profileStorage.getToken()
-        val rideId = ActiveRide.activeRide?.rideId
 
-        if (token != null && rideId != null) {
+        if (token != null) {
             getPassengerRepository.sendCancelReason(rideId, textReason, token) { isSuccess ->
-                if (isSuccess) callback(true)
-                else getPassengerRepository.sendCancelReason(rideId, textReason, token, callback)
+                if (isSuccess) {
+                    getPassengerRepository.updateRideStatus(
+                        StatusRide.CANCEL,
+                        rideId,
+                        token
+                    ) { isSucc ->
+                        if (!isSucc) {
+                            Handler().postDelayed({
+                                cancelRide(textReason, rideId)
+                            }, 300)
+                        }
+                    }
+                } else {
+                    Handler().postDelayed({
+                        cancelRide(textReason, rideId)
+                    }, 300)
+                }
             }
-        } else callback(false)
+        }
     }
 
 

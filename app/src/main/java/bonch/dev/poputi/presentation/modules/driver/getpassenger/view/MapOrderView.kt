@@ -74,7 +74,7 @@ class MapOrderView : AppCompatActivity(), UserLocationObjectListener, CameraList
         super.onCreate(null)
 
         //init map
-        MapKitFactory.setApiKey(Constants.API_KEY)
+        MapKitFactory.setApiKey(Constants.API_KEY_YANDEX)
         MapKitFactory.initialize(this)
         DirectionsFactory.initialize(this)
 

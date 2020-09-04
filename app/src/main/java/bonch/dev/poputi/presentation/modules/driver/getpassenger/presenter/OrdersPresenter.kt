@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import bonch.dev.poputi.App
+import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
+import bonch.dev.poputi.domain.entities.common.ride.Ride
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
 import bonch.dev.poputi.domain.utils.Geo
@@ -16,7 +18,11 @@ import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.ContractVi
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.view.MapOrderView
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
+import com.google.gson.Gson
 import com.yandex.mapkit.geometry.Point
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -30,17 +36,19 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     @Inject
     lateinit var getPassengerInteractor: IGetPassengerInteractor
 
+    private val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    private val calendar = Calendar.getInstance()
+
     private var blockHandler: Handler? = null
     private var userPositionHandler: Handler? = null
-    private var mainHandler: Handler? = null
     private var isBlock = false
     private var isGettingLocation = false
 
     private val UPDATE_INTERVAL = 10 * 1000.toLong()
     private val FASTEST_INTERVAL: Long = 2000
 
-    var userPosition: Point? = null
     private var mLocationRequest: LocationRequest? = null
+    var userPosition: Point? = null
     var isUserGeoAccess = false
 
     init {
@@ -73,8 +81,6 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
 
     override fun initOrders() {
-        mainHandler?.removeCallbacksAndMessages(null)
-
         getView()?.showOrdersLoading()
 
         startLocationUpdates()
@@ -86,7 +92,9 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                     val mainHandler = Handler(Looper.getMainLooper())
                     val myRunnable = Runnable {
                         kotlin.run {
-                            startSearchOrders()
+                            getOrders()
+
+                            subscribeOnGetOrders()
                         }
                     }
                     mainHandler.post(myRunnable)
@@ -98,67 +106,63 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     }
 
 
-    override fun startSearchOrders() {
-        //send request every 15 sec
-        val adapter = getView()?.getAdapter()
-        mainHandler?.removeCallbacksAndMessages(null)
-        mainHandler = Handler()
-
-        mainHandler?.postDelayed(object : Runnable {
-            override fun run() {
-                //get new orders
-                getPassengerInteractor.getNewOrder { newOrders, _ ->
-                    if (newOrders != null) {
-                        //get old orders
-                        val oldOrders = adapter?.list
-
-                        if (!oldOrders.isNullOrEmpty()) {
-                            val oldIter = oldOrders.listIterator()
-
-                            //remove duplicates
-                            while (oldIter.hasNext()) {
-                                val oldOrder = oldIter.next()
-
-                                if (newOrders.contains(oldOrder)) {
-                                    val newIter = newOrders.listIterator()
-
-                                    while (newIter.hasNext()) {
-                                        val newOrder = newIter.next()
-                                        newOrder.isNewOrder = true
-
-                                        if (oldOrder == newOrder) {
-                                            newIter.remove()
-                                        }
-                                    }
-                                } else {
-                                    //delete orders if it is too old
-                                    //-1 so RecyclerView indexing another
-                                    try {
-                                        adapter.notifyItemRemoved(oldIter.nextIndex() - 1)
-                                        oldIter.remove()
-                                    } catch (ex: IndexOutOfBoundsException) {
-                                    }
-
-                                    if (adapter.list.isNullOrEmpty()) getView()?.showOrdersLoading()
+    override fun subscribeOnGetOrders() {
+        getPassengerInteractor.connectSocketOrders { isSuccess ->
+            if (isSuccess) {
+                getPassengerInteractor.subscribeOnGetOrders { data, _ ->
+                    if (data != null) {
+                        val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                        if (ride != null) {
+                            val mainHandler = Handler(Looper.getMainLooper())
+                            val myRunnable = Runnable {
+                                kotlin.run {
+                                    ride.isNewOrder = true
+                                    mergeOrders(arrayListOf(ride))
                                 }
                             }
+
+                            mainHandler.post(myRunnable)
                         }
-
-                        //after delete duplicates and old orders, do sorting
-                        calcDistance(newOrders)
                     }
+                }
 
-                    mainHandler?.postDelayed(this, 5000)
+                getPassengerInteractor.subscribeOnDeleteOffer { data, _ ->
+                    if (data != null) {
+                        val ride = Gson().fromJson(data, Ride::class.java)?.ride
+                        ride?.rideId?.let {
+                            val mainHandler = Handler(Looper.getMainLooper())
+                            val myRunnable = Runnable {
+                                kotlin.run {
+                                    getView()?.getAdapter()?.deleteOrder(it)
+                                }
+                            }
+
+                            mainHandler.post(myRunnable)
+                        }
+                    }
                 }
             }
-        }, 0)
+        }
     }
 
 
-    private fun calcDistance(orders: ArrayList<RideInfo>) {
-        println("EEE ${orders.size}")
+    override fun getOrders() {
+        //get new orders
+        getPassengerInteractor.getNewOrder { orders, _ ->
+            if (!orders.isNullOrEmpty()) {
+                val list = arrayListOf<RideInfo>()
+                orders.forEach { if (checkRide(it)) list.add(it) }
+
+                mergeOrders(list)
+            }
+        }
+    }
+
+
+    private fun mergeOrders(orders: ArrayList<RideInfo>) {
         //calculate distance
         if (!orders.isNullOrEmpty() && !isGettingLocation) {
+
             isGettingLocation = true
 
             getView()?.getAdapter()?.list?.let { recyclerList ->
@@ -179,41 +183,35 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
 
                             //if last item, then show in view
                             if (i == orders.lastIndex) {
-                                mergeOrders(orders, copyList)
+                                copyList.addAll(orders)
+                                showOrder(copyList, recyclerList.isEmpty())
                             }
                         }
                     }
                 } else {
                     //geo not accessed
-                    mergeOrders(orders, copyList)
+                    showOrder(orders, recyclerList.isEmpty())
                 }
+
+                isGettingLocation = false
+
             }
         }
     }
 
 
-    private fun mergeOrders(orders: ArrayList<RideInfo>, copyList: ArrayList<RideInfo>) {
-        if (copyList.isNotEmpty()) {
-            //we already have some orders in view
-            copyList.addAll(orders)
-            showOrder(copyList, false)
-
-        } else {
-            //the first showing
-            showOrder(orders, true)
-        }
-
-        //end searching user position
-        isGettingLocation = false
-    }
-
-
     private fun showOrder(orders: ArrayList<RideInfo>, isFirst: Boolean) {
-        var delay = 350L
+        var delay = 250L
         orders.sortBy { it.distance }
 
-        orders.forEachIndexed { i, order ->
-            if (!isFirst) {
+        //first showing
+        if (isFirst) {
+
+            getView()?.showRecycler()
+            getView()?.getAdapter()?.setNewOrders(orders)
+
+        } else {
+            orders.forEachIndexed { i, order ->
                 if (order.isNewOrder) {
                     //+1 so indexing in RecyclerView start from 1
                     //add delay for animation showing
@@ -221,15 +219,9 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                         getView()?.getAdapter()?.setNewOrder(i, order)
                     }, delay)
 
-                    delay += 300
+                    delay += 250
                 }
             }
-        }
-
-        //first showing
-        if (isFirst) {
-            getView()?.showRecycler()
-            getView()?.getAdapter()?.setNewOrders(orders)
         }
     }
 
@@ -308,13 +300,41 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     }
 
 
+    //checking the actual of the trip
+    private fun checkRide(rideInfo: RideInfo): Boolean {
+        var result = true
+
+        val createdAt = rideInfo.createdAt
+
+        if (createdAt != null) {
+            try {
+                val parseDate = format.parse(createdAt)
+                parseDate?.let {
+                    val time = parseDate.time
+                    if (calendar.time.time - time > 300 * 1000) {
+
+                        rideInfo.rideId?.let {
+                            getPassengerInteractor.cancelRide(
+                                App.appComponent.getApp().getString(R.string.mistake_order), it
+                            )
+                        }
+
+                        result = false
+                    }
+                }
+            } catch (ex: ParseException) {
+            }
+        }
+
+        return result
+    }
+
+
     override fun stopSearchOrders() {
         blockHandler?.removeCallbacksAndMessages(null)
         userPositionHandler?.removeCallbacksAndMessages(null)
-        mainHandler?.removeCallbacksAndMessages(null)
         blockHandler = null
         userPositionHandler = null
-        mainHandler = null
     }
 
 

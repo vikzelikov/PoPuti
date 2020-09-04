@@ -246,7 +246,6 @@ class GetDriverRepository : IGetDriverRepository {
         callback: SuccessHandler
     ) {
         val log = "SOCKET_PUSHER/P"
-        val apiKey = "4f8625f09b5081d92386"
         val channelName = "ride"
 
         val options = PusherOptions()
@@ -258,7 +257,7 @@ class GetDriverRepository : IGetDriverRepository {
 
         if (pusher?.connection?.state != ConnectionState.CONNECTED) {
 
-            pusher = Pusher(apiKey, options)
+            pusher = Pusher(Constants.API_KEY_PUSHER, options)
 
             pusher?.connect()
 

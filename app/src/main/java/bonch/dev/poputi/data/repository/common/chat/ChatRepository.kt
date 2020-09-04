@@ -101,7 +101,6 @@ class ChatRepository : IChatRepository {
         callback: SuccessHandler
     ) {
         val log = "CHAT_SOCKET/P"
-        val apiKey = "4f8625f09b5081d92386"
 
         val options = PusherOptions()
         options.setCluster("mt1")
@@ -111,7 +110,7 @@ class ChatRepository : IChatRepository {
 
         if (pusher?.connection?.state != ConnectionState.CONNECTED) {
 
-            pusher = Pusher(apiKey, options)
+            pusher = Pusher(Constants.API_KEY_PUSHER, options)
 
             pusher?.connect()
 

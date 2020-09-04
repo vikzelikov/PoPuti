@@ -13,7 +13,8 @@ interface ContractPresenter {
 
     interface IOrdersPresenter {
         fun initOrders()
-        fun startSearchOrders()
+        fun getOrders()
+        fun subscribeOnGetOrders()
         fun stopSearchOrders()
         fun startProcessBlock()
         fun selectOrder(order: RideInfo)

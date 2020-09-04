@@ -9,11 +9,15 @@ import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 
 interface IGetPassengerInteractor {
 
+    fun connectSocketOrders(callback: SuccessHandler)
+
     fun connectSocket(callback: SuccessHandler)
 
     fun connectChatSocket(callback: SuccessHandler)
 
-    fun subscribeOnGetOffers(callback: DataHandler<String?>)
+    fun subscribeOnGetOrders(callback: DataHandler<String?>)
+
+    fun subscribeOnDeleteOrder(callback: DataHandler<String?>)
 
     fun subscribeOnChangeRide(callback: DataHandler<String?>)
 
@@ -45,6 +49,6 @@ interface IGetPassengerInteractor {
 
     fun getNewOrder(callback: DataHandler<ArrayList<RideInfo>?>)
 
-    fun sendReason(textReason: String, callback: SuccessHandler)
+    fun cancelRide(textReason: String, rideId: Int)
 
 }

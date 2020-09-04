@@ -1,7 +1,6 @@
 package bonch.dev.poputi.presentation.modules.driver.getpassenger.adapters
 
 import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +48,7 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
 
 
     fun setNewOrders(orders: ArrayList<RideInfo>) {
-        var delay = 500L
+        var delay = 250L
 
         orders.forEachIndexed { i, order ->
             order.isNewOrder = false
@@ -57,7 +56,7 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
                 setNewOrder(i, order)
             }, delay)
 
-            delay += if (i > 7) {
+            delay += if (i > 8) {
                 0
             } else
                 250
@@ -65,20 +64,17 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
     }
 
 
-    fun cancel() {
-        val mainHandler = Handler(Looper.getMainLooper())
-        val myRunnable = Runnable {
-            kotlin.run {
-                try {
-                    list.removeAt(list.lastIndex)
-                    notifyItemRemoved(list.size)
-                } catch (ex: IndexOutOfBoundsException) {
-                }
-
-            }
+    fun deleteOrder(rideId: Int) {
+        var ride: RideInfo? = null
+        list.forEach {
+            if (it.rideId == rideId) ride = it
         }
 
-        mainHandler.post(myRunnable)
+        ride?.let {
+            val position = list.indexOf(it)
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
     }
 
 

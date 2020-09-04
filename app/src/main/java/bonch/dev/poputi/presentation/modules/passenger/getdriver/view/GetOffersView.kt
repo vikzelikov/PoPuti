@@ -274,7 +274,7 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
 
                 else -> null
             }
-            bs_img_driver?.let{
+            bs_img_driver?.let {
                 Glide.with(bs_img_driver.context).load(img)
                     .apply(RequestOptions().centerCrop().circleCrop())
                     .error(R.drawable.ic_default_ava)
@@ -374,6 +374,8 @@ class GetOffersView : Fragment(), ContractView.IGetOffersView {
         on_view_cancel?.visibility = View.VISIBLE
         on_view_cancel?.isClickable = false
         on_view_cancel?.alpha = 0.8f
+        on_view_cancel?.elevation = 20f
+        main_info_layout?.elevation = 0f
         get_driver_coordinator?.elevation = 100f
 
 

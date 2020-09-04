@@ -1,5 +1,6 @@
 package bonch.dev.poputi.domain.interactor.passenger.getdriver
 
+import android.os.Handler
 import android.util.Log
 import bonch.dev.poputi.data.repository.common.chat.IChatRepository
 import bonch.dev.poputi.data.repository.passenger.getdriver.IGetDriverRepository
@@ -259,16 +260,30 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
-    override fun sendReason(textReason: String, callback: SuccessHandler) {
+    override fun cancelRide(textReason: String, rideId: Int) {
         val token = profileStorage.getToken()
-        val rideId = ActiveRide.activeRide?.rideId
 
-        if (token != null && rideId != null) {
+        if (token != null) {
             getDriverRepository.sendCancelReason(rideId, textReason, token) { isSuccess ->
-                if (isSuccess) callback(true)
-                else getDriverRepository.sendCancelReason(rideId, textReason, token, callback)
+                if (isSuccess) {
+                    getDriverRepository.updateRideStatus(
+                        StatusRide.CANCEL,
+                        rideId,
+                        token
+                    ) { isSucc ->
+                        if (!isSucc) {
+                            Handler().postDelayed({
+                                cancelRide(textReason, rideId)
+                            }, 300)
+                        }
+                    }
+                } else {
+                    Handler().postDelayed({
+                        cancelRide(textReason, rideId)
+                    }, 300)
+                }
             }
-        } else callback(false)
+        }
     }
 
 

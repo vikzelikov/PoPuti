@@ -261,8 +261,7 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
                             parseDate?.let {
                                 thatDay.time = parseDate
                                 val diff = today - thatDay.timeInMillis
-                                offer.timeLine =
-                                    OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
+                                offer.timeLine = OffersMainTimer.TIME_EXPIRED_ITEM - (diff / 1000)
                             }
                         }
                     } catch (e: ParseException) {
@@ -312,33 +311,11 @@ class GetOffersPresenter : BasePresenter<ContractView.IGetOffersView>(),
 
         ActiveRide.activeRide?.let { restoreRide(it) }
 
-        cancelRideListener(reasonID, textReason)
-
-        clearData()
-        ActiveRide.activeRide = null
-        getDriverInteractor.removeRideId()
-    }
-
-
-    private fun cancelRideListener(reasonID: ReasonCancel, textReason: String) {
-        getDriverInteractor.sendReason(textReason) { isSuccess ->
-            if (isSuccess) {
-                getDriverInteractor.updateRideStatus(StatusRide.CANCEL) { isSucc ->
-                    if (!isSucc) {
-                        Handler().postDelayed({
-                            cancelRideListener(reasonID, textReason)
-                        }, 300)
-                    }
-                }
-            } else {
-                if (!isSuccess) {
-                    Handler().postDelayed({
-                        cancelRideListener(reasonID, textReason)
-                    }, 300)
-                }
-            }
+        ActiveRide.activeRide?.rideId?.let {
+            getDriverInteractor.cancelRide(textReason, it)
         }
 
+        clearData()
         ActiveRide.activeRide = null
         getDriverInteractor.removeRideId()
     }

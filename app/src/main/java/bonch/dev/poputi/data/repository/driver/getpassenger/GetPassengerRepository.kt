@@ -1,21 +1,19 @@
 package bonch.dev.poputi.data.repository.driver.getpassenger
 
 import android.util.Log
-import bonch.dev.poputi.domain.utils.Constants
-import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.driver.GetPassangerService
 import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.OfferPrice
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
+import bonch.dev.poputi.domain.utils.Constants
+import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
-import com.pusher.client.channel.PrivateChannel
-import com.pusher.client.channel.PrivateChannelEventListener
-import com.pusher.client.channel.PusherEvent
+import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.util.HttpAuthorizer
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
+
 class GetPassengerRepository : IGetPassengerRepository {
 
     private var service: GetPassangerService = App.appComponent
@@ -31,7 +30,74 @@ class GetPassengerRepository : IGetPassengerRepository {
         .create(GetPassangerService::class.java)
 
     private var channel: PrivateChannel? = null
+    private var channelOrders: Channel? = null
     private var pusher: Pusher? = null
+    private var pusherOrders: Pusher? = null
+
+
+    override fun connectSocketOrders(token: String, callback: SuccessHandler) {
+        val log = "SOCKET_GET_ORDERS"
+        val channelName = "rides"
+
+        val options = PusherOptions()
+        options.setCluster("mt1")
+
+        if (pusherOrders?.connection?.state != ConnectionState.CONNECTED) {
+
+            pusherOrders = Pusher(Constants.API_KEY_PUSHER, options)
+
+            pusherOrders?.connect()
+
+            channelOrders = pusherOrders?.subscribe(channelName,
+                object : ChannelEventListener {
+                    override fun onEvent(event: PusherEvent?) {}
+
+                    override fun onSubscriptionSucceeded(channelName: String?) {
+                        Log.i(log, "SOCKET CONNECT SUCCESS")
+                        callback(true)
+                    }
+                })
+        }
+    }
+
+
+    override fun subscribeOnGetOrders(callback: DataHandler<String?>) {
+        val event = "App\\Events\\RideCreate"
+
+        channelOrders?.bind(event, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
+    }
+
+
+    override fun subscribeOnDeleteOrder(callback: DataHandler<String?>) {
+        val event = "App\\Events\\RideDelete"
+
+        channelOrders?.bind(event, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                Log.e("TEST", "delete ${event?.data}")
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
+    }
 
 
     override fun connectSocket(
@@ -40,7 +106,6 @@ class GetPassengerRepository : IGetPassengerRepository {
         callback: SuccessHandler
     ) {
         val log = "SOCKET_PUSHER/P"
-        val apiKey = "4f8625f09b5081d92386"
         val channelName = "ride"
 
         val options = PusherOptions()
@@ -51,7 +116,7 @@ class GetPassengerRepository : IGetPassengerRepository {
 
         if (pusher?.connection?.state != ConnectionState.CONNECTED) {
 
-            pusher = Pusher(apiKey, options)
+            pusher = Pusher(Constants.API_KEY_PUSHER, options)
 
             pusher?.connect()
 
@@ -73,32 +138,12 @@ class GetPassengerRepository : IGetPassengerRepository {
     }
 
 
-    override fun subscribeOnGetOffers(callback: DataHandler<String?>) {
-        val offerPriceEvent = "App\\Events\\RideCreate"
-
-        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
-            override fun onEvent(event: PusherEvent?) {
-                if (event != null) {
-                    callback(event.data, null)
-                } else {
-                    callback(null, "error")
-                }
-            }
-
-            override fun onAuthenticationFailure(message: String?, e: Exception?) {}
-
-            override fun onSubscriptionSucceeded(channelName: String?) {}
-        })
-    }
-
-
     override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
-        val rideChangeEvent = "App\\Events\\RideChange"
+        val event = "App\\Events\\RideChange"
 
-        channel?.bind(rideChangeEvent, object : PrivateChannelEventListener {
+        channel?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
-                    Log.e("TEST", "еу")
                     callback(event.data, null)
                 } else {
                     callback(null, "error")
@@ -113,9 +158,9 @@ class GetPassengerRepository : IGetPassengerRepository {
 
 
     override fun subscribeOnDeleteOffer(callback: DataHandler<String?>) {
-        val offerPriceEvent = "App\\Events\\CancelOffer"
+        val event = "App\\Events\\CancelOffer"
 
-        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
+        channel?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
                     callback(event.data, null)

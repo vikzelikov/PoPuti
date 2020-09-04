@@ -60,7 +60,7 @@ interface IGetDriverInteractor {
 
     fun deleteOffer(offerId: Int, callback: SuccessHandler)
 
-    fun sendReason(textReason: String, callback: SuccessHandler)
+    fun cancelRide(textReason: String, rideId: Int)
 
     fun saveBankCard(bankCard: BankCard)
 

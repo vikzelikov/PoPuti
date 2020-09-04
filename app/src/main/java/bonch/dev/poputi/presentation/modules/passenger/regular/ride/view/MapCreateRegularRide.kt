@@ -65,7 +65,7 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
         super.onCreate(null)
 
         //init map
-        MapKitFactory.setApiKey(Constants.API_KEY)
+        MapKitFactory.setApiKey(Constants.API_KEY_YANDEX)
         MapKitFactory.initialize(this)
         SearchFactory.initialize(this)
         DirectionsFactory.initialize(this)

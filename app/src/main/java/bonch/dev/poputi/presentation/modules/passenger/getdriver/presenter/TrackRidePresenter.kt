@@ -118,11 +118,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         clearData()
 
         //send cancel reason
-        getDriverInteractor.sendReason(textReason) { isSuccess ->
-            if (isSuccess) {
-                //cancel ride remote
-                getDriverInteractor.updateRideStatus(StatusRide.CANCEL) {}
-            }
+        ActiveRide.activeRide?.rideId?.let {
+            getDriverInteractor.cancelRide(textReason, it)
         }
 
         if (reasonID == ReasonCancel.MISTAKE_ORDER || reasonID == ReasonCancel.OTHER_REASON) {
