@@ -58,6 +58,8 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     lateinit var cancelRide: ParentHandler<ReasonCancel>
     lateinit var addDriverIcon: IconHandler
     lateinit var removeDriverIcon: ParentEmptyHandler
+    lateinit var showUserIcon: ParentEmptyHandler
+    lateinit var hideUserIcon: ParentEmptyHandler
 
     private var isAllowSlide = true
 
@@ -139,15 +141,18 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     override fun checkoutStatusView(idStep: StatusRide) {
         when (idStep) {
             StatusRide.WAIT_FOR_DRIVER -> {
+                showUserIcon()
                 status_driver?.text = resources.getString(R.string.driverInWay)
             }
 
             StatusRide.WAIT_FOR_PASSANGER -> {
+                showUserIcon()
                 context?.let { Vibration.start(it) }
                 status_driver?.text = resources.getString(R.string.driverArrived)
             }
 
             StatusRide.IN_WAY -> {
+                hideUserIcon()
                 trackRidePresenter.route()
                 phone_call_layout?.visibility = View.GONE
                 chat_layout?.visibility = View.GONE
@@ -156,6 +161,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             }
 
             StatusRide.GET_PLACE -> {
+                showUserIcon()
                 context?.let { Vibration.start(it) }
                 trackRidePresenter.clearData()
 
@@ -163,6 +169,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             }
 
             StatusRide.CANCEL -> {
+                showUserIcon()
                 context?.let { Vibration.start(it) }
                 trackRidePresenter.clearData()
 
@@ -171,6 +178,7 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
             }
 
             else -> {
+                showUserIcon()
                 status_driver?.text = resources.getString(R.string.driverInWay)
                 showNotification(getString(R.string.errorSystem))
             }

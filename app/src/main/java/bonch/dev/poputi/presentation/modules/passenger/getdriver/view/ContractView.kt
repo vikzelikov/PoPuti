@@ -28,6 +28,8 @@ interface ContractView {
         fun moveCamera(point: Point)
         fun addDriverIcon(point: Point): PlacemarkMapObject?
         fun removeDriverIcon()
+        fun showUserIcon()
+        fun hideUserIcon()
         fun getMap(): MapView
         fun attachCreateRide()
         fun attachDetailRide()

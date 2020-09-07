@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,8 +64,10 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     private var myCityCallback: ParentHandler<Address>? = null
     private var myCityCallbackDetect: ParentHandler<Address>? = null
 
+    private var userIcon: PlacemarkMapObject? = null
     private var driverIcon: PlacemarkMapObject? = null
     private var mapObjects: MapObjectCollection? = null
+
 
     private var isAllowFirstZoom = false
     private var isAllowZoom = false
@@ -156,7 +157,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
                 isAllowFirstZoom = true
             }, 2000)
 
-            var x: PlacemarkMapObject? = null
             Handler().postDelayed({
                 showMovingCab(Constants.getListOfLocations())
             }, 4000)
@@ -234,6 +234,9 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         //for moving
         val userMark = mapPresenter.getBitmap(R.drawable.ic_user_mark)
         userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
+
+        //saving for handle
+        userIcon = userLocationView.arrow
 
         userLocationLayer?.setAnchor(
             PointF(
@@ -333,6 +336,8 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     private fun showMovingCab(points: ArrayList<Point>) {
         val handler = Handler()
         var index = 0
+
+        hideUserIcon()
         runnable = Runnable {
             run {
                 if (index < points.lastIndex) {
@@ -340,6 +345,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
                     handler.postDelayed(runnable, 4000)
                     ++index
                 } else {
+                    showUserIcon()
                     handler.removeCallbacks(runnable)
                 }
             }
@@ -507,6 +513,16 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
     override fun getFM(): FragmentManager? {
         return (activity as? MainActivity)?.supportFragmentManager
+    }
+
+
+    override fun showUserIcon() {
+        userIcon?.opacity = 1f
+    }
+
+
+    override fun hideUserIcon() {
+        userIcon?.opacity = 0f
     }
 
 
