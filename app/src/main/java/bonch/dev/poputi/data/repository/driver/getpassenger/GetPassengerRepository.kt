@@ -16,6 +16,7 @@ import com.pusher.client.PusherOptions
 import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.util.HttpAuthorizer
+import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -402,6 +403,22 @@ class GetPassengerRepository : IGetPassengerRepository {
                 //Error
                 Log.e("DELETE_OFFER", "${err.printStackTrace()}")
                 callback(false)
+            }
+        }
+    }
+
+
+    override fun updateDriverGeo(point: Point, driverId: Int, token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                service.updateDriverGeo(headers, driverId, point.longitude, point.latitude)
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("UPD_DRIVER_GEO", "${err.printStackTrace()}")
             }
         }
     }

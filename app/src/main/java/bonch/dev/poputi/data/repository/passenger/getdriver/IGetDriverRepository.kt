@@ -41,4 +41,12 @@ interface IGetDriverRepository : IMainRepository {
         callback: SuccessHandler
     )
 
+    fun connectSocketGetGeoDriver(
+        driverId: Int,
+        token: String,
+        callback: SuccessHandler
+    )
+
+    fun subscribeOnGetGeoDriver(callback: DataHandler<String?>)
+
 }

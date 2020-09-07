@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
@@ -35,8 +34,9 @@ class DriverRideService : Service() {
     private lateinit var getPassengerInteractor: IGetPassengerInteractor
 
     private val UPDATE_INTERVAL = 10 * 1000.toLong()
-    private val FASTEST_INTERVAL = 2000L
-    private var userPosition: Point? = null
+    private val FASTEST_INTERVAL = 10000L
+    private lateinit var client: FusedLocationProviderClient
+    private lateinit var callbackGeo: LocationCallback
 
     private val CHANNEL_HEADS_UP = "CHANNEL_HEADS_UP"
     private val CHANNEL = "CHANNEL"
@@ -241,6 +241,13 @@ class DriverRideService : Service() {
     }
 
 
+    override fun stopService(name: Intent?): Boolean {
+        stopLocationUpdates()
+
+        return super.stopService(name)
+    }
+
+
     override fun onDestroy() {
         super.onDestroy()
 
@@ -250,6 +257,8 @@ class DriverRideService : Service() {
         notificatonManager.cancelAll()
 
         getPassengerInteractor.disconnectSocket()
+
+        stopLocationUpdates()
     }
 
 
@@ -267,26 +276,29 @@ class DriverRideService : Service() {
             builder.addLocationRequest(it)
             val locationSettingsRequest = builder.build()
 
-            val settingsClient = LocationServices.getSettingsClient(App.appComponent.getContext())
+            val settingsClient = LocationServices.getSettingsClient(context)
             settingsClient.checkLocationSettings(locationSettingsRequest)
 
-            LocationServices
-                .getFusedLocationProviderClient(App.appComponent.getContext())
-                .requestLocationUpdates(
-                    mLocationRequest, object : LocationCallback() {
-                        override fun onLocationResult(locationResult: LocationResult) {
-                            val location = locationResult.lastLocation
-                            val lat = location?.latitude
-                            val lng = location?.longitude
+            client = LocationServices.getFusedLocationProviderClient(context)
+            callbackGeo = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    val location = locationResult.lastLocation
+                    val lat = location?.latitude
+                    val lng = location?.longitude
 
-                            if (lat != null && lng != null) {
-                                Log.e("UPDATE", "${lat}")
-                                userPosition = Point(lat, lng)
-                            }
-                        }
-                    },
-                    Looper.myLooper()
-                )
+                    if (lat != null && lng != null) {
+                        val point = Point(lat, lng)
+                        getPassengerInteractor.updateDriverGeo(point)
+                    }
+                }
+            }
+
+            client.requestLocationUpdates(mLocationRequest, callbackGeo, Looper.myLooper())
         }
+    }
+
+
+    private fun stopLocationUpdates() {
+        client.removeLocationUpdates(callbackGeo)
     }
 }

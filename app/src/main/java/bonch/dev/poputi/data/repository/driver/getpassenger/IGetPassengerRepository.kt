@@ -5,6 +5,7 @@ import bonch.dev.poputi.domain.entities.common.ride.Offer
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
+import com.yandex.mapkit.geometry.Point
 
 interface IGetPassengerRepository : IMainRepository {
 
@@ -14,8 +15,16 @@ interface IGetPassengerRepository : IMainRepository {
 
     fun subscribeOnDeleteOrder(callback: DataHandler<String?>)
 
-    fun offerPrice(price: Int, rideId: Int, userId: Int, token: String, callback: DataHandler<Offer?>)
+    fun offerPrice(
+        price: Int,
+        rideId: Int,
+        userId: Int,
+        token: String,
+        callback: DataHandler<Offer?>
+    )
 
     fun getNewOrders(callback: DataHandler<ArrayList<RideInfo>?>)
+
+    fun updateDriverGeo(point: Point, driverId: Int, token: String)
 
 }

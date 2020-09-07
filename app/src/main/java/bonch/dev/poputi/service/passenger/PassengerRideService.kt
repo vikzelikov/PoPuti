@@ -38,6 +38,7 @@ class PassengerRideService : Service() {
     private lateinit var intentOfferPrice: Intent
     private lateinit var intentDeleteOffer: Intent
     private lateinit var intentChat: Intent
+    private lateinit var intentDriverLocation: Intent
     private lateinit var getDriverInteractor: IGetDriverInteractor
 
     private val CHANNEL_HEADS_UP = "CHANNEL_HEADS_UP"
@@ -48,6 +49,7 @@ class PassengerRideService : Service() {
         const val OFFER_PRICE_TAG = "OFFER_PRICE_TAG"
         const val DELETE_OFFER_TAG = "DELETE_OFFER_TAG"
         const val CHAT_TAG = "CHAT_TAG"
+        const val DRIVER_GEO_TAG = "DRIVER_GEO_TAG"
 
         var isRunning = false
         var isAppClose = false
@@ -66,6 +68,7 @@ class PassengerRideService : Service() {
         intentOfferPrice = Intent(OFFER_PRICE_TAG)
         intentDeleteOffer = Intent(DELETE_OFFER_TAG)
         intentChat = Intent(CHAT_TAG)
+        intentDriverLocation = Intent(DRIVER_GEO_TAG)
 
         createNotificationChannel()
 
@@ -118,6 +121,17 @@ class PassengerRideService : Service() {
 
                     intentChat.putExtra(CHAT_TAG, data)
                     sendBroadcast(intentChat)
+                }
+            }
+        }
+
+
+        //connect to socket for get location of driver
+        getDriverInteractor.connectSocketGetGeoDriver { isSuccess ->
+            if (isSuccess) {
+                getDriverInteractor.subscribeOnGetGeoDriver { data, _ ->
+                    intentChat.putExtra(DRIVER_GEO_TAG, data)
+                    sendBroadcast(intentDriverLocation)
                 }
             }
         }

@@ -301,6 +301,8 @@ class MainFragment : Fragment() {
         childFragment.mapView = { mapCreateRide?.getMap() }
         childFragment.nextFragment = { attachRateRide() }
         childFragment.cancelRide = { cancelRide() }
+        childFragment.addDriverIcon = { mapCreateRide?.addDriverIcon(it) }
+        childFragment.removeDriverIcon = {  mapCreateRide?.removeDriverIcon() }
 
         mapCreateRide?.fadeMap()
 

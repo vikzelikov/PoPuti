@@ -147,6 +147,28 @@ class GetDriverInteractor : IGetDriverInteractor {
     }
 
 
+    override fun connectSocketGetGeoDriver(callback: SuccessHandler) {
+        val token = profileStorage.getToken()
+        val driverId = ActiveRide.activeRide?.driver?.id
+
+        if (token != null && driverId != null) {
+            getDriverRepository.connectSocketGetGeoDriver(driverId, token) { isSuccess ->
+                if (isSuccess) {
+                    callback(true)
+                } else {
+                    //retry connect
+                    getDriverRepository.connectSocket(driverId, token, callback)
+                }
+            }
+        } else callback(false)
+    }
+
+
+    override fun subscribeOnGetGeoDriver(callback: DataHandler<String?>) {
+        getDriverRepository.subscribeOnGetGeoDriver(callback)
+    }
+
+
     override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
         getDriverRepository.subscribeOnChangeRide(callback)
     }

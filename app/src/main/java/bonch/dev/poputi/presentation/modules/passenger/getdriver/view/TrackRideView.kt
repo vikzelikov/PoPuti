@@ -15,7 +15,6 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.media.Photo
@@ -23,8 +22,10 @@ import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Driver
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.entities.passenger.getdriver.ReasonCancel
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.domain.utils.Vibration
 import bonch.dev.poputi.presentation.base.MBottomSheet
+import bonch.dev.poputi.presentation.interfaces.IconHandler
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
@@ -35,6 +36,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ethanhua.skeleton.Skeleton
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import kotlinx.android.synthetic.main.track_ride_layout.*
 import javax.inject.Inject
@@ -50,10 +53,11 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
     private var driverCancelledBottomSheet: BottomSheetBehavior<*>? = null
     private var commentBottomSheet: BottomSheetBehavior<*>? = null
 
-
     lateinit var mapView: ParentMapHandler<MapView>
     lateinit var nextFragment: ParentEmptyHandler
     lateinit var cancelRide: ParentHandler<ReasonCancel>
+    lateinit var addDriverIcon: IconHandler
+    lateinit var removeDriverIcon: ParentEmptyHandler
 
     private var isAllowSlide = true
 
@@ -171,6 +175,26 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
                 showNotification(getString(R.string.errorSystem))
             }
         }
+    }
+
+
+    override fun addDriverIconF(point: Point): PlacemarkMapObject? {
+        return addDriverIcon(point)
+    }
+
+
+    override fun rotateDriverIconF(deg: Float) {
+//        rotateDriverIcon(deg)
+    }
+
+
+    override fun moveDriverIconF(point: Point) {
+//        moveDriverIcon(point)
+    }
+
+
+    override fun removeDriverIconF() {
+        removeDriverIcon()
     }
 
 
@@ -607,7 +631,6 @@ class TrackRideView : Fragment(), ContractView.ITrackRideView {
         layoutCarName?.height = LinearLayout.LayoutParams.WRAP_CONTENT
         layoutCarName?.width = LinearLayout.LayoutParams.WRAP_CONTENT
         car_name?.layoutParams = layoutCarName
-
     }
 
 

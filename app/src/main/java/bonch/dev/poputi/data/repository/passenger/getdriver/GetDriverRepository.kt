@@ -41,7 +41,9 @@ class GetDriverRepository : IGetDriverRepository {
     private var autocomplete: Autocomplete? = null
     private var geocoder: Geocoder? = null
     private var channel: PrivateChannel? = null
+    private var channelDriverGeo: PrivateChannel? = null
     private var pusher: Pusher? = null
+    private var pusherDriverGeo: Pusher? = null
 
 
     init {
@@ -280,9 +282,9 @@ class GetDriverRepository : IGetDriverRepository {
 
 
     override fun subscribeOnChangeRide(callback: DataHandler<String?>) {
-        val rideChangeEvent = "App\\Events\\RideChange"
+        val event = "App\\Events\\RideChange"
 
-        channel?.bind(rideChangeEvent, object : PrivateChannelEventListener {
+        channel?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
                     callback(event.data, null)
@@ -299,9 +301,9 @@ class GetDriverRepository : IGetDriverRepository {
 
 
     override fun subscribeOnOfferPrice(callback: DataHandler<String?>) {
-        val offerPriceEvent = "App\\Events\\PriceOffer"
+        val event = "App\\Events\\PriceOffer"
 
-        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
+        channel?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
                     callback(event.data, null)
@@ -318,9 +320,9 @@ class GetDriverRepository : IGetDriverRepository {
 
 
     override fun subscribeOnDeleteOffer(callback: DataHandler<String?>) {
-        val offerPriceEvent = "App\\Events\\CancelOffer"
+        val event = "App\\Events\\CancelOffer"
 
-        channel?.bind(offerPriceEvent, object : PrivateChannelEventListener {
+        channel?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
                     callback(event.data, null)
@@ -522,5 +524,63 @@ class GetDriverRepository : IGetDriverRepository {
                 callback(false)
             }
         }
+    }
+
+
+    override fun connectSocketGetGeoDriver(
+        driverId: Int,
+        token: String,
+        callback: SuccessHandler
+    ) {
+        val log = "GET_GEO_DRIVER/P"
+        val channelName = "driver"
+
+        val options = PusherOptions()
+        options.setCluster("mt1")
+        val auth = HttpAuthorizer(Constants.BASE_URL.plus("/broadcasting/auth"))
+        auth.setHeaders(NetworkUtil.getHeaders(token))
+        options.authorizer = auth
+
+
+        if (pusherDriverGeo?.connection?.state != ConnectionState.CONNECTED) {
+
+            pusherDriverGeo = Pusher(Constants.API_KEY_PUSHER, options)
+
+            pusherDriverGeo?.connect()
+
+            channelDriverGeo = pusherDriverGeo?.subscribePrivate("private-$channelName.$driverId",
+                object : PrivateChannelEventListener {
+                    override fun onEvent(event: PusherEvent?) {}
+
+                    override fun onAuthenticationFailure(mess: String?, e: java.lang.Exception?) {
+                        Log.e(log, String.format("SOCKET CONNECT FAIL [%s], [%s]", mess, e))
+                        callback(false)
+                    }
+
+                    override fun onSubscriptionSucceeded(channelName: String?) {
+                        Log.i(log, "SOCKET CONNECT SUCCESS")
+                        callback(true)
+                    }
+                })
+        } else callback(true)
+    }
+
+
+    override fun subscribeOnGetGeoDriver(callback: DataHandler<String?>) {
+        val event = "App\\Events\\DriverLocation"
+
+        channelDriverGeo?.bind(event, object : PrivateChannelEventListener {
+            override fun onEvent(event: PusherEvent?) {
+                if (event != null) {
+                    callback(event.data, null)
+                } else {
+                    callback(null, "error")
+                }
+            }
+
+            override fun onAuthenticationFailure(message: String?, e: java.lang.Exception?) {}
+
+            override fun onSubscriptionSucceeded(channelName: String?) {}
+        })
     }
 }

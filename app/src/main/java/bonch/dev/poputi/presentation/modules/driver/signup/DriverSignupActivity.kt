@@ -87,8 +87,13 @@ class DriverSignupActivity : AppCompatActivity() {
                     if (driverData == null) {
                         hideLoading()
                     } else {
-                        if (driverData.isVerify) showDriverUI()
-                        else {
+                        if (driverData.isVerify) {
+                            showDriverUI()
+
+                            driverData.driverId?.let {
+                                signupInteractor.saveDriverID(it)
+                            }
+                        } else {
                             val driverId = driverData.driverId
                             if (driverId != null) {
                                 signupInteractor.saveDriverID(driverId)

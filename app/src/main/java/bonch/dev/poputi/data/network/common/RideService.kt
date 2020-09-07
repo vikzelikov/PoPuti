@@ -62,4 +62,14 @@ interface RideService {
     ): Response<ArrayList<Review>>
 
 
+    @FormUrlEncoded
+    @PUT("/api/drivers/{id}/location")
+    suspend fun updateDriverGeo(
+        @HeaderMap headers: Map<String, String>,
+        @Path("id") driverId: Int,
+        @Field("longitude") longitude: Double,
+        @Field("latitude") latitude: Double
+    ): Response<*>
+
+
 }

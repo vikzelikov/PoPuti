@@ -5,6 +5,7 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
+import com.yandex.mapkit.geometry.Point
 
 
 interface IGetPassengerInteractor {
@@ -50,5 +51,7 @@ interface IGetPassengerInteractor {
     fun getNewOrder(callback: DataHandler<ArrayList<RideInfo>?>)
 
     fun cancelRide(textReason: String, rideId: Int)
+
+    fun updateDriverGeo(point: Point)
 
 }

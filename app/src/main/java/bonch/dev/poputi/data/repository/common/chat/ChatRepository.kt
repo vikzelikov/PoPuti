@@ -133,9 +133,9 @@ class ChatRepository : IChatRepository {
 
 
     override fun subscribeOnChat(callback: DataHandler<String?>) {
-        val rideChangeEvent = "App\\Events\\CreateMessage"
+        val event = "App\\Events\\CreateMessage"
 
-        channel?.bind(rideChangeEvent, object : PrivateChannelEventListener {
+        channel?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if (event != null) {
                     callback(event.data, null)

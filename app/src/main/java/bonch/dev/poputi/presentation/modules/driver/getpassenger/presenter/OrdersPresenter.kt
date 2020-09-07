@@ -45,7 +45,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
     private var isGettingLocation = false
 
     private val UPDATE_INTERVAL = 10 * 1000.toLong()
-    private val FASTEST_INTERVAL = 2000L
+    private val FASTEST_INTERVAL = 10000L
 
     private var mLocationRequest: LocationRequest? = null
     var userPosition: Point? = null

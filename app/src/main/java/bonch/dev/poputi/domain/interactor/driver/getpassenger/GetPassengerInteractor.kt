@@ -15,6 +15,7 @@ import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import bonch.dev.poputi.presentation.modules.driver.getpassenger.GetPassengerComponent
 import com.google.gson.Gson
+import com.yandex.mapkit.geometry.Point
 import javax.inject.Inject
 
 class GetPassengerInteractor : IGetPassengerInteractor {
@@ -269,6 +270,16 @@ class GetPassengerInteractor : IGetPassengerInteractor {
                 else getPassengerRepository.deleteOffer(offerId, token, callback)
             }
         } else callback(false)
+    }
+
+
+    override fun updateDriverGeo(point: Point) {
+        val token = profileStorage.getToken()
+        val driverId = profileStorage.getDriverId()
+
+        if (token != null && driverId != -1) {
+            getPassengerRepository.updateDriverGeo(point, driverId, token)
+        }
     }
 
 }

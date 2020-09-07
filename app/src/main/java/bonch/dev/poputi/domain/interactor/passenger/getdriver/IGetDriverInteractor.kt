@@ -36,6 +36,10 @@ interface IGetDriverInteractor {
 
     fun connectChatSocket(callback: SuccessHandler)
 
+    fun connectSocketGetGeoDriver(callback: SuccessHandler)
+
+    fun subscribeOnGetGeoDriver(callback: DataHandler<String?>)
+
     fun subscribeOnChangeRide(callback: DataHandler<String?>)
 
     fun subscribeOnOfferPrice(callback: DataHandler<String?>)

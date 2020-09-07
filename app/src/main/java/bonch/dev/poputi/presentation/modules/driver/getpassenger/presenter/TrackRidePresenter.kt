@@ -41,7 +41,6 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     private val IS_DRIVER = "IS_DRIVER"
     val CHAT_REQUEST = 9
 
-    private var isRegistered = false
     private var isDrivingRoute = true
 
 
@@ -77,21 +76,15 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
     override fun registerReceivers() {
         val app = App.appComponent.getApp()
 
-        //check regestered receivers before
-        if (!isRegistered) {
-            app.registerReceiver(
-                changeRideReceiver,
-                IntentFilter(DriverRideService.CHANGE_RIDE_TAG)
-            )
+        app.registerReceiver(
+            changeRideReceiver,
+            IntentFilter(DriverRideService.CHANGE_RIDE_TAG)
+        )
 
-            app.registerReceiver(
-                chatReceiver,
-                IntentFilter(DriverRideService.CHAT_TAG)
-            )
-
-
-            isRegistered = true
-        }
+        app.registerReceiver(
+            chatReceiver,
+            IntentFilter(DriverRideService.CHAT_TAG)
+        )
     }
 
 

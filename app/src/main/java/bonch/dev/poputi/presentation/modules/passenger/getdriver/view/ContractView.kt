@@ -13,6 +13,7 @@ import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.Offers
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.PaymentsAdapter
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 
 interface ContractView {
@@ -25,6 +26,8 @@ interface ContractView {
         fun getMyCityCall(): ParentHandler<Address>?
         fun zoomMapDistance(cameraPosition: CameraPosition)
         fun moveCamera(point: Point)
+        fun addDriverIcon(point: Point): PlacemarkMapObject?
+        fun removeDriverIcon()
         fun getMap(): MapView
         fun attachCreateRide()
         fun attachDetailRide()
@@ -99,6 +102,10 @@ interface ContractView {
         fun onBackPressed(): Boolean
         fun checkoutIconChat(isShow: Boolean)
         fun checkoutStatusView(idStep: StatusRide)
+        fun addDriverIconF(point: Point): PlacemarkMapObject?
+        fun rotateDriverIconF(deg: Float)
+        fun moveDriverIconF(point: Point)
+        fun removeDriverIconF()
         fun onCancelRide(reason: ReasonCancel)
         fun registerReceivers()
         fun getMap(): MapView?

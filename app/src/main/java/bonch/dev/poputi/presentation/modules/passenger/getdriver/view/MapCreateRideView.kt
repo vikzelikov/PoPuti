@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import bonch.dev.poputi.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.poputi.di.module.passenger.GetDriverModule
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
+import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.domain.utils.Constants.API_KEY_YANDEX
 import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.domain.utils.Keyboard
@@ -62,6 +64,9 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     var myCityCallbackMain: ParentHandler<Address>? = null
     private var myCityCallback: ParentHandler<Address>? = null
     private var myCityCallbackDetect: ParentHandler<Address>? = null
+
+    private var driverIcon: PlacemarkMapObject? = null
+    private var mapObjects: MapObjectCollection? = null
 
     private var isAllowFirstZoom = false
     private var isAllowZoom = false
@@ -149,7 +154,12 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         map?.post {
             Handler().postDelayed({
                 isAllowFirstZoom = true
-            }, 3000)
+            }, 2000)
+
+            var x: PlacemarkMapObject? = null
+            Handler().postDelayed({
+                showMovingCab(Constants.getListOfLocations())
+            }, 4000)
         }
 
         super.onViewCreated(view, null)
@@ -265,6 +275,99 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             it.isHeadingEnabled = false
             it.isVisible = true
             it.setObjectListener(this)
+        }
+    }
+
+
+    /**!!!!!!!!!!!!!!!!!! todo*/
+    private var previousPoint: Point? = null
+    private var currentPoint: Point? = null
+    private lateinit var runnable: Runnable
+    private var isAllowRotate = true
+    private fun updateDriverLocation(point: Point) {
+        if (driverIcon == null) {
+            driverIcon = addDriverIcon(point)
+            val driverIconHandler = Handler()
+            driverIconHandler.postDelayed(object : Runnable {
+                override fun run() {
+                    isAllowRotate = true
+                    driverIconHandler.postDelayed(this, 500)
+                }
+            }, 0)
+        }
+        if (previousPoint == null) {
+            currentPoint = point
+            previousPoint = currentPoint
+            currentPoint?.let { driverIcon?.geometry = it }
+        } else {
+            previousPoint = currentPoint
+            currentPoint = point
+            val valueAnimator = Constants.carAnimator()
+            valueAnimator.addUpdateListener { va ->
+                if (currentPoint != null && previousPoint != null) {
+                    val multiplier = va.animatedFraction
+                    val curLat = currentPoint?.latitude
+                    val prevLat = previousPoint?.latitude
+                    val curLon = currentPoint?.longitude
+                    val prevLon = previousPoint?.longitude
+                    if (curLat != null && prevLat != null && curLon != null && prevLon != null) {
+                        val nextLocation = Point(
+                            multiplier * curLat + (1 - multiplier) * prevLat,
+                            multiplier * curLon + (1 - multiplier) * prevLon
+                        )
+                        driverIcon?.geometry = nextLocation
+                        previousPoint?.let { prevPoint ->
+                            val rotation = Constants.getRotation(prevPoint, nextLocation)
+                            if (!rotation.isNaN() && isAllowRotate) {
+                                driverIcon?.direction = rotation
+                                isAllowRotate = false
+                            }
+                        }
+                    }
+                }
+            }
+            valueAnimator.start()
+        }
+    }
+
+    private fun showMovingCab(points: ArrayList<Point>) {
+        val handler = Handler()
+        var index = 0
+        runnable = Runnable {
+            run {
+                if (index < points.lastIndex) {
+                    updateDriverLocation(points[index])
+                    handler.postDelayed(runnable, 4000)
+                    ++index
+                } else {
+                    handler.removeCallbacks(runnable)
+                }
+            }
+        }
+        handler.postDelayed(runnable, 0)
+    }
+
+
+    override fun addDriverIcon(point: Point): PlacemarkMapObject? {
+        if (mapObjects == null) {
+            val mark = mapPresenter.getBitmap(R.drawable.ic_car)
+            mapObjects = mapView.map.mapObjects.addCollection()
+            driverIcon = mapObjects?.addPlacemark(point)
+            driverIcon?.setIcon(ImageProvider.fromBitmap(mark))
+            driverIcon?.setIconStyle(IconStyle().setRotationType(RotationType.ROTATE))
+        }
+
+        return driverIcon
+    }
+
+
+    override fun removeDriverIcon() {
+        mapObjects?.let {
+            try {
+                mapView.map?.mapObjects?.remove(it)
+                mapObjects = null
+            } catch (ex: java.lang.Exception) {
+            }
         }
     }
 
