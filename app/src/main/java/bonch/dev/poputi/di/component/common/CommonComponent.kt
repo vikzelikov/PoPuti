@@ -8,6 +8,8 @@ import bonch.dev.poputi.domain.interactor.common.offerprice.OfferPriceInteractor
 import bonch.dev.poputi.domain.interactor.common.rate.RateRideInteractor
 import bonch.dev.poputi.presentation.modules.common.chat.presenter.ChatPresenter
 import bonch.dev.poputi.presentation.modules.common.chat.view.ChatView
+import bonch.dev.poputi.presentation.modules.common.onboarding.presenter.OnboardingPresenter
+import bonch.dev.poputi.presentation.modules.common.onboarding.view.OnboardingView
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.presenter.OfferPricePresenter
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.view.OfferPriceView
 import bonch.dev.poputi.presentation.modules.common.ride.rate.presenter.RateRidePresenter
@@ -36,5 +38,9 @@ interface CommonComponent {
     fun inject(target: OfferPricePresenter)
     fun inject(target: OfferPriceInteractor)
 
+
+    //ONBOARDING
+    fun inject(target: OnboardingView)
+    fun inject(target: OnboardingPresenter)
 
 }

@@ -299,6 +299,14 @@
     <string name="notDetectYourCity">Не удалось определить Ваш город</string>
     <string name="selectCityT">Выбрать город</string>
     <string name="enableGeo">Пожалуйста, включите на устройстве геолокацию</string>
+    <string name="onboarding1Driver">Выбирай заказы из списка</string>
+    <string name="onboarding2Driver">Принимайте заказ или \nпредлагайте свою цену</string>
+    <string name="onboarding3Driver">Оценивайте пассажиров \nв конце каждой поездки</string>
+    <string name="onboarding1Passenger">Предлагайте свою цену</string>
+    <string name="onboarding2Passenger">Выберите лучшее предложение</string>
+    <string name="onboarding3Passenger">Создайте регулярные \nпоездки на работу и обратно</string>
+    <string name="onboarding4Passenger">Легко стать водителем</string>
+
 
 
 </resources>

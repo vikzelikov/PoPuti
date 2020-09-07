@@ -40,6 +40,8 @@ interface IProfilePresenter {
 
     fun checkModerateVerification(photos: Array<Photo>)
 
+    fun checkOnboarding(isForPassenger: Boolean)
+
     fun logout()
 
     fun onDestroy()

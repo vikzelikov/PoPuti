@@ -210,7 +210,6 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-
     /**
      * CITY DETECT
      * */
@@ -218,4 +217,26 @@ class ProfileInteractor : IProfileInteractor {
         return profileStorage.getMyCity()
     }
 
+
+    /**
+     * ONBOARDING
+     * */
+    override fun saveOnboardingPassenger() {
+        profileStorage.saveOnboardingPassenger()
+    }
+
+
+    override fun getOnboardingPassenger(): Boolean {
+        return profileStorage.getOnboardingPassenger()
+    }
+
+
+    override fun saveOnboardingDriver() {
+        profileStorage.saveOnboardingDriver()
+    }
+
+
+    override fun getOnboardingDriver(): Boolean {
+        return profileStorage.getOnboardingDriver()
+    }
 }

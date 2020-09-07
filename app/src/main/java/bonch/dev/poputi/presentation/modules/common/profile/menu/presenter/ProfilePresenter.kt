@@ -176,6 +176,22 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
     }
 
 
+    override fun checkOnboarding(isForPassenger: Boolean) {
+        val key = "IS_PASSENGER"
+        val bundle = Bundle()
+        bundle.putBoolean(key, isForPassenger)
+
+        if (isForPassenger) {
+            if (profileInteractor.getOnboardingPassenger())
+                MainRouter.showView(R.id.show_onboarding, getView()?.getNavHost(), bundle)
+
+        } else {
+            if (!profileInteractor.getOnboardingDriver())
+                MainRouter.showView(R.id.show_onboarding, getView()?.getNavHost(), bundle)
+        }
+    }
+
+
     override fun showRating() {
         MainRouter.showView(R.id.rating_passenger, getView()?.getNavHost(), null)
     }

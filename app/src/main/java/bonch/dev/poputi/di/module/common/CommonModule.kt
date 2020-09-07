@@ -15,14 +15,14 @@ import bonch.dev.poputi.domain.interactor.common.chat.ChatInteractor
 import bonch.dev.poputi.domain.interactor.common.chat.IChatInteractor
 import bonch.dev.poputi.domain.interactor.common.offerprice.IOfferPriceInteractor
 import bonch.dev.poputi.domain.interactor.common.offerprice.OfferPriceInteractor
+import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
+import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
 import bonch.dev.poputi.domain.interactor.common.rate.IRateRideInteractor
 import bonch.dev.poputi.domain.interactor.common.rate.RateRideInteractor
-import bonch.dev.poputi.domain.interactor.driver.getpassenger.GetPassengerInteractor
-import bonch.dev.poputi.domain.interactor.driver.getpassenger.IGetPassengerInteractor
-import bonch.dev.poputi.domain.interactor.passenger.getdriver.GetDriverInteractor
-import bonch.dev.poputi.domain.interactor.passenger.getdriver.IGetDriverInteractor
 import bonch.dev.poputi.presentation.modules.common.chat.presenter.ChatPresenter
 import bonch.dev.poputi.presentation.modules.common.chat.presenter.IChatPresenter
+import bonch.dev.poputi.presentation.modules.common.onboarding.presenter.IOnboardingPresenter
+import bonch.dev.poputi.presentation.modules.common.onboarding.presenter.OnboardingPresenter
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.presenter.IOfferPricePresenter
 import bonch.dev.poputi.presentation.modules.common.ride.orfferprice.presenter.OfferPricePresenter
 import bonch.dev.poputi.presentation.modules.common.ride.rate.presenter.IRateRidePresenter
@@ -72,6 +72,13 @@ class CommonModule {
     fun provideOfferPriceInteractor(): IOfferPriceInteractor = OfferPriceInteractor()
 
 
+    //ONBOARDING
+    @Provides
+    @CompScope
+    fun provideOnboardingPresenter(): IOnboardingPresenter = OnboardingPresenter()
+
+
+
     //COMMON
     @Provides
     @CompScope
@@ -84,5 +91,9 @@ class CommonModule {
     @Provides
     @CompScope
     fun provideGetDriverStorage(): IGetDriverStorage = GetDriverStorage()
+
+    @Provides
+    @CompScope
+    fun provideProfileInteractor(): IProfileInteractor = ProfileInteractor()
 
 }

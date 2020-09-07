@@ -54,4 +54,14 @@ interface IProfileInteractor {
 
     fun getMyCity(): Address?
 
+
+    //ONBOARDING
+    fun saveOnboardingPassenger()
+
+    fun getOnboardingPassenger(): Boolean
+
+    fun saveOnboardingDriver()
+
+    fun getOnboardingDriver(): Boolean
+
 }

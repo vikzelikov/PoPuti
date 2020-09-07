@@ -77,6 +77,8 @@ class ProfileView : Fragment(), IProfileView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        profilePresenter.checkOnboarding(isForPassenger)
+
         return inflater.inflate(R.layout.profile_fragment, container, false)
     }
 

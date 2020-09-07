@@ -51,9 +51,8 @@
         <activity
             android:name=".presentation.modules.driver.getpassenger.view.MapOrderView"
             android:screenOrientation="portrait" />
-
         <activity
-            android:name="bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.MapCreateRegularRide"
+            android:name=".presentation.modules.passenger.regular.ride.view.MapCreateRegularRide"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
@@ -103,6 +102,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.modules.common.profile.support.SupportView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".presentation.modules.common.onboarding.view.OnboardingView"
             android:screenOrientation="portrait" />
 
         <service

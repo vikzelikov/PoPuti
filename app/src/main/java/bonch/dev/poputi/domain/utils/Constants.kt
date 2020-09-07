@@ -21,6 +21,10 @@ object Constants {
     const val GALLERY = 1
 
 
+
+
+
+
     fun getListOfLocations(): ArrayList<Point> {
         val locationList = ArrayList<Point>()
 

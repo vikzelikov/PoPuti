@@ -77,6 +77,12 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/main_passenger_fragment"
             app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/show_onboarding"
+            app:destination="@id/onboarding"
+            app:enterAnim="@anim/activity_fade_in"
+            app:popEnterAnim="@anim/activity_fade_in" />
     </fragment>
 
 
@@ -118,6 +124,12 @@
         android:id="@+id/support"
         android:name="bonch.dev.poputi.presentation.modules.common.profile.support.SupportView"
         android:label="support_activity" />
+
+
+    <activity
+        android:id="@+id/onboarding"
+        android:name="bonch.dev.poputi.presentation.modules.common.onboarding.view.OnboardingView"
+        android:label="onboarding_activity" />
 
 
     <fragment

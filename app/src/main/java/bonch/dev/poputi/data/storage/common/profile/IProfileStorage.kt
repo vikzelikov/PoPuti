@@ -35,6 +35,14 @@ interface IProfileStorage {
 
     fun deleteBankCard(card: BankCard)
 
+    fun saveOnboardingPassenger()
+
+    fun getOnboardingPassenger(): Boolean
+
+    fun saveOnboardingDriver()
+
+    fun getOnboardingDriver(): Boolean
+
     fun closeRealm()
 
 }

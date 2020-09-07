@@ -15,6 +15,8 @@ class ProfileStorage : IProfileStorage {
     private val DRIVER_ID = "DRIVER_ID"
     private val ACCESS_TOKEN = "ACCESS_TOKEN"
     private val CHECKOUT_AS_DRIVER = "CHECKOUT_AS_DRIVER"
+    private val PASSENGER_ONBOARDING = "PASSENGER_ONBOARDING"
+    private val DRIVER_ONBOARDING = "DRIVER_ONBOARDING"
 
     private var bankingRealm: Realm? = null
     private var cityRealm: Realm? = null
@@ -134,7 +136,7 @@ class ProfileStorage : IProfileStorage {
 
 
     override fun saveMyCity(address: Address) {
-        Log.i("CITY_UPDATE","${address.address}")
+        Log.i("CITY_UPDATE", "${address.address}")
         bankingRealm?.executeTransaction {
             address.id = 0
             it.insertOrUpdate(address)
@@ -146,6 +148,32 @@ class ProfileStorage : IProfileStorage {
         initRealm()
 
         return bankingRealm?.where(Address::class.java)?.findFirst()
+    }
+
+
+    override fun saveOnboardingPassenger() {
+        val editor = App.appComponent.getSharedPref().edit()
+        editor.putBoolean(PASSENGER_ONBOARDING, true)
+        editor.apply()
+    }
+
+
+    override fun getOnboardingPassenger(): Boolean {
+        val pref = App.appComponent.getSharedPref()
+        return pref.getBoolean(PASSENGER_ONBOARDING, false)
+    }
+
+
+    override fun saveOnboardingDriver() {
+        val editor = App.appComponent.getSharedPref().edit()
+        editor.putBoolean(DRIVER_ONBOARDING, true)
+        editor.apply()
+    }
+
+
+    override fun getOnboardingDriver(): Boolean {
+        val pref = App.appComponent.getSharedPref()
+        return pref.getBoolean(DRIVER_ONBOARDING, false)
     }
 
 
