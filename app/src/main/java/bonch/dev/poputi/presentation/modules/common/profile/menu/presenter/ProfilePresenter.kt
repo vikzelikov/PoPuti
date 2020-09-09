@@ -182,7 +182,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
         bundle.putBoolean(key, isForPassenger)
 
         if (isForPassenger) {
-            if (profileInteractor.getOnboardingPassenger())
+            if (!profileInteractor.getOnboardingPassenger())
                 MainRouter.showView(R.id.show_onboarding, getView()?.getNavHost(), bundle)
 
         } else {

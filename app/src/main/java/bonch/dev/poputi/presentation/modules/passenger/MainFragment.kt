@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,7 @@ import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
@@ -94,11 +94,6 @@ class MainFragment : Fragment() {
         detectCity()
 
         setEditRegularRideUI()
-
-        Handler().postDelayed({
-            if (isShowErrorPopup && Geo.selectedCity == null)
-                showPopupError()
-        }, 12000)
     }
 
 
@@ -212,8 +207,13 @@ class MainFragment : Fragment() {
                 attachTrackRide()
             }
         } else {
-            checkoutNavView(true)
-            mapCreateRide?.attachCreateRide()
+            if (Coordinate.fromAdr != null && Coordinate.toAdr != null && Coordinate.price != null) {
+                attachDetailRide()
+
+            } else {
+                checkoutNavView(true)
+                mapCreateRide?.attachCreateRide()
+            }
 
             profile?.changeGeoMap = {
                 it.point?.let { point ->
@@ -302,9 +302,9 @@ class MainFragment : Fragment() {
         childFragment.nextFragment = { attachRateRide() }
         childFragment.cancelRide = { cancelRide() }
         childFragment.addDriverIcon = { mapCreateRide?.addDriverIcon(it) }
-        childFragment.removeDriverIcon = {  mapCreateRide?.removeDriverIcon() }
-        childFragment.showUserIcon = {  mapCreateRide?.showUserIcon() }
-        childFragment.hideUserIcon = {  mapCreateRide?.hideUserIcon() }
+        childFragment.removeDriverIcon = { mapCreateRide?.removeDriverIcon() }
+        childFragment.showUserIcon = { mapCreateRide?.showUserIcon() }
+        childFragment.hideUserIcon = { mapCreateRide?.hideUserIcon() }
 
         mapCreateRide?.fadeMap()
 
@@ -497,6 +497,7 @@ class MainFragment : Fragment() {
     }
 
 
+    @Suppress("unused")
     private fun showPopupError() {
         on_view?.visibility = View.VISIBLE
         on_view?.alpha = 0.8f

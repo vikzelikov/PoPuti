@@ -1,5 +1,6 @@
 package bonch.dev.poputi.presentation.interfaces
 
+import android.content.Intent
 import bonch.dev.poputi.presentation.base.MainPresenter
 
 interface IMainPresenter {
@@ -8,7 +9,7 @@ interface IMainPresenter {
 
     fun onBackPressed()
 
-    fun navigate()
+    fun navigate(intent: Intent?)
 
     fun showPassengerView()
 

@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
         setContentView(R.layout.activity_main)
-        mainPresenter.navigate()
+        mainPresenter.navigate(intent)
 
         //Firebase connect
         FirebaseInstanceId.getInstance().instanceId

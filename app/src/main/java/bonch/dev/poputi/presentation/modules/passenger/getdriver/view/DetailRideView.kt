@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.toAdr
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
@@ -174,6 +175,11 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     override fun setAddresses(fromAddress: String, toAddress: String) {
         from_address?.text = fromAddress
         to_address?.text = toAddress
+
+        Coordinate.price?.let {
+            //todo get average price
+            offerPriceDone(it, 500)
+        }
     }
 
 

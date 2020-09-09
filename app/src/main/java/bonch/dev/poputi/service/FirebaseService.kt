@@ -13,7 +13,9 @@ import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
-import bonch.dev.poputi.presentation.modules.common.chat.view.ChatView
+import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
+import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.service.driver.DriverRideService
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -32,7 +34,7 @@ class FirebaseService : FirebaseMessagingService() {
 
 
     override fun onNewToken(p0: String) {
-        Log.w("TEST", "new token $p0")
+        Log.w("NEW FB TOKEN", p0)
         super.onNewToken(p0)
     }
 
@@ -55,10 +57,18 @@ class FirebaseService : FirebaseMessagingService() {
         val title = data?.title
         val subtitle = data?.body
 
-        Log.e("TEST", "$title $subtitle")
         p0.data.values.forEach {
             Log.e("DATA", "${it}")
         }
+
+        val regularRide = RideInfo()
+        regularRide.position = "ОТКУДААААА !3!"
+        regularRide.destination = "DESTination"
+        regularRide.fromLat = 59.915870
+        regularRide.fromLng = 30.425529
+        regularRide.toLat = 59.941434
+        regularRide.toLng = 30.373617
+        regularRide.price = 341
 
         if (title != null && subtitle != null) {
             val notification = buildNotification(
@@ -67,7 +77,7 @@ class FirebaseService : FirebaseMessagingService() {
                 isSetOngoing = false,
                 isAutoCancel = true,
                 isHeadsUp = true,
-                isChat = false
+                regularRide = regularRide
             )
 
             notificatonManager.notify(1, notification)
@@ -82,7 +92,7 @@ class FirebaseService : FirebaseMessagingService() {
             //general notification channel
             val channel = NotificationChannel(
                 CHANNEL,
-                "GENERAL_CHANNEL",
+                "Default notification",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             channel.description = "General notification channel"
@@ -93,7 +103,7 @@ class FirebaseService : FirebaseMessagingService() {
             //heads up notification channel
             val channelHeadsUp = NotificationChannel(
                 CHANNEL_HEADS_UP,
-                "HEADS_UP_CHANNEL",
+                "Important heads up notification",
                 NotificationManager.IMPORTANCE_HIGH
             )
             channel.description = "Heads up notification channel"
@@ -111,10 +121,21 @@ class FirebaseService : FirebaseMessagingService() {
         isSetOngoing: Boolean,
         isAutoCancel: Boolean,
         isHeadsUp: Boolean,
-        isChat: Boolean
+        regularRide: RideInfo?
     ): Notification {
-        val notificationIntent = if (isChat) Intent(this, ChatView::class.java)
-        else Intent(this, MainActivity::class.java)
+        val notificationIntent = Intent(this, MainActivity::class.java)
+
+        if (regularRide != null) {
+            val from = getFrom(regularRide)
+            val to = getTo(regularRide)
+            val price = regularRide.price
+
+            if (from != null && to != null && price != null) {
+                notificationIntent.putExtra("from", from)
+                notificationIntent.putExtra("to", to)
+                notificationIntent.putExtra("price", price)
+            }
+        }
 
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
@@ -141,5 +162,38 @@ class FirebaseService : FirebaseMessagingService() {
         }
 
         return notification.build()
+    }
+
+
+    private fun getFrom(ride: RideInfo): Address? {
+        val fromLat = ride.fromLat
+        val fromLng = ride.fromLng
+
+        val fromPoint = if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
+        else null
+
+        return if (fromPoint != null) {
+            val fromAdr = Address()
+            fromAdr.point = fromPoint
+            fromAdr.address = ride.position
+            fromAdr
+
+        } else null
+    }
+
+
+    private fun getTo(ride: RideInfo): Address? {
+        val toLat = ride.toLat
+        val toLng = ride.toLng
+
+        val toPoint = if (toLat != null && toLng != null) AddressPoint(toLat, toLng)
+        else null
+
+        return if (toPoint != null) {
+            val toAdr = Address()
+            toAdr.point = toPoint
+            toAdr.address = ride.destination
+            toAdr
+        } else null
     }
 }

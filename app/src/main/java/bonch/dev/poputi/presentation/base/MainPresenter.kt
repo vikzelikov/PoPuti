@@ -7,6 +7,8 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
+import bonch.dev.poputi.domain.entities.common.ride.Address
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.interactor.IBaseInteractor
 import bonch.dev.poputi.presentation.interfaces.IMainActivity
@@ -37,8 +39,10 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
     }
 
 
-    override fun navigate() {
+    override fun navigate(intent: Intent?) {
         getView()?.showFullLoading()
+
+        if (intent != null) getRegularRide(intent)
 
         //check user login
         val accessToken = baseInteractor.getToken()
@@ -146,7 +150,21 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
 
     override fun updateFirebaseToken(firebaseToken: String) {
+        Log.e("FB", firebaseToken)
         baseInteractor.updateFirebaseToken(firebaseToken)
+    }
+
+
+    private fun getRegularRide(intent: Intent?) {
+        val from = intent?.getParcelableExtra<Address>("from")
+        val to = intent?.getParcelableExtra<Address>("to")
+        val price = intent?.getIntExtra("price", -1)
+
+        if (from != null && to != null && price != -1) {
+            Coordinate.fromAdr = from
+            Coordinate.toAdr = to
+            Coordinate.price = price
+        }
     }
 
 

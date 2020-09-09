@@ -28,10 +28,26 @@ class OnboardingPresenter : BasePresenter<IOnboardingView>(), IOnboardingPresent
 
         if (isForPassenger) {
             when (step) {
-                1 -> getView()?.setData(r.getString(R.string.onboarding1Passenger), 1, step)
-                2 -> getView()?.setData(r.getString(R.string.onboarding2Passenger), 2, step)
-                3 -> getView()?.setData(r.getString(R.string.onboarding3Passenger), 3, step)
-                4 -> getView()?.setData(r.getString(R.string.onboarding4Passenger), 4, step)
+                1 -> getView()?.setData(
+                    r.getString(R.string.onboarding1Passenger),
+                    R.drawable.ic_passenger_onb1,
+                    step
+                )
+                2 -> getView()?.setData(
+                    r.getString(R.string.onboarding2Passenger),
+                    R.drawable.ic_passenger_onb2,
+                    step
+                )
+                3 -> getView()?.setData(
+                    r.getString(R.string.onboarding3Passenger),
+                    R.drawable.ic_passenger_onb3,
+                    step
+                )
+                4 -> getView()?.setData(
+                    r.getString(R.string.onboarding4Passenger),
+                    R.drawable.ic_passenger_onb4,
+                    step
+                )
                 5 -> {
                     //end
                     profileInteractor.saveOnboardingPassenger()

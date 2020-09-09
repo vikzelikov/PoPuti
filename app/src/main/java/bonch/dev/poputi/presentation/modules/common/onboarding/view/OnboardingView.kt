@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.App
@@ -47,10 +46,6 @@ class OnboardingView : AppCompatActivity(), IOnboardingView {
         super.onCreate(null)
         setContentView(R.layout.onboarding_activity)
 
-        val key = "IS_PASSENGER"
-        val isForPassenger = savedInstanceState?.getBoolean(key, false)
-        Log.e("TEST", "$isForPassenger")
-
         presenter.instance().step = 0
 
         setListeners()
@@ -60,7 +55,6 @@ class OnboardingView : AppCompatActivity(), IOnboardingView {
     override fun setListeners() {
         val key = "IS_PASSENGER"
         val isForPassenger = intent.getBooleanExtra(key, false)
-        Log.e("TEST", "$isForPassenger")
 
         presenter.nextStep(isForPassenger)
 
@@ -75,7 +69,7 @@ class OnboardingView : AppCompatActivity(), IOnboardingView {
     override fun setData(title: String, img: Int, step: Int) {
         if (step == 1) {
             title_onb?.text = title
-//        img_onb?.setImageResource(img)
+            img_onb?.setImageResource(img)
 
             next?.isClickable = true
 
@@ -88,7 +82,7 @@ class OnboardingView : AppCompatActivity(), IOnboardingView {
                     override fun onAnimationEnd(animation: Animator?) {
                         super.onAnimationEnd(animation)
                         title_onb?.text = title
-//        img_onb?.setImageResource(img)
+                        img_onb?.setImageResource(img)
                         main_container?.translationX = 0f
                     }
                 })
