@@ -41,7 +41,6 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
-    private val AVERAGE_PRICE = "AVERAGE_PRICE"
     private val NOT_DESCRIPTION = "Место"
     private val BLOCK_REQUEST_GEOCODER = 1500L
 
@@ -108,8 +107,8 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                 getView()?.setAddressView(true, from)
                 getView()?.setAddressView(false, to)
             }
-            //todo average price and selected bank card
-            if (price != null) getView()?.offerPriceDone(price, 555)
+            //todo selected bank card
+            if (price != null) getView()?.offerPriceDone(price)
             if (days != null) getView()?.setDays(days)
             parseTime(time)?.let { getView()?.setTime(it) }
             if (comment != null) getView()?.setComment(comment)
@@ -628,10 +627,9 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
     override fun offerPriceDone(data: Intent?) {
         val price = data?.getIntExtra(OFFER_PRICE.toString(), 0)
-        val averagePrice = data?.getIntExtra(AVERAGE_PRICE, 0)
 
-        if (price != null && averagePrice != null) {
-            getView()?.offerPriceDone(price, averagePrice)
+        if (price != null) {
+            getView()?.offerPriceDone(price)
         }
     }
 

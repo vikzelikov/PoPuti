@@ -156,6 +156,12 @@
             android:id="@+id/show_map_order_activity"
             app:destination="@id/map_order_activity" />
 
+        <action
+            android:id="@+id/show_onboarding_d"
+            app:destination="@id/onboarding"
+            app:enterAnim="@anim/activity_fade_in"
+            app:popEnterAnim="@anim/activity_fade_in" />
+
     </fragment>
 
 

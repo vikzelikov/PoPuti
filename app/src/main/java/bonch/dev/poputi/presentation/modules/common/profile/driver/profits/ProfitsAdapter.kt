@@ -8,6 +8,7 @@ import androidx.annotation.AnimRes
 import androidx.recyclerview.widget.RecyclerView
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
+import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import kotlinx.android.synthetic.main.order_profits_item.view.*
 import java.lang.Exception
@@ -91,7 +92,7 @@ class ProfitsAdapter @Inject constructor(private val presenter: ContractPresente
             } catch (ex: Exception) {
             }
 
-            val fee = ride.price?.times(presenter.instance().FEE)
+            val fee = ride.price?.times(Constants.FEE)
             val output = ((fee?.times(100.0))?.roundToInt() ?: 0) / 100.0
             itemView.fee.text = itemView.context.getString(R.string.fee)
                 .plus(": -")

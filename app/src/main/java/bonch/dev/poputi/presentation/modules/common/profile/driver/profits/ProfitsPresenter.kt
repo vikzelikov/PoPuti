@@ -28,8 +28,6 @@ class ProfitsPresenter : BasePresenter<ContractView.IProfitsView>(),
 
     private var lowDay = -1L
 
-    var FEE = 0.05
-
 
     init {
         ProfileComponent.profileComponent?.inject(this)

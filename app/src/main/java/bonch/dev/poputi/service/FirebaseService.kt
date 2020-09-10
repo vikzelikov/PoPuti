@@ -13,8 +13,6 @@ import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.common.ride.Address
-import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.service.driver.DriverRideService
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -69,6 +67,7 @@ class FirebaseService : FirebaseMessagingService() {
         regularRide.toLat = 59.941434
         regularRide.toLng = 30.373617
         regularRide.price = 341
+        regularRide.statusId = 7
 
         if (title != null && subtitle != null) {
             val notification = buildNotification(
@@ -126,15 +125,7 @@ class FirebaseService : FirebaseMessagingService() {
         val notificationIntent = Intent(this, MainActivity::class.java)
 
         if (regularRide != null) {
-            val from = getFrom(regularRide)
-            val to = getTo(regularRide)
-            val price = regularRide.price
-
-            if (from != null && to != null && price != null) {
-                notificationIntent.putExtra("from", from)
-                notificationIntent.putExtra("to", to)
-                notificationIntent.putExtra("price", price)
-            }
+            notificationIntent.putExtra("regular_ride", regularRide)
         }
 
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -162,38 +153,5 @@ class FirebaseService : FirebaseMessagingService() {
         }
 
         return notification.build()
-    }
-
-
-    private fun getFrom(ride: RideInfo): Address? {
-        val fromLat = ride.fromLat
-        val fromLng = ride.fromLng
-
-        val fromPoint = if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
-        else null
-
-        return if (fromPoint != null) {
-            val fromAdr = Address()
-            fromAdr.point = fromPoint
-            fromAdr.address = ride.position
-            fromAdr
-
-        } else null
-    }
-
-
-    private fun getTo(ride: RideInfo): Address? {
-        val toLat = ride.toLat
-        val toLng = ride.toLng
-
-        val toPoint = if (toLat != null && toLng != null) AddressPoint(toLat, toLng)
-        else null
-
-        return if (toPoint != null) {
-            val toAdr = Address()
-            toAdr.point = toPoint
-            toAdr.address = ride.destination
-            toAdr
-        } else null
     }
 }

@@ -7,8 +7,6 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
-import bonch.dev.poputi.domain.entities.common.ride.Address
-import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.interactor.IBaseInteractor
 import bonch.dev.poputi.presentation.interfaces.IMainActivity
@@ -156,19 +154,14 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
 
 
     private fun getRegularRide(intent: Intent?) {
-        val from = intent?.getParcelableExtra<Address>("from")
-        val to = intent?.getParcelableExtra<Address>("to")
-        val price = intent?.getIntExtra("price", -1)
+        val regularRide = intent?.getParcelableExtra<RideInfo>("regular_ride")
 
-        if (from != null && to != null && price != -1) {
-            Coordinate.fromAdr = from
-            Coordinate.toAdr = to
-            Coordinate.price = price
+        if (regularRide != null) {
+            ActiveRide.activeRide = regularRide
         }
     }
 
 
-    //todo переделать все onBackPress выглядит некрасиво
     override fun onBackPressed() {
 
         onBackPressedSignupPassanger()

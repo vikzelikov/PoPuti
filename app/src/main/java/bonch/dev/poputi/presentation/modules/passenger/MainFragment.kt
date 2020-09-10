@@ -15,10 +15,7 @@ import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
-import bonch.dev.poputi.domain.entities.common.ride.Address
-import bonch.dev.poputi.domain.entities.common.ride.Coordinate
-import bonch.dev.poputi.domain.entities.common.ride.StatusRide
+import bonch.dev.poputi.domain.entities.common.ride.*
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
 import bonch.dev.poputi.domain.utils.Geo
@@ -200,20 +197,29 @@ class MainFragment : Fragment() {
         val ride = ActiveRide.activeRide
 
         if (ride != null) {
-            if (ride.statusId == StatusRide.SEARCH.status) {
+            if (ride.statusId == StatusRide.REGULAR_RIDE.status) {
+                val from = getFrom(ride)
+                val to = getTo(ride)
+                val price = ride.price
+
+                if (from != null && to != null && price != null) {
+                    Coordinate.fromAdr = from
+                    Coordinate.toAdr = to
+                    Coordinate.price = price
+
+                    attachDetailRide()
+
+                } else attachCreateRide()
+
+            } else if (ride.statusId == StatusRide.SEARCH.status) {
                 attachGetOffers()
             } else {
                 //ride already created
                 attachTrackRide()
             }
         } else {
-            if (Coordinate.fromAdr != null && Coordinate.toAdr != null && Coordinate.price != null) {
-                attachDetailRide()
 
-            } else {
-                checkoutNavView(true)
-                mapCreateRide?.attachCreateRide()
-            }
+            attachCreateRide()
 
             profile?.changeGeoMap = {
                 it.point?.let { point ->
@@ -221,6 +227,12 @@ class MainFragment : Fragment() {
                 }
             }
         }
+    }
+
+
+    private fun attachCreateRide() {
+        checkoutNavView(true)
+        mapCreateRide?.attachCreateRide()
     }
 
 
@@ -232,9 +244,8 @@ class MainFragment : Fragment() {
 
         //pass callback
         childFragment.backHandler = {
-            checkoutNavView(true)
             ride_frame_container?.visibility = View.GONE
-            mapCreateRide?.attachCreateRide()
+            attachCreateRide()
         }
         childFragment.onCreateRideFail = { attachDetailRide() }
         childFragment.mapView = { mapCreateRide?.getMap() }
@@ -342,9 +353,7 @@ class MainFragment : Fragment() {
 
             detailRideView?.removeRoute()
 
-            checkoutNavView(true)
-
-            mapCreateRide?.attachCreateRide()
+            attachCreateRide()
         }
 
         mapCreateRide?.fadeMap()
@@ -554,5 +563,38 @@ class MainFragment : Fragment() {
                 it.address?.let { city -> profile?.setMyCity(city) }
             }
         }
+    }
+
+
+    private fun getFrom(ride: RideInfo): Address? {
+        val fromLat = ride.fromLat
+        val fromLng = ride.fromLng
+
+        val fromPoint = if (fromLat != null && fromLng != null) AddressPoint(fromLat, fromLng)
+        else null
+
+        return if (fromPoint != null) {
+            val fromAdr = Address()
+            fromAdr.point = fromPoint
+            fromAdr.address = ride.position
+            fromAdr
+
+        } else null
+    }
+
+
+    private fun getTo(ride: RideInfo): Address? {
+        val toLat = ride.toLat
+        val toLng = ride.toLng
+
+        val toPoint = if (toLat != null && toLng != null) AddressPoint(toLat, toLng)
+        else null
+
+        return if (toPoint != null) {
+            val toAdr = Address()
+            toAdr.point = toPoint
+            toAdr.address = ride.destination
+            toAdr
+        } else null
     }
 }

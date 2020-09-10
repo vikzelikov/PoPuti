@@ -22,6 +22,7 @@ object Constants {
 
     const val AVERAGE_PRICE_K = 9.5
 
+    const val FEE = 0.05
 
 
 

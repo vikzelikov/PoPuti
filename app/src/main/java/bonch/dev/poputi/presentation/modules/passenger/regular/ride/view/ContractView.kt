@@ -43,7 +43,7 @@ interface ContractView {
         fun getRideInfo(): RideInfo
         fun showStartUI(isShowBottomSheet: Boolean)
         fun setSelectedBankCard(bankCard: BankCard)
-        fun offerPriceDone(price: Int, averagePrice: Int)
+        fun offerPriceDone(price: Int)
         fun setAddressView(isFrom: Boolean, address: String)
         fun getBottomSheet(bottomSheetBehavior: BottomSheetBehavior<*>)
         fun onClickItem(address: Address, isFromMapSearch: Boolean)

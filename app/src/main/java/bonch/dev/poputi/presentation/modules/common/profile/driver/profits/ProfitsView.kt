@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.ContractView
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
@@ -103,7 +104,7 @@ class ProfitsView : AppCompatActivity(), ContractView.IProfitsView {
             }
         }
 
-        val resultProfit = totalProfit.times(1 - presenter.instance().FEE).toInt()
+        val resultProfit = totalProfit.times(1 - Constants.FEE).toInt()
         total_profit?.text = resultProfit.toString().plus(" ₽")
     }
 

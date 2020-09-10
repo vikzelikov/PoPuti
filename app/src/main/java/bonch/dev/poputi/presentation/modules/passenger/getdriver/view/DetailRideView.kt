@@ -167,7 +167,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         }
 
         back_btn.setOnClickListener {
-            onBackPressed()
+            (activity as? MainActivity)?.onBackPressed()
         }
     }
 

@@ -48,12 +48,15 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         //unsupported Yandex Map exception
         try {
             for (route in routes) {
-                //calk average price
-                var sec = 0.0
-                route.sections.forEach {
-                    sec += it.metadata.weight.timeWithTraffic.value
+                if (isWaypoint) {
+                    //calc average price
+                    var sec = 0.0
+                    route.sections.forEach {
+                        sec += it.metadata.weight.timeWithTraffic.value
+                    }
+
+                    Coordinate.averagePrice = ((sec / 60) * Constants.AVERAGE_PRICE_K).toInt()
                 }
-                Coordinate.averagePrice = ((sec / 60) * Constants.AVERAGE_PRICE_K).toInt()
 
 //                val t1 = PolylinePosition(0, 50.3)
 //                val t2 = PolylinePosition(100, 50.3)

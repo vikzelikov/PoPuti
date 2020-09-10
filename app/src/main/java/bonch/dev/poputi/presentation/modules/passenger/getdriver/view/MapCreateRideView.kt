@@ -450,6 +450,8 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
     override fun attachCreateRide() {
         (activity as? MainActivity)?.supportFragmentManager?.let {
+            mapPresenter.instance().attachView(this)
+
             mapPresenter.attachCreateRide(it)
 
             frame_container?.visibility = View.VISIBLE
