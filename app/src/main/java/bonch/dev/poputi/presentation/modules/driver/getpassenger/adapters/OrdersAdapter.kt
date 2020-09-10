@@ -75,6 +75,9 @@ class OrdersAdapter @Inject constructor(private val ordersPresenter: ContractPre
             list.removeAt(position)
             notifyItemRemoved(position)
         }
+
+        if(list.isEmpty())
+            ordersPresenter.instance().getView()?.showOrdersLoading()
     }
 
 

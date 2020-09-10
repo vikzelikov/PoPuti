@@ -55,6 +55,8 @@ class FirebaseService : FirebaseMessagingService() {
         val title = data?.title
         val subtitle = data?.body
 
+        Log.e("FB NOTIF", "есть!")
+
         p0.data.values.forEach {
             Log.e("DATA", "${it}")
         }

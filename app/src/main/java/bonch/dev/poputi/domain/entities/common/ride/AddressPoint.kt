@@ -52,3 +52,10 @@ open class AddressPoint(
         return result
     }
 }
+
+
+open class Location(
+    @SerializedName("location")
+    @Expose
+    val location: AddressPoint
+)

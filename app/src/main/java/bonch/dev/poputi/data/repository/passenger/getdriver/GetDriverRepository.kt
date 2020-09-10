@@ -41,9 +41,9 @@ class GetDriverRepository : IGetDriverRepository {
     private var autocomplete: Autocomplete? = null
     private var geocoder: Geocoder? = null
     private var channel: PrivateChannel? = null
-    private var channelDriverGeo: PrivateChannel? = null
     private var pusher: Pusher? = null
     private var pusherDriverGeo: Pusher? = null
+    private var channelDriverGeo: PrivateChannel? = null
 
 
     init {
@@ -542,12 +542,14 @@ class GetDriverRepository : IGetDriverRepository {
         options.authorizer = auth
 
 
+        Log.e("try", "connecting ${pusherDriverGeo?.connection?.state}")
+
         if (pusherDriverGeo?.connection?.state != ConnectionState.CONNECTED) {
 
             pusherDriverGeo = Pusher(Constants.API_KEY_PUSHER, options)
 
             pusherDriverGeo?.connect()
-
+            Log.e("TEST", "private-$channelName.$driverId")
             channelDriverGeo = pusherDriverGeo?.subscribePrivate("private-$channelName.$driverId",
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {}
@@ -568,9 +570,11 @@ class GetDriverRepository : IGetDriverRepository {
 
     override fun subscribeOnGetGeoDriver(callback: DataHandler<String?>) {
         val event = "App\\Events\\DriverLocation"
-
+Log.e("TEST","subscrive $channelDriverGeo")
         channelDriverGeo?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
+                Log.e("TEST","subscrive!! ${event?.data}")
+
                 if (event != null) {
                     callback(event.data, null)
                 } else {

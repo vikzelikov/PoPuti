@@ -129,7 +129,7 @@ class SignupRepository : ISignupRepository {
                 //set headers
                 val headers = NetworkUtil.getHeaders(token)
 
-                response = service.updateFirebaseToken(headers, token)
+                response = service.updateFirebaseToken(headers, firebaseToken)
 
                 withContext(Dispatchers.Main) {
                     if (!response.isSuccessful) {

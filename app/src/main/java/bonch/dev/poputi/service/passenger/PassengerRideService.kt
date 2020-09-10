@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
@@ -77,7 +79,15 @@ class PassengerRideService : Service() {
 
 
     private fun createConnection() {
-        //connect to socket
+
+        connectMainSocket()
+
+        connectSocketGetGeoDriver()
+
+    }
+
+
+    private fun connectMainSocket() {
         getDriverInteractor.connectSocket { isSuccess ->
             if (isSuccess) {
                 //change ride status
@@ -103,12 +113,16 @@ class PassengerRideService : Service() {
                     intentDeleteOffer.putExtra(DELETE_OFFER_TAG, data)
                     sendBroadcast(intentDeleteOffer)
                 }
-            }
-
-            if (!isSuccess) {
-                Handler().postDelayed({
-                    createConnection()
-                }, 500)
+            } else {
+                val mainHandler = Handler(Looper.getMainLooper())
+                val myRunnable = Runnable {
+                    kotlin.run {
+                        Handler().postDelayed({
+                            connectMainSocket()
+                        }, 1000)
+                    }
+                }
+                mainHandler.post(myRunnable)
             }
         }
 
@@ -124,15 +138,34 @@ class PassengerRideService : Service() {
                 }
             }
         }
+    }
 
 
+    private fun connectSocketGetGeoDriver() {
+        Log.e("!!", "кчау")
         //connect to socket for get location of driver
         getDriverInteractor.connectSocketGetGeoDriver { isSuccess ->
+            getDriverInteractor.subscribeOnGetGeoDriver { data, _ ->
+                intentChat.putExtra(DRIVER_GEO_TAG, data)
+                sendBroadcast(intentDriverLocation)
+            }
             if (isSuccess) {
                 getDriverInteractor.subscribeOnGetGeoDriver { data, _ ->
                     intentChat.putExtra(DRIVER_GEO_TAG, data)
                     sendBroadcast(intentDriverLocation)
                 }
+            } else {
+                val mainHandler = Handler(Looper.getMainLooper())
+                val myRunnable = Runnable {
+                    kotlin.run {
+                        Handler().postDelayed({
+                            connectSocketGetGeoDriver()
+                        }, 3500)
+                    }
+                }
+
+                mainHandler.post(myRunnable)
+
             }
         }
     }

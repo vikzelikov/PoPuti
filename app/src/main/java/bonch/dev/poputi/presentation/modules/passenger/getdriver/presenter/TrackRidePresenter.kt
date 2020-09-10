@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.animation.LinearInterpolator
 import androidx.fragment.app.Fragment
 import bonch.dev.poputi.App
@@ -213,9 +214,11 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         val data = intent?.getStringExtra(PassengerRideService.DRIVER_GEO_TAG)
 
         if (data != null) {
-            val location = Gson().fromJson(data, MessageObject::class.java)?.message
+            Log.e("TEST", data)
+            val location = Gson().fromJson(data, Location::class.java)?.location
             if (location != null) {
-
+                val point = Point(location.latitude, location.longitude)
+                updateDriverLocation(point)
             }
         }
     }

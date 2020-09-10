@@ -104,7 +104,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         userPoint?.let {
             Handler().postDelayed({
                 it()?.let { point ->
-                    val c = CameraPosition(point, 14f, 1f, 1f)
+                    val c = CameraPosition(point, 17f, 1f, 1f)
                     requestGeocoder(c, false)
                 }
             }, 1000)

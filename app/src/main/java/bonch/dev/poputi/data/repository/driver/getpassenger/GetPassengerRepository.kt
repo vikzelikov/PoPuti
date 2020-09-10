@@ -86,7 +86,6 @@ class GetPassengerRepository : IGetPassengerRepository {
 
         channelOrders?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
-                Log.e("TEST", "delete ${event?.data}")
                 if (event != null) {
                     callback(event.data, null)
                 } else {

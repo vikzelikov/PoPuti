@@ -127,7 +127,7 @@ class OrdersPresenter : BasePresenter<ContractView.IOrdersView>(),
                     }
                 }
 
-                getPassengerInteractor.subscribeOnDeleteOffer { data, _ ->
+                getPassengerInteractor.subscribeOnDeleteOrder { data, _ ->
                     if (data != null) {
                         val ride = Gson().fromJson(data, Ride::class.java)?.ride
                         ride?.rideId?.let {
