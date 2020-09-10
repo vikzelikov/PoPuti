@@ -13,8 +13,6 @@ import bonch.dev.poputi.data.storage.passenger.getdriver.IGetDriverStorage
 import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.common.chat.ChatInteractor
 import bonch.dev.poputi.domain.interactor.common.chat.IChatInteractor
-import bonch.dev.poputi.domain.interactor.common.offerprice.IOfferPriceInteractor
-import bonch.dev.poputi.domain.interactor.common.offerprice.OfferPriceInteractor
 import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
 import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
 import bonch.dev.poputi.domain.interactor.common.rate.IRateRideInteractor
@@ -66,10 +64,6 @@ class CommonModule {
     @Provides
     @CompScope
     fun provideOfferPricePresenter(): IOfferPricePresenter = OfferPricePresenter()
-
-    @Provides
-    @CompScope
-    fun provideOfferPriceInteractor(): IOfferPriceInteractor = OfferPriceInteractor()
 
 
     //ONBOARDING

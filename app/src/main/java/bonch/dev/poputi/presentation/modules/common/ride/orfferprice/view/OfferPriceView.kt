@@ -14,6 +14,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerCommonComponent
 import bonch.dev.poputi.di.module.common.CommonModule
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.domain.utils.Keyboard.hideKeyboard
 import bonch.dev.poputi.domain.utils.Keyboard.showKeyboard
@@ -28,7 +29,6 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
     lateinit var offerPricePresenter: IOfferPricePresenter
 
     private val OFFER_PRICE = 1
-    private val AVERAGE_PRICE = "AVERAGE_PRICE"
 
     init {
         initDI()
@@ -58,8 +58,9 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
         //set listener to move button in relation to keyboard on/off
         Keyboard.setMovingButtonListener(this.rootLinearLayout, false)
 
-        val averagePrice = offerPricePresenter.getAveragePrice()
-        setAveragePrice(averagePrice)
+        Coordinate.averagePrice?.let {
+            setAveragePrice(it)
+        }
 
         //display keyboard and set focus
         price.requestFocus()
@@ -83,11 +84,10 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
         price.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val price = priceEditText.text.toString().split('₽')[0].trim()
-                val averagePrice = offerPricePresenter.getAveragePrice()
                 try {
                     if (price.length < 7 && price.isNotEmpty() && price.toInt() > 0) {
 
-                        doneOfferPrice(price, averagePrice)
+                        doneOfferPrice(price)
 
                         return@OnEditorActionListener true
                     }
@@ -100,12 +100,11 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
 
         offerBtn.setOnClickListener {
             val price = priceEditText?.text?.toString()?.split('₽')?.first()?.trim()
-            val averagePrice = offerPricePresenter.getAveragePrice()
             try {
                 price?.let {
                     if (price.length < 7 && price.isNotEmpty() && price.toInt() > 0) {
 
-                        doneOfferPrice(price, averagePrice)
+                        doneOfferPrice(price)
 
                     }
                 }
@@ -189,10 +188,9 @@ class OfferPriceView : AppCompatActivity(), IOfferPriceView {
     }
 
 
-    private fun doneOfferPrice(price: String, averagePrice: Int?) {
+    private fun doneOfferPrice(price: String) {
         hideKeyboard()
         intent.putExtra(OFFER_PRICE.toString(), price.toInt())
-        intent.putExtra(AVERAGE_PRICE, averagePrice)
         setResult(RESULT_OK, intent)
         finish()
     }

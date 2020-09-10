@@ -4,6 +4,4 @@ interface IOfferPricePresenter {
 
     fun instance(): OfferPricePresenter
 
-    fun getAveragePrice(): Int?
-
 }

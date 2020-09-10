@@ -39,7 +39,6 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
-    private val AVERAGE_PRICE = "AVERAGE_PRICE"
 
     private var fromPoint: Point? = null
     private var toPoint: Point? = null
@@ -173,10 +172,9 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
     override fun offerPriceDone(data: Intent?) {
         val price = data?.getIntExtra(OFFER_PRICE.toString(), 0)
-        val averagePrice = data?.getIntExtra(AVERAGE_PRICE, 0)
 
-        if (price != null && averagePrice != null) {
-            getView()?.offerPriceDone(price, averagePrice)
+        if (price != null) {
+            getView()?.offerPriceDone(price)
         }
     }
 

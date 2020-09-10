@@ -70,7 +70,7 @@ interface ContractView {
         fun getPaymentsAdapter(): PaymentsAdapter
         fun setAddresses(fromAddress: String, toAddress: String)
         fun setSelectedBankCard(bankCard: BankCard)
-        fun offerPriceDone(price: Int, averagePrice: Int)
+        fun offerPriceDone(price: Int)
         fun isDataComplete(): Boolean
         fun onBackPressed(): Boolean
         fun getRideInfo(): RideInfo

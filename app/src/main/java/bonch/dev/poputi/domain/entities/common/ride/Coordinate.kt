@@ -4,4 +4,5 @@ object Coordinate {
     var fromAdr: Address? = null
     var toAdr: Address? = null
     var price: Int? = null
+    var averagePrice: Int? = null
 }

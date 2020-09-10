@@ -4,10 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.util.Log
 import androidx.core.content.ContextCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.ride.Coordinate
+import bonch.dev.poputi.domain.utils.Constants
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.RequestPoint
 import com.yandex.mapkit.RequestPointType
@@ -47,6 +48,13 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         //unsupported Yandex Map exception
         try {
             for (route in routes) {
+                //calk average price
+                var sec = 0.0
+                route.sections.forEach {
+                    sec += it.metadata.weight.timeWithTraffic.value
+                }
+                Coordinate.averagePrice = ((sec / 60) * Constants.AVERAGE_PRICE_K).toInt()
+
 //                val t1 = PolylinePosition(0, 50.3)
 //                val t2 = PolylinePosition(100, 50.3)
 //                val x = Subpolyline(t1, t2)

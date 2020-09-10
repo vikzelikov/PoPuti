@@ -20,7 +20,7 @@ object Constants {
     const val CAMERA = 0
     const val GALLERY = 1
 
-
+    const val AVERAGE_PRICE_K = 9.5
 
 
 

@@ -177,8 +177,7 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
         to_address?.text = toAddress
 
         Coordinate.price?.let {
-            //todo get average price
-            offerPriceDone(it, 500)
+            offerPriceDone(it)
         }
     }
 
@@ -312,16 +311,19 @@ class DetailRideView : Fragment(), ContractView.IDetailRideView {
     }
 
 
-    override fun offerPriceDone(price: Int, averagePrice: Int) {
+    override fun offerPriceDone(price: Int) {
         offer_price?.textSize = 22f
         getDP(15)?.let { offer_price?.setPadding(0, 5, 0, it) }
         offer_price?.setTextColor(Color.parseColor("#000000"))
         offer_price?.typeface = Typeface.DEFAULT_BOLD
 
-        if (averagePrice <= price) {
-            info_price?.visibility = View.GONE
-        } else {
-            info_price?.visibility = View.VISIBLE
+        val averagePrice = Coordinate.averagePrice
+        if (averagePrice != null) {
+            if (averagePrice <= price) {
+                info_price?.visibility = View.GONE
+            } else {
+                info_price?.visibility = View.VISIBLE
+            }
         }
 
         try {

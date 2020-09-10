@@ -4,7 +4,6 @@ import bonch.dev.poputi.di.component.AppComponent
 import bonch.dev.poputi.di.module.common.CommonModule
 import bonch.dev.poputi.di.scope.CompScope
 import bonch.dev.poputi.domain.interactor.common.chat.ChatInteractor
-import bonch.dev.poputi.domain.interactor.common.offerprice.OfferPriceInteractor
 import bonch.dev.poputi.domain.interactor.common.rate.RateRideInteractor
 import bonch.dev.poputi.presentation.modules.common.chat.presenter.ChatPresenter
 import bonch.dev.poputi.presentation.modules.common.chat.view.ChatView
@@ -36,7 +35,6 @@ interface CommonComponent {
     //OFFER PRICE
     fun inject(target: OfferPriceView)
     fun inject(target: OfferPricePresenter)
-    fun inject(target: OfferPriceInteractor)
 
 
     //ONBOARDING
