@@ -79,13 +79,4 @@ class BaseInteractor : IBaseInteractor {
     override fun isCheckoutDriver(): Boolean {
         return profileStorage.isCheckoutDriver()
     }
-
-
-    override fun updateFirebaseToken(firebaseToken: String) {
-        val token = profileStorage.getToken()
-
-        if (token != null) {
-            signupRepository.updateFirebaseToken(firebaseToken, token)
-        }
-    }
 }

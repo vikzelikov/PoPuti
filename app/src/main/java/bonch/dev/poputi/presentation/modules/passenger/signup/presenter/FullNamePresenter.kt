@@ -42,12 +42,19 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
 
         //if there is data from old app version
         signupInteractor.resetProfile()
-        //save Data:
-        //save token
-        saveToken()
+
         //save and send profile data to server
         saveProfileData { isSuccess ->
             if (isSuccess) {
+
+                //save token
+                saveToken()
+
+                //update FB token
+                DataSignup.firebaseToken?.let {
+                    signupInteractor.updateFirebaseToken(it)
+                }
+
                 //clear data
                 SignupComponent.passengerSignupComponent = null
                 DataSignup.phone = null
@@ -67,6 +74,8 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
                 getView()?.showNotification(
                     App.appComponent.getContext().getString(R.string.errorSystem)
                 )
+
+                getView()?.hideLoading()
             }
         }
     }
@@ -99,8 +108,8 @@ class FullNamePresenter : BasePresenter<ContractView.IFullNameView>(),
 
         if (token != null && userId != null && profileData != null) {
             //remote save
-            signupInteractor.saveProfile(userId, token, profileData)
-            callback(true)
+            signupInteractor.saveProfile(userId, token, profileData, callback)
+
         } else callback(false)
     }
 

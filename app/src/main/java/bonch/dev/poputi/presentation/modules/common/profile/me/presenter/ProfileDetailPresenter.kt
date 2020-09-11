@@ -3,8 +3,6 @@ package bonch.dev.poputi.presentation.modules.common.profile.me.presenter
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -23,8 +21,8 @@ import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.common.checkphoto.CheckPhotoView
 import bonch.dev.poputi.presentation.modules.common.media.MediaEvent
-import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import bonch.dev.poputi.presentation.modules.common.profile.me.view.IProfileDetailView
+import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import javax.inject.Inject
 
 
@@ -73,29 +71,6 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
 
             getView()?.setProfile(p)
 
-        } else {
-            getView()?.showLoading()
-
-            profileInteractor.getProfile { profileData, _ ->
-                val mainHandler = Handler(Looper.getMainLooper())
-                val myRunnable = Runnable {
-                    kotlin.run {
-                        getView()?.hideLoading()
-
-                        profileData?.let {
-                            //set start data
-                            startDataProfile = it
-
-                            if (it.imgUser != null) {
-                                imageUri = Uri.parse(it.imgUser)
-                            }
-
-                            getView()?.setProfile(it)
-                        }
-                    }
-                }
-                mainHandler.post(myRunnable)
-            }
         }
     }
 
@@ -290,9 +265,7 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     }
 
 
-    override fun instance(): ProfileDetailPresenter {
-        return this
-    }
+    override fun instance() = this
 
 }
 

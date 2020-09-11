@@ -64,7 +64,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
 
     override fun requestGeocoder(point: Point?) {
-        if (!isBlockRequest && point != null) {
+        if (!isBlockRequest && point != null && point.latitude != 0.0 && point.longitude != 0.0) {
             //send request and set block for several seconds
             getDriverInteractor.requestGeocoder(point) { address ->
                 address.point?.let {

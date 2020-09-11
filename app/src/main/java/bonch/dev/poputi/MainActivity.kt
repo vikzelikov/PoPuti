@@ -7,11 +7,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import bonch.dev.poputi.domain.entities.passenger.signup.DataSignup
 import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.base.MainPresenter
 import bonch.dev.poputi.presentation.interfaces.IMainActivity
@@ -54,7 +56,8 @@ class MainActivity : AppCompatActivity(), IMainActivity {
                 }
 
                 task.result?.token?.let {
-                    mainPresenter.updateFirebaseToken(it)
+                    DataSignup.firebaseToken = it
+                    Log.e("FB", it)
                 }
             })
     }

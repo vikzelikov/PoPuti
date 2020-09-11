@@ -22,6 +22,8 @@ interface IProfileInteractor {
 
     fun uploadPhoto(image: File, callback: SuccessHandler)
 
+    fun deletePhoto(imageId: Int, callback: SuccessHandler)
+
     fun saveCheckoutDriver(isDriver: Boolean)
 
     fun isCheckoutDriver(): Boolean
@@ -33,10 +35,6 @@ interface IProfileInteractor {
     fun deleteBankCard(card: BankCard)
 
     fun closeRealm()
-
-
-    //VERIFICATION
-    fun deletePhoto(imageId: Int, callback: SuccessHandler)
 
 
     //STORY RIDES

@@ -74,12 +74,14 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
                     //this is new sign up
                     MainRouter.showView(R.id.show_full_name_view, getView()?.getNavHost(), null)
                 }
+
+                getView()?.hideLoading()
             }
         } else {
             getView()?.showError()
-        }
 
-        getView()?.hideLoading()
+            getView()?.hideLoading()
+        }
     }
 
 
@@ -105,6 +107,11 @@ class ConfirmPhonePresenter : BasePresenter<ContractView.IConfirmView>(),
         saveToken()
 
         signupInteractor.saveUserId()
+
+        //update FB token
+        DataSignup.firebaseToken?.let {
+            signupInteractor.updateFirebaseToken(it)
+        }
 
         //clear data
         SignupComponent.passengerSignupComponent = null

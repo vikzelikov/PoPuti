@@ -147,12 +147,6 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
     }
 
 
-    override fun updateFirebaseToken(firebaseToken: String) {
-        Log.e("FB", firebaseToken)
-        baseInteractor.updateFirebaseToken(firebaseToken)
-    }
-
-
     private fun getRegularRide(intent: Intent?) {
         val regularRide = intent?.getParcelableExtra<RideInfo>("regular_ride")
 
@@ -206,9 +200,10 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
         val rateRideView =
             fm?.findFragmentByTag(RateRideView::class.java.simpleName) as? RateRideView?
 
-
-        if (createRideView?.view != null) {
-            createRideView.onBackPressed()
+        createRideView?.view?.let {
+            if (it.isFocused) {
+                createRideView.onBackPressed()
+            }
         }
 
         if (detailRideView?.view != null) {

@@ -186,7 +186,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                 MainRouter.showView(R.id.show_onboarding, getView()?.getNavHost(), bundle)
 
         } else {
-            if (profileInteractor.getOnboardingDriver())
+            if (!profileInteractor.getOnboardingDriver())
                 MainRouter.showView(R.id.show_onboarding_d, getView()?.getNavHost(), bundle)
         }
     }

@@ -79,26 +79,33 @@ class ProfileDetailView : AppCompatActivity(),
 
     override fun getProfile(): Profile {
         val profileData = Profile()
-        val firstName = first_name.text.toString().trim()
-        val lastName = last_name.text.toString().trim()
-        val email = email.text.toString().trim()
+        val firstName = first_name?.text?.toString()?.trim()
+        val lastName = last_name?.text?.toString()?.trim()
+        val email = email?.text?.toString()?.trim()
         val imageUri = profileDetailPresenter.instance().imageUri
 
         //if user change ava
         if (imageUri != null)
             profileData.imgUser = imageUri.toString()
 
-        if (firstName.isNotEmpty() && firstName.length < 20)
+        if (!firstName.isNullOrEmpty() && firstName.length < 20)
             profileData.firstName = firstName
 
-        if (lastName.isNotEmpty() && lastName.length < 20)
+        if (!lastName.isNullOrEmpty() && lastName.length < 20)
             profileData.lastName = lastName
 
-        if (profileDetailPresenter.isValidEmail(email))
-            profileData.email = email
+        email?.let {
+            if (profileDetailPresenter.isValidEmail(email))
+                profileData.email = email
+        }
 
-        profileData.isNotificationsEnable = notifications_switch.isChecked
-        profileData.isCallsEnable = calls_switch.isChecked
+        notifications_switch?.let {
+            profileData.isNotificationsEnable = it.isChecked
+        }
+
+        calls_switch?.let {
+            profileData.isCallsEnable = it.isChecked
+        }
 
         profileData.photos = CacheProfile.profile?.photos
 
@@ -171,16 +178,6 @@ class ProfileDetailView : AppCompatActivity(),
 
         clip_photo.setOnClickListener {
             Gallery.getPhoto(this)
-        }
-
-        notifications_switch.setOnClickListener {
-            //TODO
-            //profileDetailPresenter?.showNotifications(notification)
-        }
-
-        calls_switch.setOnClickListener {
-            //TODO
-            //profileDetailPresenter?.showNotifications(notification)
         }
 
         logout.setOnClickListener {
@@ -369,9 +366,7 @@ class ProfileDetailView : AppCompatActivity(),
     }
 
 
-    override fun getNavHost(): NavController? {
-        return null
-    }
+    override fun getNavHost(): NavController? = null
 
 
     override fun hideKeyboard() {
@@ -387,23 +382,12 @@ class ProfileDetailView : AppCompatActivity(),
 
 
     override fun showLoading() {
-        progress_bar_btn?.visibility = View.VISIBLE
-        on_view?.visibility = View.VISIBLE
+
     }
 
 
     override fun hideLoading() {
-        progress_bar_btn?.visibility = View.GONE
-        on_view?.alpha = 0.7f
-        on_view?.animate()
-            ?.alpha(0f)
-            ?.setDuration(500)
-            ?.setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    //go to the next screen
-                    on_view?.visibility = View.GONE
-                }
-            })
+
     }
 
 

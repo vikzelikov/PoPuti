@@ -57,9 +57,21 @@ class OnboardingPresenter : BasePresenter<IOnboardingView>(), IOnboardingPresent
             }
         } else {
             when (step) {
-                1 -> getView()?.setData(r.getString(R.string.onboarding1Driver), 1, step)
-                2 -> getView()?.setData(r.getString(R.string.onboarding2Driver), 2, step)
-                3 -> getView()?.setData(r.getString(R.string.onboarding3Driver), 3, step)
+                1 -> getView()?.setData(
+                    r.getString(R.string.onboarding1Driver),
+                    R.drawable.ic_driver_onb1,
+                    step
+                )
+                2 -> getView()?.setData(
+                    r.getString(R.string.onboarding2Driver),
+                    R.drawable.ic_driver_onb2,
+                    step
+                )
+                3 -> getView()?.setData(
+                    r.getString(R.string.onboarding3Driver),
+                    R.drawable.ic_driver_onb3,
+                    step
+                )
                 4 -> {
                     //end
                     profileInteractor.saveOnboardingDriver()

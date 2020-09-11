@@ -4,6 +4,7 @@ import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
 import bonch.dev.poputi.data.repository.passenger.signup.ISignupRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.passenger.signup.DataSignup
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -78,10 +79,10 @@ class SignupInteractor : ISignupInteractor {
 
     override fun getUserId(token: String, callback: SuccessHandler) {
         signupRepository.getUserId(token) { profile: Profile?, _: String? ->
-            if(profile?.id != null){
+            if (profile?.id != null) {
                 DataSignup.userId = profile.id
                 callback(true)
-            }else{
+            } else {
                 callback(false)
 
             }
@@ -95,23 +96,31 @@ class SignupInteractor : ISignupInteractor {
 
         if (token != null && userId != null) {
             profileRepository.getProfile(userId, token) { profile, _ ->
-                if (profile?.firstName != null) callback(true)
+                if (profile?.firstName != null){
+                    CacheProfile.profile = profile
+
+                    callback(true)
+                }
                 else callback(false)
             }
         }
     }
 
 
-    override fun saveProfile(userId: Int, token: String, profileData: Profile) {
+    override fun saveProfile(
+        userId: Int,
+        token: String,
+        profileData: Profile,
+        callback: SuccessHandler
+    ) {
         profileRepository.saveProfile(userId, token, profileData) { isSuccess ->
-            if (!isSuccess) {
-                //Retry request
-                profileRepository.saveProfile(userId, token, profileData) {}
-            }
-        }
+            if (isSuccess) {
+                //local save data
+                profileStorage.saveUserId(userId)
+                callback(true)
 
-        //local save data
-        profileStorage.saveUserId(userId)
+            } else callback(false)
+        }
     }
 
 
@@ -143,7 +152,17 @@ class SignupInteractor : ISignupInteractor {
     }
 
 
+    override fun updateFirebaseToken(firebaseToken: String) {
+        val token = profileStorage.getToken()
+
+        if (token != null) {
+            signupRepository.updateFirebaseToken(firebaseToken, token)
+        }
+    }
+
+
     override fun closeRealm() {
         profileStorage.closeRealm()
     }
+
 }

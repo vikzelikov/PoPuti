@@ -178,17 +178,18 @@ class MainFragment : Fragment() {
             regularDriving = RegularRidesView()
         }
 
+        if (profile == null) {
+            profile = ProfileView()
+        }
+
         if (mapCreateRide == null) {
             mapCreateRide = MapCreateRideView()
             mapCreateRide?.navigateUser = { navigateUser() }
+            mapCreateRide?.onboarding = { profile?.checkOnboarding() }
             mapCreateRide?.nextFragment = {
                 ride_frame_container?.visibility = View.VISIBLE
                 attachDetailRide()
             }
-        }
-
-        if (profile == null) {
-            profile = ProfileView()
         }
     }
 

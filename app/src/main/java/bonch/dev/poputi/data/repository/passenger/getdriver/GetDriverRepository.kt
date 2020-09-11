@@ -541,15 +541,12 @@ class GetDriverRepository : IGetDriverRepository {
         auth.setHeaders(NetworkUtil.getHeaders(token))
         options.authorizer = auth
 
-
-        Log.e("try", "connecting ${pusherDriverGeo?.connection?.state}")
-
         if (pusherDriverGeo?.connection?.state != ConnectionState.CONNECTED) {
 
             pusherDriverGeo = Pusher(Constants.API_KEY_PUSHER, options)
 
             pusherDriverGeo?.connect()
-            Log.e("TEST", "private-$channelName.$driverId")
+
             channelDriverGeo = pusherDriverGeo?.subscribePrivate("private-$channelName.$driverId",
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {}

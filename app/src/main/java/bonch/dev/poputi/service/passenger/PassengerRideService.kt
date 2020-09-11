@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
@@ -142,7 +141,6 @@ class PassengerRideService : Service() {
 
 
     private fun connectSocketGetGeoDriver() {
-        Log.e("!!", "кчау")
         //connect to socket for get location of driver
         getDriverInteractor.connectSocketGetGeoDriver { isSuccess ->
             getDriverInteractor.subscribeOnGetGeoDriver { data, _ ->

@@ -21,7 +21,6 @@ import bonch.dev.poputi.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.poputi.di.module.passenger.GetDriverModule
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
-import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.domain.utils.Constants.API_KEY_YANDEX
 import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.domain.utils.Keyboard
@@ -58,6 +57,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     private lateinit var mapView: MapView
     lateinit var nextFragment: ParentEmptyHandler
     lateinit var navigateUser: ParentEmptyHandler
+    lateinit var onboarding: ParentEmptyHandler
     private var userLocationLayer: UserLocationLayer? = null
 
     var myCityCallbackMain: ParentHandler<Address>? = null
@@ -68,10 +68,10 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     private var driverIcon: PlacemarkMapObject? = null
     private var mapObjects: MapObjectCollection? = null
 
-
     private var isAllowFirstZoom = false
     private var isAllowZoom = false
 
+    
     init {
         initDI()
 
@@ -152,16 +152,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             }
         }
 
-        map?.post {
-            Handler().postDelayed({
-                isAllowFirstZoom = true
-            }, 2000)
-
-            Handler().postDelayed({
-                showMovingCab(Constants.getListOfLocations())
-            }, 4000)
-        }
-
         super.onViewCreated(view, null)
     }
 
@@ -177,6 +167,16 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             if (Permissions.isAccess(Permissions.GEO_PERMISSION, activity)) {
                 setUserLocation()
             }
+
+            map?.post {
+                Handler().postDelayed({
+                    isAllowFirstZoom = true
+
+                    onboarding()
+
+                }, 2000)
+            }
+
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -270,7 +270,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     private fun setUserLocation() {
         val mapKit = MapKitFactory.getInstance()
         //set correct zoom
-        mapView.map?.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
+        mapView.map?.move(CameraPosition(Point(), 16f, 0f, 0f))
 
         //init user location service
         userLocationLayer = mapKit.createUserLocationLayer(mapView.mapWindow)
@@ -279,78 +279,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             it.isVisible = true
             it.setObjectListener(this)
         }
-    }
-
-
-    /**!!!!!!!!!!!!!!!!!! todo*/
-    private var previousPoint: Point? = null
-    private var currentPoint: Point? = null
-    private lateinit var runnable: Runnable
-    private var isAllowRotate = true
-    private fun updateDriverLocation(point: Point) {
-        if (driverIcon == null) {
-            driverIcon = addDriverIcon(point)
-            val driverIconHandler = Handler()
-            driverIconHandler.postDelayed(object : Runnable {
-                override fun run() {
-                    isAllowRotate = true
-                    driverIconHandler.postDelayed(this, 500)
-                }
-            }, 0)
-        }
-        if (previousPoint == null) {
-            currentPoint = point
-            previousPoint = currentPoint
-            currentPoint?.let { driverIcon?.geometry = it }
-        } else {
-            previousPoint = currentPoint
-            currentPoint = point
-            val valueAnimator = Constants.carAnimator()
-            valueAnimator.addUpdateListener { va ->
-                if (currentPoint != null && previousPoint != null) {
-                    val multiplier = va.animatedFraction
-                    val curLat = currentPoint?.latitude
-                    val prevLat = previousPoint?.latitude
-                    val curLon = currentPoint?.longitude
-                    val prevLon = previousPoint?.longitude
-                    if (curLat != null && prevLat != null && curLon != null && prevLon != null) {
-                        val nextLocation = Point(
-                            multiplier * curLat + (1 - multiplier) * prevLat,
-                            multiplier * curLon + (1 - multiplier) * prevLon
-                        )
-                        driverIcon?.geometry = nextLocation
-                        previousPoint?.let { prevPoint ->
-                            val rotation = Constants.getRotation(prevPoint, nextLocation)
-                            if (!rotation.isNaN() && isAllowRotate) {
-                                driverIcon?.direction = rotation
-                                isAllowRotate = false
-                            }
-                        }
-                    }
-                }
-            }
-            valueAnimator.start()
-        }
-    }
-
-    private fun showMovingCab(points: ArrayList<Point>) {
-        val handler = Handler()
-        var index = 0
-
-        hideUserIcon()
-        runnable = Runnable {
-            run {
-                if (index < points.lastIndex) {
-                    updateDriverLocation(points[index])
-                    handler.postDelayed(runnable, 4000)
-                    ++index
-                } else {
-                    showUserIcon()
-                    handler.removeCallbacks(runnable)
-                }
-            }
-        }
-        handler.postDelayed(runnable, 0)
     }
 
 

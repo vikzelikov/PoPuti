@@ -244,13 +244,15 @@
                 android:text="@string/changeLang"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:theme="@style/ThemeOverlay.AppCompat.Light" />
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                android:visibility="gone" />
 
 
             <TextView
                 android:id="@+id/support"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
+                android:layout_marginTop="20dp"
                 android:background="?attr/selectableItemBackground"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:gravity="center_vertical"

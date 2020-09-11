@@ -18,6 +18,4 @@ interface IBaseInteractor {
 
     fun getRide(rideId: Int, callback: DataHandler<RideInfo?>)
 
-    fun updateFirebaseToken(firebaseToken: String)
-
 }

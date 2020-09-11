@@ -25,7 +25,7 @@ interface ISignupInteractor {
     fun initRealm()
 
 
-    fun saveProfile(userId: Int, token: String, profileData: Profile)
+    fun saveProfile(userId: Int, token: String, profileData: Profile, callback: SuccessHandler)
 
 
     fun saveUserId()
@@ -41,6 +41,9 @@ interface ISignupInteractor {
 
 
     fun saveGooglePay(bankCard: BankCard)
+
+
+    fun updateFirebaseToken(firebaseToken: String)
 
 
     fun closeRealm()

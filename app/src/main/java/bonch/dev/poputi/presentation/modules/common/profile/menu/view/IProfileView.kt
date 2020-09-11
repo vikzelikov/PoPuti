@@ -15,4 +15,6 @@ interface IProfileView : IBaseView {
 
     fun showModerateIcon()
 
+    fun checkOnboarding()
+
 }

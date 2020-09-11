@@ -169,7 +169,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     override fun requestGeocoder(point: Point?) {
-        if (!isBlockGeocoder && !isBlockRequest && point != null) {
+        if (!isBlockGeocoder && !isBlockRequest && point != null && point.latitude != 0.0 && point.longitude != 0.0) {
             //send request and set block for several seconds
             getDriverInteractor.requestGeocoder(point) { address ->
                 address.point?.let {

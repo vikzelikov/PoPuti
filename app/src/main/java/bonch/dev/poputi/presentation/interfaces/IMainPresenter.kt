@@ -15,6 +15,4 @@ interface IMainPresenter {
 
     fun showDriverView()
 
-    fun updateFirebaseToken(firebaseToken: String)
-
 }
