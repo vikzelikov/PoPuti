@@ -13,6 +13,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.chat.MessageObject
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Ride
 import bonch.dev.poputi.domain.entities.common.ride.StatusRide
@@ -200,7 +201,9 @@ class PassengerRideService : Service() {
 
 
     private fun offerPriceNotification() {
-        if (isAppClose) {
+        val isNotificationsEnable = CacheProfile.profile?.isNotificationsEnable
+
+        if (isAppClose && (isNotificationsEnable == null || isNotificationsEnable)) {
             val title = getString(R.string.checkOffersFromDriver).plus(" 🛒")
             val subtitle = getString(R.string.selectBestOffer)
 
@@ -224,7 +227,9 @@ class PassengerRideService : Service() {
             val title = message?.author?.firstName
             val subtitle = message?.text
 
-            if (title != null && subtitle != null) {
+            val isNotificationsEnable = CacheProfile.profile?.isNotificationsEnable
+
+            if (title != null && subtitle != null && (isNotificationsEnable == null || isNotificationsEnable)) {
                 val notification = buildNotification(
                     title, subtitle,
                     getString(R.string.newMessage),

@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.service.driver.DriverRideService
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -71,14 +72,16 @@ class FirebaseService : FirebaseMessagingService() {
         regularRide.price = 341
         regularRide.statusId = 7
 
-        if (title != null && subtitle != null) {
+        val isNotificationsEnable = CacheProfile.profile?.isNotificationsEnable
+
+        if (title != null && subtitle != null && (isNotificationsEnable == null || isNotificationsEnable)) {
             val notification = buildNotification(
                 title, subtitle,
                 getString(R.string.newMessage),
                 isSetOngoing = false,
                 isAutoCancel = true,
                 isHeadsUp = true,
-                regularRide = regularRide
+                regularRide = null
             )
 
             notificatonManager.notify(1, notification)
