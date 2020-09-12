@@ -39,8 +39,6 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
     private val PROFILE_CHECK_PHOTO = 12
 
     private var isDataSaved = false
-    private var isPhotoUploaded = true
-
 
     var tempImageUri: Uri? = null
     var imageUri: Uri? = null
@@ -83,15 +81,20 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
             //remote save
             profileInteractor.saveProfile(profileData)
 
-            //update start data
-            startDataProfile = profileData
+            //for delete old ava in the storage
+            var oldImageId: Int? = null
+            startDataProfile?.photos?.forEach {
+                if (it.imgName == "photo") oldImageId = it.id
+            }
 
             //update cache profile
             CacheProfile.profile = profileData
 
+            //update start data
+            startDataProfile = profileData
+
             //load photo
             imageUri?.let {
-                isPhotoUploaded = false
                 imageUri = null
 
                 Thread(Runnable {
@@ -99,14 +102,33 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                     if (btm != null) {
                         val file = mediaEvent?.convertImage(btm, "photo")
                         if (file != null) {
-                            profileInteractor.uploadPhoto(file) {
-                                isPhotoUploaded = true
+                            val oldImgId = oldImageId
+                            if (oldImgId != null) {
+                                profileInteractor.deletePhoto(oldImgId) { isSuccess ->
+                                    if (isSuccess) {
+                                        profileInteractor.uploadPhoto(file, true) {
+                                            onResponseUploadAva(it)
+                                        }
+                                    } else onResponseUploadAva(false)
+                                }
+                            } else {
+                                profileInteractor.uploadPhoto(file, true) {
+                                    onResponseUploadAva(it)
+                                }
                             }
-                        } else isPhotoUploaded = true
-                    } else isPhotoUploaded = true
+                        } else onResponseUploadAva(false)
+                    } else onResponseUploadAva(false)
                 }).start()
             }
         }
+    }
+
+
+    private fun onResponseUploadAva(isSuccess: Boolean) {
+        getView()?.hideLoading()
+
+        if (!isSuccess)
+            getView()?.showNotification(App.appComponent.getContext().getString(R.string.tryAgain))
     }
 
 
@@ -135,25 +157,21 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
         if (!NetworkUtil.isNetworkConnected(App.appComponent.getContext())) return true
 
         val isDataComplete = getView()?.isDataNamesComplete()
-        val res = App.appComponent.getContext().resources
 
         return if (isDataComplete != null) {
             if (isDataComplete) {
 
                 if (isDataChanged()) {
                     val profileData = getView()?.getProfile()
+                    profileData?.photos = startDataProfile?.photos
 
                     setDataIntent(profileData)
 
                     saveProfile(profileData)
                 }
 
-                if (isPhotoUploaded) {
-                    true
-                } else {
-                    getView()?.showNotification(res.getString(R.string.photoProfileLoading))
-                    false
-                }
+                true
+
             } else {
                 getView()?.showErrorNotification()
                 false
@@ -210,10 +228,9 @@ class ProfileDetailPresenter : BasePresenter<IProfileDetailView>(),
                 isDataSaved = if (isDataComplete != null && isDataComplete) {
                     if (isDataChanged()) {
                         val profileData = getView()?.getProfile()
+                        profileData?.photos = startDataProfile?.photos
 
                         saveProfile(profileData)
-
-                        startDataProfile = profileData
                     }
 
                     true

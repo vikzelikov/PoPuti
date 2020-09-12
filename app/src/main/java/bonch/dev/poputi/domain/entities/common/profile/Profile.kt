@@ -36,8 +36,10 @@ open class Profile(
 
     @SerializedName("calls_allowed")
     @Expose
-    var isCallsEnable: Boolean = false,
+    var isCallsEnable: Boolean = true,
 
+    @SerializedName("notifications_allowed")
+    @Expose
     var isNotificationsEnable: Boolean = true,
 
     var imgUser: String? = null,
@@ -57,7 +59,6 @@ open class ProfilePhoto(
     @Expose
     var imgId: IntArray? = intArrayOf()
 )
-
 
 
 object CacheProfile {

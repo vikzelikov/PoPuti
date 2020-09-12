@@ -6,7 +6,7 @@ import bonch.dev.poputi.data.repository.common.profile.IProfileRepository
 import bonch.dev.poputi.data.repository.common.rate.IRateRideRepository
 import bonch.dev.poputi.data.storage.common.profile.IProfileStorage
 import bonch.dev.poputi.domain.entities.common.banking.BankCard
-import bonch.dev.poputi.domain.entities.common.media.MediaObject
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
 import bonch.dev.poputi.domain.entities.common.rate.Review
@@ -97,14 +97,27 @@ class ProfileInteractor : IProfileInteractor {
     }
 
 
-    override fun uploadPhoto(image: File, callback: SuccessHandler) {
+    override fun uploadPhoto(image: File, isAva: Boolean, callback: SuccessHandler) {
         val token = profileStorage.getToken()
         val userId = profileStorage.getUserId()
 
         if (token != null && userId != -1) {
             mediaRepository.loadPhoto(token, image) { media, _ ->
-                if (media != null) remoteSaveProfile(media, token, userId, callback)
-                else callback(false)
+                if (media != null) {
+                    val imageId = media.id
+
+                    if (isAva) {
+                        CacheProfile.profile?.photos?.forEachIndexed { index, photo ->
+                            if (photo.imgName == "photo") {
+                                //update image id for deleting in the future
+                                CacheProfile.profile?.photos?.get(index)?.id = imageId
+                            }
+                        }
+                    }
+
+                    remoteSaveProfile(imageId, token, userId, callback)
+
+                } else callback(false)
             }
         } else callback(false)
     }
@@ -123,15 +136,14 @@ class ProfileInteractor : IProfileInteractor {
 
 
     private fun remoteSaveProfile(
-        media: MediaObject,
+        imageId: Int,
         token: String,
         userId: Int,
         callback: SuccessHandler
     ) {
         val photo = ProfilePhoto()
-        photo.apply {
-            imgId = intArrayOf(media.id)
-        }
+        photo.imgId = intArrayOf(imageId)
+
         profileRepository.savePhoto(userId, token, photo, callback)
     }
 

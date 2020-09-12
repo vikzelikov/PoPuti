@@ -20,7 +20,7 @@ interface IProfileInteractor {
 
     fun getProfile(callback: DataHandler<Profile?>)
 
-    fun uploadPhoto(image: File, callback: SuccessHandler)
+    fun uploadPhoto(image: File, isAva: Boolean, callback: SuccessHandler)
 
     fun deletePhoto(imageId: Int, callback: SuccessHandler)
 

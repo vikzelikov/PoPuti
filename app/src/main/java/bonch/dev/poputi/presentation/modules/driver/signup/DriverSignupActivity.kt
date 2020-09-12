@@ -12,6 +12,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.driver.DaggerDriverSignupComponent
 import bonch.dev.poputi.di.module.driver.DriverSignupModule
+import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.driver.signup.DriverData
 import bonch.dev.poputi.domain.entities.driver.signup.SignupMainData
 import bonch.dev.poputi.domain.entities.driver.signup.Step
@@ -131,6 +132,11 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun showTableDocsView(driver: DriverData) {
+        //check the user have avatars
+        CacheProfile.profile?.photos?.forEach {
+            if (it.imgName == "photo") SignupMainData.idStep = Step.PASSPORT_PHOTO
+        }
+
         SignupMainData.listDocs = driver.photoArray.toCollection(ArrayList())
 
         //show table docs

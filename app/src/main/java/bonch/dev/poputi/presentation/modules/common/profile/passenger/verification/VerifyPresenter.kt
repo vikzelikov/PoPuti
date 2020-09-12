@@ -254,7 +254,7 @@ class VerifyPresenter : BasePresenter<ContractView.IVerifyView>(),
 
                     if (file != null) {
 
-                        profileInteractor.uploadPhoto(file, callback)
+                        profileInteractor.uploadPhoto(file, false, callback)
 
                     } else {
                         failLoadPhoto()

@@ -23,6 +23,8 @@ import bonch.dev.poputi.presentation.modules.common.profile.me.presenter.IProfil
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.ethanhua.skeleton.Skeleton
+import com.ethanhua.skeleton.SkeletonScreen
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.profile_detail_activity.*
 import javax.inject.Inject
@@ -37,6 +39,7 @@ class ProfileDetailView : AppCompatActivity(),
     private var loadPhotoBottomSheet: BottomSheetBehavior<*>? = null
     private var errorBottomSheet: BottomSheetBehavior<*>? = null
     private var handlerAnimation: Handler? = null
+    private var imgUserSkeleton: SkeletonScreen? = null
 
     private val PROFILE_CHECK_PHOTO = 12
     private val IS_SHOW_POPUP = "IS_SHOW_POPUP"
@@ -382,12 +385,14 @@ class ProfileDetailView : AppCompatActivity(),
 
 
     override fun showLoading() {
-
+        imgUserSkeleton = Skeleton.bind(img_user)
+            .load(R.layout.skeleton_layout)
+            .show()
     }
 
 
     override fun hideLoading() {
-
+        imgUserSkeleton?.hide()
     }
 
 

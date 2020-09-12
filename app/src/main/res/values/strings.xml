@@ -81,6 +81,7 @@
     <string name="changeLang">Сменить язык</string>
     <string name="selectLang">Выбор языка</string>
     <string name="support">Техподдержка</string>
+    <string name="contactWithSupport">Написать в техподдержку</string>
     <string name="support1">Служба поддержки</string>
     <string name="conditionUse">Условия пользования</string>
     <string name="logout">Выйти из профиля</string>
