@@ -170,7 +170,7 @@ class ProfileView : Fragment(), IProfileView {
         }
 
         support.setOnClickListener {
-            profilePresenter.showSupport()
+            profilePresenter.showSupport(this)
         }
 
         condition_use.setOnClickListener {

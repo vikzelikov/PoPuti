@@ -34,8 +34,6 @@ class CarInfoView : AppCompatActivity(), ContractView.ICarInfoView {
         super.onCreate(null)
         setContentView(R.layout.car_info_activity)
 
-        showLoading()
-
         setListeners()
 
         presenter.getCarInfo()

@@ -28,7 +28,7 @@ interface IProfilePresenter {
 
     fun showProfits()
 
-    fun showSupport()
+    fun showSupport(fragment: Fragment)
 
     fun showRating()
 

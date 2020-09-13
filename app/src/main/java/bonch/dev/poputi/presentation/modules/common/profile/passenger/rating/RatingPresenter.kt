@@ -32,13 +32,6 @@ class RatingPresenter : BasePresenter<ContractView.IRatingView>(),
         val p = CacheProfile.profile
 
         if (p != null) getView()?.setProfile(p)
-        else {
-            interactor.getProfile { profileData, _ ->
-                profileData?.let {
-                    getView()?.setProfile(it)
-                }
-            }
-        }
     }
 
 

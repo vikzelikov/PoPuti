@@ -1,6 +1,7 @@
 package bonch.dev.poputi.presentation.modules.common.profile.menu.presenter
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,6 +26,7 @@ import bonch.dev.poputi.presentation.modules.driver.signup.DriverSignupActivity
 import bonch.dev.poputi.route.MainRouter
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import javax.inject.Inject
+
 
 class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
@@ -195,17 +197,25 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
 
     override fun showRating() {
-        MainRouter.showView(R.id.rating_passenger, getView()?.getNavHost(), null)
+        CacheProfile.profile?.let {
+            MainRouter.showView(R.id.rating_passenger, getView()?.getNavHost(), null)
+        }
     }
 
 
     override fun showCarInfo() {
-        MainRouter.showView(R.id.car_info_driver, getView()?.getNavHost(), null)
+        CacheProfile.profile?.let {
+            MainRouter.showView(R.id.car_info_driver, getView()?.getNavHost(), null)
+        }
     }
 
 
-    override fun showSupport() {
-        MainRouter.showView(R.id.support, getView()?.getNavHost(), null)
+    override fun showSupport(fragment: Fragment) {
+        val emailIntent = Intent(
+            Intent.ACTION_SENDTO, Uri.fromParts("mailto", "poputi@bonch.dev", null)
+        )
+        fragment.startActivity(Intent.createChooser(emailIntent, "Send email..."), null)
+//        MainRouter.showView(R.id.support, getView()?.getNavHost(), null)
     }
 
 
