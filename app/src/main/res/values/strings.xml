@@ -160,6 +160,7 @@
     <string name="photoLoading">Фото загружаются…</string>
     <string name="photoProfileLoading">Фото загружается…</string>
     <string name="place">Место</string>
+    <string name="atlantic">Атлантический океан</string>
     <string name="chatEmpty">Сообщений нет</string>
     <string name="checkInternet">Проверьте Интернет-соединение</string>
     <string name="bankCardValidData">Введите актуальные данные!</string>

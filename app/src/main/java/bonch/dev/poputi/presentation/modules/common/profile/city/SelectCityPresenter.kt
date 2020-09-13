@@ -55,7 +55,7 @@ class SelectCityPresenter : BasePresenter<ContractView.ISelectCityView>(),
         interactor.saveMyCity(address)
 
         Geo.isPreferCityGeo = true
-        Geo.isRequestMyPosition = true
+        Geo.isRequestUpdateCity = true
     }
 
 

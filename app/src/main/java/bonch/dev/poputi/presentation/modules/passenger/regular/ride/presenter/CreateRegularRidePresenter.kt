@@ -41,7 +41,6 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
     val OFFER_PRICE = 1
     val ADD_BANK_CARD = 2
-    private val NOT_DESCRIPTION = "Место"
     private val BLOCK_REQUEST_GEOCODER = 1500L
 
 
@@ -123,14 +122,6 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
         } else {
             isBlockGeocoder = false
             isOnRouting = false
-
-            Handler().postDelayed({
-                Geo.selectedCity?.point?.let { point ->
-                    getView()?.moveCamera(Point(point.latitude, point.longitude))
-
-                    Geo.isPreferCityGeo = true
-                }
-            }, 1000)
         }
     }
 
@@ -169,21 +160,27 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     override fun requestGeocoder(point: Point?) {
-        if (!isBlockGeocoder && !isBlockRequest && point != null && point.latitude != 0.0 && point.longitude != 0.0) {
+        if (!isBlockRequest && point != null && point.latitude != 0.0 && point.longitude != 0.0) {
             //send request and set block for several seconds
             getDriverInteractor.requestGeocoder(point) { address ->
-                address.point?.let {
-                    responseGeocoder(address.address, Point(it.latitude, it.longitude))
-                }
 
-                //callback city
-                getView()?.getMyCityCall()?.let {
-                    val a = Address()
-                    a.address = address.description
-                    a.point = address.point
-                    it(a)
-                }
+                if (address.address != App.appComponent.getApp().getString(R.string.atlantic)) {
+
+                    address.point?.let {
+                        responseGeocoder(address.address, Point(it.latitude, it.longitude))
+                    }
+
+                    //callback city
+                    getView()?.getMyCityCall()?.let {
+                        val a = Address()
+                        a.address = address.description
+                        a.point = address.point
+                        it(a)
+                    }
+
+                } else isBlockRequest = false
             }
+
             isBlockRequest = true
         }
     }
@@ -191,13 +188,14 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
     private fun responseGeocoder(address: String?, point: Point) {
         val actualFocus = getView()?.getActualFocus()
+        val place = App.appComponent.getApp().getString(R.string.place)
 
         if (address != null) {
             if (isFromMapSearch || (actualFocus != null && !actualFocus)) {
                 Coordinate.fromAdr = Address(
                     0,
                     address,
-                    NOT_DESCRIPTION,
+                    place,
                     null,
                     AddressPoint(
                         point.latitude,
@@ -208,7 +206,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                 Coordinate.toAdr = Address(
                     0,
                     address,
-                    NOT_DESCRIPTION,
+                    place,
                     null,
                     AddressPoint(
                         point.latitude,
@@ -420,7 +418,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
     override fun showMyPosition() {
         Geo.isPreferCityGeo = false
-        Geo.isRequestMyPosition = true
+        Geo.isRequestUpdateCity = true
 
         val userPoint = getUserPoint()
 

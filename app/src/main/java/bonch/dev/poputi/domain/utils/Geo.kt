@@ -22,7 +22,7 @@ object Geo {
      * */
     var isPreferCityGeo = false
 
-    var isRequestMyPosition = false
+    var isRequestUpdateCity = false
 
     var selectedCity: Address? = null
 

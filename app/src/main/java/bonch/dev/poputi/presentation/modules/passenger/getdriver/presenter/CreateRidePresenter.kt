@@ -2,6 +2,8 @@ package bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter
 
 import android.os.Handler
 import android.view.View
+import bonch.dev.poputi.App
+import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.AddressPoint
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
@@ -26,11 +28,10 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
     var isFromMapSearch = true
     var isNextStep = false
-    private var isBlockRequest = true
+    private var isBlockRequest = false
 
     private var cashEvent: CashEvent
     private val BLOCK_REQUEST_GEOCODER = 1000L
-    private val NOT_DESCRIPTION = "Место"
 
 
     init {
@@ -67,18 +68,24 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
         if (!isBlockRequest && point != null && point.latitude != 0.0 && point.longitude != 0.0) {
             //send request and set block for several seconds
             getDriverInteractor.requestGeocoder(point) { address ->
-                address.point?.let {
-                    responseGeocoder(address.address, Point(it.latitude, it.longitude))
-                }
 
-                //callback city
-                getView()?.getMyCityCall()?.let {
-                    val a = Address()
-                    a.address = address.description
-                    a.point = address.point
-                    it(a)
-                }
+                if (address.address != App.appComponent.getApp().getString(R.string.atlantic)) {
+
+                    address.point?.let {
+                        responseGeocoder(address.address, Point(it.latitude, it.longitude))
+                    }
+
+                    //callback city
+                    getView()?.getMyCityCall()?.let {
+                        val a = Address()
+                        a.address = address.description
+                        a.point = address.point
+                        it(a)
+                    }
+
+                } else isBlockRequest = false
             }
+
             isBlockRequest = true
         }
     }
@@ -86,13 +93,14 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
     private fun responseGeocoder(address: String?, point: Point) {
         val actualFocus = getView()?.getActualFocus()
+        val place = App.appComponent.getApp().getString(R.string.place)
 
         if (address != null) {
             if (isFromMapSearch || (actualFocus != null && !actualFocus)) {
                 fromAdr = Address(
                     0,
                     address,
-                    NOT_DESCRIPTION,
+                    place,
                     null,
                     AddressPoint(
                         point.latitude,
@@ -103,7 +111,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
                 toAdr = Address(
                     0,
                     address,
-                    NOT_DESCRIPTION,
+                    place,
                     null,
                     AddressPoint(
                         point.latitude,
@@ -234,7 +242,7 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
 
     override fun showMyPosition() {
         Geo.isPreferCityGeo = false
-        Geo.isRequestMyPosition = true
+        Geo.isRequestUpdateCity = true
 
         val userPoint = getView()?.getUserLocation()
 
@@ -251,8 +259,6 @@ class CreateRidePresenter : BasePresenter<ContractView.ICreateRideView>(),
             blockRequestHandler?.postDelayed(object : Runnable {
                 override fun run() {
                     isBlockRequest = false
-                    if (fromAdr == null)
-                        requestGeocoder(getView()?.getUserLocation())
                     blockRequestHandler?.postDelayed(this, BLOCK_REQUEST_GEOCODER)
                 }
             }, 0)

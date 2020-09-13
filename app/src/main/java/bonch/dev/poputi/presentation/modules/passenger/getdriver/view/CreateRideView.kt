@@ -102,12 +102,9 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         Coordinate.toAdr = null
 
         userPoint?.let {
-            Handler().postDelayed({
-                it()?.let { point ->
-                    val c = CameraPosition(point, 17f, 1f, 1f)
-                    requestGeocoder(c, false)
-                }
-            }, 1000)
+            it()?.let { point ->
+                moveMapCamera(point)
+            }
         }
     }
 

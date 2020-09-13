@@ -7,10 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import bonch.dev.poputi.App
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.common.ride.Address
-import bonch.dev.poputi.domain.interactor.common.profile.IProfileInteractor
-import bonch.dev.poputi.domain.interactor.common.profile.ProfileInteractor
-import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.presentation.base.BasePresenter
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.ContractView
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.view.CreateRegularRideView
@@ -22,7 +18,6 @@ class MapCreateRegRidePresenter : BasePresenter<ContractView.IMapCreateRegularDr
 
 
     private var childCreateRegularDrive: ContractView.ICreateRegularDriveView? = null
-    private var profileInteractor: IProfileInteractor? = null
 
 
     //Child fragments
@@ -96,19 +91,6 @@ class MapCreateRegRidePresenter : BasePresenter<ContractView.IMapCreateRegularDr
     }
 
 
-    override fun instance(): MapCreateRegRidePresenter {
-        return this
-    }
-
-
-    override fun saveMyCity(address: Address) {
-        if (profileInteractor == null)
-            profileInteractor = ProfileInteractor()
-
-        if (Geo.selectedCity?.address != address.address) {
-            Geo.selectedCity = address
-            profileInteractor?.saveMyCity(address)
-        }
-    }
+    override fun instance() = this
 
 }

@@ -209,9 +209,9 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         }
     }
 
-
     private fun enterAnimation() {
         val box = boundingBox
+
         box?.let {
             var cameraPosition = mapView?.map?.cameraPosition(box)
 
@@ -223,11 +223,7 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
                     cameraPosition.tilt
                 )
 
-                mapView?.map?.move(
-                    cameraPosition,
-                    Animation(Animation.Type.SMOOTH, 0f),
-                    null
-                )
+                mapView?.map?.move(cameraPosition)
 
                 cameraPosition = CameraPosition(
                     cameraPosition.target,

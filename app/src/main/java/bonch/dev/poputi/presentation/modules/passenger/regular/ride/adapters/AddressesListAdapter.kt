@@ -1,10 +1,12 @@
 package bonch.dev.poputi.presentation.modules.passenger.regular.ride.adapters
 
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.presentation.modules.passenger.regular.ride.presenter.ContractPresenter
@@ -28,6 +30,7 @@ class AddressesListAdapter @Inject constructor(private val createRegularDrivePre
     override fun getItemCount(): Int = list.size
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ItemPostHolder, position: Int) {
         holder.bind(list[position])
 
@@ -49,7 +52,7 @@ class AddressesListAdapter @Inject constructor(private val createRegularDrivePre
             itemView.address.text = post.address
 
             itemView.city.text = if (post.description.isNullOrEmpty()) {
-                "Место"//todo
+                App.appComponent.getApp().getString(R.string.place)
             } else {
                 post.description
             }

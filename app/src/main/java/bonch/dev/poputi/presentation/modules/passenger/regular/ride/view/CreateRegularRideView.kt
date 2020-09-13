@@ -1300,11 +1300,13 @@ class CreateRegularRideView : Fragment(), ContractView.ICreateRegularDriveView {
     private fun showMapMarker() {
         center_position?.visibility = View.VISIBLE
         center_position?.alpha = 1.0f
+        shadow_marker?.visibility = View.VISIBLE
     }
 
 
     override fun hideMapMarker() {
         center_position?.visibility = View.GONE
+        shadow_marker?.visibility = View.GONE
     }
 
 

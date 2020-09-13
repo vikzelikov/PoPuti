@@ -61,7 +61,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                         if (profileData?.firstName == null) {
                             Handler().postDelayed({
                                 getProfile()
-                            }, 19000)
+                            }, 1000)
                         }
 
                         profileData?.let {

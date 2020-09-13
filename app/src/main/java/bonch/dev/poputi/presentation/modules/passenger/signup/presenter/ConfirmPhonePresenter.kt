@@ -3,6 +3,7 @@ package bonch.dev.poputi.presentation.modules.passenger.signup.presenter
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.FragmentActivity
+import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.banking.BankCard

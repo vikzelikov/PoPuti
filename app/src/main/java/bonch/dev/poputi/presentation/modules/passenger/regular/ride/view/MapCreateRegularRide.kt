@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
-import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate
 import bonch.dev.poputi.domain.utils.Constants
@@ -52,6 +51,7 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
 
     private var isAllowFirstZoom = false
     private var isAllowZoom = false
+    private var isDetectCity = true
 
 
     init {
@@ -106,6 +106,21 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        //access geo permission
+        applicationContext.let {
+            val isEnabled = Geo.isEnabled(it)
+            if (isEnabled == null || !isEnabled) {
+                Geo.isPreferCityGeo = true
+                getUserLocation()?.let { point ->
+                    map?.post {
+                        Handler().postDelayed({
+                            mapView.map?.move(CameraPosition(point, 16f, 1f, 1f))
+                        }, 500)
+                    }
+                }
+            }
+        }
+
         if (Permissions.isAccess(Permissions.GEO_PERMISSION, this)) {
             setUserLocation()
         }
@@ -123,10 +138,6 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
         p2: CameraUpdateSource,
         p3: Boolean
     ) {
-        if (p3) {
-            userLocationLayer?.resetAnchor()
-        }
-
         if ((p2 == CameraUpdateSource.GESTURES && p3) || Coordinate.fromAdr == null) {
             isAllowZoom = true
             mapCreateDrivePresenter.requestGeocoder(p1, false)
@@ -136,18 +147,9 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
             mapCreateDrivePresenter.requestGeocoder(p1, true)
         }
 
-        if (Geo.isRequestMyPosition && p3) {
+        if (Geo.isRequestUpdateCity || p3) {
 
-            mapCreateDrivePresenter.requestGeocoder(p1, false)
-
-            //update city
-            myCityCallback = { city ->
-                mapCreateDrivePresenter.saveMyCity(city)
-
-                myCityCallback = null
-            }
-
-            Geo.isRequestMyPosition = false
+            if (p3) mapCreateDrivePresenter.requestGeocoder(p1, false)
         }
 
         mapCreateDrivePresenter.onObjectUpdate()
@@ -210,19 +212,6 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
         val userMark = mapCreateDrivePresenter.getBitmap(R.drawable.ic_user_mark)
         userLocationView.arrow.setIcon(ImageProvider.fromBitmap(userMark))
 
-        if (ActiveRide.activeRide == null) {
-            userLocationLayer?.setAnchor(
-                PointF(
-                    (mapView.width * 0.5).toFloat(),
-                    (mapView.height * 0.5).toFloat()
-                ),
-                PointF(
-                    (mapView.width * 0.5).toFloat(),
-                    (mapView.height * 0.83).toFloat()
-                )
-            )
-        }
-
         //for staying
         pinIcon.setIcon(
             "pin",
@@ -236,7 +225,36 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
     }
 
 
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
+    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
+        if (isDetectCity) {
+            getUserLocation()?.let {
+                mapCreateDrivePresenter.requestGeocoder(CameraPosition(it, 16f, 1f, 1f), false)
+            }
+
+            myCityCallback = { city ->
+                if (city.address != Geo.selectedCity?.address) {
+                    Geo.selectedCity?.point?.let {
+                        Geo.isPreferCityGeo = true
+                    }
+                }
+
+                getUserLocation()?.let {
+                    mapView.map?.move(CameraPosition(it, 16f, 1f, 1f))
+
+                    Handler().postDelayed({
+                        mapCreateDrivePresenter.requestGeocoder(
+                            CameraPosition(it, 16f, 1f, 1f),
+                            false
+                        )
+                    }, 1000)
+                }
+
+                myCityCallback = null
+            }
+
+            isDetectCity = false
+        }
+    }
 
 
     private fun setUserLocation() {
@@ -281,6 +299,7 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
 
         mainHandler.post(myRunnable)
     }
+
 
     override fun showLoading() {
         val mainHandler = Handler(Looper.getMainLooper())
@@ -348,9 +367,7 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
     }
 
 
-    override fun getNavHost(): NavController? {
-        return null
-    }
+    override fun getNavHost(): NavController? = null
 
 
     override fun hideKeyboard() {}

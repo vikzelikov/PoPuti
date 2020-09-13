@@ -73,23 +73,7 @@ class ProfileInteractor : IProfileInteractor {
         val userId = profileStorage.getUserId()
 
         if (token != null && userId != -1) {
-            profileRepository.getProfile(userId, token) { profile, error ->
-                if (error != null) {
-                    //retry request
-                    profileRepository.getProfile(userId, token) { profileData, _ ->
-                        if (profileData != null) {
-                            //ok
-                            callback(profile, null)
-                        } else {
-                            //error
-                            callback(null, "Error")
-                        }
-                    }
-                } else if (profile != null) {
-                    //ok
-                    callback(profile, null)
-                }
-            }
+            profileRepository.getProfile(userId, token, callback)
         } else {
             //error
             callback(null, "Error")

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import bonch.dev.poputi.App
 import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.presenter.ContractPresenter
@@ -54,7 +55,7 @@ class AddressesAdapter @Inject constructor(private val createRidePresenter: Cont
             itemView.address?.text = post.address
 
             itemView.city?.text = if (post.description.isNullOrEmpty()) {
-                "Место"//todo
+                App.appComponent.getApp().getString(R.string.place)
             } else {
                 post.description
             }

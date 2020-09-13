@@ -70,6 +70,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
     private var isAllowFirstZoom = false
     private var isAllowZoom = false
+    private var isDetectCity = true
 
 
     init {
@@ -119,10 +120,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             Geo.showAlertEnable(it)
         }
 
-        Geo.isEnabled(App.appComponent.getContext())?.let {
-            if (it) setListenerUserPosition()
-        }
-
         return root
     }
 
@@ -131,6 +128,20 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         val activity = activity as? MainActivity
         //access geo permission
         activity?.let {
+            activity.applicationContext?.let {
+                val isEnabled = Geo.isEnabled(it)
+                if (isEnabled == null || !isEnabled) {
+                    Geo.isPreferCityGeo = true
+                    getUserLocation()?.let { point ->
+                        map?.post {
+                            Handler().postDelayed({
+                                mapView.map?.move(CameraPosition(point, 16f, 1f, 1f))
+                            }, 1000)
+                        }
+                    }
+                }
+            }
+
             Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
 
             navigateUser()
@@ -183,10 +194,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         p2: CameraUpdateSource,
         p3: Boolean
     ) {
-        if (p3) {
-            userLocationLayer?.resetAnchor()
-        }
-
         if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
             isAllowZoom = true
             mapPresenter.requestGeocoder(p1, false)
@@ -196,23 +203,23 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             mapPresenter.requestGeocoder(p1, true)
         }
 
-        if (Geo.isRequestMyPosition && p3) {
 
-            mapPresenter.requestGeocoder(p1, false)
+        if (Geo.isRequestUpdateCity || p3) {
+
+            if (p3) mapPresenter.requestGeocoder(p1, false)
 
             //update city
             myCityCallback = { city ->
                 myCityCallbackMain?.let { it(city) }
-
-                //todo это надо?
                 myCityCallbackDetect?.let { it(city) }
 
-                mapPresenter.saveMyCity(city)
+                if (Geo.isRequestUpdateCity)
+                    mapPresenter.saveMyCity(city)
+
+                Geo.isRequestUpdateCity = false
 
                 myCityCallback = null
             }
-
-            Geo.isRequestMyPosition = false
         }
 
         mapPresenter.onObjectUpdate()
@@ -233,17 +240,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         //saving for handle
         userIcon = userLocationView.arrow
 
-        userLocationLayer?.setAnchor(
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.5).toFloat()
-            ),
-            PointF(
-                (mapView.width * 0.5).toFloat(),
-                (mapView.height * 0.83).toFloat()
-            )
-        )
-
         //for staying
         pinIcon.setIcon(
             "pin",
@@ -254,12 +250,39 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         )
 
         userLocationView.accuracyCircle.fillColor = Color.TRANSPARENT
-
-        Geo.isRequestMyPosition = true
     }
 
 
-    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {}
+    override fun onObjectUpdated(view: UserLocationView, event: ObjectEvent) {
+        if (isDetectCity) {
+            getUserLocation()?.let {
+                mapPresenter.requestGeocoder(CameraPosition(it, 16f, 1f, 1f), false)
+            }
+
+            myCityCallbackDetect = { city ->
+                if (city.address != Geo.selectedCity?.address) {
+                    Geo.selectedCity?.point?.let {
+                        Geo.isPreferCityGeo = true
+                    }
+                }
+
+                getUserLocation()?.let {
+                    mapView.map?.move(CameraPosition(it, 16f, 1f, 1f))
+
+                    Handler().postDelayed({
+                        mapPresenter.requestGeocoder(
+                            CameraPosition(it, 16f, 1f, 1f),
+                            false
+                        )
+                    }, 1000)
+                }
+
+                myCityCallbackDetect = null
+            }
+
+            isDetectCity = false
+        }
+    }
 
 
     private fun setUserLocation() {
@@ -385,6 +408,8 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
 
     override fun attachDetailRide() {
+        isAllowZoom = false
+
         nextFragment()
 
         fadeMap()
@@ -454,23 +479,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     override fun onDestroy() {
         mapPresenter.instance().detachView()
         super.onDestroy()
-    }
-
-
-    private fun setListenerUserPosition() {
-        myCityCallbackDetect = { city ->
-            if (city.address != Geo.selectedCity?.address) {
-                Geo.selectedCity?.point?.let {
-                    Geo.isRequestMyPosition = true
-                    Geo.isPreferCityGeo = true
-
-                    val cityPoint = Point(it.latitude, it.longitude)
-                    moveCamera(cityPoint)
-                }
-            }
-
-            myCityCallbackDetect = null
-        }
     }
 
 

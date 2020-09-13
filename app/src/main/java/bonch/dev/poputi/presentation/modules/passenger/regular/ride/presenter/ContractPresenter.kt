@@ -26,7 +26,6 @@ interface ContractPresenter {
         fun getBitmap(drawableId: Int): Bitmap?
         fun getUserLocation(): Point?
         fun requestGeocoder(cameraPosition: CameraPosition, isUp: Boolean)
-        fun saveMyCity(address: Address)
         fun onObjectUpdate()
         fun onBackPressed()
     }

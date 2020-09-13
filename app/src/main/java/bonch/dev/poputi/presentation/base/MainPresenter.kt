@@ -102,21 +102,6 @@ class MainPresenter : BasePresenter<IMainActivity>(), IMainPresenter {
             getView()?.hideFullLoading()
             showSignup()
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        showPassengerView()
     }
 
 
