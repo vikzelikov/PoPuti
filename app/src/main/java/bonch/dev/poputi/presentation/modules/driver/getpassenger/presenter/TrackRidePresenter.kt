@@ -137,6 +137,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
     override fun receiveOrder(order: RideInfo?) {
         val res = App.appComponent.getContext().resources
+        isDrivingRoute = true
 
         if (order != null) {
             //set UI
@@ -159,6 +160,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
             //set directions
             if (fromPoint != null && toPoint != null && map != null) {
                 //set routes
+                Routing.mapObjects = null
+
                 routing.submitRequest(fromPoint, toPoint, true, map)
             }
         } else {
@@ -327,6 +330,8 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         }
 
         if (userPoint != null && fromPoint != null && map != null && isDrivingRoute) {
+            Routing.mapObjectsDriver = null
+
             Routing().submitRequest(userPoint, fromPoint, false, map)
             isDrivingRoute = false
         }

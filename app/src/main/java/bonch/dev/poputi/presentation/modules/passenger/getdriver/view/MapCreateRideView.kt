@@ -19,6 +19,7 @@ import bonch.dev.poputi.Permissions
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.poputi.di.module.passenger.GetDriverModule
+import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.utils.Constants.API_KEY_YANDEX
@@ -239,6 +240,19 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
 
         //saving for handle
         userIcon = userLocationView.arrow
+
+        ActiveRide.activeRide?.let {
+            userLocationLayer?.setAnchor(
+                PointF(
+                    (mapView.width * 0.5).toFloat(),
+                    (mapView.height * 0.5).toFloat()
+                ),
+                PointF(
+                    (mapView.width * 0.5).toFloat(),
+                    (mapView.height * 0.83).toFloat()
+                )
+            )
+        }
 
         //for staying
         pinIcon.setIcon(

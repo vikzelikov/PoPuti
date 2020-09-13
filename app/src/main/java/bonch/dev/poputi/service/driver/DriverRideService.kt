@@ -34,8 +34,8 @@ class DriverRideService : Service() {
     private var mLocationRequest: LocationRequest? = null
     private lateinit var getPassengerInteractor: IGetPassengerInteractor
 
-    private val UPDATE_INTERVAL = 10 * 1000.toLong()
-    private val FASTEST_INTERVAL = 10000L
+    private val UPDATE_INTERVAL = 50 * 1000.toLong()
+    private val FASTEST_INTERVAL = 5000L
     private lateinit var client: FusedLocationProviderClient
     private lateinit var callbackGeo: LocationCallback
 

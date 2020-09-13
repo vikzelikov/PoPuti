@@ -63,6 +63,11 @@ class DriverSignupActivity : AppCompatActivity() {
         clearData()
 
         navigateOnSignup()
+
+        //check the user have avatars
+        CacheProfile.profile?.photos?.forEach {
+            if (it.imgName == "photo") SignupMainData.idStep = Step.PASSPORT_PHOTO
+        }
     }
 
 
@@ -132,11 +137,6 @@ class DriverSignupActivity : AppCompatActivity() {
 
 
     private fun showTableDocsView(driver: DriverData) {
-        //check the user have avatars
-        CacheProfile.profile?.photos?.forEach {
-            if (it.imgName == "photo") SignupMainData.idStep = Step.PASSPORT_PHOTO
-        }
-
         SignupMainData.listDocs = driver.photoArray.toCollection(ArrayList())
 
         //show table docs

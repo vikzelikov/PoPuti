@@ -144,13 +144,9 @@ class PassengerRideService : Service() {
     private fun connectSocketGetGeoDriver() {
         //connect to socket for get location of driver
         getDriverInteractor.connectSocketGetGeoDriver { isSuccess ->
-            getDriverInteractor.subscribeOnGetGeoDriver { data, _ ->
-                intentChat.putExtra(DRIVER_GEO_TAG, data)
-                sendBroadcast(intentDriverLocation)
-            }
             if (isSuccess) {
                 getDriverInteractor.subscribeOnGetGeoDriver { data, _ ->
-                    intentChat.putExtra(DRIVER_GEO_TAG, data)
+                    intentDriverLocation.putExtra(DRIVER_GEO_TAG, data)
                     sendBroadcast(intentDriverLocation)
                 }
             } else {

@@ -19,9 +19,7 @@ import bonch.dev.poputi.presentation.interfaces.SuccessHandler
 import bonch.dev.poputi.presentation.interfaces.SuggestHandler
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
-import com.pusher.client.channel.PrivateChannel
-import com.pusher.client.channel.PrivateChannelEventListener
-import com.pusher.client.channel.PusherEvent
+import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.util.HttpAuthorizer
 import com.yandex.mapkit.geometry.Point
@@ -43,7 +41,7 @@ class GetDriverRepository : IGetDriverRepository {
     private var channel: PrivateChannel? = null
     private var pusher: Pusher? = null
     private var pusherDriverGeo: Pusher? = null
-    private var channelDriverGeo: PrivateChannel? = null
+    private var channelDriverGeo: Channel? = null
 
 
     init {
@@ -547,14 +545,9 @@ class GetDriverRepository : IGetDriverRepository {
 
             pusherDriverGeo?.connect()
 
-            channelDriverGeo = pusherDriverGeo?.subscribePrivate("private-$channelName.$driverId",
-                object : PrivateChannelEventListener {
+            channelDriverGeo = pusherDriverGeo?.subscribe("$channelName.$driverId",
+                object : ChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {}
-
-                    override fun onAuthenticationFailure(mess: String?, e: java.lang.Exception?) {
-                        Log.e(log, String.format("SOCKET CONNECT FAIL [%s], [%s]", mess, e))
-                        callback(false)
-                    }
 
                     override fun onSubscriptionSucceeded(channelName: String?) {
                         Log.i(log, "SOCKET CONNECT SUCCESS")
@@ -567,11 +560,9 @@ class GetDriverRepository : IGetDriverRepository {
 
     override fun subscribeOnGetGeoDriver(callback: DataHandler<String?>) {
         val event = "App\\Events\\DriverLocation"
-Log.e("TEST","subscrive $channelDriverGeo")
+
         channelDriverGeo?.bind(event, object : PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
-                Log.e("TEST","subscrive!! ${event?.data}")
-
                 if (event != null) {
                     callback(event.data, null)
                 } else {
