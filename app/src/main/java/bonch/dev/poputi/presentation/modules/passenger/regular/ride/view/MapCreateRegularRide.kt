@@ -92,21 +92,12 @@ class MapCreateRegularRide : AppCompatActivity(), UserLocationObjectListener, Ca
 
         setListeners()
 
-        onPermission()
+        Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
 
         mapCreateDrivePresenter.attachCreateRegularDrive(supportFragmentManager)
 
         Coordinate.fromAdr = null
         Coordinate.toAdr = null
-    }
-
-
-    private fun onPermission() {
-        if (Permissions.isAccess(Permissions.GEO_PERMISSION, this)) {
-            setUserLocation()
-        } else {
-            Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
-        }
     }
 
 

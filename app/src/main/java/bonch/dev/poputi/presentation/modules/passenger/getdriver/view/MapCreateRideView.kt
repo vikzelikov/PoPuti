@@ -71,7 +71,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
     private var isAllowFirstZoom = false
     private var isAllowZoom = false
 
-    
+
     init {
         initDI()
 
@@ -119,8 +119,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             Geo.showAlertEnable(it)
         }
 
-        Geo.selectedCity = mapPresenter.getMyCity()
-
         Geo.isEnabled(App.appComponent.getContext())?.let {
             if (it) setListenerUserPosition()
         }
@@ -133,11 +131,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         val activity = activity as? MainActivity
         //access geo permission
         activity?.let {
-            if (Permissions.isAccess(Permissions.GEO_PERMISSION, activity)) {
-                setUserLocation()
-            } else {
-                Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
-            }
+            Permissions.access(Permissions.GEO_PERMISSION_REQUEST, this)
 
             navigateUser()
         }
@@ -173,7 +167,6 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
                     isAllowFirstZoom = true
 
                     onboarding()
-
                 }, 2000)
             }
 
@@ -210,6 +203,8 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
             //update city
             myCityCallback = { city ->
                 myCityCallbackMain?.let { it(city) }
+
+                //todo это надо?
                 myCityCallbackDetect?.let { it(city) }
 
                 mapPresenter.saveMyCity(city)

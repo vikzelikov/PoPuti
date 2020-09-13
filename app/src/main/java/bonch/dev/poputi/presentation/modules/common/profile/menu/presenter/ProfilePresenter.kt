@@ -61,7 +61,7 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
                         if (profileData?.firstName == null) {
                             Handler().postDelayed({
                                 getProfile()
-                            }, 1000)
+                            }, 19000)
                         }
 
                         profileData?.let {
@@ -78,9 +78,11 @@ class ProfilePresenter : BasePresenter<IProfileView>(), IProfilePresenter {
 
 
     override fun showFullProfile(fragment: Fragment) {
-        val context = App.appComponent.getContext()
-        val intent = Intent(context, ProfileDetailView::class.java)
-        fragment.startActivityForResult(intent, PROFILE_DETAIL_VIEW)
+        CacheProfile.profile?.let {
+            val context = App.appComponent.getContext()
+            val intent = Intent(context, ProfileDetailView::class.java)
+            fragment.startActivityForResult(intent, PROFILE_DETAIL_VIEW)
+        }
     }
 
 

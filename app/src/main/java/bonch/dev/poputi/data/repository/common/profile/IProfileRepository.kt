@@ -2,6 +2,7 @@ package bonch.dev.poputi.data.repository.common.profile
 
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.presentation.interfaces.DataHandler
 import bonch.dev.poputi.presentation.interfaces.SuccessHandler
@@ -18,5 +19,7 @@ interface IProfileRepository {
     fun getStoryRidesPassenger(token: String, callback: DataHandler<ArrayList<RideInfo>?>)
 
     fun getStoryRidesDriver(token: String, callback: DataHandler<ArrayList<RideInfo>?>)
+
+    fun updateCity(city: Address, userId: Int, token: String)
 
 }

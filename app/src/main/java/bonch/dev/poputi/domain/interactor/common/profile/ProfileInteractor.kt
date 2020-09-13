@@ -215,16 +215,19 @@ class ProfileInteractor : IProfileInteractor {
 
 
     /**
-     * RATING PASSENGER
+     * CITY DETECT
      * */
     override fun saveMyCity(address: Address) {
+        val userId = profileStorage.getUserId()
+        val token = profileStorage.getToken()
+
         profileStorage.saveMyCity(address)
+
+        if (token != null && userId != -1)
+            profileRepository.updateCity(address, userId, token)
     }
 
 
-    /**
-     * CITY DETECT
-     * */
     override fun getMyCity(): Address? {
         return profileStorage.getMyCity()
     }

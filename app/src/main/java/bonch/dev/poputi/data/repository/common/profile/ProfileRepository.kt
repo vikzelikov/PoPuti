@@ -5,6 +5,7 @@ import bonch.dev.poputi.App
 import bonch.dev.poputi.data.network.common.ProfileService
 import bonch.dev.poputi.domain.entities.common.profile.Profile
 import bonch.dev.poputi.domain.entities.common.profile.ProfilePhoto
+import bonch.dev.poputi.domain.entities.common.ride.Address
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.utils.NetworkUtil
 import bonch.dev.poputi.presentation.interfaces.DataHandler
@@ -214,6 +215,24 @@ class ProfileRepository : IProfileRepository {
                 //Error
                 Log.e("GET_STORY_DRIVER", "${err.printStackTrace()}")
                 callback(null, err.message)
+            }
+        }
+    }
+
+
+    override fun updateCity(city: Address, userId: Int, token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //set headers
+                val headers = NetworkUtil.getHeaders(token)
+
+                city.address?.let {
+                    service.updateCity(headers, userId, it)
+                }
+
+            } catch (err: Exception) {
+                //Error
+                Log.e("UPD_CITY", "${err.printStackTrace()}")
             }
         }
     }

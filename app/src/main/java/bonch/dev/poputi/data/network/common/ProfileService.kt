@@ -43,4 +43,12 @@ interface ProfileService {
         @HeaderMap headers: Map<String, String>
     ): Response<ArrayList<RideInfo>>
 
+
+    @FormUrlEncoded
+    @PUT("/api/users/{id}")
+    suspend fun updateCity(
+        @HeaderMap headers: Map<String, String>,
+        @Path("id") id: Int,
+        @Field("city") city: String
+    ): Response<*>
 }
