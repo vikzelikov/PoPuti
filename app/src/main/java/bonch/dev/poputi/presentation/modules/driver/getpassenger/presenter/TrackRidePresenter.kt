@@ -160,9 +160,9 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
             //set directions
             if (fromPoint != null && toPoint != null && map != null) {
                 //set routes
-                Routing.mapObjects = null
+                if (Routing.mapObjects != null) Routing.removeRoute()
 
-                routing.submitRequest(fromPoint, toPoint, true, map)
+                routing.submitRequest(fromPoint, toPoint, map)
             }
         } else {
             getView()?.showNotification(res.getString(R.string.errorSystem))
@@ -330,9 +330,9 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         }
 
         if (userPoint != null && fromPoint != null && map != null && isDrivingRoute) {
-            Routing.mapObjectsDriver = null
+            if (Routing.mapObjectsDriver != null) Routing.removeRouteDriver()
 
-            Routing().submitRequest(userPoint, fromPoint, false, map)
+            routing.submitRequestDriver(userPoint, fromPoint, map)
             isDrivingRoute = false
         }
     }

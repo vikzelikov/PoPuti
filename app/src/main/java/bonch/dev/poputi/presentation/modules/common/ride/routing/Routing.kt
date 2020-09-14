@@ -29,15 +29,38 @@ import javax.inject.Inject
 
 class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
 
-    private var mapView: MapView? = null
     private var drivingRouter: DrivingRouter? = null
     private var drivingSession: DrivingSession? = null
     private var isWaypoint = true
 
     companion object {
+        private var mapView: MapView? = null
+        private var boundingBox: BoundingBox? = null
+
         var mapObjects: MapObjectCollection? = null
         var mapObjectsDriver: MapObjectCollection? = null
-        private var boundingBox: BoundingBox? = null
+
+
+        fun removeRoute() {
+            mapObjects?.let {
+                try {
+                    mapView?.map?.mapObjects?.remove(it)
+                    mapObjects = null
+                } catch (ex: java.lang.Exception) {
+                }
+            }
+        }
+
+
+        fun removeRouteDriver() {
+            mapObjectsDriver?.let {
+                try {
+                    mapView?.map?.mapObjects?.remove(it)
+                    mapObjectsDriver = null
+                } catch (ex: java.lang.Exception) {
+                }
+            }
+        }
     }
 
 
@@ -98,28 +121,20 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
     fun submitRequest(
         startLocation: Point,
         endLocation: Point,
-        isWaypoint: Boolean,
         mapView: MapView
     ) {
         if (drivingRouter == null)
             drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
 
-        this.mapView = mapView
-        this.isWaypoint = isWaypoint
+        Routing.mapView = mapView
+        isWaypoint = true
 
-        if (isWaypoint && mapObjects == null) {
+        if (mapObjects == null) {
             mapObjects = mapView.map?.mapObjects?.addCollection()
             boundingBox = BoundingBox(
                 Point(startLocation.latitude, startLocation.longitude),
                 Point(endLocation.latitude, endLocation.longitude)
             )
-
-            route(startLocation, endLocation)
-
-            enterAnimation()
-
-        } else if (!isWaypoint && mapObjectsDriver == null) {
-            mapObjectsDriver = mapView.map?.mapObjects?.addCollection()
 
             route(startLocation, endLocation)
         }
@@ -130,17 +145,35 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
     }
 
 
-    fun submitRequestStory(
+    fun submitRequestDriver(
         startLocation: Point,
         endLocation: Point,
-        isWaypoint: Boolean,
         mapView: MapView
     ) {
         if (drivingRouter == null)
             drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
 
-        this.mapView = mapView
-        this.isWaypoint = isWaypoint
+        Routing.mapView = mapView
+        isWaypoint = false
+
+        if (mapObjectsDriver == null) {
+            mapObjectsDriver = mapView.map?.mapObjects?.addCollection()
+
+            route(startLocation, endLocation)
+        }
+    }
+
+
+    fun submitRequestStory(
+        startLocation: Point,
+        endLocation: Point,
+        mapView: MapView
+    ) {
+        if (drivingRouter == null)
+            drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
+
+        Routing.mapView = mapView
+        isWaypoint = true
 
         if (mapObjects == null) {
             mapObjects = mapView.map?.mapObjects?.addCollection()
@@ -198,16 +231,6 @@ class Routing @Inject constructor() : DrivingSession.DrivingRouteListener {
         drivingSession = drivingRouter?.requestRoutes(requestPoints, drivingOptions, this)
     }
 
-
-    fun removeRoute() {
-        mapObjects?.let {
-            try {
-                mapView?.map?.mapObjects?.remove(it)
-                mapObjects = null
-            } catch (ex: java.lang.Exception) {
-            }
-        }
-    }
 
     private fun enterAnimation() {
         val box = boundingBox

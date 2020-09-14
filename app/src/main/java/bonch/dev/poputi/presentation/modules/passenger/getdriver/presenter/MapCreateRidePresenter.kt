@@ -35,6 +35,7 @@ class MapCreateRidePresenter : BasePresenter<ContractView.IMapCreateRideView>(),
         childFragment.attachDetalRide = { getView()?.attachDetailRide() }
         childFragment.mapView = { getView()?.getMap() }
         childFragment.zoomMap = { getView()?.zoomMap(it) }
+        childFragment.removeDriverIcon = { getView()?.removeDriverIcon() }
         childFragment.myCityCallback = {
             getView()?.getMyCityCall()?.let { call -> call(it) }
         }

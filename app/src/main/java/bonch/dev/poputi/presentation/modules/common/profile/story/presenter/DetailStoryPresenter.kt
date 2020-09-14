@@ -49,7 +49,7 @@ class DetailStoryPresenter : BasePresenter<ContractView.IDetailStoryView>(),
         //set directions
         if (fromPoint != null && toPoint != null && map != null) {
             //set routes
-            routing.submitRequestStory(fromPoint, toPoint, true, map)
+            routing.submitRequestStory(fromPoint, toPoint, map)
         }
     }
 

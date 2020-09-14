@@ -103,7 +103,7 @@
                 <TextView
                     android:id="@+id/car_number"
                     android:layout_width="100dp"
-                    android:layout_height="29dp"
+                    android:layout_height="28dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/bg_car_number"
@@ -119,7 +119,7 @@
                 <TextView
                     android:id="@+id/car_name"
                     android:layout_width="150dp"
-                    android:layout_height="25dp"
+                    android:layout_height="24dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="15dp"
                     android:textColor="#70000000"

@@ -21,7 +21,6 @@ import bonch.dev.poputi.di.component.passenger.DaggerGetDriverComponent
 import bonch.dev.poputi.di.module.passenger.GetDriverModule
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
 import bonch.dev.poputi.domain.entities.common.ride.Address
-import bonch.dev.poputi.domain.entities.common.ride.Coordinate.fromAdr
 import bonch.dev.poputi.domain.utils.Constants.API_KEY_YANDEX
 import bonch.dev.poputi.domain.utils.Geo
 import bonch.dev.poputi.domain.utils.Keyboard
@@ -195,7 +194,7 @@ class MapCreateRideView : Fragment(), UserLocationObjectListener, CameraListener
         p2: CameraUpdateSource,
         p3: Boolean
     ) {
-        if ((p2 == CameraUpdateSource.GESTURES && p3) || fromAdr == null) {
+        if (p2 == CameraUpdateSource.GESTURES && p3) {
             isAllowZoom = true
             mapPresenter.requestGeocoder(p1, false)
 

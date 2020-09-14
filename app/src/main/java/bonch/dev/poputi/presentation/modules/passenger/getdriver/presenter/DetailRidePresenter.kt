@@ -133,7 +133,7 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
                 to.longitude
             )
 
-            routing.submitRequest(from, to, true, map)
+            routing.submitRequest(from, to, map)
         }
     }
 
@@ -144,7 +144,7 @@ class DetailRidePresenter : BasePresenter<ContractView.IDetailRideView>(),
 
 
     override fun removeRoute() {
-        routing.removeRoute()
+        Routing.removeRoute()
     }
 
 

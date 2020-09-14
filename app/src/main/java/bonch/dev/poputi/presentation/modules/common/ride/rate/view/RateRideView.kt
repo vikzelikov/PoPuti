@@ -14,13 +14,13 @@ import android.widget.RatingBar.OnRatingBarChangeListener
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.App
 import bonch.dev.poputi.MainActivity
 import bonch.dev.poputi.R
 import bonch.dev.poputi.di.component.common.DaggerCommonComponent
 import bonch.dev.poputi.di.module.common.CommonModule
 import bonch.dev.poputi.domain.entities.common.ride.ActiveRide
+import bonch.dev.poputi.domain.utils.Keyboard
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
@@ -166,12 +166,16 @@ class RateRideView : Fragment(), IRateRideView {
 
     override fun setListeners() {
         send.setOnClickListener {
+            rateRidePresenter.instance().attachView(this)
+
             rating_bar?.rating?.toInt()?.let {
                 rateRidePresenter.rateDone(it, comment_text?.text?.toString())
             }
         }
 
         close.setOnClickListener {
+            rateRidePresenter.instance().attachView(this)
+
             rateRidePresenter.closeRate()
         }
 

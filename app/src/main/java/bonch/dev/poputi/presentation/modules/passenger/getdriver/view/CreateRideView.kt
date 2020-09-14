@@ -31,6 +31,7 @@ import bonch.dev.poputi.presentation.base.MBottomSheet
 import bonch.dev.poputi.presentation.interfaces.ParentEmptyHandler
 import bonch.dev.poputi.presentation.interfaces.ParentHandler
 import bonch.dev.poputi.presentation.interfaces.ParentMapHandler
+import bonch.dev.poputi.presentation.modules.common.ride.routing.Routing
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.GetDriverComponent
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.AddressesAdapter
 import bonch.dev.poputi.presentation.modules.passenger.getdriver.adapters.WrapContentLinearLayoutManager
@@ -61,6 +62,7 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
     lateinit var attachDetalRide: ParentEmptyHandler
     lateinit var zoomMap: ParentHandler<CameraPosition>
     lateinit var mapView: ParentMapHandler<MapView>
+    lateinit var removeDriverIcon: ParentEmptyHandler
     var myCityCallback: ParentHandler<Address>? = null
     var userPoint: ParentMapHandler<Point?>? = null
 
@@ -82,6 +84,9 @@ class CreateRideView : Fragment(), ContractView.ICreateRideView {
         correctMapView()
 
         createRidePresenter.instance().isNextStep = false
+
+        Routing.removeRoute()
+        removeDriverIcon()
 
         return inflater.inflate(R.layout.create_ride_layout, container, false)
     }

@@ -348,10 +348,12 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
         val map = getView()?.getMap()
 
         if (fromLat != null && fromLng != null && toLat != null && toLng != null && map != null) {
+            if (Routing.mapObjects != null) Routing.removeRoute()
+
             val from = Point(fromLat, fromLng)
             val to = Point(toLat, toLng)
 
-            routing.submitRequest(from, to, true, map)
+            routing.submitRequest(from, to, map)
         }
     }
 
@@ -382,7 +384,7 @@ class TrackRidePresenter : BasePresenter<ContractView.ITrackRideView>(),
 
 
     override fun removeRoute() {
-        routing.removeRoute()
+        Routing.removeRoute()
     }
 
 

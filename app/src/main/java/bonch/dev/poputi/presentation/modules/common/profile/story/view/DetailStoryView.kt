@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -15,7 +16,6 @@ import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.domain.utils.Constants
 import bonch.dev.poputi.presentation.modules.common.profile.ContractPresenter
 import bonch.dev.poputi.presentation.modules.common.profile.ContractView
-import bonch.dev.poputi.presentation.modules.common.profile.support.SupportView
 import bonch.dev.presentation.modules.common.profile.ProfileComponent
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.directions.DirectionsFactory
@@ -172,8 +172,12 @@ class DetailStoryView : AppCompatActivity(), ContractView.IDetailStoryView {
         }
 
         support.setOnClickListener {
-            val intent = Intent(this, SupportView::class.java)
-            startActivity(intent)
+            val emailIntent = Intent(
+                Intent.ACTION_SENDTO, Uri.fromParts("mailto", "poputi@bonch.dev", null)
+            )
+            startActivity(Intent.createChooser(emailIntent, "Send email..."), null)
+//            val intent = Intent(this, SupportView::class.java)
+//            startActivity(intent)
         }
 
         copy_phone.setOnClickListener {

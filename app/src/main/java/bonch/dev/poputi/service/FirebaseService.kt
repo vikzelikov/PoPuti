@@ -16,6 +16,7 @@ import bonch.dev.poputi.R
 import bonch.dev.poputi.domain.entities.common.profile.CacheProfile
 import bonch.dev.poputi.domain.entities.common.ride.RideInfo
 import bonch.dev.poputi.service.driver.DriverRideService
+import bonch.dev.poputi.service.passenger.PassengerRideService
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -77,14 +78,15 @@ class FirebaseService : FirebaseMessagingService() {
         if (title != null && subtitle != null && (isNotificationsEnable == null || isNotificationsEnable)) {
             val notification = buildNotification(
                 title, subtitle,
-                getString(R.string.newMessage),
+                getString(R.string.newNotif),
                 isSetOngoing = false,
                 isAutoCancel = true,
                 isHeadsUp = true,
                 regularRide = null
             )
 
-            notificatonManager.notify(1, notification)
+            if (!PassengerRideService.isRunning && !PassengerRideService.isRunning)
+                notificatonManager.notify(1, notification)
         }
     }
 

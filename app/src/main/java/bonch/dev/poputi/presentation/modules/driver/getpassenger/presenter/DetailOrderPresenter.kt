@@ -77,7 +77,9 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
             //set directions
             if (fromPoint != null && toPoint != null && map != null) {
                 //set routes
-                routing.submitRequest(fromPoint, toPoint, true, map)
+                if (Routing.mapObjects != null) Routing.removeRoute()
+
+                routing.submitRequest(fromPoint, toPoint, map)
             }
 
             //set UI
@@ -236,7 +238,9 @@ class DetailOrderPresenter : BasePresenter<ContractView.IDetailOrderView>(),
         }
 
         if (userPoint != null && fromPoint != null && map != null && isDrivingRoute) {
-            Routing().submitRequest(userPoint, fromPoint, false, map)
+            if (Routing.mapObjectsDriver != null) Routing.removeRouteDriver()
+
+            Routing().submitRequestDriver(userPoint, fromPoint, map)
             isDrivingRoute = false
         }
     }

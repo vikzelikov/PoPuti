@@ -119,7 +119,6 @@ class RegularRidesView : Fragment(), ContractView.IRegularDriveView {
             }
         }
 
-        Coordinate.fromAdr = null
         Coordinate.toAdr = null
     }
 

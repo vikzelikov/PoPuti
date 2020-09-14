@@ -43,7 +43,6 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
     val ADD_BANK_CARD = 2
     private val BLOCK_REQUEST_GEOCODER = 1500L
 
-
     private var fromPoint: Point? = null
     private var toPoint: Point? = null
 
@@ -160,10 +159,9 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     override fun requestGeocoder(point: Point?) {
-        if (!isBlockRequest && point != null && point.latitude != 0.0 && point.longitude != 0.0) {
+        if (!isBlockGeocoder && point != null && point.latitude != 0.0 && point.longitude != 0.0) {
             //send request and set block for several seconds
             getDriverInteractor.requestGeocoder(point) { address ->
-
                 if (address.address != App.appComponent.getApp().getString(R.string.atlantic)) {
 
                     address.point?.let {
@@ -337,7 +335,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
                     to.longitude
                 )
 
-            routing.submitRequest(from, to, true, map)
+            routing.submitRequest(from, to, map)
 
             isOnRouting = true
         }
@@ -434,7 +432,7 @@ class CreateRegularRidePresenter : BasePresenter<ContractView.ICreateRegularDriv
 
 
     override fun removeRoute() {
-        routing.removeRoute()
+        Routing.removeRoute()
     }
 
 
